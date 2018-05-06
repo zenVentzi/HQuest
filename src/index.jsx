@@ -1,12 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-function Welcome(props) {
-  return <h1>Hello, {props.message}</h1>;
-}
-
+import App from './Components/App';
 
 ReactDOM.render(
-  <Welcome message="Hello!" />,
+  <App message="Hello!" />,
   document.getElementById('app'),
 );
