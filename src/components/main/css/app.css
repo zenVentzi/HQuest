@@ -1,0 +1,55 @@
+﻿body {
+    margin: 0px;
+    font-family: "Arial Black", Gadget, sans-serif;
+}
+
+button {
+    background-color: black;
+    color: white;
+    font-size: 17px;
+    font-family: "Arial Black", Gadget, sans-serif;    
+    border: none;
+    border-radius: 5%;
+    cursor: pointer;
+}
+
+.grid-container {
+    margin: 70px 0;
+    display: grid;
+    grid-template-columns: auto;
+}
+
+.grid-item {
+    /*background-color: #00ffff;*/
+    /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+    padding: initial;
+    font-size: 20px;
+    text-align: center;
+}
+
+/*to be inserted*/
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 6px;
+    padding: 5px 0px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 110%;
+    /* left: 100%; */
+    margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
