@@ -1,4 +1,5 @@
 import React from 'react';
+import style from './css/avatar.css';
 
 const UserAvatar = () => (
   <div className="grid-item">
