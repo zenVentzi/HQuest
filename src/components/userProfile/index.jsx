@@ -1,17 +1,20 @@
 import React from 'react';
-import UserAvatar from './UserAvatar';
+import styled from 'styled-components';
+import Avatar from './Avatar';
 import UserName from './UserName';
 import Search from './Search';
 import QuestionList from './Questions';
-import style from './css/userProfile.css';
+
+const StyledUserProfile = styled.div`
+  text-align: center;`;
 
 const UserProfile = () => (
-  <div className="user-profile">
-    <UserAvatar />
+  <StyledUserProfile>
+    <Avatar />
     <UserName />
     <Search />
     <QuestionList />
-  </div>
+  </StyledUserProfile>
 );
 
 export default UserProfile;

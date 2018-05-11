@@ -1,20 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
 import Question from './Question';
-import style from './questions.css';
+
+const StyledQuestionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 40%;`;
 
 const QuestionsContainer = () => (
-  <div className="questions-container">
+  <StyledQuestionsContainer>
     <Question />
-    {/* <Question />
-    <Question />
-    <Question />
-    <Question />
-    <Question />
-    <Question />
-    <Question />
-    <Question />
-    <Question /> */}
-  </div>
+  </StyledQuestionsContainer>
 );
 
 export default QuestionsContainer;

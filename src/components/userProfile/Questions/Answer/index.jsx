@@ -1,6 +1,10 @@
 import React from 'react';
+import styled from 'styled-components';
 import AnswerViewer from './AnswerViewer';
 import AnswerEditor from './AnswerEditor';
+
+const StyledAnswer = styled.div`
+  `;
 
 class Answer extends React.Component {
   constructor(props) {
@@ -33,11 +37,11 @@ class Answer extends React.Component {
 
   render() {
     return (
-      <div className="answer-container">
+      <StyledAnswer>
         {this.state.isEditMode ?
           <AnswerEditor onSave={this.onSave} /> :
           <AnswerViewer onEdit={this.onEdit} />}
-      </div>
+      </StyledAnswer>
     );
   }
 }
