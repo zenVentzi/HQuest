@@ -1,6 +1,5 @@
 import React from 'react';
 import RatingUnit from './RatingUnit';
-import style from './css/rating.css';
 
 const UNITS_LENGTH = 7;
 
@@ -33,13 +32,7 @@ class Rating extends React.Component {
 
   render() {
     return (
-      <div className="answer-edit">
-        <div className="answer-keywords">
-          <i>Never </i>
-          <i>Sometimes </i>
-          <i>Always</i>
-        </div>
-
+      <div>
         {this.state.ratingUnits.map(unit => (
           <RatingUnit
             key={unit.id}

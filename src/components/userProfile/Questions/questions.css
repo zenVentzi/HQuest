@@ -1,9 +1,0 @@
-﻿.questions-container {
-    display: flex;
-    justify-content: center;
-    width: 40%;
-}
-
-.question {
-    margin-top: 10px;
-}

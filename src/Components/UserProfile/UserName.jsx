@@ -1,12 +1,15 @@
 import React from 'react';
-// import style from './css/avatar.css';
+import styled from 'styled-components';
+
+const StyledUserName = styled.div`
+  padding: initial;
+  font-size: 20px;
+  text-align: center;`;
 
 const UserName = () => (
-  <div className="grid-item">
-    <div className="">
+  <StyledUserName>
       Ventsislav Marinov
-    </div>
-  </div>
+  </StyledUserName>
 );
 
 export default UserName;

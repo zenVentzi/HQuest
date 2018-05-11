@@ -1,10 +1,12 @@
 import React from 'react';
+import styled from 'styled-components';
 import Rating from './Rating';
-import style from './css/answer.css';
 
+const StyledAnswerEditor = styled.div`
+  display: flex;`;
 
 const AnswerEditor = props => (
-  <div className="answer-edit">
+  <StyledAnswerEditor>
     <Rating />
     <button
       className="answer-save-btn"
@@ -12,8 +14,7 @@ const AnswerEditor = props => (
     >
         Save
     </button>
-  </div>
-
+  </StyledAnswerEditor>
 );
 
 export default AnswerEditor;
