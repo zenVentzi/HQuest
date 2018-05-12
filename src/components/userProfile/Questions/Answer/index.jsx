@@ -4,7 +4,7 @@ import AnswerViewer from './AnswerViewer';
 import AnswerEditor from './AnswerEditor';
 
 const StyledAnswer = styled.div`
-  `;
+  margin-top: 0.5em;`;
 
 class Answer extends React.Component {
   constructor(props) {

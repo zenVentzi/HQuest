@@ -3,17 +3,22 @@ import styled from 'styled-components';
 import Avatar from './Avatar';
 import UserName from './UserName';
 import Search from './Search';
-import QuestionList from './Questions';
+import QuestionsContainer from './Questions';
 
 const StyledUserProfile = styled.div`
-  text-align: center;`;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  width: 500px;`;
 
 const UserProfile = () => (
   <StyledUserProfile>
     <Avatar />
     <UserName />
     <Search />
-    <QuestionList />
+    <QuestionsContainer />
   </StyledUserProfile>
 );
 

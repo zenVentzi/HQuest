@@ -4,17 +4,14 @@ import AvatarImage from './AvatarImage';
 import AvatarUpdate from './AvatarUpdate';
 
 const StyledUserAvatar = styled.div`
-  padding: initial;
   font-size: 20px;
   text-align: center;
   
   width: 150px;
   height: 150px;
-  display: inline-block;
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid black;
-  position: relative;`;
+  border: 2px solid black;`;
 
 const UserAvatar = () => (
   <StyledUserAvatar>

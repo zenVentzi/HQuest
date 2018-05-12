@@ -1,18 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
-import Input from './Input';
 
-const StyledSearch = styled.div`
-  padding: initial;
-  font-size: 20px;
-  text-align: center;
-  
-  margin-top: 40px;`;
+const StyledSearch = styled.input`
+  padding: 0.2em 0.9em;
+  font-size: 15px;
+  border: none;
+  border-radius: 0.2em;
+  background-color: black;
+  color: white;
+  font-family: "Arial Black", Gadget, sans-serif;
+  width: 300px;
+  margin-top: 2em;`;
 
 const Search = () => (
-  <StyledSearch>
-    <Input />
-  </StyledSearch>
+  <form action="#">
+    <StyledSearch type="text" placeholder="Search.." name="search" />
+  </form>
 );
 
 export default Search;

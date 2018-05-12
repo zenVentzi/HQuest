@@ -17,10 +17,18 @@ module.exports = {
         test: /\.css$/,
         loader: 'style-loader!css-loader',
       },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx', '.css'],
+    extensions: ['*', '.js', '.jsx', '.css', 'png', 'jpg', 'gif'],
   },
   watch: true,
 };

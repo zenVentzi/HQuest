@@ -2,16 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import Answer from './Answer';
 
-const StyledQuestion = styled.div`
-  padding: initial;
-  font-size: 20px;
-  text-align: center;  
+const StyledQuestion = styled.div``;
 
-  margin-top: 10px;`;
+// Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?
 
 const Question = () => (
   <StyledQuestion>
-    <i>Is this is this is is this or how much?</i>
+    <span>Is this is this is is this or how much? </span>
     <br />
     <Answer />
   </StyledQuestion>

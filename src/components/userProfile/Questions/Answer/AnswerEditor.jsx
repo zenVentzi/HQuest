@@ -1,19 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import Rating from './Rating';
+import ButtonsContainer from './ButtonsContainer';
 
-const StyledAnswerEditor = styled.div`
-  display: flex;`;
+const StyledAnswerEditor = styled.div``;
 
 const AnswerEditor = props => (
   <StyledAnswerEditor>
     <Rating />
-    <button
-      className="answer-save-btn"
-      onClick={() => { props.onSave(); }}
-    >
-        Save
-    </button>
+    <ButtonsContainer onSave={props.onSave} />
   </StyledAnswerEditor>
 );
 
