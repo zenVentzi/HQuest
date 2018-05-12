@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './Navigation/Navbar';
+import Navbar from './navigation';
 import Content from './Content';
 import baseStyles from './base-styles';
 

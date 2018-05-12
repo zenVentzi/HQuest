@@ -1,5 +1,8 @@
 import React from 'react';
+import styled from 'styled-components';
 import RatingUnit from './RatingUnit';
+
+const StyledRating = styled.div``;
 
 const UNITS_LENGTH = 7;
 
@@ -32,7 +35,7 @@ class Rating extends React.Component {
 
   render() {
     return (
-      <div>
+      <StyledRating>
         {this.state.ratingUnits.map(unit => (
           <RatingUnit
             key={unit.id}
@@ -41,7 +44,7 @@ class Rating extends React.Component {
             clickHandler={this.handleUnitClick}
           />
         ))}
-      </div>);
+      </StyledRating>);
   }
 }
 

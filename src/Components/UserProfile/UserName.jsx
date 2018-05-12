@@ -2,9 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledUserName = styled.div`
-  padding: initial;
-  font-size: 20px;
-  text-align: center;`;
+  font-size: 20px;`;
 
 const UserName = () => (
   <StyledUserName>

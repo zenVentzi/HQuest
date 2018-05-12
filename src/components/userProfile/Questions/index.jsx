@@ -3,9 +3,7 @@ import styled from 'styled-components';
 import Question from './Question';
 
 const StyledQuestionsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 40%;`;
+  margin-top: 1em;`;
 
 const QuestionsContainer = () => (
   <StyledQuestionsContainer>
