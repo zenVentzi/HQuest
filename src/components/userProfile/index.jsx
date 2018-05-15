@@ -17,7 +17,7 @@ const UserProfile = () => (
   <StyledUserProfile>
     <Avatar />
     <UserName />
-    <Search />
+    <Search placeholder="Search questions.." />
     <QuestionsContainer />
   </StyledUserProfile>
 );
