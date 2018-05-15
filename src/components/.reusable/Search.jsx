@@ -9,13 +9,6 @@ const StyledSearch = styled.input`
   background-color: black;
   color: white;
   font-family: "Arial Black", Gadget, sans-serif;
-  width: 300px;
-  margin-top: 2em;`;
+  width: 300px;`;
 
-const Search = () => (
-  <form action="#">
-    <StyledSearch type="text" placeholder="Search.." name="search" />
-  </form>
-);
-
-export default Search;
+export default StyledSearch;

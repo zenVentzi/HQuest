@@ -3,15 +3,13 @@ import NavContainer from './NavContainer';
 import NavLeft from './NavLeft';
 import NavRight from './NavRight';
 import NavElement from './NavElement';
-// import style from './css/navbar.css';
+import Search from './Search';
 
 const Navbar = () => (
   <nav>
     <NavContainer>
       <NavLeft>
-        <NavElement>
-          Home
-        </NavElement>
+        <Search />
       </NavLeft>
       <NavRight>
         <NavElement>
