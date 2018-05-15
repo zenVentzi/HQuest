@@ -11,6 +11,8 @@ class Answer extends React.Component {
     super(props);
 
     this.state = {
+      type: 'rating',
+      payload: 7,
       isEditMode: true,
     };
   }
@@ -39,8 +41,8 @@ class Answer extends React.Component {
     return (
       <StyledAnswer>
         {this.state.isEditMode ?
-          <AnswerEditor onSave={this.onSave} /> :
-          <AnswerViewer onEdit={this.onEdit} />}
+          <AnswerEditor questionId={this.props.questionId} onSave={this.onSave} /> :
+          <AnswerViewer questionId={this.props.questionId} onEdit={this.onEdit} />}
       </StyledAnswer>
     );
   }

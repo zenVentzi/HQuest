@@ -1,14 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import Rating from './Rating';
-import ButtonsContainer from './ButtonsContainer';
+import EditorButtons from './EditorButtons';
 
 const StyledAnswerEditor = styled.div``;
 
 const AnswerEditor = props => (
   <StyledAnswerEditor>
-    <Rating />
-    <ButtonsContainer onSave={props.onSave} />
+    <Rating editMode questionId={props.questionId} />
+    <EditorButtons
+      questionId={props.questionId}
+      onSave={props.onSave}
+    />
   </StyledAnswerEditor>
 );
 
