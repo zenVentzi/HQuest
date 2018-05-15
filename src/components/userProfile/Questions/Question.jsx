@@ -4,13 +4,11 @@ import Answer from './Answer';
 
 const StyledQuestion = styled.div``;
 
-// Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?Is this is this is is this or how much?
-
-const Question = () => (
+const Question = props => (
   <StyledQuestion>
     <span>Is this is this is is this or how much? </span>
     <br />
-    <Answer />
+    <Answer questionId={props.questionId} />
   </StyledQuestion>
 );
 

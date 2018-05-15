@@ -1,51 +1,61 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import RatingUnit from './RatingUnit';
+import { editAnswer } from '../../../../actions/actionCreators';
+import { getAnswer } from '../../../../selectors';
 
 const StyledRating = styled.div``;
 
-const UNITS_LENGTH = 7;
-
 class Rating extends React.Component {
   componentWillMount() {
-    // super(props);
-    const ratingUnits = [];
-
-    for (let i = 0; i < UNITS_LENGTH; i += 1) {
-      ratingUnits.push({
-        id: i,
-        active: false,
-      });
-    }
-
-    this.setState({ ratingUnits });
     this.handleUnitClick = this.handleUnitClick.bind(this);
   }
 
-  handleUnitClick(unitId) {
-    const newState = { ...this.state };
+  handleUnitClick(unitIndex) {
+    const { questionId } = this.props;
+    const newAnswer = unitIndex + 1;
 
-    for (let i = 0; i < UNITS_LENGTH; i += 1) {
-      const active = i <= unitId;
-      newState.ratingUnits[i].active = active;
+    this.props.edit(questionId, newAnswer);
+  }
+
+  renderUnits() {
+    const ratingUnits = [];
+
+    for (let i = 0; i < 7; i += 1) {
+      const active = i < this.props.rating;
+
+      ratingUnits[i] = (
+        <RatingUnit
+          key={i}
+          index={i}
+          active={active}
+          editMode={this.props.editMode}
+          clickHandler={this.handleUnitClick}
+        />
+      );
     }
 
-    this.setState(newState);
+    return ratingUnits;
   }
 
   render() {
     return (
       <StyledRating>
-        {this.state.ratingUnits.map(unit => (
-          <RatingUnit
-            key={unit.id}
-            id={unit.id}
-            active={unit.active}
-            clickHandler={this.handleUnitClick}
-          />
-        ))}
+        {this.renderUnits()}
       </StyledRating>);
   }
 }
 
-export default Rating;
+function mapStateToProps(state, ownProps) {
+  const rating = getAnswer(state, ownProps.questionId);
+  return { rating };
+}
+
+const mapDispatchToProps = dispatch => ({
+  edit: (questionId, answer) => {
+    dispatch(editAnswer(questionId, answer));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Rating);

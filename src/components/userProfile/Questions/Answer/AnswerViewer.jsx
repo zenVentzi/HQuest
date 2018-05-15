@@ -1,12 +1,17 @@
 import React from 'react';
-import RatingUnit from './RatingUnit';
+import Rating from './Rating';
+import StyledBtn from './StyledBtn';
 
-const AnswerViewer = () => (
-  <div className="answer-preview">
-    <RatingUnit />
-    <i>, Never</i>
-    <button >Edit</button>
-  </div>
-);
+const AnswerViewer = (props) => {
+  const btnName = props.hasAnswer ?
+    'Edit' : 'Answer';
+
+  return (
+    <div>
+      <Rating editMode={false} questionId={props.questionId} />
+      <StyledBtn onClick={() => { props.onEdit(); }}>Edit</StyledBtn>
+    </div>
+  );
+};
 
 export default AnswerViewer;

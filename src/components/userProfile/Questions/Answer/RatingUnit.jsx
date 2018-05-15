@@ -3,15 +3,6 @@ import styled, { css } from 'styled-components';
 import tickBlack from './tick_black.png';
 import tickWhite from './tick_white.png';
 
-const Button = styled.button(props => css`
-  height: ${props.height};
-  width: ${props.width};
-  color: ${props.theme.fontColor};
-  background-color: ${props.theme.backgroundColor};
-`)
-
-// 
-
 const StyledRatingUnit = styled.button`${props => css`
   width: 30px;
   height: 30px;
@@ -24,12 +15,15 @@ const StyledRatingUnit = styled.button`${props => css`
   background-repeat:no-repeat;
   background-image:url(${props.active ? tickWhite : tickBlack});
   background-color: ${props.active ? 'black' : 'white'};
+  pointer-events: ${props.editMode ? 'auto' : 'none'};
+  cursor: ${props.editMode ? 'pointer' : 'default'};
   `}`;
 
 const RatingUnit = props => (
   <StyledRatingUnit
     active={props.active}
-    onClick={() => { props.clickHandler(props.id); }}
+    editMode={props.editMode}
+    onClick={() => { props.clickHandler(props.index); }}
   />
 );
 

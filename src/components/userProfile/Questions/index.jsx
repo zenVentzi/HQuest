@@ -5,10 +5,26 @@ import Question from './Question';
 const StyledQuestionsContainer = styled.div`
   margin-top: 1em;`;
 
-const QuestionsContainer = () => (
-  <StyledQuestionsContainer>
-    <Question />
-  </StyledQuestionsContainer>
-);
+const QuestionsContainer = (props) => {
+  const renderQuestions = () => {
+    // = pros.questionIds.map
+
+    const tempIds = [1];
+    const questions = tempIds.map(id => (
+      <Question
+        key={id}
+        questionId={id}
+      />
+    ));
+
+    return questions;
+  };
+
+  return (
+    <StyledQuestionsContainer>
+      {renderQuestions()}
+    </StyledQuestionsContainer>
+  );
+};
 
 export default QuestionsContainer;
