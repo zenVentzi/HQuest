@@ -1,12 +1,28 @@
-// const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const webpack = require('webpack');
+
+const path = require('path');
 
 module.exports = {
-  entry: './src/index.jsx',
+  entry: [
+    'webpack-hot-middleware/client?reload=true',
+    './src/index.jsx',
+  ],
   mode: 'development',
   output: {
+    // path: path.resolve(process.cwd(), 'dist'),
+    publicPath: '/',
     filename: 'bundle.js',
-    publicPath: 'dist/',
   },
+  devtool: 'inline-source-map',
+  devServer: {
+    // contentBase: '/',
+    hot: true,
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   module: {
     rules: [
       {
@@ -31,5 +47,4 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx', '.css', 'png', 'jpg', 'gif'],
   },
-  watch: true,
 };

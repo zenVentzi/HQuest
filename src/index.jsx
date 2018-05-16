@@ -19,6 +19,13 @@ ReactDOM.render(
   document.getElementById('app'),
 );
 
+if (module.hot) {
+  module.hot.accept('./components/main/App', () => {
+    console.log('Accepting the updated printMe module!');
+    console.log('Updating App.js...');
+  });
+}
+
 // eslint-disable-next-line
 injectGlobal`
   body {
