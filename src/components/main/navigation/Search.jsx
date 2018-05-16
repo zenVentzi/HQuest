@@ -10,9 +10,9 @@ const CustomSearch = (props) => {
 
   return (
     <React.Fragment>
-      <CustomSearchStyled list="users" placeholder="fdffdf users.." />
+      <CustomSearchStyled list="users" placeholder="Search users.." />
       <datalist id="users">
-        <option value="Pesho" onClick={(e) => { console.log(e.target.value); }} />
+        <option value="Pesho" />
         <option value="Pesho" />
         <option value="Pesho" />
       </datalist>
