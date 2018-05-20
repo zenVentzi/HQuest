@@ -56,23 +56,3 @@ export function fetchUsers(input) {
     }, 1000);
   };
 }
-
-// function shouldFetchUsers(state) {
-//   if (state.users.isFetching) {
-//     return false;
-//   } else if (state.users.items.length === 0) {
-//     return true;
-//   }
-
-//   return state.users.didInvalidate;
-// }
-
-// export function fetchUsersIfNeeded(input) {
-//   return (dispatch, getState) => {
-//     if (shouldFetchUsers(getState())) {
-//       return dispatch(fetchUsers(input));
-//     }
-
-//     return Promise.resolve();
-//   };
-// }
