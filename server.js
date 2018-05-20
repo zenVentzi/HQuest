@@ -15,7 +15,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 // app.use(express.static(path.join(process.cwd(), 'dist')));
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 app.listen(port, () => {

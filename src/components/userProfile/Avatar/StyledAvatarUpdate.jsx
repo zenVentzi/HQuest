@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const StyledAvatarUpdate = styled.div`
@@ -11,10 +10,4 @@ const StyledAvatarUpdate = styled.div`
   color: white;
   line-height: 150px;`;
 
-const AvatarUpdate = () => (
-  <StyledAvatarUpdate>
-    <a href="/">Update</a>
-  </StyledAvatarUpdate>
-);
-
-export default AvatarUpdate;
+export default StyledAvatarUpdate;
