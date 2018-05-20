@@ -1,0 +1,2 @@
+- store the profile pic file path in database
+- save the profile pic to public/users/user_1/profilepic.png
