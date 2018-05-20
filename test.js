@@ -1,9 +1,7 @@
 const util = require('util');
 
-// console.log(util.inspect({}, { depth: null }));
+const func = num => (num + 1);
 
-const mapDispatchToProps = dispatch => ({ a: dispatch });
+let obj = { a: func(5) };
 
-let neshto = mapDispatchToProps(5);
-
-console.log(neshto.a);
+console.log(util.inspect(obj, { depth: null }));
