@@ -1,23 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
-import AvatarImage from './AvatarImage';
-import AvatarUpdate from './AvatarUpdate';
-
-const StyledUserAvatar = styled.div`
-  font-size: 20px;
-  text-align: center;
-  
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  border-radius: 50%;
-  border: 2px solid black;`;
+import StyledAvatarWrapper from '../../.reusable/StyledAvatarWrapper';
+import StyledAvatarImage from '../../.reusable/StyledAvatarImage';
+import StyledAvatarUpdate from './StyledAvatarUpdate';
 
 const UserAvatar = () => (
-  <StyledUserAvatar>
-    <AvatarImage />
-    <AvatarUpdate />
-  </StyledUserAvatar>
+  <StyledAvatarWrapper>
+    <StyledAvatarImage src="/" alt="" />
+    <StyledAvatarUpdate />
+  </StyledAvatarWrapper>
 );
 
 export default UserAvatar;
