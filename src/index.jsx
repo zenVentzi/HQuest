@@ -16,10 +16,13 @@ import {
 
 const logger = createLogger();
 
+/* eslint-disable no-underscore-dangle */
 const store = createStore(
   rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(thunk, logger),
 );
+/* eslint-enable */
 
 ReactDOM.render(
   <Provider store={store} >

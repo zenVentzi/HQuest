@@ -53,7 +53,7 @@ export function fetchUsers(input) {
       ];
 
       dispatch(receiveUsers(users));
-    }, 500);
+    }, 1000);
   };
 }
 
