@@ -3,18 +3,19 @@ import { connect } from 'react-redux';
 import { parse } from 'qs';
 import StyledContentComponent from '../.reusable/StyledContentComponent';
 import User from './User';
+import { fetchUsers } from '../../actions/actionCreators';
 
 // { match: { url, params } }
-const Search = (props) => {
-  const query = parse(window.location.search.substr(1));
+class Search extends React.Component {
+  constructor(props) {
+    super(props);
 
-  // return (<div>Search page for {query.match}</div>);
-  const renderUsers = () => {
-    if (props.users.length === 0) {
-      return null;
-    }
+    const query = parse(window.location.search.substr(1));
+    props.fetchMatchingUsers(query.match);
+  }
 
-    const users = props.users.map((user) => {
+  renderUsers() {
+    const users = this.props.users.map((user) => {
       // console.log(user.id)
 
       return (
@@ -27,23 +28,39 @@ const Search = (props) => {
     });
 
     return users;
-  };
+  }
 
-  return (
-    <StyledContentComponent>
-      {renderUsers()}
-    </StyledContentComponent>
-  );
-};
+  renderNotFound() {
+    return (<div> No matches found </div>);
+  }
+
+  renderSearch() {
+    const hasMatchingUsers = this.props.users.length > 0;
+
+    if (hasMatchingUsers) {
+      return this.renderUsers();
+    }
+
+    return this.renderNotFound();
+  }
+
+  render() {
+    return (
+      <StyledContentComponent>
+        {this.renderSearch()}
+      </StyledContentComponent>
+    );
+  }
+}
 
 function mapStateToProps(state) {
   return { users: state.users.items };
 }
 
-// const mapDispatchToProps = dispatch => ({
-//   edit: (questionId, answer) => {
-//     dispatch(editAnswer(questionId, answer));
-//   },
-// });
+const mapDispatchToProps = dispatch => ({
+  fetchMatchingUsers: (input) => {
+    dispatch(fetchUsers(input));
+  },
+});
 
-export default connect(mapStateToProps, null)(Search);
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

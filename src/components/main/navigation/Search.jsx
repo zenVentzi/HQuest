@@ -31,25 +31,15 @@ const CustomSearch = (props) => {
 
   return (
     <React.Fragment>
-<<<<<<< HEAD
-      <CustomSearchStyled list="users" placeholder="Search users.." />
-      <datalist id="users">
-        <option value="Pesho" />
-        <option value="Pesho" />
-        <option value="Pesho" />
-      </datalist>
-=======
       <form action="/search">
         <CustomSearchStyled
           list="users"
           name="match"
           placeholder="Search users.."
-          autocomplete="off"
           onKeyUp={onKeyUp}
         />
         <UsersDataList />
       </form>
->>>>>>> react-router
     </React.Fragment>
   );
 };
