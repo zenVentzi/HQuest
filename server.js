@@ -1,5 +1,8 @@
 const express = require('express');
 const path = require('path');
+const { ApolloServer } = require('apollo-server');
+const { registerServer } = require('apollo-server-express');
+const { typeDefs, resolvers } = require('./schema');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -18,6 +21,15 @@ app.use(require('webpack-hot-middleware')(compiler));
 app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));
 });
+
+const server = new ApolloServer({
+  // These will be defined for both new or existing servers
+  typeDefs,
+  mocks: true,
+});
+
+registerServer({ server, app });
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}...`);
 });

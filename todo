@@ -1,2 +1,9 @@
 - store the profile pic file path in database
 - save the profile pic to public/users/user_1/profilepic.png
+
+- Login page
+- Search questions
+
+
+Should I try to implement GraphQL or simple REST? GraphQL is better for sure but is the implementation time
+okay?

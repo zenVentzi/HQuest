@@ -1,9 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import RatingUnit from './RatingUnit';
-import { editAnswer } from '../../../../actions/actionCreators';
-import { getAnswer } from '../../../../selectors';
 
 const StyledRating = styled.div``;
 
@@ -47,15 +44,4 @@ class Rating extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const rating = getAnswer(state, ownProps.questionId);
-  return { rating };
-}
-
-const mapDispatchToProps = dispatch => ({
-  edit: (questionId, answer) => {
-    dispatch(editAnswer(questionId, answer));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Rating);
+export default Rating;

@@ -1,35 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
 import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
 import App from './components/main/App';
-import rootReducer from './reducers';
-import {
-  fetchUsersIfNeeded,
-  clearAnswer,
-  editAnswer,
-} from './actions/actionCreators';
 
-const logger = createLogger();
+const httpLink = new HttpLink({ uri: 'http://localhost:3000' });
 
-/* eslint-disable no-underscore-dangle */
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  applyMiddleware(thunk, logger),
-);
-/* eslint-enable */
+const client = new ApolloClient({
+  link: httpLink,
+  cache: new InMemoryCache(),
+});
 
 ReactDOM.render(
-  <Provider store={store} >
+  <ApolloProvider client={client}>
     <Router>
       <App />
     </Router>
-  </Provider>,
+  </ApolloProvider>,
   document.getElementById('app'),
 );
 

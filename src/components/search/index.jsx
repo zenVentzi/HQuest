@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { parse } from 'qs';
 import StyledContentComponent from '../.reusable/StyledContentComponent';
 import User from './User';
@@ -53,14 +52,4 @@ class Search extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return { users: state.users.items };
-}
-
-const mapDispatchToProps = dispatch => ({
-  fetchMatchingUsers: (input) => {
-    dispatch(fetchUsers(input));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default Search;

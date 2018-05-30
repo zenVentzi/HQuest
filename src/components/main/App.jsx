@@ -7,9 +7,9 @@ const App = (props) => {
   baseStyles();
 
   return (
-    <div>
-      <Navbar />
-      <Content />
+    <div>Hello
+      {/* <Navbar />
+      <Content /> */}
     </div>
   );
 };
