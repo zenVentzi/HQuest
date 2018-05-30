@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { clearAnswer } from '../../../../actions/actionCreators';
 import StyledBtn from './StyledBtn';
 
 const EditorButtons = (props) => {
@@ -22,10 +20,4 @@ const EditorButtons = (props) => {
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  onClear: (questionId) => {
-    dispatch(clearAnswer(questionId));
-  },
-});
-
-export default connect(null, mapDispatchToProps)(EditorButtons);
+export default EditorButtons;

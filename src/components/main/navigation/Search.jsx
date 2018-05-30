@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { fetchUsers } from '../../../actions/actionCreators';
 import Search from '../../.reusable/Search';
@@ -26,7 +25,7 @@ const CustomSearch = (props) => {
     // 1) Fetch user names that match. On callback
     // 2) Update the datalist options with those names on callback
 
-    props.fetchMatchingUsers(input);
+    // props.fetchMatchingUsers(input);
   };
 
   return (
@@ -44,11 +43,4 @@ const CustomSearch = (props) => {
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  fetchMatchingUsers: (input) => {
-
-    dispatch(fetchUsers(input));
-  },
-});
-
-export default connect(null, mapDispatchToProps)(CustomSearch);
+export default CustomSearch;
