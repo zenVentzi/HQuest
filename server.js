@@ -1,14 +1,21 @@
 const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
+const { createServer } = require('http');
+const cors = require('cors');
 const { ApolloServer } = require('apollo-server');
-const { registerServer } = require('apollo-server-express');
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+const { execute, subscribe } = require('graphql');
+const { makeExecutableSchema } = require('graphql-tools');
 const { typeDefs, resolvers } = require('./schema');
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 const webpack = require('webpack');
 const webpackConfig = require('./webpack/config');
+
 const compiler = webpack(webpackConfig);
 
 app.use(require('webpack-dev-middleware')(compiler, {
@@ -22,14 +29,26 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
-const server = new ApolloServer({
-  // These will be defined for both new or existing servers
-  typeDefs,
-  mocks: true,
-});
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-registerServer({ server, app });
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use('/graphiql', graphiqlExpress({
+  endpointURL: '/graphql',
+  subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`,
+}));
 
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}...`);
+const server = createServer(app);
+
+server.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}...`);
+
+  /* eslint-disable no-new */
+  new SubscriptionServer({
+    execute,
+    subscribe,
+    schema,
+  }, {
+    server,
+    path: '/subscriptions',
+  });
 });
