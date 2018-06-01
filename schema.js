@@ -8,8 +8,14 @@ type Book {
   author: String!
 }
 
+type User {
+  id: ID!
+  name: String!
+}
+
 type Query {
   books: [Book!]!
+  users(match: String): [User!]!
 }
 
 type Mutation {
@@ -26,10 +32,24 @@ const books = [
   { title: 'Hello1', author: 'Pesho1' },
 ];
 
+const users = [
+  { id: 1, name: 'Pesho1' },
+  { id: 2, name: 'Pesho2' },
+];
+
 const resolvers = {
   Query: {
     books(root, args, context, info) {
       return books;
+    },
+    users(root, args, context, info) {
+      const matchedUsers = users.filter((user) => {
+        const name = user.name.toLowerCase();
+        const match = args.match.toLowerCase();
+        return name.includes(match);
+      });
+      console.dir(args.match);
+      return matchedUsers;
     },
   },
   Mutation: {

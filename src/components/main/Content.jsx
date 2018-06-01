@@ -9,7 +9,7 @@ const StyledContent = styled.div`
 
 const Content = () => (
   <StyledContent>
-    <Route exact path="/(/|userProfile|)/" component={UserProfile} />
+    {/* <Route exact path="/(/|userProfile|)/" component={UserProfile} /> */}
     <Route path="/search" component={Search} />
   </StyledContent>
 );
