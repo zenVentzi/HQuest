@@ -29,7 +29,6 @@ const UsersDataList = ({ match }) => {
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
         if (error) return `Error! ${error.message}`;
-        console.log(data)        
 
         return (
           <datalist id="users">

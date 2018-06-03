@@ -3,17 +3,17 @@ import Avatar from './Avatar';
 import StyledUserName from '../.reusable/StyledUserName';
 import Search from './Search';
 import QuestionsContainer from './Questions';
-import StyledContentComponent from '../.reusable/StyledContentComponent';
+import StyledView from '../.reusable/StyledView';
 
-const UserProfile = () => (
-  <StyledContentComponent>
+const ProfileView = () => (
+  <StyledView>
     <Avatar />
     <StyledUserName>
       Ventsislav Marinov
     </StyledUserName>
     <Search placeholder="Search questions.." />
     <QuestionsContainer />
-  </StyledContentComponent>
+  </StyledView>
 );
 
-export default UserProfile;
+export default ProfileView;

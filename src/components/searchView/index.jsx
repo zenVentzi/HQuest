@@ -2,7 +2,7 @@ import React from 'react';
 import { parse } from 'qs';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import StyledContentComponent from '../.reusable/StyledContentComponent';
+import StyledView from '../.reusable/StyledView';
 import User from './User';
 
 const GET_USERS = gql`
@@ -18,7 +18,7 @@ function getMatchParam() {
 }
 
 
-const Search = () => {
+const SearchView = () => {
   const renderUsers = (users) => {
     const userList = users.map((user) => {
       const test = 5;
@@ -48,7 +48,7 @@ const Search = () => {
   };
 
   return (
-    <StyledContentComponent>
+    <StyledView>
       <Query
         query={GET_USERS}
         variables={{ match: getMatchParam() }}
@@ -61,8 +61,8 @@ const Search = () => {
           return <div> {renderSearch(data.users)} </div>;
         }}
       </Query>
-    </StyledContentComponent>
+    </StyledView>
   );
 };
 
-export default Search;
+export default SearchView;
