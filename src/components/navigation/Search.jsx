@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Search from '../../.reusable/Search';
+import TextInput from '../.reusable/TextInput';
 import UsersDataList from './UsersDataList';
 
-const CustomSearchStyled = styled(Search)`
+const CustomTextInput = styled(TextInput)`
   margin-top: 0.5em;`;
 
 class CustomSearch extends Component {
@@ -15,7 +15,7 @@ class CustomSearch extends Component {
   render() {
     return (
       <form action="/search">
-        <CustomSearchStyled
+        <CustomTextInput
           list="users"
           name="match"
           placeholder="Search users.."

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const StyledSearch = styled.input`
+const TextInput = styled.input`
   padding: 0.2em 0.9em;
   font-size: 15px;
   border: none;
@@ -11,4 +11,4 @@ const StyledSearch = styled.input`
   font-family: "Arial Black", Gadget, sans-serif;
   width: 300px;`;
 
-export default StyledSearch;
+export default TextInput;

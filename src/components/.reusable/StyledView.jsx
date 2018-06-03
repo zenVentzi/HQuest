@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-const StyledContentComponent = styled.div`
+const StyledView = styled.div`
   display: flex;
   flex-direction: column;
-  margin: auto;
+  margin: 70px auto;
   align-items: center;
   text-align: center;
   width: 500px;`;
 
-export default StyledContentComponent;
+export default StyledView;
