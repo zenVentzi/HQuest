@@ -1,22 +1,21 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const { createServer } = require('http');
-const cors = require('cors');
-const { ApolloServer } = require('apollo-server');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { execute, subscribe } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
+const jwt = require('express-jwt');
+const webpack = require('webpack');
+const webpackConfig = require('./webpack/config');
 const { typeDefs, resolvers } = require('./schema');
+
+const compiler = webpack(webpackConfig);
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-
-const webpack = require('webpack');
-const webpackConfig = require('./webpack/config');
-
-const compiler = webpack(webpackConfig);
 
 app.use(require('webpack-dev-middleware')(compiler, {
   hot: true,
@@ -31,11 +30,21 @@ app.get('*', (req, res) => {
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
-app.use('/graphiql', graphiqlExpress({
-  endpointURL: '/graphql',
-  subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`,
-}));
+const auth = jwt({
+  secret: process.env.JWT_SECRET,
+  credentialsRequired: false,
+});
+
+app.use('/graphql', bodyParser.json(), auth, graphqlExpress(req => ({
+  schema,
+  context: {
+    user: req.user,
+  },
+})));
+// app.use('/graphiql', graphiqlExpress({
+//   endpointURL: '/graphql',
+//   subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`,
+// }));
 
 const server = createServer(app);
 

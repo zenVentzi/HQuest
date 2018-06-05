@@ -1,11 +1,9 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
-
-const path = require('path');
+// const path = require('path');
 
 module.exports = {
   entry: [
+    'babel-polyfill',
     'webpack-hot-middleware/client?reload=true',
     './src/index.jsx',
   ],
@@ -30,11 +28,6 @@ module.exports = {
         exclude: /node_modules/,
         use: ['babel-loader'],
       },
-      // {
-      //   type: 'javascript/auto',
-      //   test: /\.mjs$/,
-      //   use: [],
-      // },
       {
         test: /\.css$/,
         loader: 'style-loader!css-loader',
