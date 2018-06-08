@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import TextInput from '../.reusable/TextInput';
+import TextInput from '../reusable/TextInput';
 import UsersDataList from './UsersDataList';
 
 const CustomTextInput = styled(TextInput)`
@@ -18,6 +18,7 @@ class CustomSearch extends Component {
         <CustomTextInput
           list="users"
           name="match"
+          autoComplete="off"
           placeholder="Search users.."
           onChange={(e) => {
             this.setState({ input: e.target.value });

@@ -5,33 +5,55 @@ const jsonwebtoken = require('jsonwebtoken');
 const pubsub = new PubSub();
 
 const typeDefs = `
-type Book {
-  title: String!
-  author: String!
-}
+  type Book {
+    title: String!
+    author: String!
+  }
 
-type User {
-  id: ID!
-  email: String!
-  firstName: String!
-  surName: String!
-}
+  type User {
+    id: ID!
+    email: String!
+    firstName: String!
+    surName: String!
+    questionIds: [Int!]!
+    answerIds: [Int!]!
+  }
 
-type Query {
-  books: [Book!]!
-  users(match: String): [User!]!
-  user(id: String!): User
-}
+  type Question {
+    id: ID!
+    value: String!
+    answerId: Answer!
+  }
 
-type Mutation {
-  addBook(title: String!, author: String!): Book!
-  signUp(firstName: String!, surName: String!, email: String!, password: String!): String
-  login(email: String!, password: String!): String
-}
+  enum AnswerType {
+    RATING
+    TEXT
+  }
 
-type Subscription {
-  bookAdded: Book!
-}
+  type Answer {
+    id: ID!
+    questionId: Int!
+    type: AnswerType!
+    value: String!
+  }
+
+  type Query {
+    books: [Book!]!
+    users(match: String): [User!]!
+    user(id: String!): User
+  }
+
+  type Mutation {
+    addBook(title: String!, author: String!): Book!
+    signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+    login(email: String!, password: String!): String
+    # questions(ids: [Int!]!): [String!]!
+    answers(ids: [Int!]!): [Answer!]!
+  }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `;
 
 const books = [
@@ -39,12 +61,29 @@ const books = [
   { title: 'Hello1', author: 'Pesho1' },
 ];
 
+const questions = [
+  { id: 1, value: 'How much do you use self-discipline?' },
+  { id: 2, value: 'Where do you like to go the most?' },
+  { id: 3, value: 'How much do you work?' },
+];
+
+const TYPE_TEXT = 'Text';
+const TYPE_RATING = 'Rating';
+
+const answers = [
+  { id: 1, type: TYPE_RATING, value: 7, questionId: 1 },
+  { id: 2, type: TYPE_TEXT, value: 'I like going to the park the most', questionId: 2 },
+];
+
 const users = [
   {
-    id: '1', firstName: 'Pesho1', surName: 'Ivanov1', email: 'a1@a.com', password: bcrypt.hash('123', 10),
+    id: '1', firstName: 'Pesho1', surName: 'Ivanov1', email: 'a1', password: bcrypt.hash('123', 10),
+    questionIds: [1, 2, 3], answerIds: [1, 2, 3],
+    // questions: [ {id: 1, value: }]
   },
   {
-    id: '2', firstName: 'Pesho2', surName: 'Ivanov2', email: 'a2@a.com', password: bcrypt.hash('1234', 10),
+    id: '2', firstName: 'Pesho2', surName: 'Ivanov2', email: 'a2', password: bcrypt.hash('1234', 10),
+    questionIds: [1, 2, 3], answerIds: [1, 2, 3],
   },
 ];
 
@@ -53,25 +92,51 @@ const resolvers = {
     books(root, args, context, info) {
       return books;
     },
+    // questions(root, args, context, info) {
+    //   if (!context.user) {
+    //     throw new Error('You are not authorized!');
+    //   }
+
+    //   const user = users.find(user => user.id === args.userId);
+
+    //   const matchingQuestions = user.questionIds.map(id =>
+    //     questions.find(qs => qs.id === id));
+
+    //   return matchingQuestions;
+    // },
+    // answers(root, args, context, info) {
+    //   if (!context.user) {
+    //     throw new Error('You are not authorized!');
+    //   }
+
+    //   const user = users.find(user => user.id === args.userId);      
+
+    //   const matchingAnswers = user.answerIds.map(id =>
+    //     answers.find(answ => answ.id === id));
+
+    //   return matchingAnswers;
+    // },
     users(root, args, context, info) {
       if (!context.user) {
         throw new Error('You are not authorized!');
       }
 
       const matchedUsers = users.filter((user) => {
-        const name = user.name.toLowerCase();
+        const name = `${user.firstName.toLowerCase()} ${user.surName.toLowerCase()}`;
         const match = args.match.toLowerCase();
         return name.includes(match);
       });
 
       return matchedUsers;
     },
-    user(_, args, { user }) {
+    user(root, args, { user }) {
       if (!user) {
         throw new Error('You are not authorized!');
       }
 
-      return users.find(usr => usr.id === args.id);
+      const user = users.find(usr => usr.id === args.id);
+
+      return user;
     },
   },
   Mutation: {

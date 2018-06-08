@@ -2,5 +2,9 @@
 - save the profile pic to public/users/user_1/profilepic.png
 
 - Login page
+- Load questions from db
 - Search questions
 
+Questions:
+
+2 db tables, questions & answers

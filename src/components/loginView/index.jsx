@@ -1,9 +1,10 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import StyledView from '../.reusable/StyledView';
-import TextInput from '../.reusable/TextInput';
+import StyledView from '../reusable/StyledView';
+import TextInput from '../reusable/TextInput';
 import { AUTH_TOKEN } from '../../constants';
+import { history } from '../../utils';
 
 const LOGIN_MUTATION = gql`
   mutation LoginMutation($email: String!, $password: String!) {
@@ -11,7 +12,7 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const LoginView = () => {
+const LoginView = (props) => {
   let email;
   let password;
 
@@ -31,10 +32,9 @@ const LoginView = () => {
                 password,
               };
               const result = await login({ variables });
-              const { token } = result.data.login;
+              const token = result.data.login;
               localStorage.setItem(AUTH_TOKEN, token);
-              const token1 = localStorage.getItem(AUTH_TOKEN);
-              console.log(token1)              
+              history.push('/');
             }}
             >
              Login
