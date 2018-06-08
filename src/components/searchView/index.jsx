@@ -2,14 +2,16 @@ import React from 'react';
 import { parse } from 'qs';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import StyledView from '../.reusable/StyledView';
+import StyledView from '../reusable/StyledView';
 import User from './User';
+import Navbar from '../navigation';
 
 const GET_USERS = gql`
   query GetUsers($match: String) {
     users(match: $match) {
       id,
-      name,
+      firstName,
+      surName,
     }
   }`;
 
@@ -48,20 +50,22 @@ const SearchView = () => {
   };
 
   return (
-    <StyledView>
-      <Query
-        query={GET_USERS}
-        variables={{ match: getMatchParam() }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return 'Loading...';
-          if (error) return `Error! ${error.message}`;
-          console.log(data);
+    <div>
+      <Navbar />
+      <StyledView>
+        <Query
+          query={GET_USERS}
+          variables={{ match: getMatchParam() }}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return 'Loading...';
+            if (error) return `Error! ${error.message}`;
 
-          return <div> {renderSearch(data.users)} </div>;
-        }}
-      </Query>
-    </StyledView>
+            return <div> {renderSearch(data.users)} </div>;
+          }}
+        </Query>
+      </StyledView>
+    </div>
   );
 };
 

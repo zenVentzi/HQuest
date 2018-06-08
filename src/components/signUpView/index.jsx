@@ -1,8 +1,8 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import StyledView from '../.reusable/StyledView';
-import TextInput from '../.reusable/TextInput';
+import StyledView from '../reusable/StyledView';
+import TextInput from '../reusable/TextInput';
 
 const SIGNUP_MUTATION = gql`
   mutation SignUpMutation(
@@ -18,7 +18,7 @@ const SIGNUP_MUTATION = gql`
   }
 `;
 
-const SignUpView = () => {
+const SignUpView = (props) => {
   let firstName;
   let surName;
   let email;
@@ -36,7 +36,7 @@ const SignUpView = () => {
             <TextInput placeholder="Email.." type="email" onChange={(e) => { email = e.target.value; }} />
             <TextInput placeholder="Password.." type="password" onChange={(e) => { password = e.target.value; }} />
             <br />
-            <button onClick={() => {
+            <button onClick={async () => {
               const variables = {
                 firstName,
                 surName,
@@ -44,7 +44,8 @@ const SignUpView = () => {
                 password,
               };
 
-              signUp({ variables });
+              const result = await signUp({ variables });
+              props.history.push("/login");
             }}
             >
              Sign up

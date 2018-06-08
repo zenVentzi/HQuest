@@ -1,8 +1,8 @@
 import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import StyledAvatarWrapper from '../.reusable/StyledAvatarWrapper';
-import StyledAvatarImage from '../.reusable/StyledAvatarImage';
-import StyledUserName from '../.reusable/StyledUserName';
+import StyledAvatarWrapper from '../reusable/StyledAvatarWrapper';
+import StyledAvatarImage from '../reusable/StyledAvatarImage';
+import StyledUserName from '../reusable/StyledUserName';
 
 const StyledUser = styled.div`
   display: flex;

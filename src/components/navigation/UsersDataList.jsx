@@ -6,7 +6,8 @@ const GET_USERS = gql`
   query GetUsers($match: String) {
     users(match: $match) {
       id,
-      name,
+      firstName,
+      surName,
     }
   }`;
 
@@ -14,7 +15,7 @@ const UsersDataList = ({ match }) => {
   const renderOptions = (users) => {
     const options = users.map(user => (
       <option key={user.id} >
-        {user.name}
+        {`${user.firstName} ${user.surName}`}
       </option>
     ));
 
