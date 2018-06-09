@@ -7,11 +7,11 @@ import Search from './Search';
 import Navbar from '../navigation';
 import QuestionsContainer from './Questions';
 import StyledView from '../reusable/StyledView';
-import ToggleBtn from '../reusable/ToggleBtn';
+import ToggleQuestions from './ToggleQuestions';
 
 const GET_USER = gql`
-  query user($userId: String!) {
-    user(userId: $userId) {
+  query user($id: ID!) {
+    user(id: $id) {
       id,
       firstName,
       surName,
@@ -28,19 +28,20 @@ const ProfileView = (props) => {
       <StyledView>
         <Query
           query={GET_USER}
-          variables={{ userId: props.userId}}
+          variables={{ id: 1 }}
         >
           {({loading, error, data}) => {
-            const fullName = `${data.user.firstName} ${data.user.surName}`;
+            console.log(data)
+            // const fullName = `${data.user.firstName} ${data.user.surName}`;
 
             return (
               <div>
                 <Avatar />
                 <StyledUserName>
-                  {fullName}
+                  {/* {fullName} */}
                 </StyledUserName>
                 <Search placeholder="Search questions.." />
-                <ToggleBtn />
+                <ToggleQuestions />
                 {/* <QuestionsContainer userId={data.user.id} /> */}
               </div>
             );

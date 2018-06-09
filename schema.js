@@ -39,8 +39,9 @@ const typeDefs = `
 
   type Query {
     books: [Book!]!
+    book(title: String): Book
     users(match: String): [User!]!
-    user(id: String!): User
+    user(id: ID!): User
   }
 
   type Mutation {
@@ -92,6 +93,9 @@ const resolvers = {
     books(root, args, context, info) {
       return books;
     },
+    book(root, args, context, info) {
+      return books[0];
+    },
     // questions(root, args, context, info) {
     //   if (!context.user) {
     //     throw new Error('You are not authorized!');
@@ -130,13 +134,15 @@ const resolvers = {
       return matchedUsers;
     },
     user(root, args, { user }) {
+      console.dir(user);
+      
       if (!user) {
         throw new Error('You are not authorized!');
       }
 
-      const user = users.find(usr => usr.id === args.id);
+      const matchingUser = users.find(usr => usr.id === args.id);
 
-      return user;
+      return matchingUser;
     },
   },
   Mutation: {
