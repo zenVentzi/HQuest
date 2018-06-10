@@ -24,7 +24,7 @@ Wrapper.defaultProps = {
 };
 
 const Avatar = props => (
-  <Wrapper>
+  <Wrapper className={props.className}>
     <Img src={props.src} />
   </Wrapper>
 );
@@ -34,4 +34,4 @@ export {
   Img,
 };
 
-export default Avatar;
+export default styled(Avatar)``;

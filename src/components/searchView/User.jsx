@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import { Wrapper as ImgWrapper, Img } from '../reusable/Avatar';
+import Avatar, { Wrapper as ImgWrapper, Img } from '../reusable/Avatar';
 import StyledUserName from '../reusable/StyledUserName';
 
 const StyledUser = styled.div`
@@ -20,7 +20,7 @@ const StyledUser = styled.div`
     ${StyledUserName} {
       color: white;
     }
-    ${ImgWrapper} {
+    ${Avatar} {
       border-color: white;
     }
   }
@@ -44,17 +44,18 @@ const User = ({ username, avatarSrc }) => {
   };
 
   return (
-    <StyledUser1>
+    <StyledUser>
       <ThemeProvider theme={theme}>
-        <ImgWrapper>
+        {/* <ImgWrapper>
           <Img src={avatarSrc} />
-        </ImgWrapper>
+        </ImgWrapper> */}
+        <Avatar src={avatarSrc} />
       </ThemeProvider>
       <StyledUserName>
         {/* {username} */}
         Ventsislav Marinov
       </StyledUserName>
-    </StyledUser1>
+    </StyledUser>
     // <div>
     //   <StyledUser>
     //     <ThemeProvider theme={theme}>
