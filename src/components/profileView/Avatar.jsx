@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import StyledAvatarWrapper from '../reusable/StyledAvatarWrapper';
-import StyledAvatarImage from '../reusable/StyledAvatarImage';
+import DefaultAvatar from '../reusable/Avatar';
 
 const UpdateOverlay = styled.div`
   pointer-events: none;
@@ -14,10 +13,9 @@ const UpdateOverlay = styled.div`
   line-height: 150px;`;
 
 const Avatar = () => (
-  <StyledAvatarWrapper>
-    <StyledAvatarImage src="/" alt="" />
-    <UpdateOverlay />
-  </StyledAvatarWrapper>
+  <DefaultAvatar>
+    {/* <UpdateOverlay /> */}
+  </DefaultAvatar>
 );
 
 export default Avatar;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import Avatar from './Avatar';
@@ -20,10 +20,12 @@ const GET_USER = gql`
   }`;
 
 const ProfileView = (props) => {
-  const test = 5;
+  const onToggleQuestions = (e) => {
+    const isOn = e.target.checked;
+  };
 
   return (
-    <div>
+    <Fragment>
       <Navbar />
       <StyledView>
         <Query
@@ -31,24 +33,29 @@ const ProfileView = (props) => {
           variables={{ id: 1 }}
         >
           {({loading, error, data}) => {
-            console.log(data)
             // const fullName = `${data.user.firstName} ${data.user.surName}`;
 
             return (
-              <div>
+              <Fragment>
                 <Avatar />
                 <StyledUserName>
-                  {/* {fullName} */}
+                  <p> aaaafdfdfdf </p>
+                  {/* {fullName} */}fdfdf
                 </StyledUserName>
-                <Search placeholder="Search questions.." />
-                <ToggleQuestions />
+                <Search placeholder="Search questions.." onChange={() => {
+                  const a = 5;
+                  const b = 110;
+                }}/>
+                {/* <ToggleQuestions
+                  onClick={onToggleQuestions}
+                /> */}
                 {/* <QuestionsContainer userId={data.user.id} /> */}
-              </div>
+              </Fragment>
             );
           }}
         </Query>
       </StyledView>
-    </div>
+    </Fragment>
   );
 }
 

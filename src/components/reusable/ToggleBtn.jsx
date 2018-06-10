@@ -47,7 +47,7 @@ const On = styled.span`
 const Off = styled.span`
   ${common}`;
 
-const Input = styled.input.attrs({ type: 'checkbox' })`
+const Input = styled.input`
   display:none;
     
   &:checked + ${Slider} {
@@ -74,7 +74,10 @@ const ToggleBtn = (props) => {
   return (
     // eslint-disable-next-line jsx-a11y/label-has-for
     <Switch>
-      <Input />
+      <Input
+        type="checkbox"
+        onClick={props.onClick}
+      />
       <Slider>
         <On>{props.onText}</On>
         <Off>{props.offText}</Off>
