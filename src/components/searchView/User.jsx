@@ -4,38 +4,26 @@ import Avatar, { Wrapper as ImgWrapper, Img } from '../reusable/Avatar';
 import StyledUserName from '../reusable/StyledUserName';
 
 const StyledUser = styled.div`
-  display: flex;
-  width: 100%;
-  flex-wrap: nowrap;
-  height: 60px;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 1;
-  border-radius: 0.3em; 
-  border: 1px solid black;
-  
-  &:hover {
-    background: black;
-    cursor: pointer;
-    ${StyledUserName} {
-      color: white;
-    }
-    ${Avatar} {
-      border-color: white;
-    }
-  }
-`;
+display: flex;
+width: 100%;
+flex-wrap: nowrap;
+height: 60px;
+align-items: center;
+justify-content: space-around;
+z-index: 1;
+border-radius: 0.3em; 
+border: 1px solid black;
 
-const StyledUser1 = styled.div`
-  display: flex;
-  width: 70%;
-  flex-wrap: wrap;
-  height: 60px;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 1;
-  border-radius: 0.3em; 
-  border: 1px solid black;
+&:hover {
+background: black;
+cursor: pointer;
+${StyledUserName} {
+color: white;
+}
+${Avatar} {
+border-color: white;
+}
+}
 `;
 
 const User = ({ username, avatarSrc }) => {
@@ -46,15 +34,12 @@ const User = ({ username, avatarSrc }) => {
   return (
     <StyledUser>
       <ThemeProvider theme={theme}>
-        {/* <ImgWrapper>
-          <Img src={avatarSrc} />
-        </ImgWrapper> */}
         <Avatar src={avatarSrc} />
+        <StyledUserName>
+          {/* {username} */}
+          Ventsislav Marinov
+        </StyledUserName>
       </ThemeProvider>
-      <StyledUserName>
-        {/* {username} */}
-        Ventsislav Marinov
-      </StyledUserName>
     </StyledUser>
     // <div>
     //   <StyledUser>
