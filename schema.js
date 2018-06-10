@@ -78,7 +78,7 @@ const answers = [
 
 const users = [
   {
-    id: '1', firstName: 'Pesho1', surName: 'Ivanov1', email: 'a1', password: bcrypt.hash('123', 10),
+    id: '1', firstName: 'Pesho1', surName: 'Ivanov1', email: 'a', password: bcrypt.hash('a', 10),
     questionIds: [1, 2, 3], answerIds: [1, 2, 3],
     // questions: [ {id: 1, value: }]
   },
@@ -134,8 +134,6 @@ const resolvers = {
       return matchedUsers;
     },
     user(root, args, { user }) {
-      console.dir(user);
-      
       if (!user) {
         throw new Error('You are not authorized!');
       }

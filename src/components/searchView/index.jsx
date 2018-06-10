@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { parse } from 'qs';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -19,7 +19,6 @@ function getMatchParam() {
   return parse(window.location.search.substr(1)).match;
 }
 
-
 const SearchView = () => {
   const renderUsers = (users) => {
     const userList = users.map((user) => {
@@ -29,8 +28,9 @@ const SearchView = () => {
         <User
           key={user.id}
           avatarSrc={user.avatarSrc}
-          username={user.name}
+          username={user.firstName}
         />
+        // <div key={user.id} > {user.id} </div>
       );
     });
 
@@ -50,7 +50,7 @@ const SearchView = () => {
   };
 
   return (
-    <div>
+    <Fragment>
       <Navbar />
       <StyledView>
         <Query
@@ -61,11 +61,11 @@ const SearchView = () => {
             if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
 
-            return <div> {renderSearch(data.users)} </div>;
+            return <Fragment> {renderSearch(data.users)} </Fragment>;
           }}
         </Query>
       </StyledView>
-    </div>
+    </Fragment>
   );
 };
 

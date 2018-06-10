@@ -1,0 +1,34 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Nodemon",
+      "protocol": "inspector",
+      "runtimeExecutable": "nodemon",
+      "runtimeArgs": [
+          "--inspect=3000"
+      ],
+      "program": "${workspaceFolder}\\server.js",
+      "port": 3000,
+      "restart": true,
+      "env": {
+        "BABEL_DISABLE_CACHE": "1",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

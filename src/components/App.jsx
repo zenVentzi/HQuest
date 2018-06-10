@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Router, Route } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
@@ -49,6 +49,11 @@ const link = ApolloLink.from([
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'cache-only',
+    },
+  },
 });
 
 const App = () => {
@@ -57,12 +62,12 @@ const App = () => {
   return (
     <ApolloProvider client={client}>
       <Router history={history}>
-        <div>
+        <Fragment>
           <ProtectedRoute exact path="/(/|userProfile|)/" component={ProfileView} />
           <ProtectedRoute path="/search" component={SearchView} />
           <Route path="/login" component={LoginView} />
           <Route path="/signup" component={SignUpView} />
-        </div>
+        </Fragment>
       </Router>
     </ApolloProvider>
   );
