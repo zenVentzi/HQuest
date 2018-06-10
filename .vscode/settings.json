@@ -4,5 +4,11 @@
     "editor.detectIndentation": true,
     "stylelint.enable": true,
     "css.validate": false,
-    "scss.validate": false
+    "scss.validate": false,
+    "editor.formatOnSave": true,
+    "[javascript]": {
+        "editor.formatOnSave": false
+    },
+    "eslint.autoFixOnSave": true,
+    "eslint.alwaysShowStatus": true,
 }
