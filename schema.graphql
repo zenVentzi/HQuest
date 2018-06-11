@@ -1,0 +1,50 @@
+type Book {
+  title: String!
+  author: String!
+}
+
+type User {
+  id: ID!
+  email: String!
+  firstName: String!
+  surName: String!
+  questionIds: [Int!]!
+  answerIds: [Int!]!
+}
+
+type Question {
+  id: ID!
+  value: String!
+  answerId: Answer!
+}
+
+enum AnswerType {
+  RATING
+  TEXT
+}
+
+type Answer {
+  id: ID!
+  questionId: Int!
+  type: AnswerType!
+  value: String!
+}
+
+type Query {
+  books: [Book!]!
+  book(title: String): Book
+  users(match: String): [User!]!
+  user(id: ID!): User
+}
+
+type Mutation {
+  addBook(title: String!, author: String!): Book!
+  signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+  login(email: String!, password: String!): String
+  questions(ids: [Int!]!): [String!]!
+  answers(ids: [Int!]!): [Answer!]!
+}
+
+type Subscription {
+  bookAdded: Book!
+}

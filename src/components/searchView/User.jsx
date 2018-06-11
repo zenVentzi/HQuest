@@ -35,11 +35,11 @@ const User = ({ username, avatarSrc }) => {
     <StyledUser>
       <ThemeProvider theme={theme}>
         <Avatar src={avatarSrc} />
-        <StyledUserName>
-          {/* {username} */}
-          Ventsislav Marinov
-        </StyledUserName>
       </ThemeProvider>
+      <StyledUserName>
+        {/* {username} */}
+        Ventsislav Marinov
+      </StyledUserName>
     </StyledUser>
   );
 };
