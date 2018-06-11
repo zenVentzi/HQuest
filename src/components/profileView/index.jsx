@@ -12,15 +12,16 @@ import ToggleQuestions from './ToggleQuestions';
 const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {
-      id,
-      firstName,
-      surName,
-      questionIds,
+      id
+      firstName
+      surName
+      questionIds
     }
-  }`;
+  }
+`;
 
-const ProfileView = (props) => {
-  const onToggleQuestions = (e) => {
+const ProfileView = props => {
+  const onToggleQuestions = e => {
     const isOn = e.target.checked;
   };
 
@@ -28,11 +29,9 @@ const ProfileView = (props) => {
     <Fragment>
       <Navbar />
       <StyledView>
-        <Query
-          query={GET_USER}
-          variables={{ id: 1 }}
-        >
-          {({loading, error, data}) => {
+        <Query query={GET_USER} variables={{ id: 1 }}>
+          {({ loading, error, data }) => {
+            if (loading) return <div> loading </div>;
             // const fullName = `${data.user.firstName} ${data.user.surName}`;
 
             return (
@@ -42,14 +41,15 @@ const ProfileView = (props) => {
                   <p> aaaafdfdfdf </p>
                   {/* {fullName} */}fdfdf
                 </StyledUserName>
-                <Search placeholder="Search questions.." onChange={() => {
-                  const a = 5;
-                  const b = 110;
-                }}/>
-                {/* <ToggleQuestions
-                  onClick={onToggleQuestions}
-                /> */}
-                {/* <QuestionsContainer userId={data.user.id} /> */}
+                <Search
+                  placeholder="Search questions.."
+                  onChange={() => {
+                    const a = 5;
+                    const b = 110;
+                  }}
+                />
+                <ToggleQuestions onClick={onToggleQuestions} />
+                <QuestionsContainer userId={data.user.id} />
               </Fragment>
             );
           }}
@@ -57,6 +57,6 @@ const ProfileView = (props) => {
       </StyledView>
     </Fragment>
   );
-}
+};
 
 export default ProfileView;

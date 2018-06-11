@@ -4,9 +4,11 @@ module.exports = {
         "prettier",
         "prettier/react"
     ],
-    rules:{
+    rules: {
+        "no-console": "off",
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
-        "jsx-a11y/anchor-is-valid": [ "error", { "components": [ "Link" ], "specialLink": [ "to" ] } ],
+        "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],
         "prettier/prettier": [
             "error",
             {
