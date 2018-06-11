@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { createServer } = require('http');
@@ -7,15 +8,30 @@ const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { execute, subscribe } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
 const jwt = require('express-jwt');
+const webpack = require('webpack');
+const webpackConfig = require('../webpack/config');
 const requireGraphQLFile = require('require-graphql-file');
 
 const typeDefs = requireGraphQLFile('./schema');
 const resolvers = require('./resolvers');
 
-// process.exit(1);
+const compiler = webpack(webpackConfig);
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+
+app.use(
+  require('webpack-dev-middleware')(compiler, {
+    hot: true,
+    publicPath: webpackConfig.output.publicPath,
+  })
+);
+
+app.use(require('webpack-hot-middleware')(compiler));
+// app.use(express.static(path.join(process.cwd(), 'dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'index.html'));
+});
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
