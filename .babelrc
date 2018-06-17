@@ -6,8 +6,14 @@
     "stage-2"
   ],
   "plugins": [
-    ["babel-plugin-styled-components", {
-      "fileName": false
-    }]
+    [
+      "babel-plugin-styled-components",
+      {
+        "fileName": false
+      }
+    ],
+    [
+      "transform-class-properties"
+    ]
   ]
 }

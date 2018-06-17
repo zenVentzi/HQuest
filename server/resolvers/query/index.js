@@ -9,30 +9,37 @@ function book() {
   return db.books[0];
 }
 
-// questions(root, args, context, info) {
-//   if (!context.user) {
-//     throw new Error('You are not authorized!');
-//   }
+function isAnswered(question, usr) {
+  return usr.questions.some(q => q.id === question.id);
+}
 
-//   const user = users.find(user => user.id === args.userId);
+function questions(root, { userId, answered }, context, info) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
 
-//   const matchingQuestions = user.questionIds.map(id =>
-//     questions.find(qs => qs.id === id));
+  const usr = db.users.find(u => u.id === userId);
 
-//   return matchingQuestions;
-// },
-// answers(root, args, context, info) {
-//   if (!context.user) {
-//     throw new Error('You are not authorized!');
-//   }
+  let qtions;
 
-//   const user = users.find(user => user.id === args.userId);
+  if (answered) {
+    qtions = usr.questions.map(q => {
+      const dbQuestion = db.questions.find(dbQ => dbQ.id === q.id);
+      const dbAnswer = db.answers.find(dbA => dbA.id === q.answer.id);
 
-//   const matchingAnswers = user.answerIds.map(id =>
-//     answers.find(answ => answ.id === id));
+      return {
+        id: q.id,
+        value: dbQuestion.value,
+        type: dbQuestion.type,
+        answer: { id: dbAnswer.id, value: dbAnswer.value },
+      };
+    });
+  } else {
+    qtions = db.questions.filter(q => !isAnswered(q, usr));
+  }
 
-//   return matchingAnswers;
-// },
+  return qtions;
+}
 
 function users(_, args, context) {
   if (!context.user) {
@@ -64,4 +71,5 @@ module.exports = {
   book,
   users,
   user,
+  questions,
 };

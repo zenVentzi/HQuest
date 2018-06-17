@@ -1,10 +1,15 @@
 - store the profile pic file path in database
 - save the profile pic to public/users/user_1/profilepic.png
 
-- Login page
-- Load questions from db
+- Login page. DONE!
+- Load questions from db. DONE!
 - Search questions
 
-Questions:
+What am I trying to achieve?
+What does the finished minimal product look like?
 
-2 db tables, questions & answers
+1) List of all answered questions
+2) Answer of just 2 types. Scale & text. Later we can add more
+3) Answer edit & remove buttons
+
+What is the scale type going to look like?

@@ -12,21 +12,20 @@ type User {
   answerIds: [Int!]!
 }
 
-type Question {
-  id: ID!
-  value: String!
-  answerId: Answer!
+enum QuestionType {
+  Scale
+  Text
 }
 
-enum AnswerType {
-  RATING
-  TEXT
+type Question {
+  id: ID!
+  type: QuestionType!
+  value: String!
+  answer: Answer!
 }
 
 type Answer {
   id: ID!
-  questionId: Int!
-  type: AnswerType!
   value: String!
 }
 
@@ -35,14 +34,13 @@ type Query {
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
+  questions(userId: ID!, answered: Boolean!): [Question!]!
 }
 
 type Mutation {
   addBook(title: String!, author: String!): Book!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): String
-  questions(ids: [Int!]!): [String!]!
-  answers(ids: [Int!]!): [Answer!]!
 }
 
 type Subscription {

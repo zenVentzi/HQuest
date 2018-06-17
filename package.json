@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config ./webpack/config.js",
+    "start": "nodemon server/server.js",
     "lint:css": "stylelint './src/**/*.jsx' --formatter verbose"
   },
   "author": "",

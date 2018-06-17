@@ -34,7 +34,9 @@ const authLink = setContext((_, { headers }) => {
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) =>
-      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
     );
   }
 
@@ -46,11 +48,6 @@ const link = ApolloLink.from([errorLink, authLink, httpLink]);
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {
-      fetchPolicy: 'cache-only',
-    },
-  },
 });
 
 const App = () => {
@@ -60,7 +57,11 @@ const App = () => {
     <ApolloProvider client={client}>
       <Router history={history}>
         <Fragment>
-          <ProtectedRoute exact path="/(/|userProfile|)/" component={ProfileView} />
+          <ProtectedRoute
+            exact
+            path="/(/|userProfile|)/"
+            component={ProfileView}
+          />
           <ProtectedRoute path="/search" component={SearchView} />
           <Route path="/login" component={LoginView} />
           <Route path="/signup" component={SignUpView} />

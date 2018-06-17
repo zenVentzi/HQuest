@@ -12,32 +12,43 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const LoginView = (props) => {
+const LoginView = props => {
   let email;
   let password;
 
   return (
     <StyledView>
-      <Mutation
-        mutation={LOGIN_MUTATION}
-      >
+      <Mutation mutation={LOGIN_MUTATION}>
         {(login, { data }) => (
           <div>
-            <TextInput placeholder="Email.." type="email" onChange={(e) => { email = e.target.value; }} />
-            <TextInput placeholder="Password.." type="password" onChange={(e) => { password = e.target.value; }} />
+            <TextInput
+              placeholder="Email.."
+              type="email"
+              onChange={e => {
+                email = e.target.value;
+              }}
+            />
+            <TextInput
+              placeholder="Password.."
+              type="password"
+              onChange={e => {
+                password = e.target.value;
+              }}
+            />
             <br />
-            <button onClick={async () => {
-              const variables = {
-                email,
-                password,
-              };
-              const result = await login({ variables });
-              const token = result.data.login;
-              localStorage.setItem(AUTH_TOKEN, token);
-              history.push('/');
-            }}
+            <button
+              onClick={async () => {
+                const variables = {
+                  email,
+                  password,
+                };
+                const result = await login({ variables });
+                const token = result.data.login;
+                localStorage.setItem(AUTH_TOKEN, token);
+                history.push('/');
+              }}
             >
-             Login
+              Login
             </button>
           </div>
         )}

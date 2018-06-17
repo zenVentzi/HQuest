@@ -1,19 +1,32 @@
 const bcrypt = require('bcrypt');
 
-const books = [{ title: 'Hello', author: 'Pesho' }, { title: 'Hello1', author: 'Pesho1' }];
-
-const questions = [
-  { id: 1, value: 'How much do you use self-discipline?' },
-  { id: 2, value: 'Where do you like to go the most?' },
-  { id: 3, value: 'How much do you work?' },
+const books = [
+  { title: 'Hello', author: 'Pesho' },
+  { title: 'Hello1', author: 'Pesho1' },
 ];
 
 const TYPE_TEXT = 'Text';
-const TYPE_RATING = 'Rating';
+const TYPE_SCALE = 'Scale';
+
+const questions = [
+  {
+    id: '1',
+    type: TYPE_SCALE,
+    value:
+      'How much do you use self-discipline?How much do you use self-discipline?',
+  },
+  { id: '2', type: TYPE_SCALE, value: 'Where do you like to go the most?' },
+  { id: '3', type: TYPE_SCALE, value: 'How much do you work?' },
+  { id: '4', type: TYPE_SCALE, value: 'Test q?' },
+  { id: '5', type: TYPE_SCALE, value: 'Test q1?' },
+];
 
 const answers = [
-  { id: 1, type: TYPE_RATING, value: 7, questionId: 1 },
-  { id: 2, type: TYPE_TEXT, value: 'I like going to the park the most', questionId: 2 },
+  { id: '1', value: 7 },
+  { id: '2', value: 7 },
+  { id: '3', value: 7 },
+  { id: '4', value: 7 },
+  // { id: 2, type: TYPE_TEXT, value: 'I like going to the park the most', questionId: 2 },
 ];
 
 const users = [
@@ -23,9 +36,12 @@ const users = [
     surName: 'Ivanov1',
     email: 'a',
     password: bcrypt.hash('a', 10),
-    questionIds: [1, 2, 3],
-    answerIds: [1, 2, 3],
-    // questions: [ {id: 1, value: }]
+    questions: [
+      { id: '1', answer: { id: '3' } },
+      { id: '2', answer: { id: '4' } },
+      { id: '3', answer: { id: '4' } },
+      { id: '4', answer: { id: '4' } },
+    ],
   },
   {
     id: '2',
@@ -33,8 +49,10 @@ const users = [
     surName: 'Ivanov2',
     email: 'a2',
     password: bcrypt.hash('1234', 10),
-    questionIds: [1, 2, 3],
-    answerIds: [1, 2, 3],
+    questions: [
+      { id: '1', answer: { id: '2' } },
+      { id: '3', answer: { id: '1' } },
+    ],
   },
 ];
 
