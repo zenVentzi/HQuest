@@ -14,4 +14,3 @@ injectGlobal`
     font-family: "Arial Black", Gadget, sans-serif;
   }
 `;
-

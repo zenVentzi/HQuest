@@ -9,12 +9,13 @@ module.exports = {
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
         "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],
+        "react/prop-types": 0,
         "prettier/prettier": [
             "error",
             {
                 "trailingComma": "es5",
                 "singleQuote": true,
-                "printWidth": 120
+                "printWidth": 80
             }
         ]
     },

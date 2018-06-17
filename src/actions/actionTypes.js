@@ -1,6 +1,0 @@
-export const CLEAR_ANSWER = 'ANSWER_CLEAR';
-export const EDIT_ANSWER = 'EDIT_ANSWER';
-
-export const REQUEST_USERS = 'REQUEST_USERS';
-export const RECEIVE_USERS = 'RECEIVE_USERS';
-export const INVALIDATE_USERS = 'INVALIDATE_USERS';

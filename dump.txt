@@ -1,0 +1,70 @@
+<Query query={GET_USER} variables={{ id: props.userId }}>
+          {({ loading, error, data }) => {
+            if (loading) return <div> loading </div>;
+            // const fullName = `${data.user.firstName} ${data.user.surName}`;
+
+            return (
+              <Fragment>
+                <Avatar />
+                <StyledUserName>
+                  <p> aaaafdfdfdf </p>
+                  {/* {fullName} */}fdfdf
+                </StyledUserName>
+                <Search
+                  placeholder="Search questions.."
+                  onChange={() => {
+                    const test = 5;
+                  }}
+                />
+                <ToggleQuestions onClick={onToggleQuestions} />
+                <QuestionsView userId={props.userId} answered />
+              </Fragment>
+            );
+          }}
+        </Query>
+
+
+import React from 'react';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
+import styled from 'styled-components';
+import AnsweredQuestions from './AnsweredQuestions';
+import UnansweredQuestions from './UnansweredQuestions';
+
+const StyledQuestionsContainer = styled.div`
+  margin-top: 1em;
+  width: 100%;
+`;
+
+const GET_QUESTIONS = gql`
+  query questions($userId: ID!, $answered: Boolean!) {
+    questions(userId: $userId, answered: $answered) {
+      id
+      type
+      value
+      answer @include(if: $answered) {
+        value
+      }
+    }
+  }
+`;
+
+const QuestionsContainer = props => {
+  const vars = { userId: props.userId, answered: props.answered };
+
+  return (
+    <StyledQuestionsContainer>
+      <Query query={GET_QUESTIONS} variables={vars}>
+        {({ loading, error, data: { questions } }) => {
+          if (loading) return <div> loading </div>;
+          if (error) return <div> {error} </div>;
+
+          return <UnansweredQuestions questions={questions} />;
+        }}
+      </Query>
+    </StyledQuestionsContainer>
+  );
+};
+
+export default QuestionsContainer;
+
