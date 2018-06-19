@@ -48,7 +48,7 @@ class ProfileView extends Component {
             }}
           />
           <ToggleQuestions onClick={this.onToggleQuestions} />
-          <QuestionsView userId={1} answered={this.state.answered} />
+          <QuestionsView userId={1} showAnswered={this.state.answered} />
         </StyledView>
       </Fragment>
     );

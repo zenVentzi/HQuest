@@ -33,6 +33,7 @@
     "graphql-tools": "^3.0.2",
     "history": "^4.7.2",
     "jsonwebtoken": "^8.2.2",
+    "lodash.isequal": "^4.5.0",
     "npm": "^6.1.0",
     "qs": "^6.5.2",
     "react": "^16.4.0",

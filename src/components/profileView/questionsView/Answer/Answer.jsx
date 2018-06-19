@@ -9,9 +9,10 @@ const StyledAnswer = styled.div`
   justify-content: center;
 `;
 
-class Completed extends React.Component {
+class Answer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       payload: 7,
       editMode: this.props.editMode,
@@ -46,4 +47,4 @@ class Completed extends React.Component {
   }
 }
 
-export default Completed;
+export default Answer;

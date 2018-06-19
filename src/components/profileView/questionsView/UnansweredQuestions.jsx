@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import Question from './Question';
-import AnswerEditor from './Answer/AnswerEditor';
+import QuestionsQuery from './QuestionsQuery';
 
 class UnansweredQuestions extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      index: 0,
-    };
-  }
+  state = {
+    index: 0,
+  };
 
   onSave = () => {
     const index = this.state.index + 1;
@@ -17,11 +13,17 @@ class UnansweredQuestions extends Component {
   };
 
   render() {
-    const q = this.props.questions[this.state.index];
+    const { userId } = this.props;
+
     return (
-      <Question value={q.value}>
-        <AnswerEditor type={q.type} onSave={this.onSave} />
-      </Question>
+      <QuestionsQuery answered={false} userId={userId}>
+        {questions => {
+          const { index } = this.state;
+          const q = questions[index];
+
+          return <Question question={q} onSave={this.onSave} />;
+        }}
+      </QuestionsQuery>
     );
   }
 }

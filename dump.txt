@@ -23,48 +23,64 @@
           }}
         </Query>
 
+return (
+      <StyledQuestionsContainer>
+        <Query query={GET_QUESTIONS} variables={vars}>
+          {({ loading, error, data: { questions } }) => {
+            if (loading) return <div> loading </div>;
+            if (error) return <div> {error} </div>;
 
-import React from 'react';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
-import styled from 'styled-components';
-import AnsweredQuestions from './AnsweredQuestions';
-import UnansweredQuestions from './UnansweredQuestions';
+            console.log(fadeUnansweredIn);
 
-const StyledQuestionsContainer = styled.div`
-  margin-top: 1em;
-  width: 100%;
-`;
+            if (this.props.answered) {
+              if (this.state.UAQsVisible) {
+                return (
+                  <UnansweredQuestions
+                    questions={questions}
+                    fadeIn={fadeUnansweredIn}
+                    onDidFade={this.onDidFade}
+                  />
+                );
+              }
+            }
 
-const GET_QUESTIONS = gql`
-  query questions($userId: ID!, $answered: Boolean!) {
-    questions(userId: $userId, answered: $answered) {
-      id
-      type
-      value
-      answer @include(if: $answered) {
-        value
-      }
-    }
+            /* 
+            Case1) answered=true & UAQsVisible=false means fade in AnsweredQuestions
+             */
+
+            const res = this.props.answered ? (
+              <AnsweredQuestions
+                questions={questions}
+                fadeIn={fadeAnsweredIn}
+                onDidFade={this.onDidFade}
+              />
+            ) : (
+              <UnansweredQuestions
+                questions={questions}
+                fadeIn={fadeUnansweredIn}
+                onDidFade={this.onDidFade}
+              />
+            );
+
+            return res;
+          }}
+        </Query>
+      </StyledQuestionsContainer>
+    );
+
+
+componentDidMount () {
+    const elm = this.refs.button
+    elm.addEventListener('animationend', this.fadingDone)
   }
-`;
+  componentWillUnmount () {
+    const elm = this.refs.button
+    elm.removeEventListener('animationend', this.fadingDone)
+  }
 
-const QuestionsContainer = props => {
-  const vars = { userId: props.userId, answered: props.answered };
-
-  return (
-    <StyledQuestionsContainer>
-      <Query query={GET_QUESTIONS} variables={vars}>
-        {({ loading, error, data: { questions } }) => {
-          if (loading) return <div> loading </div>;
-          if (error) return <div> {error} </div>;
-
-          return <UnansweredQuestions questions={questions} />;
-        }}
-      </Query>
-    </StyledQuestionsContainer>
-  );
-};
-
-export default QuestionsContainer;
-
+  // toggleVisible = () => {
+  //   this.setState(prevState => ({
+  //     AnsweredVisible: !prevState.AnsweredVisible,
+  //     UnansweredVisible: !prevState.UnansweredVisible,
+  //   }));
+  // };
