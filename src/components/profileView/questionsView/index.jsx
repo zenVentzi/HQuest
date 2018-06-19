@@ -1,9 +1,10 @@
 import React from 'react';
+import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import styled from 'styled-components';
 import AnsweredQuestions from './AnsweredQuestions';
 import UnansweredQuestions from './UnansweredQuestions';
+import { AnimToggler } from './AnimToggler';
 
 const StyledQuestionsContainer = styled.div`
   margin-top: 1em;
@@ -23,26 +24,14 @@ const GET_QUESTIONS = gql`
   }
 `;
 
-const QuestionsContainer = props => {
-  const vars = { userId: props.userId, answered: props.answered };
+const QuestionsContainer = ({ userId, showAnswered }) => {
+  const test = 5;
 
   return (
-    <StyledQuestionsContainer>
-      <Query query={GET_QUESTIONS} variables={vars}>
-        {({ loading, error, data: { questions } }) => {
-          if (loading) return <div> loading </div>;
-          if (error) return <div> {error} </div>;
-
-          const res = props.answered ? (
-            <AnsweredQuestions questions={questions} />
-          ) : (
-            <UnansweredQuestions questions={questions} />
-          );
-
-          return res;
-        }}
-      </Query>
-    </StyledQuestionsContainer>
+    <AnimToggler showFirst={showAnswered}>
+      <AnsweredQuestions userId={userId} />
+      <UnansweredQuestions userId={userId} />
+    </AnimToggler>
   );
 };
 

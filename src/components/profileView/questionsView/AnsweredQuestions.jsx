@@ -1,21 +1,15 @@
 import React from 'react';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
 import Question from './Question';
-import CompletedAnswer from './Answer/Completed';
+import QuestionsQuery from './QuestionsQuery';
 
-const AnsweredQuestions = props => {
-  const renderQuestions = questions => {
-    const qComponents = questions.map(q => (
-      <Question key={q.id} value={q.value}>
-        <CompletedAnswer value={q.answer.value} type={q.type} />
-      </Question>
-    ));
+const AnsweredQuestions = ({ userId }) => {
+  const test = 5;
 
-    return qComponents;
-  };
-
-  return renderQuestions(props.questions);
+  return (
+    <QuestionsQuery answered userId={userId}>
+      {questions => questions.map(q => <Question key={q.id} question={q} />)}
+    </QuestionsQuery>
+  );
 };
 
 export default AnsweredQuestions;
