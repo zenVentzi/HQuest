@@ -16,7 +16,8 @@ const fadeOut = keyframes`
 
 const StyledAnimator = styled.div`
   opacity: 0;
-  animation: ${props => props.animation} 2s forwards;
+  animation: ${props => props.animation} 0.4s forwards;
+  width: 100%;
 `;
 
 export const Animator = ({ action, children, onFadeIn, onFadedOut }) => {

@@ -12,8 +12,8 @@ const questions = [
   {
     id: '1',
     type: TYPE_SCALE,
-    value:
-      'How much do you use self-discipline?How much do you use self-discipline?',
+    value: 'q?',
+    // 'How much do you use self-discipline?How much do you use self-discipline?',
   },
   { id: '2', type: TYPE_SCALE, value: 'Where do you like to go the most?' },
   { id: '3', type: TYPE_SCALE, value: 'How much do you work?' },

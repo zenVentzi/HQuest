@@ -13,40 +13,19 @@ const StyledView = styled.div`
   overflow: hidden;
 `;
 
-const StyledAnswer = styled.div`
-  margin-top: 0.5em;
-  border: 1px solid black;
+const StyledQuestionsContainer = styled.div`
+  margin-top: 1em;
+  width: 50%;
+  border: 3px solid black;
 `;
 
-const Slider = styled.input`
-  appearance: none;
-  display: block;
-  width: 50%;
-  height: 15px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+const StyledQuestion = styled.div`
+  border: 3px solid black;
+  /* width: 100%; */
+`;
 
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #4caf50;
-    cursor: pointer;
-  }
-  &::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #4caf50;
-    cursor: pointer;
-  }
-  &:hover {
-    opacity: 1;
-  }
+const StyledP = styled.p`
+  border: 3px solid black;
 `;
 
 const App = () => {
@@ -54,11 +33,16 @@ const App = () => {
 
   return (
     <StyledView>
-      <StyledAnswer>
-        <Slider type="range" min="0" max="6" defaultValue={6} />
-      </StyledAnswer>
+      <StyledQuestionsContainer>
+        <p> 123456 </p>
+      </StyledQuestionsContainer>
     </StyledView>
   );
+  // return (
+  //   <StyledView>
+  //     <StyledP> 123456 </StyledP>
+  //   </StyledView>
+  // );
 };
 
 export default App;
