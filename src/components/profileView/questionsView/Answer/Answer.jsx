@@ -44,6 +44,11 @@ class Answer extends React.Component {
         )}
       </StyledAnswer>
     );
+    // return (
+    //   <StyledAnswer>
+    //     <div> fdf </div>
+    //   </StyledAnswer>
+    // );
   }
 }
 

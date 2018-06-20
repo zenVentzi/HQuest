@@ -1,8 +1,11 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import Answer from './Answer/Answer';
 
-const StyledQuestion = styled.div``;
+const StyledQuestion = styled.div`
+  border: 3px solid black;
+  width: 100%;
+`;
 
 const Question = ({ question, onSave }) => {
   const answerProps = { type: question.type };
