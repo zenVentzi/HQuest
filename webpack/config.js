@@ -18,9 +18,7 @@ module.exports = {
     // contentBase: '/',
     hot: true,
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-  ],
+  plugins: [new webpack.HotModuleReplacementPlugin()],
   module: {
     rules: [
       {

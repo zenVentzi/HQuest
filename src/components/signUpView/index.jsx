@@ -6,19 +6,21 @@ import TextInput from '../reusable/TextInput';
 
 const SIGNUP_MUTATION = gql`
   mutation SignUpMutation(
-    $firstName: String!,
-    $surName: String!,
-    $email: String!,
-    $password: String!) {
-      signUp(
-        firstName: $firstName,
-        surName: $surName,
-        email: $email,
-        password: $password)
+    $firstName: String!
+    $surName: String!
+    $email: String!
+    $password: String!
+  ) {
+    signUp(
+      firstName: $firstName
+      surName: $surName
+      email: $email
+      password: $password
+    )
   }
 `;
 
-const SignUpView = (props) => {
+const SignUpView = props => {
   let firstName;
   let surName;
   let email;
@@ -26,29 +28,50 @@ const SignUpView = (props) => {
 
   return (
     <StyledView>
-      <Mutation
-        mutation={SIGNUP_MUTATION}
-      >
+      <Mutation mutation={SIGNUP_MUTATION}>
         {(signUp, { data }) => (
           <div>
-            <TextInput placeholder="First name.." onChange={(e) => { firstName = e.target.value; }} />
-            <TextInput placeholder="Surname.." onChange={(e) => { surName = e.target.value; }} />
-            <TextInput placeholder="Email.." type="email" onChange={(e) => { email = e.target.value; }} />
-            <TextInput placeholder="Password.." type="password" onChange={(e) => { password = e.target.value; }} />
+            <TextInput
+              placeholder="First name.."
+              onChange={e => {
+                firstName = e.target.value;
+              }}
+            />
+            <TextInput
+              placeholder="Surname.."
+              onChange={e => {
+                surName = e.target.value;
+              }}
+            />
+            <TextInput
+              placeholder="Email.."
+              type="email"
+              onChange={e => {
+                email = e.target.value;
+              }}
+            />
+            <TextInput
+              placeholder="Password.."
+              type="password"
+              onChange={e => {
+                password = e.target.value;
+              }}
+            />
             <br />
-            <button onClick={async () => {
-              const variables = {
-                firstName,
-                surName,
-                email,
-                password,
-              };
+            <button
+              onClick={async () => {
+                const variables = {
+                  firstName,
+                  surName,
+                  email,
+                  password,
+                };
 
-              const result = await signUp({ variables });
-              props.history.push("/login");
-            }}
+                const result = await signUp({ variables });
+                props.history.push('/login');
+              }}
             >
-             Sign up
+              Sign up
             </button>
           </div>
         )}

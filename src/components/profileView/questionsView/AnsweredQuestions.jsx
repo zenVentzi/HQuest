@@ -7,7 +7,7 @@ const AnsweredQuestions = ({ userId }) => {
 
   return (
     <QuestionsQuery answered userId={userId}>
-      {questions => questions.map(q => <Question key={q.id} question={q} />)[0]}
+      {questions => questions.map(q => <Question key={q.id} question={q} />)}
     </QuestionsQuery>
   );
 };

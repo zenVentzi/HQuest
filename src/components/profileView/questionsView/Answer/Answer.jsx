@@ -5,7 +5,7 @@ import AnswerEditor from './AnswerEditor';
 
 const StyledAnswer = styled.div`
   margin-top: 0.5em;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   justify-content: center;
 `;
 
@@ -40,7 +40,7 @@ class Answer extends React.Component {
         {this.state.editMode ? (
           <AnswerEditor onSave={this.onSave} />
         ) : (
-          <AnswerViewer onEdit={this.onEdit} />
+          <AnswerViewer onEdit={this.onEdit} hovered={this.props.hovered} />
         )}
       </StyledAnswer>
     );

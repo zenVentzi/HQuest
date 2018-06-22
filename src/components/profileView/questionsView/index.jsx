@@ -22,7 +22,6 @@ const StyledAnimator = styled.div`
 
 const StyledQuestion = styled.div`
   border: 3px solid black;
-  /* width: 50%; */
 `;
 
 const QuestionsContainer = ({ userId, showAnswered }) => {
@@ -36,21 +35,6 @@ const QuestionsContainer = ({ userId, showAnswered }) => {
       </AnimToggler>
     </StyledQuestionsContainer>
   );
-  // return (
-  //   <AnimToggler showFirst={showAnswered}>
-  //     <StyledQuestion> 123456 </StyledQuestion>
-  //     <StyledQuestion> 789 </StyledQuestion>
-  //   </AnimToggler>
-  // );
-  // return (
-  //   <StyledQuestionsContainer>
-  //     <StyledAnimator>
-  //       <StyledQuestion>123456</StyledQuestion>
-  //     </StyledAnimator>
-  //   </StyledQuestionsContainer>
-  // );
-  // return <StyledQuestion> 123456 </StyledQuestion>;
-  return <AnsweredQuestions userId={userId} />;
 };
 
 export default QuestionsContainer;

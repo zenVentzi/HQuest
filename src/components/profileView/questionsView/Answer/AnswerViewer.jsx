@@ -4,27 +4,29 @@ import Scale from './Scale';
 import StyledBtn from './StyledBtn';
 
 const Btn = styled(StyledBtn)`
-  display: none;
+  visibility: ${props => (props.visible ? 'visible' : 'hidden')};
 `;
 
 const EditBtn = props => (
-  <StyledBtn
+  <Btn
     onClick={() => {
       props.onEdit();
     }}
+    visible={props.visible}
   >
     Edit
-  </StyledBtn>
+  </Btn>
 );
 
 const RemoveBtn = props => (
-  <StyledBtn
+  <Btn
     onClick={() => {
       props.onRemove();
     }}
+    visible={props.visible}
   >
     Remove
-  </StyledBtn>
+  </Btn>
 );
 
 const tempVals = [
@@ -40,8 +42,8 @@ const tempVals = [
 const AnswerViewer = props => (
   <Fragment>
     <Scale editMode={false} values={tempVals} value={3} />
-    <EditBtn onEdit={props.onEdit} />
-    <RemoveBtn onEdit={props.onRemove} />
+    <EditBtn onEdit={props.onEdit} visible={props.hovered} />
+    <RemoveBtn onEdit={props.onRemove} visible={props.hovered} />
   </Fragment>
 );
 
