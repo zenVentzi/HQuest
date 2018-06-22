@@ -42,8 +42,8 @@ const tempVals = [
 const AnswerViewer = props => (
   <Fragment>
     <Scale editMode={false} values={tempVals} value={3} />
-    <EditBtn onEdit={props.onEdit} visible={props.hovered} />
-    <RemoveBtn onEdit={props.onRemove} visible={props.hovered} />
+    <EditBtn onEdit={props.onClickEdit} visible={props.showButtons} />
+    <RemoveBtn onEdit={props.onRemove} visible={props.showButtons} />
   </Fragment>
 );
 
