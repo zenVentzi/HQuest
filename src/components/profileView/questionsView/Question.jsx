@@ -20,15 +20,24 @@ class Question extends Component {
   };
 
   render() {
-    const { question, onSave } = this.props;
-    const answerProps = { type: question.type };
+    const {
+      question: { value, type, answer },
+      viewMode,
+      onSave,
+    } = this.props;
+
+    const answerProps = {
+      type,
+      viewMode,
+      hovered: this.state.hovered,
+    };
 
     if (onSave) {
       answerProps.onSave = onSave;
     }
 
-    if (question.answer) {
-      answerProps.value = question.answer.value;
+    if (answer) {
+      answerProps.value = answer.value;
     }
 
     return (
@@ -36,8 +45,8 @@ class Question extends Component {
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       >
-        <p> {question.value} </p>
-        <Answer {...answerProps} hovered={this.state.hovered} />
+        <p> {value} </p>
+        <Answer {...answerProps} />
       </StyledQuestion>
     );
   }

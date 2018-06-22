@@ -15,40 +15,38 @@ class Answer extends React.Component {
 
     this.state = {
       payload: 7,
-      editMode: this.props.editMode,
+      viewMode: this.props.viewMode,
     };
   }
 
   onSave = () => {
-    this.toggleEditMode();
+    this.toggleViewMode();
     this.props.onSave();
   };
 
   onEdit = () => {
-    this.toggleEditMode();
+    this.toggleViewMode();
   };
 
-  toggleEditMode = () => {
+  toggleViewMode = () => {
     const newState = { ...this.state };
-    newState.editMode = !this.state.editMode;
+    newState.viewMode = !this.state.viewMode;
     this.setState(newState);
   };
 
   render() {
     return (
       <StyledAnswer>
-        {this.state.editMode ? (
-          <AnswerEditor onSave={this.onSave} />
+        {this.state.viewMode ? (
+          <AnswerViewer
+            onClickEdit={this.onEdit}
+            showButtons={this.props.hovered}
+          />
         ) : (
-          <AnswerViewer onEdit={this.onEdit} hovered={this.props.hovered} />
+          <AnswerEditor onClickSave={this.onSave} />
         )}
       </StyledAnswer>
     );
-    // return (
-    //   <StyledAnswer>
-    //     <div> fdf </div>
-    //   </StyledAnswer>
-    // );
   }
 }
 

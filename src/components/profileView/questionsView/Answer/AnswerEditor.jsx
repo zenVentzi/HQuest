@@ -29,7 +29,7 @@ const AnswerEditor = props => (
   // use props.questionType to switch between Scale and other type answers
   <StyledAnswerEditor>
     <Scale editMode values={tempVals} value={3} />
-    <SaveBtn onSave={props.onSave} />
+    <SaveBtn onSave={props.onClickSave} />
   </StyledAnswerEditor>
 );
 
