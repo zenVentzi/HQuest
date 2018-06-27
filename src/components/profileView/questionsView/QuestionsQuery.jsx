@@ -7,6 +7,7 @@ const GET_QUESTIONS = gql`
     questions(userId: $userId, answered: $answered) {
       id
       type
+      possibleValues
       value
       answer @include(if: $answered) {
         value

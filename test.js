@@ -1,3 +1,5 @@
-const a = 5;
+const arr = [{ a: 5 }];
 
-console.log('In aabb', this.a);
+const obj = arr.push({ a: 6 });
+
+console.log(obj);

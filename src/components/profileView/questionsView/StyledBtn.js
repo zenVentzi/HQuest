@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
-export default styled.button`
+const StyledBtn = styled.button`
   font-size: 15px;
   border: none;
   outline: none;
+  visibility: ${props => (props.visible ? 'visible' : 'hidden')};
   font-family: 'Arial Black', Gadget, sans-serif;
   background-color: black;
   color: white;
@@ -16,3 +17,9 @@ export default styled.button`
     background-color: gray;
   }
 `;
+
+StyledBtn.defaultProps = {
+  visible: true,
+};
+
+export default StyledBtn;

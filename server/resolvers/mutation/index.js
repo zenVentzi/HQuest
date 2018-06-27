@@ -27,7 +27,11 @@ async function signUp(_, { firstName, surName, email, password }) {
   db.users.push(user);
 
   // return json web token
-  return jsonwebtoken.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1y' });
+  return jsonwebtoken.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '1y' }
+  );
 }
 
 function login(_, { email, password }) {
@@ -44,11 +48,38 @@ function login(_, { email, password }) {
   }
 
   // return json web token
-  return jsonwebtoken.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  return jsonwebtoken.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '1d' }
+  );
 }
+
+function editAnswer(_, { value, questionId }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const userId = context.user.id;
+  const dbUser = db.users.find(u => u.id === userId);
+  const existingAnswer = dbUser.questions.find(q => q.id === questionId).answer;
+
+  if (existingAnswer) {
+    const dbAnswer = db.answers.find(a => a.id === existingAnswer.id);
+    dbAnswer.value = value;
+    return existingAnswer.id;
+  }
+
+  const newAnswerId = db.answers.length + 1;
+  db.answers.push({ id: newAnswerId, value });
+  dbUser.questions.push({ id: questionId, answer: { id: newAnswerId } });
+}
+
+// function updateUserAnswer()
 
 module.exports = {
   addBook,
   signUp,
   login,
+  editAnswer,
 };
