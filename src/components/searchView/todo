@@ -1,2 +1,4 @@
 - Make each user clickable.
 - Make the transition between searching and search page.
+
+Should the question mutation stay in the question compoennt?

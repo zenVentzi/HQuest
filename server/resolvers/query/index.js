@@ -29,6 +29,7 @@ function questions(root, { userId, answered }, context, info) {
 
       return {
         id: q.id,
+        possibleValues: dbQuestion.possibleValues,
         value: dbQuestion.value,
         type: dbQuestion.type,
         answer: { id: dbAnswer.id, value: dbAnswer.value },

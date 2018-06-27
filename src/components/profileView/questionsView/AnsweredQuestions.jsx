@@ -8,7 +8,9 @@ const AnsweredQuestions = ({ userId }) => {
   return (
     <QuestionsQuery answered userId={userId}>
       {questions =>
-        questions.map(q => <Question key={q.id} question={q} viewMode />)
+        questions.map(q => (
+          <Question key={q.id} userId={userId} question={q} viewMode />
+        ))
       }
     </QuestionsQuery>
   );

@@ -1,5 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  margin-top: 0.6em;
+`;
 
 const Slider = styled.input`
   appearance: none;
@@ -32,40 +36,27 @@ const Slider = styled.input`
   }
 `;
 
-class Scale extends Component {
-  constructor(props) {
-    super(props);
-    const valueName = this.props.values[this.props.value];
-    this.state = {
-      disabled: !this.props.editMode,
-      defaultValue: this.props.editMode ? this.props.value : undefined,
-      minValue: 0,
-      maxValue: this.props.values.length - 1,
-      valueName,
-    };
-  }
-  onChange = e => {
-    const val = e.target.value;
-    const valueName = this.props.values[val];
-    this.setState({ valueName });
-    // this.props.onChange(val);
-  };
+const Scale = React.forwardRef((props, ref) => {
+  const defaultValue = props.viewMode ? props.value : undefined;
+  const minValue = 0;
+  const maxValue = props.values.length - 1;
+  const valueName = props.values[props.value];
+  // console.log(valueName);
 
-  render() {
-    return (
-      <Fragment>
-        <p> {this.state.valueName} </p>
-        <Slider
-          disabled={this.state.disabled}
-          type="range"
-          min={this.state.minValue}
-          max={this.state.maxValue}
-          defaultValue={this.state.defaultValue}
-          onChange={this.onChange}
-        />
-      </Fragment>
-    );
-  }
-}
+  return (
+    <Wrapper>
+      <p> {valueName} </p>
+      <Slider
+        ref={ref}
+        disabled={props.viewMode}
+        type="range"
+        min={minValue}
+        max={maxValue}
+        defaultValue={defaultValue}
+        onChange={props.onChange}
+      />
+    </Wrapper>
+  );
+});
 
 export default Scale;

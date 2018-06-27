@@ -8,24 +8,55 @@ const books = [
 const TYPE_TEXT = 'Text';
 const TYPE_SCALE = 'Scale';
 
+const possibleValues = [
+  'Never',
+  'Very rarely',
+  'Rarely',
+  'Sometimes',
+  'Often',
+  'Very often',
+  'Always',
+];
+
 const questions = [
   {
     id: '1',
     type: TYPE_SCALE,
+    possibleValues,
     value: 'q?',
     // 'How much do you use self-discipline?How much do you use self-discipline?',
   },
-  { id: '2', type: TYPE_SCALE, value: 'Where do you like to go the most?' },
-  { id: '3', type: TYPE_SCALE, value: 'How much do you work?' },
-  { id: '4', type: TYPE_SCALE, value: 'Test q?' },
-  { id: '5', type: TYPE_SCALE, value: 'Test q1?' },
+  {
+    id: '2',
+    type: TYPE_SCALE,
+    possibleValues,
+    value: 'Where do you like to go the most?',
+  },
+  {
+    id: '3',
+    type: TYPE_SCALE,
+    possibleValues,
+    value: 'How much do you work?',
+  },
+  {
+    id: '4',
+    type: TYPE_SCALE,
+    possibleValues,
+    value: 'Test q?',
+  },
+  {
+    id: '5',
+    type: TYPE_SCALE,
+    possibleValues,
+    value: 'Test q1?',
+  },
 ];
 
 const answers = [
-  { id: '1', value: 7 },
-  { id: '2', value: 7 },
-  { id: '3', value: 7 },
-  { id: '4', value: 7 },
+  { id: '1', value: 2 },
+  { id: '2', value: 2 },
+  { id: '3', value: 2 },
+  { id: '4', value: 2 },
   // { id: 2, type: TYPE_TEXT, value: 'I like going to the park the most', questionId: 2 },
 ];
 
