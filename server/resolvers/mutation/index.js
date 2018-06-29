@@ -62,17 +62,18 @@ function editAnswer(_, { value, questionId }, context) {
 
   const userId = context.user.id;
   const dbUser = db.users.find(u => u.id === userId);
-  const existingAnswer = dbUser.questions.find(q => q.id === questionId).answer;
+  const answeredQuestion = dbUser.questions.find(q => q.id === questionId);
 
-  if (existingAnswer) {
-    const dbAnswer = db.answers.find(a => a.id === existingAnswer.id);
+  if (answeredQuestion) {
+    const dbAnswer = db.answers.find(a => a.id === answeredQuestion.answer.id);
     dbAnswer.value = value;
-    return existingAnswer.id;
+    return answeredQuestion.answer.id;
   }
 
   const newAnswerId = db.answers.length + 1;
   db.answers.push({ id: newAnswerId, value });
   dbUser.questions.push({ id: questionId, answer: { id: newAnswerId } });
+  return newAnswerId;
 }
 
 // function updateUserAnswer()
