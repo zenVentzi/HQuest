@@ -52,18 +52,14 @@ class Question extends Component {
     hovered: false,
     question: this.props.question.value,
     possibleValues: this.props.question.possibleValues,
-    value: this.props.question.answer.value,
-    viewMode: this.props.question.answer !== null,
+    value: this.props.question.answer ? this.props.question.answer.value : null,
+    viewMode: !!this.props.question.answer,
   };
 
-  /* const {
-      question: { value, possibleValues, answer },
-    } = this.props; */
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.answer !== this.state.answer) return false;
-    return true;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (nextState.value !== this.state.value) return false;
+  //   return true;
+  // }
 
   onMouseEnter = () => {
     this.setState({ hovered: true });
@@ -74,7 +70,7 @@ class Question extends Component {
   };
 
   onChange = value => {
-    const newState = { ...this.state, answer: value };
+    const newState = { ...this.state, value };
     this.setState(newState);
   };
 
@@ -85,9 +81,13 @@ class Question extends Component {
       questionId: this.props.question.id,
     };
 
-    await editAnswer({ variables });
-    this.toggleViewMode(); // this has to be executed after the mutation query has succeeded
-    // this.props.onSave();
+    console.log(variables);
+
+    const t = await editAnswer({ variables });
+    console.log(t);
+    this.toggleViewMode();
+
+    if (this.props.onSave) this.props.onSave();
   };
 
   onEdit = () => {
@@ -107,11 +107,9 @@ class Question extends Component {
   };
 
   render() {
-    // const {
-    //   question: { value, possibleValues, answer },
-    // } = this.props;
+    const { hovered, question, possibleValues, value, viewMode } = this.state;
 
-    const { hovered, question, possibleValues, value } = this.state;
+    // console.log(value);
 
     return (
       <StyledQuestion
@@ -123,7 +121,7 @@ class Question extends Component {
             <Fragment>
               <p> {question} </p>
               <Scale
-                viewMode={this.state.viewMode}
+                viewMode={viewMode}
                 values={possibleValues}
                 value={value}
                 onChange={this.onChange}

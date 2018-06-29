@@ -21,7 +21,7 @@ class UnansweredQuestions extends Component {
           const { index } = this.state;
           const q = questions[index];
 
-          return <Question question={q} onSave={this.onSave} />;
+          return <Question userId={userId} question={q} onSave={this.onSave} />;
         }}
       </QuestionsQuery>
     );

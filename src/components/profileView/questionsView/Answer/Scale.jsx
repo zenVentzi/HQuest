@@ -40,8 +40,7 @@ const Scale = React.forwardRef((props, ref) => {
   const defaultValue = props.viewMode ? props.value : undefined;
   const minValue = 0;
   const maxValue = props.values.length - 1;
-  const valueName = props.values[props.value];
-  // console.log(valueName);
+  const valueName = props.value ? props.values[props.value] : props.values[3];
 
   return (
     <Wrapper>

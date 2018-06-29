@@ -1,5 +1,8 @@
-const arr = [{ a: 5 }];
+// console.log(undefined === false);
 
-const obj = arr.push({ a: 6 });
+let a;
 
-console.log(obj);
+const b = { a: a || 5 };
+
+console.log(a);
+console.log(b);

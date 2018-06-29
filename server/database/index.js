@@ -71,7 +71,7 @@ const users = [
       { id: '1', answer: { id: '3' } },
       { id: '2', answer: { id: '4' } },
       { id: '3', answer: { id: '4' } },
-      { id: '4', answer: { id: '4' } },
+      // { id: '4', answer: { id: '4' } },
     ],
   },
   {
