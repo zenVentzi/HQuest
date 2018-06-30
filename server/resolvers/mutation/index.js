@@ -76,6 +76,25 @@ function editAnswer(_, { value, questionId }, context) {
   return newAnswerId;
 }
 
+function removeQuestion(_, { questionId }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const userId = context.user.id;
+  const dbUser = db.users.find(u => u.id === userId);
+  const i = dbUser.questions.findIndex(q => q.id === questionId);
+  dbUser.questions.splice(i, 1);
+  const removedQ = db.questions.find(q => q.id === questionId);
+
+  return {
+    id: questionId,
+    type: removedQ.type,
+    possibleValues: removedQ.possibleValues,
+    value: removedQ.value,
+  };
+}
+
 // function updateUserAnswer()
 
 module.exports = {
@@ -83,4 +102,5 @@ module.exports = {
   signUp,
   login,
   editAnswer,
+  removeQuestion,
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
-const GET_QUESTIONS = gql`
+export const GET_QUESTIONS = gql`
   query questions($userId: ID!, $answered: Boolean!) {
     questions(userId: $userId, answered: $answered) {
       id

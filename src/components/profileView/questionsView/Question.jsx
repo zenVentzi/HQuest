@@ -4,10 +4,22 @@ import { Mutation } from 'react-apollo';
 import styled from 'styled-components';
 import Scale from './Answer/Scale';
 import Btn from './StyledBtn';
+import { GET_QUESTIONS } from './QuestionsQuery';
 
 const EDIT_ANSWER = gql`
   mutation editAnswer($value: String!, $questionId: ID!) {
     editAnswer(value: $value, questionId: $questionId)
+  }
+`;
+
+const REMOVE_QUESTION = gql`
+  mutation removeQuestion($questionId: ID!) {
+    removeQuestion(questionId: $questionId) {
+      id
+      type
+      possibleValues
+      value
+    }
   }
 `;
 
@@ -16,37 +28,6 @@ const StyledQuestion = styled.div`
   width: 100%;
 `;
 
-const EditBtn = props => (
-  <Btn
-    onClick={() => {
-      props.onEdit();
-    }}
-    visible={props.visible}
-  >
-    Edit
-  </Btn>
-);
-
-const RemoveBtn = props => (
-  <Btn
-    onClick={() => {
-      props.onRemove();
-    }}
-    visible={props.visible}
-  >
-    Remove
-  </Btn>
-);
-
-const SaveBtn = props => (
-  <Btn
-    onClick={() => {
-      props.onSave();
-    }}
-  >
-    Save
-  </Btn>
-);
 class Question extends Component {
   state = {
     hovered: false,
@@ -55,11 +36,6 @@ class Question extends Component {
     value: this.props.question.answer ? this.props.question.answer.value : null,
     viewMode: !!this.props.question.answer,
   };
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (nextState.value !== this.state.value) return false;
-  //   return true;
-  // }
 
   onMouseEnter = () => {
     this.setState({ hovered: true });
@@ -83,8 +59,7 @@ class Question extends Component {
 
     console.log(variables);
 
-    const t = await editAnswer({ variables });
-    console.log(t);
+    await editAnswer({ variables });
     this.toggleViewMode();
 
     if (this.props.onSave) this.props.onSave();
@@ -92,6 +67,47 @@ class Question extends Component {
 
   onEdit = () => {
     this.toggleViewMode();
+  };
+
+  onRemove = mutate => async () => {
+    const variables = {
+      questionId: this.props.question.id,
+    };
+
+    const updateQuestions = (answered, store, removeQuestion) => {
+      const { userId } = this.props;
+      const { questions } = store.readQuery({
+        query: GET_QUESTIONS,
+        variables: { userId, answered },
+      });
+
+      if (answered) {
+        const removedQuestionId = removeQuestion.id;
+        const i = questions.findIndex(q => q.id === removedQuestionId);
+        questions.splice(i, 1);
+      } else {
+        questions.push(removeQuestion);
+      }
+
+      store.writeQuery({
+        query: GET_QUESTIONS,
+        variables: { userId, answered },
+        data: { questions },
+      });
+    };
+
+    const update = (store, { data: { removeQuestion } }) => {
+      try {
+        updateQuestions(false, store, removeQuestion);
+      } catch (error) {}
+
+      updateQuestions(true, store, removeQuestion);
+    };
+
+    mutate({ variables, update });
+    // await removeAnswer({ variables });
+
+    // do sth
   };
 
   onChange = e => {
@@ -117,27 +133,35 @@ class Question extends Component {
         onMouseLeave={this.onMouseLeave}
       >
         <Mutation mutation={EDIT_ANSWER}>
-          {(editAnswer, { data }) => (
-            <Fragment>
-              <p> {question} </p>
-              <Scale
-                viewMode={viewMode}
-                values={possibleValues}
-                value={value}
-                onChange={this.onChange}
-              />
-              {this.state.viewMode ? (
+          {(editAnswer, { _ }) => (
+            <Mutation mutation={REMOVE_QUESTION}>
+              {mutate => (
                 <Fragment>
-                  <EditBtn onEdit={this.onEdit} visible={hovered} />
-                  <RemoveBtn
-                    onEdit={this.onRemove}
-                    visible={this.state.hovered}
+                  <p> {question} </p>
+                  <Scale
+                    viewMode={viewMode}
+                    values={possibleValues}
+                    value={value}
+                    onChange={this.onChange}
                   />
+                  {this.state.viewMode ? (
+                    <Fragment>
+                      <Btn onClick={this.onEdit} visible={hovered}>
+                        Edit
+                      </Btn>
+                      <Btn
+                        onClick={this.onRemove(mutate)}
+                        visible={this.state.hovered}
+                      >
+                        Remove
+                      </Btn>
+                    </Fragment>
+                  ) : (
+                    <Btn onClick={this.onSave(editAnswer)}> Save </Btn>
+                  )}
                 </Fragment>
-              ) : (
-                <SaveBtn onSave={this.onSave(editAnswer)} />
               )}
-            </Fragment>
+            </Mutation>
           )}
         </Mutation>
       </StyledQuestion>

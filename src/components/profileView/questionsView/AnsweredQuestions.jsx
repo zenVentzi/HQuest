@@ -5,13 +5,25 @@ import QuestionsQuery from './QuestionsQuery';
 const AnsweredQuestions = ({ userId }) => {
   const test = 5;
 
+  const onRemoved = questionId => {
+    // dosth
+  };
+
   return (
     <QuestionsQuery answered userId={userId}>
-      {questions =>
-        questions.map(q => (
-          <Question key={q.id} userId={userId} question={q} viewMode />
-        ))
-      }
+      {questions => {
+        const test = 5;
+
+        return questions.map(q => (
+          <Question
+            key={q.id}
+            userId={userId}
+            question={q}
+            viewMode
+            onRemoved={onRemoved}
+          />
+        ));
+      }}
     </QuestionsQuery>
   );
 };
