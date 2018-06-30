@@ -6,6 +6,7 @@ module.exports = {
     ],
     rules: {
         "no-console": "off",
+        'no-plusplus': 'off',
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
         "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],

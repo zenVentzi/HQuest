@@ -12,6 +12,5 @@ What does the finished minimal product look like?
 2) Answer of just 2 types. Scale & text. Later we can add more
 3) Answer edit & remove buttons
 
-
 Rename questionsView to questionsContainer
 
