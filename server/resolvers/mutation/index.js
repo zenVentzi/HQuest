@@ -73,7 +73,7 @@ function editQuestion(_, { questionId, answerValue }, context) {
       id: questionId,
       type: dbQuestion.type,
       possibleValues: dbQuestion.possibleValues,
-      value: dbQuestion.possibleValues,
+      value: dbQuestion.value,
       answer: { id: dbAnswer.id, value: answerValue },
     };
   }

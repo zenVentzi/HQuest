@@ -1,0 +1,40 @@
+const GET_BOOKS = gql`
+  query books {
+    title
+  }
+`;
+
+(
+                <Fragment>
+                  <p> {question} </p>
+                  <Scale
+                    viewMode={viewMode}
+                    values={possibleValues}
+                    value={value}
+                    onChange={this.onChange}
+                  />
+                  {viewMode ? (
+                    <Fragment>
+                      <Btn onClick={this.onClickEdit} visible={hovered}>
+                        Edit
+                      </Btn>
+                      <Btn
+                        onClick={this.onClickRemove(removeQuestion)}
+                        visible={hovered}
+                      >
+                        Remove
+                      </Btn>
+                    </Fragment>
+                  ) : (
+                    <Btn onClick={this.onClickSave(editQuestion)}> Save </Btn>
+                  )}
+                </Fragment>
+              )
+
+              <Mutation mutation={EDIT_QUESTION}>
+          {editQuestion => (
+            <Mutation mutation={REMOVE_QUESTION_GQL}>
+              {removeQuestion => viewMode ? <QuestionViewer /> : <QuestionEditor />}
+            </Mutation>
+          )}
+        </Mutation>
