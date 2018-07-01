@@ -55,25 +55,47 @@ function login(_, { email, password }) {
   );
 }
 
-function editAnswer(_, { value, questionId }, context) {
+function editQuestion(_, { questionId, answerValue }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
   const userId = context.user.id;
   const dbUser = db.users.find(u => u.id === userId);
+  const dbQuestion = db.questions.find(q => q.id === questionId);
   const answeredQuestion = dbUser.questions.find(q => q.id === questionId);
 
   if (answeredQuestion) {
     const dbAnswer = db.answers.find(a => a.id === answeredQuestion.answer.id);
-    dbAnswer.value = value;
-    return answeredQuestion.answer.id;
+    dbAnswer.value = answerValue;
+
+    return {
+      id: questionId,
+      type: dbQuestion.type,
+      possibleValues: dbQuestion.possibleValues,
+      value: dbQuestion.possibleValues,
+      answer: { id: dbAnswer.id, value: answerValue },
+    };
   }
 
   const newAnswerId = db.answers.length + 1;
-  db.answers.push({ id: newAnswerId, value });
+  db.answers.push({ id: newAnswerId, value: answerValue });
   dbUser.questions.push({ id: questionId, answer: { id: newAnswerId } });
-  return newAnswerId;
+
+  return {
+    id: questionId,
+    type: dbQuestion.type,
+    possibleValues: dbQuestion.possibleValues,
+    value: dbQuestion.value,
+    answer: { id: newAnswerId, value: answerValue },
+  };
+
+  /* return {
+    id: questionId,
+    type: removedQ.type,
+    possibleValues: removedQ.possibleValues,
+    value: removedQ.value,
+  }; */
 }
 
 function removeQuestion(_, { questionId }, context) {
@@ -101,6 +123,6 @@ module.exports = {
   addBook,
   signUp,
   login,
-  editAnswer,
+  editQuestion,
   removeQuestion,
 };

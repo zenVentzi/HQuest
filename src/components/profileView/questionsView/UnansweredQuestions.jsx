@@ -7,19 +7,13 @@ class UnansweredQuestions extends Component {
     index: 0,
   };
 
-  onSave = () => {
-    const index = this.state.index + 1;
-    this.setState({ index });
-  };
-
   render() {
     const { userId } = this.props;
 
     return (
       <QuestionsQuery answered={false} userId={userId}>
         {questions => {
-          const { index } = this.state;
-          const q = questions[index];
+          const q = questions[0];
 
           return <Question userId={userId} question={q} onSave={this.onSave} />;
         }}

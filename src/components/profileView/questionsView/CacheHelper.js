@@ -10,7 +10,7 @@ const updateQuestions = (
   action,
   updateAnswered,
   store,
-  returnedValue
+  mutatedQuestion
 ) => {
   const variables = { userId, answered: updateAnswered };
 
@@ -22,20 +22,20 @@ const updateQuestions = (
   switch (action) {
     case ADD_QUESTION:
       if (updateAnswered) {
-        questions.push(returnedValue);
+        questions.push(mutatedQuestion);
       } else {
-        const removedQuestionId = returnedValue.id;
+        const removedQuestionId = mutatedQuestion.id;
         const i = questions.findIndex(q => q.id === removedQuestionId);
         questions.splice(i, 1);
       }
       break;
     case REMOVE_QUESTION:
       if (updateAnswered) {
-        const removedQuestionId = returnedValue.id;
+        const removedQuestionId = mutatedQuestion.id;
         const i = questions.findIndex(q => q.id === removedQuestionId);
         questions.splice(i, 1);
       } else {
-        questions.push(returnedValue);
+        questions.push(mutatedQuestion);
       }
       break;
     default:
@@ -51,13 +51,13 @@ const updateQuestions = (
 
 const update = (userId, action) => (
   store,
-  { data: { [action]: returnedValue } }
+  { data: { [action]: mutatedQuestion } }
 ) => {
   try {
-    updateQuestions(userId, action, false, store, returnedValue);
+    updateQuestions(userId, action, false, store, mutatedQuestion);
   } catch (error) {} // eslint-disable-line no-empty
 
-  updateQuestions(userId, action, true, store, returnedValue);
+  updateQuestions(userId, action, true, store, mutatedQuestion);
 };
 
 export default update;
