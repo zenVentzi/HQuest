@@ -40,7 +40,7 @@ type Mutation {
   addBook(title: String!, author: String!): Book!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): String
-  editAnswer(value: String!, questionId: ID!): ID!
+  editQuestion(questionId: ID!, answerValue: String!): Question!
   removeQuestion(questionId: ID!): Question!
 }
 
