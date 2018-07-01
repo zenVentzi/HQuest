@@ -1,8 +1,9 @@
 // console.log(undefined === false);
 
-let a;
+const obj = { a: 5 };
 
-const b = { a: a || 5 };
+const nm = 'a';
+// const a = 5;
 
-console.log(a);
+const { [nm]: b } = obj;
 console.log(b);
