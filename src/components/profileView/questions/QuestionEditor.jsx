@@ -51,7 +51,6 @@ class QuestionEditor extends Component {
     const { value } = e.target;
     const newState = { ...this.state, answerValue: value };
     this.setState(newState);
-    // this is later going to be stateful
   };
 
   render() {

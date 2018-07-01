@@ -10,6 +10,9 @@ class UnansweredQuestions extends Component {
     return (
       <QuestionsQuery answered={false} userId={userId}>
         {questions => {
+          if (!questions.length) {
+            return <div> Congrats. All questions are answered </div>;
+          }
           const q = questions[0];
 
           return <QuestionEditor userId={userId} question={q} />;

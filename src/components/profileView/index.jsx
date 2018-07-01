@@ -5,7 +5,7 @@ import Avatar from './Avatar';
 import StyledUserName from '../reusable/StyledUserName';
 import Search from './Search';
 import Navbar from '../navigation';
-import QuestionsView from './questionsView';
+import QuestionsContainer from './questions';
 import StyledView from '../reusable/StyledView';
 import ToggleQuestions from './ToggleQuestions';
 
@@ -48,7 +48,7 @@ class ProfileView extends Component {
             }}
           />
           <ToggleQuestions onClick={this.onToggleQuestions} />
-          <QuestionsView userId={1} showAnswered={this.state.answered} />
+          <QuestionsContainer userId={1} showAnswered={this.state.answered} />
         </StyledView>
       </Fragment>
     );
