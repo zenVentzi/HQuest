@@ -1,3 +1,5 @@
+Snippets: rcc, rce, rfe, 
+
 - store the profile pic file path in database
 - save the profile pic to public/users/user_1/profilepic.png
 
@@ -5,7 +7,6 @@
 - Load questions from db. DONE!
 - Search questions
 
-What am I trying to achieve?
 What does the finished minimal product look like?
 
 1) List of all answered questions
@@ -14,3 +15,4 @@ What does the finished minimal product look like?
 
 Rename questionsView to questionsContainer
 
+Store viewMode only in state of Question, if it has answer

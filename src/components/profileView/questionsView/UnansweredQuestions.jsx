@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import Question from './Question';
+import QuestionEditor from './QuestionEditor';
 import QuestionsQuery from './QuestionsQuery';
 
+// eslint-disable-next-line react/prefer-stateless-function
 class UnansweredQuestions extends Component {
-  state = {
-    index: 0,
-  };
-
   render() {
     const { userId } = this.props;
 
@@ -15,7 +12,7 @@ class UnansweredQuestions extends Component {
         {questions => {
           const q = questions[0];
 
-          return <Question userId={userId} question={q} onSave={this.onSave} />;
+          return <QuestionEditor userId={userId} question={q} />;
         }}
       </QuestionsQuery>
     );

@@ -1,48 +1,49 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
-const StyledView = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  margin: 70px auto;
-  align-items: center;
-  text-align: center;
-  width: 500px;
-  border: 3px solid red;
-  overflow: hidden;
-`;
-
-const StyledQuestionsContainer = styled.div`
-  margin-top: 1em;
+const Slider = styled.input`
+  appearance: none;
+  display: block;
+  margin: 0 auto;
   width: 50%;
-  border: 3px solid black;
-`;
+  height: 15px;
+  border-radius: 5px;
+  background: black;
+  outline: none;
+  transition: opacity 0.2s;
 
-const StyledQuestion = styled.div`
-  border: 3px solid black;
-  /* width: 100%; */
-`;
-
-const StyledP = styled.p`
-  border: 3px solid black;
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+  }
+  &::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+  }
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const App = () => {
   const test = 5;
 
   return (
-    <StyledView>
-      <StyledQuestionsContainer>
-        <p> 123456 </p>
-      </StyledQuestionsContainer>
-    </StyledView>
+    <Slider
+      // disabled={viewMode}
+      type="range"
+      min={0}
+      max={6}
+      defaultValue={3}
+    />
   );
-  // return (
-  //   <StyledView>
-  //     <StyledP> 123456 </StyledP>
-  //   </StyledView>
-  // );
 };
 
 export default App;

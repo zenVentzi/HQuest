@@ -36,26 +36,25 @@ const Slider = styled.input`
   }
 `;
 
-const Scale = React.forwardRef((props, ref) => {
-  const defaultValue = props.viewMode ? props.value : undefined;
+const Scale = props => {
+  const { viewMode, value } = props;
   const minValue = 0;
   const maxValue = props.values.length - 1;
-  const valueName = props.value ? props.values[props.value] : props.values[3];
+  const valueName = props.values[value];
 
   return (
     <Wrapper>
       <p> {valueName} </p>
       <Slider
-        ref={ref}
-        disabled={props.viewMode}
+        disabled={viewMode}
         type="range"
         min={minValue}
         max={maxValue}
-        defaultValue={defaultValue}
+        defaultValue={value}
         onChange={props.onChange}
       />
     </Wrapper>
   );
-});
+};
 
 export default Scale;
