@@ -1,5 +1,5 @@
 import React from 'react';
-import Question from './Question';
+import CompleteQuestion from './CompleteQuestion';
 import QuestionsQuery from './QuestionsQuery';
 
 const AnsweredQuestions = ({ userId }) => {
@@ -11,7 +11,7 @@ const AnsweredQuestions = ({ userId }) => {
         const test = 5;
 
         return questions.map(q => (
-          <Question key={q.id} userId={userId} question={q} />
+          <CompleteQuestion key={q.id} userId={userId} question={q} />
         ));
       }}
     </QuestionsQuery>
