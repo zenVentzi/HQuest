@@ -67,6 +67,7 @@ const users = [
     surName: 'Ivanov1',
     email: 'a',
     password: bcrypt.hash('a', 10),
+    avatarSrc: ``,
     questions: [
       { id: '1', answer: { id: '3' } },
       { id: '2', answer: { id: '4' } },
@@ -80,6 +81,7 @@ const users = [
     surName: 'Ivanov2',
     email: 'a2',
     password: bcrypt.hash('1234', 10),
+    avatarSrc: ``,
     questions: [
       { id: '1', answer: { id: '2' } },
       { id: '3', answer: { id: '1' } },

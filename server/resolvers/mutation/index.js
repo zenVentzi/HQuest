@@ -35,13 +35,13 @@ async function signUp(_, { firstName, surName, email, password }) {
 }
 
 function login(_, { email, password }) {
-  const user = db.users.find(usr => usr.email === email);
+  const dbUser = db.users.find(usr => usr.email === email);
 
-  if (!user) {
+  if (!dbUser) {
     throw new Error('No user with that email');
   }
 
-  const valid = bcrypt.compare(password, user.password);
+  const valid = bcrypt.compare(password, dbUser.password);
 
   if (!valid) {
     throw new Error('Incorrect password');
@@ -49,7 +49,7 @@ function login(_, { email, password }) {
 
   // return json web token
   return jsonwebtoken.sign(
-    { id: user.id, email: user.email },
+    { id: dbUser.id, email: dbUser.email },
     process.env.JWT_SECRET,
     { expiresIn: '1d' }
   );

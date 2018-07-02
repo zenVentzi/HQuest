@@ -56,15 +56,23 @@ function users(_, args, context) {
   return matchedUsers;
 }
 
-function user(_, args, context) {
-  console.dir(context.user);
+function user(_, { id }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const matchingUser = db.users.find(usr => usr.id === args.id);
+  const dbUser = db.users.find(usr => usr.id === id);
 
-  return matchingUser;
+  if (!dbUser) return null;
+
+  const result = {
+    id: dbUser.id,
+    email: dbUser.email,
+    fullName: `${dbUser.firstName} ${dbUser.surName}`,
+    avatarSrc: dbUser.avatarSrc,
+  };
+
+  return result;
 }
 
 module.exports = {
