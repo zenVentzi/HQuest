@@ -7,61 +7,44 @@ import User from './User';
 import Navbar from '../navigation';
 
 const GET_USERS = gql`
-  query GetUsers($match: String) {
+  query users($match: String) {
     users(match: $match) {
-      id,
-      firstName,
-      surName,
+      id
+      fullName
     }
-  }`;
+  }
+`;
 
 function getMatchParam() {
   return parse(window.location.search.substr(1)).match;
 }
 
 const SearchView = () => {
-  const renderUsers = (users) => {
-    const userList = users.map((user) => {
-      const test = 5;
-
-      return (
-        <User
-          key={user.id}
-          avatarSrc={user.avatarSrc}
-          username={user.firstName}
-        />
-        // <div key={user.id} > {user.id} </div>
-      );
-    });
-
-    return userList;
-  };
-
-  const renderNotFound = () => (<div> No matches found </div>);
-
-  const renderSearch = (users) => {
-    const hasMatchingUsers = users.length > 0;
-
-    if (hasMatchingUsers) {
-      return renderUsers(users);
-    }
-
-    return renderNotFound();
-  };
+  const test = 5;
 
   return (
     <Fragment>
       <Navbar />
       <StyledView>
-        <Query
-          query={GET_USERS}
-          variables={{ match: getMatchParam() }}
-        >
-          {({ loading, error, data }) => {
-            if (loading) return 'Loading...';
-            if (error) return `Error! ${error.message}`;
+        <Query query={GET_USERS} variables={{ match: getMatchParam() }}>
+          {({ loading, error, data: { users } }) => {
+            if (loading) return <div> Loading..</div>;
+            if (error) return <div> {error.message} </div>;
+            if (!users.length) {
+              return <div> No matches found </div>;
+            }
 
-            return <Fragment> {renderSearch(data.users)} </Fragment>;
+            return (
+              <Fragment>
+                {users.map(user => (
+                  <User
+                    key={user.id}
+                    fullName={user.fullName}
+                    avatarSrc={user.avatarSrc}
+                  />
+                ))}
+              </Fragment>
+            );
           }}
         </Query>
       </StyledView>
