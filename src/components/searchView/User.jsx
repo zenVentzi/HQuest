@@ -26,7 +26,7 @@ const StyledUser = styled.div`
   }
 `;
 
-const User = ({ username, avatarSrc }) => {
+const User = ({ fullName, avatarSrc }) => {
   const theme = {
     avatarSize: '50px',
   };
@@ -36,10 +36,7 @@ const User = ({ username, avatarSrc }) => {
       <ThemeProvider theme={theme}>
         <Avatar src={avatarSrc} />
       </ThemeProvider>
-      <StyledUserName>
-        {/* {username} */}
-        Ventsislav Marinov
-      </StyledUserName>
+      <StyledUserName>{fullName}</StyledUserName>
     </StyledUser>
   );
 };

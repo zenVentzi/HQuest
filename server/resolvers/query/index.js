@@ -53,7 +53,14 @@ function users(_, args, context) {
     return name.includes(match);
   });
 
-  return matchedUsers;
+  const result = matchedUsers.map(u => ({
+    id: u.id,
+    email: u.email,
+    fullName: `${u.firstName} ${u.surName}`,
+    avatarSrc: u.avatarSrc,
+  }));
+
+  return result;
 }
 
 function user(_, { id }, context) {
