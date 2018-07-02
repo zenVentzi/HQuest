@@ -11,8 +11,8 @@ What does the finished minimal product look like?
 
 Rename questionsView to questionsContainer
 
+What is the minimal functionality?
+
 Next?
 
-1) Display real users
-
-empty string src vs null?
+1) Show different profileView if personal

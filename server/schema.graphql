@@ -8,6 +8,7 @@ type User {
   email: String!
   fullName: String!
   avatarSrc: String!
+  me: Boolean!
 }
 
 enum QuestionType {
@@ -23,6 +24,11 @@ type Question {
   answer: Answer
 }
 
+type Questions {
+  answered: [Question!]
+  unanswered: [Question!]
+}
+
 type Answer {
   id: ID!
   value: String!
@@ -33,7 +39,7 @@ type Query {
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
-  questions(userId: ID!, answered: Boolean!): [Question!]!
+  questions(userId: ID!, all: Boolean!): Questions
 }
 
 type Mutation {

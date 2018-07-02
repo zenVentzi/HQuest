@@ -36,13 +36,7 @@ const SearchView = () => {
 
             return (
               <Fragment>
-                {users.map(user => (
-                  <User
-                    key={user.id}
-                    fullName={user.fullName}
-                    avatarSrc={user.avatarSrc}
-                  />
-                ))}
+                {users.map(user => <User key={user.id} user={user} />)}
               </Fragment>
             );
           }}

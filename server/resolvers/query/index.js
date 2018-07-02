@@ -13,33 +13,43 @@ function isAnswered(question, usr) {
   return usr.questions.some(q => q.id === question.id);
 }
 
-function questions(root, { userId, answered }, context, info) {
+function questions(root, { userId, all }, context, info) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
   const usr = db.users.find(u => u.id === userId);
 
-  let qtions;
+  const answeredQs = usr.questions.map(q => {
+    const dbQuestion = db.questions.find(dbQ => dbQ.id === q.id);
+    const dbAnswer = db.answers.find(dbA => dbA.id === q.answer.id);
 
-  if (answered) {
-    qtions = usr.questions.map(q => {
-      const dbQuestion = db.questions.find(dbQ => dbQ.id === q.id);
-      const dbAnswer = db.answers.find(dbA => dbA.id === q.answer.id);
+    return {
+      id: q.id,
+      type: dbQuestion.type,
+      possibleValues: dbQuestion.possibleValues,
+      value: dbQuestion.value,
+      answer: { id: dbAnswer.id, value: dbAnswer.value },
+    };
+  });
 
-      return {
-        id: q.id,
-        possibleValues: dbQuestion.possibleValues,
-        value: dbQuestion.value,
-        type: dbQuestion.type,
-        answer: { id: dbAnswer.id, value: dbAnswer.value },
-      };
-    });
-  } else {
-    qtions = db.questions.filter(q => !isAnswered(q, usr));
+  const result = { answered: answeredQs };
+
+  if (all) {
+    result.unanswered = db.questions.filter(q => !isAnswered(q, usr));
   }
 
-  return qtions;
+  return result;
+}
+
+function shapedUser(context, dbUser) {
+  return {
+    id: dbUser.id,
+    email: dbUser.email,
+    fullName: `${dbUser.firstName} ${dbUser.surName}`,
+    avatarSrc: dbUser.avatarSrc,
+    me: context.user.id === dbUser.id,
+  };
 }
 
 function users(_, args, context) {
@@ -47,18 +57,13 @@ function users(_, args, context) {
     throw new Error('You are not authorized!');
   }
 
-  const matchedUsers = db.users.filter(usr => {
+  const matchedDbUsers = db.users.filter(usr => {
     const name = `${usr.firstName.toLowerCase()} ${usr.surName.toLowerCase()}`;
     const match = args.match.toLowerCase();
     return name.includes(match);
   });
 
-  const result = matchedUsers.map(u => ({
-    id: u.id,
-    email: u.email,
-    fullName: `${u.firstName} ${u.surName}`,
-    avatarSrc: u.avatarSrc,
-  }));
+  const result = matchedDbUsers.map(dbUsr => shapedUser(context, dbUsr));
 
   return result;
 }
@@ -71,15 +76,7 @@ function user(_, { id }, context) {
   const dbUser = db.users.find(usr => usr.id === id);
 
   if (!dbUser) return null;
-
-  const result = {
-    id: dbUser.id,
-    email: dbUser.email,
-    fullName: `${dbUser.firstName} ${dbUser.surName}`,
-    avatarSrc: dbUser.avatarSrc,
-  };
-
-  return result;
+  return shapedUser(context, dbUser);
 }
 
 module.exports = {
