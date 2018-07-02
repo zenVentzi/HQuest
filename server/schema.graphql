@@ -6,8 +6,8 @@ type Book {
 type User {
   id: ID!
   email: String!
-  firstName: String!
-  surName: String!
+  fullName: String!
+  avatarSrc: String!
 }
 
 enum QuestionType {

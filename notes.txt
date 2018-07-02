@@ -9,10 +9,10 @@ Snippets: rcc, rce, rfe,
 
 What does the finished minimal product look like?
 
-1) List of all answered questions
-2) Answer of just 2 types. Scale & text. Later we can add more
-3) Answer edit & remove buttons
-
 Rename questionsView to questionsContainer
 
-Should viewMode stay in Question or Questions?
+Next?
+
+1) Display real users
+
+empty string src vs null?
