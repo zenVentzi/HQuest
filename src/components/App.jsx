@@ -20,7 +20,7 @@ const App = () => {
         <Fragment>
           <ProtectedRoute
             exact
-            path="/(/|userProfile|)/"
+            path="/userProfile/:id"
             component={ProfileView}
           />
           <ProtectedRoute path="/search" component={SearchView} />

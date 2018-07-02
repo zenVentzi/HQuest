@@ -1,4 +1,4 @@
-import { GET_QUESTIONS } from './QuestionsQuery';
+import { GET_QUESTIONS } from './index';
 
 const ADD_QUESTION = 'editQuestion';
 const REMOVE_QUESTION = 'removeQuestion';

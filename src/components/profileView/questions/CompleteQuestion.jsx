@@ -40,7 +40,7 @@ class CompleteQuestion extends Component {
 
   render() {
     const { hovered, viewMode } = this.state;
-    const { userId, question } = this.props;
+    const { question } = this.props;
 
     return (
       <StyledQuestion
@@ -49,17 +49,12 @@ class CompleteQuestion extends Component {
       >
         {viewMode ? (
           <QuestionViewer
-            userId={userId}
             hovered={hovered}
             question={question}
             onClickEdit={this.onClickEdit}
           />
         ) : (
-          <QuestionEditor
-            userId={userId}
-            question={question}
-            onSaved={this.onSaved}
-          />
+          <QuestionEditor question={question} onSaved={this.onSaved} />
         )}
       </StyledQuestion>
     );

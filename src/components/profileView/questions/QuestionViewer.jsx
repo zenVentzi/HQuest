@@ -33,8 +33,6 @@ const QuestionViewer = props => {
         const { value } = props.question.answer;
         const { hovered, onClickEdit } = props;
 
-        // return <div />;
-
         return (
           <Fragment>
             <p> {question} </p>

@@ -15,6 +15,7 @@ const GET_USER = gql`
       id
       fullName
       avatarSrc
+      me
     }
   }
 `;
@@ -22,7 +23,7 @@ const GET_USER = gql`
 class ProfileView extends Component {
   constructor(props) {
     super(props);
-
+    // props.match.params.fullName
     this.state = { answered: true };
   }
 
@@ -32,7 +33,9 @@ class ProfileView extends Component {
   };
 
   render() {
-    const vars = { id: 2 };
+    const { id } = this.props.match.params;
+    const vars = { id };
+
     return (
       <Query query={GET_USER} variables={vars}>
         {({ loading, error, data: { user } }) => {
@@ -55,9 +58,11 @@ class ProfileView extends Component {
                     const test = 5;
                   }}
                 />
-                <ToggleQuestions onClick={this.onToggleQuestions} />
+                {user.me && (
+                  <ToggleQuestions onClick={this.onToggleQuestions} />
+                )}
                 <QuestionsContainer
-                  userId={1}
+                  user={user}
                   showAnswered={this.state.answered}
                 />
               </StyledView>

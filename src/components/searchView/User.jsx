@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
 import StyledUserName from '../reusable/StyledUserName';
@@ -26,18 +27,25 @@ const StyledUser = styled.div`
   }
 `;
 
-const User = ({ fullName, avatarSrc }) => {
+const User = ({ user: { id, fullName, avatatarSrc } }) => {
   const theme = {
     avatarSize: '50px',
   };
 
+  const linkTo = `/userProfile/${id}`;
+
   return (
-    <StyledUser>
-      <ThemeProvider theme={theme}>
-        <Avatar src={avatarSrc} />
-      </ThemeProvider>
-      <StyledUserName>{fullName}</StyledUserName>
-    </StyledUser>
+    // <StyledUser
+    //   onClick={() => {
+    //     // redirect to user's page
+    //   }}
+    // >
+    //   <ThemeProvider theme={theme}>
+    //     <Avatar src={avatarSrc} />
+    //   </ThemeProvider>
+    //   <StyledUserName>{fullName}</StyledUserName>
+    // </StyledUser>
+    <Link to={linkTo}> {fullName} </Link>
   );
 };
 
