@@ -48,6 +48,7 @@ type Mutation {
   login(email: String!, password: String!): String
   editQuestion(questionId: ID!, answerValue: String!): Question!
   removeQuestion(questionId: ID!): Question!
+  uploadAvatar(upload: Upload!): String!
 }
 
 type Subscription {

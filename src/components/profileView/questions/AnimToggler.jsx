@@ -60,6 +60,7 @@ export class AnimToggler extends Component {
   }
 
   render() {
+    console.log(`anim toggler render`);
     const { showFirst } = this.props;
     const { FirstVisible, SecondVisible } = this.state;
 

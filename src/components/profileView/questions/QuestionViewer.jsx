@@ -22,7 +22,7 @@ const QuestionViewer = props => {
       questionId: props.question.id,
     };
 
-    mutate({ variables, update: update(props.userId, REMOVE_QUESTION) });
+    mutate({ variables, update: update(REMOVE_QUESTION) });
   };
 
   return (
@@ -31,18 +31,22 @@ const QuestionViewer = props => {
         const question = props.question.value;
         const values = props.question.possibleValues;
         const { value } = props.question.answer;
-        const { hovered, onClickEdit } = props;
+        const { hovered, onClickEdit, showButtons } = props;
 
         return (
           <Fragment>
             <p> {question} </p>
             <Scale viewMode values={values} value={value} />
-            <Btn onClick={onClickEdit} visible={hovered}>
-              Edit
-            </Btn>
-            <Btn onClick={onClickRemove(removeQuestion)} visible={hovered}>
-              Remove
-            </Btn>
+            {showButtons && (
+              <Fragment>
+                <Btn onClick={onClickEdit} visible={hovered}>
+                  Edit
+                </Btn>
+                <Btn onClick={onClickRemove(removeQuestion)} visible={hovered}>
+                  Remove
+                </Btn>
+              </Fragment>
+            )}
           </Fragment>
         );
       }}

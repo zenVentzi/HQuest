@@ -40,7 +40,7 @@ class CompleteQuestion extends Component {
 
   render() {
     const { hovered, viewMode } = this.state;
-    const { question } = this.props;
+    const { question, showButtons } = this.props;
 
     return (
       <StyledQuestion
@@ -50,6 +50,7 @@ class CompleteQuestion extends Component {
         {viewMode ? (
           <QuestionViewer
             hovered={hovered}
+            showButtons={showButtons}
             question={question}
             onClickEdit={this.onClickEdit}
           />

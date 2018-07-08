@@ -117,6 +117,16 @@ function removeQuestion(_, { questionId }, context) {
   };
 }
 
+async function uploadAvatar(_, { upload }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { stream, filename, mimetype, encoding } = await upload;
+
+  console.dir(stream);
+}
+
 // function updateUserAnswer()
 
 module.exports = {
@@ -125,4 +135,5 @@ module.exports = {
   login,
   editQuestion,
   removeQuestion,
+  uploadAvatar,
 };

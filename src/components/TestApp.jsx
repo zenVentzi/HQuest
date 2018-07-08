@@ -1,49 +1,51 @@
-import React, { Fragment } from 'react';
-import styled from 'styled-components';
+import React, { Fragment, Component } from 'react';
+import { Transition } from 'react-spring';
 
-const Slider = styled.input`
-  appearance: none;
-  display: block;
-  margin: 0 auto;
-  width: 50%;
-  height: 15px;
-  border-radius: 5px;
-  background: black;
-  outline: none;
-  transition: opacity 0.2s;
-
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: white;
-    cursor: pointer;
+const A = ({ bla, destroyed, ...style }) => {
+  console.log(`a`);
+  if (destroyed) {
+    console.log(`dstr`);
   }
-  &::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: white;
-    cursor: pointer;
-  }
-  &:hover {
-    opacity: 0.9;
-  }
-`;
+  // console.log(style);
 
-const App = () => {
-  const test = 5;
-
-  return (
-    <Slider
-      // disabled={viewMode}
-      type="range"
-      min={0}
-      max={6}
-      defaultValue={3}
-    />
-  );
+  return <div style={style}>a</div>;
 };
 
-export default App;
+// onClick={this.toggle}
+
+const B = style => {
+  const holder = 5;
+  // console.log(`b`);
+  // console.log(this.state.toggle);
+
+  return <div style={style}>b</div>;
+};
+
+class TestApp extends Component {
+  state = {
+    toggle: true,
+  };
+
+  toggle = () => {
+    this.setState(state => ({ toggle: !state.toggle }));
+  };
+  render() {
+    const { toggle } = this.state;
+
+    return (
+      <Fragment>
+        <Transition
+          from={{ opacity: 0 }}
+          enter={{ opacity: 1 }}
+          leave={{ opacity: 0 }}
+          bla={5}
+        >
+          {toggle ? A : B}
+        </Transition>
+        <button onClick={this.toggle}> Toggle </button>
+      </Fragment>
+    );
+  }
+}
+
+export default TestApp;
