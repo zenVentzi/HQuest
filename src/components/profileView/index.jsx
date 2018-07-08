@@ -9,6 +9,8 @@ import QuestionsContainer from './questions';
 import StyledView from '../reusable/StyledView';
 import ToggleQuestions from './ToggleQuestions';
 
+let viewedProfileId;
+
 const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {
@@ -43,6 +45,8 @@ class ProfileView extends Component {
           if (error) return <div> {error} </div>;
           if (!user) return <div> User not found </div>;
 
+          viewedProfileId = user.id;
+
           return (
             <Fragment>
               <Navbar />
@@ -73,5 +77,7 @@ class ProfileView extends Component {
     );
   }
 }
+
+export { viewedProfileId };
 
 export default ProfileView;

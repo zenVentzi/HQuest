@@ -9,13 +9,15 @@ const Wrapper = styled.div`
   height: ${props => props.theme.avatarSize};
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid black;`;
+  border: 2px solid black;
+`;
 
 const Img = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);`;
+  transform: translate(-50%, -50%);
+`;
 
 Wrapper.defaultProps = {
   theme: {
@@ -23,15 +25,17 @@ Wrapper.defaultProps = {
   },
 };
 
-const Avatar = props => (
-  <Wrapper className={props.className}>
-    <Img src={props.src} />
+const Avatar = ({ children, className, src, onMouseOver, onMouseOut }) => (
+  <Wrapper
+    className={className}
+    onMouseOver={onMouseOver}
+    onMouseOut={onMouseOut}
+  >
+    <Img src={src} />
+    {children}
   </Wrapper>
 );
 
-export {
-  Wrapper,
-  Img,
-};
+export { Wrapper, Img };
 
 export default styled(Avatar)``;

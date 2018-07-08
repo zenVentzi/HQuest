@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Transition } from 'react-spring';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import AnsweredQuestions from './AnsweredQuestions';
 import UnansweredQuestions from './UnansweredQuestions';
-import { AnimToggler } from './AnimToggler';
+import QuestionViewer from './QuestionViewer';
+import QuestionEditor from './QuestionEditor';
 
 export const GET_QUESTIONS = gql`
   query questions($userId: ID!, $all: Boolean!) {
@@ -36,15 +38,19 @@ const StyledQuestionsContainer = styled.div`
   /* border: 3px solid black; */
 `;
 
-const AllQuestions = ({
-  showAnswered,
-  questions: { answered, unanswered },
-}) => (
-  <AnimToggler showFirst={showAnswered}>
-    <AnsweredQuestions questions={answered} />
-    <UnansweredQuestions questions={unanswered} />
-  </AnimToggler>
+const A = ({ bla, destroyed, ...style }) => (
+  // console.log(style);
+
+  <div style={style}>a</div>
 );
+
+const B = ({ bla, destroyed, ...style }) => {
+  const holder = 5;
+  // console.log(`b`);
+  // console.log(this.state.toggle);
+
+  return <div style={style}>b</div>;
+};
 
 const QuestionsContainer = ({ user, showAnswered }) => {
   const vars = { userId: user.id, all: user.me };
@@ -54,12 +60,20 @@ const QuestionsContainer = ({ user, showAnswered }) => {
       <Query query={GET_QUESTIONS} variables={vars}>
         {({ loading, error, data: { questions } }) => {
           if (loading) return <div> loading questions.. </div>;
-          if (error) return <div> `Error ${error}`</div>;
+          if (error) return <div> {`Error ${error}`}</div>;
+          // not using object destructing cuz it didn't work at the time
+          const qs = showAnswered ? questions.answered : questions.unanswered;
 
-          return user.me ? (
-            <AllQuestions questions={questions} showAnswered={showAnswered} />
-          ) : (
-            <AnsweredQuestions questions={questions.answred} />
+          return (
+            <Transition
+              from={{ opacity: 0 }}
+              enter={{ opacity: 1 }}
+              leave={{ opacity: 0 }}
+              questions={qs}
+              showButtons={user.me}
+            >
+              {showAnswered ? AnsweredQuestions : UnansweredQuestions}
+            </Transition>
           );
         }}
       </Query>

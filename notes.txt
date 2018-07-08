@@ -1,18 +1,11 @@
 Snippets: rcc, rce, rfe, 
 
+Problem: ..
+Solution/s:..
+
 - store the profile pic file path in database
 - save the profile pic to public/users/user_1/profilepic.png
 
-- Login page. DONE!
-- Load questions from db. DONE!
-- Search questions
-
-What does the finished minimal product look like?
-
-Rename questionsView to questionsContainer
-
-What is the minimal functionality?
-
-Next?
-
-1) Show different profileView if personal
+1) Search users
+2) Log out
+3) Avatar

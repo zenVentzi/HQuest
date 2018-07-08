@@ -40,7 +40,7 @@ class QuestionEditor extends Component {
     const mutationParams = { variables };
 
     if (isNewQuestion) {
-      mutationParams.update = update(this.props.userId, ADD_QUESTION);
+      mutationParams.update = update(ADD_QUESTION);
     }
 
     await mutation(mutationParams);

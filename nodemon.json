@@ -1,5 +1,6 @@
 {
   "ignore": [
+    "src/",
     "README",
     "test.js"
   ]

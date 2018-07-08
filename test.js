@@ -1,9 +1,5 @@
-// console.log(undefined === false);
+const { graphqlExpress } = require('apollo-server-express');
 
-const obj = { a: 5 };
+// const { graphqlExpress } = require('apollo-server-express');
 
-const nm = 'a';
-// const a = 5;
-
-const { [nm]: b } = obj;
-console.log(b);
+console.log(graphqlExpress);
