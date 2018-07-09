@@ -42,6 +42,8 @@ type Query {
   questions(userId: ID!, all: Boolean!): Questions
 }
 
+scalar Upload
+
 type Mutation {
   addBook(title: String!, author: String!): Book!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String

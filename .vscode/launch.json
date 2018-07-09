@@ -18,10 +18,10 @@
       "protocol": "inspector",
       "runtimeExecutable": "nodemon",
       "runtimeArgs": [
-        "--inspect=3000"
+        "--inspect=4000"
       ],
       "program": "${workspaceFolder}\\server\\server.js",
-      "port": 3000,
+      "port": 4000,
       "restart": true,
       "env": {
         "BABEL_DISABLE_CACHE": "1",
