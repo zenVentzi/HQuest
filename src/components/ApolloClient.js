@@ -1,5 +1,6 @@
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
+import { createUploadLink } from 'apollo-upload-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
@@ -8,6 +9,7 @@ import { onError } from 'apollo-link-error';
 import { AUTH_TOKEN } from '../constants';
 
 const httpLink = new HttpLink({ uri: '/graphql' });
+const uploadLink = createUploadLink({ uri: 'http://localhost:4000/graphql' });
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
@@ -33,11 +35,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-const link = ApolloLink.from([errorLink, authLink, httpLink]);
+const link = ApolloLink.from([errorLink, authLink, uploadLink]);
 
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
+
+// client.clearCache();
 
 export default client;

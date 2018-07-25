@@ -5,7 +5,8 @@ const Switch = styled.label`
   position: relative;
   display: inline-block;
   width: 120px;
-  height: 26px;`;
+  height: 26px;
+`;
 
 const Slider = styled.div`
   position: absolute;
@@ -15,12 +16,12 @@ const Slider = styled.div`
   right: 0;
   bottom: 0;
   background-color: black;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 15px;
-  
+
   &:before {
     position: absolute;
-    content: "";
+    content: '';
     height: 19px;
     width: 19px;
     left: 3px;
@@ -28,36 +29,39 @@ const Slider = styled.div`
     background-color: white;
     transition: 1s;
     border-radius: 50%;
-  }`;
+  }
+`;
 
 const common = css`
   color: white;
   position: absolute;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
   font-size: 10px;
-  // font-family: Verdana, sans-serif;`;
+  // font-family: Verdana, sans-serif;
+`;
 
 const On = styled.span`
   display: none;
-  ${common}
+  ${common};
 `;
 
 const Off = styled.span`
-  ${common}`;
+  ${common};
+`;
 
 const Input = styled.input`
-  display:none;
-    
+  display: none;
+
   &:checked + ${Slider} {
   }
   &:focus + ${Slider} {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #2196f3;
   }
   &:checked + ${Slider} {
     &:before {
-      transform: translateX(95px);      
+      transform: translateX(95px);
     }
   }
   &:checked + ${Slider} ${On} {
@@ -68,16 +72,13 @@ const Input = styled.input`
   }
 `;
 
-const ToggleBtn = (props) => {
+const ToggleBtn = props => {
   const test = 5;
 
   return (
     // eslint-disable-next-line jsx-a11y/label-has-for
     <Switch>
-      <Input
-        type="checkbox"
-        onClick={props.onClick}
-      />
+      <Input type="checkbox" onClick={props.onClick} />
       <Slider>
         <On>{props.onText}</On>
         <Off>{props.offText}</Off>

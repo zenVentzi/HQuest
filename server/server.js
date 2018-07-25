@@ -19,21 +19,6 @@ const compiler = webpack(webpackConfig);
 const PORT = process.env.PORT || 4000;
 const app = express();
 
-// app.use(
-//   require('webpack-dev-middleware')(compiler, {
-//     hot: true,
-//     publicPath: webpackConfig.output.publicPath,
-//   })
-// );
-
-// app.use(require('webpack-hot-middleware')(compiler));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'index.html'));
-});
-
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-
 const auth = jwt({
   secret: process.env.JWT_SECRET,
   credentialsRequired: false,
@@ -41,8 +26,28 @@ const auth = jwt({
 
 app.use(bodyParser.json(), auth);
 
+app.use('/public', express.static('public'));
+
+// app.use(usersContent)
+
+app.use(
+  require('webpack-dev-middleware')(compiler, {
+    hot: true,
+    publicPath: webpackConfig.output.publicPath,
+  })
+);
+
+app.use(require('webpack-hot-middleware')(compiler));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'index.html'));
+});
+
+// const schema = makeExecutableSchema({ typeDefs, resolvers });
+
 const server = new ApolloServer({
-  schema,
+  typeDefs,
+  resolvers,
   context: ({ req, connection }) => {
     if (connection) {
       // check connection for metadata

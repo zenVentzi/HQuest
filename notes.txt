@@ -9,3 +9,12 @@ Solution/s:..
 1) Search users
 2) Log out
 3) Avatar
+
+Should usersContent folder be made public? WHere to store it?
+If the directory were /protected/user/ and the information could only be accessed through a PHP that would resolve my only concern. 
+
+Webpack doens't have to load the users files. They should simply be accessible. How? Hash vs folder ids?
+If I use express static b4 webpack, if the file is found it will be sent and the process will be interrupted
+
+1) Save the avatar as {hash}.png in assets/ folder.
+2) Save the hash name at avatarSrc

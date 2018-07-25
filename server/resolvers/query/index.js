@@ -1,3 +1,4 @@
+const { getAvatarSrcAsync } = require('../../utils');
 const db = require('../../database');
 
 function books() {
@@ -76,7 +77,8 @@ function user(_, { id }, context) {
   const dbUser = db.users.find(usr => usr.id === id);
 
   if (!dbUser) return null;
-  return shapedUser(context, dbUser);
+  const usr = shapedUser(context, dbUser);
+  return usr;
 }
 
 module.exports = {

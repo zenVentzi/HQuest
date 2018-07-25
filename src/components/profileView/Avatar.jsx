@@ -1,16 +1,9 @@
-import React, { Component } from 'react';
-import gql from 'graphql-tag';
+import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
-import DefaultAvatar from '../reusable/Avatar';
-import { Mutation } from 'react-apollo';
-
-// const UPLOAD_AVATAR = gql`
-//   mutation uploadAvatar($upload: Upload!) {
-//     uploadAvatar(upload: $upload)
-//   }
-// `;
+import FloatingEditor from './FloatingEditor';
 
 const Wrapper = styled.div`
+  position: relative;
   font-size: 20px;
   text-align: center;
   display: inline-block;
@@ -26,9 +19,10 @@ const Wrapper = styled.div`
 `;
 
 const Img = styled.img`
-  position: absolute;
+  position: relative;
   top: 50%;
   left: 50%;
+  width: 100%;
   transform: translate(-50%, -50%);
 `;
 
@@ -39,6 +33,10 @@ Wrapper.defaultProps = {
 };
 
 const UpdateOverlay = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   pointer-events: none;
   display: inline-block;
   width: 100%;
@@ -52,6 +50,9 @@ const UpdateOverlay = styled.div`
 class Avatar extends Component {
   state = {
     hovered: false,
+    src: this.props.src,
+    inputImg: null,
+    fileInputKey: 0,
   };
 
   onMouseOver = () => {
@@ -63,51 +64,72 @@ class Avatar extends Component {
   };
 
   onClick = () => {
-    // this.setState(prevState => ({ ...prevState, clicked: true }));
     this.upload.click();
   };
 
-  onChangeFile = uploadAvatar => event => {
+  onCloseEditor = src => {
+    const newState = { ...this.state };
+
+    if (src) {
+      newState.src = `${src}?time=${new Date().valueOf()}`;
+    }
+
+    newState.inputImg = null;
+    newState.fileInputKey = this.state.fileInputKey + 1;
+    this.setState(newState);
+  };
+
+  onChangeFile = event => {
     event.stopPropagation();
     event.preventDefault();
-    const file = event.target.files[0];
-    console.log(file);
-    const variables = { upload: file };
-    uploadAvatar({ variables });
-    // this.setState({ file }); // / if you want to upload latter
+
+    const incorrectType = event.target.files[0].type.indexOf('image') === -1;
+
+    if (incorrectType) {
+      // do sth
+      return;
+    }
+
+    const newState = { ...this.state };
+    [newState.inputImg] = event.target.files;
+
+    this.setState(newState);
   };
 
   render() {
-    return <div />;
-    const { src } = this.props;
-    return (
-      <Mutation mutation={UPLOAD_AVATAR}>
-        {(uploadAvatar, { data }) => {
-          const t = 5;
+    // return <div> fdf </div>;
+    const { src, fileInputKey } = this.state;
 
-          return (
-            <Wrapper
-              onMouseOver={this.onMouseOver}
-              onFocus={this.onMouseOver}
-              onMouseOut={this.onMouseOut}
-              onBlur={this.onMouseOut}
-              onClick={this.onClick}
-            >
-              <Img src={src} />
-              {this.state.hovered && <UpdateOverlay>Upload </UpdateOverlay>}
-              <input
-                id="myInput"
-                type="file"
-                ref={ref => {
-                  this.upload = ref;
-                }}
-                style={{ display: 'none' }}
-                onChange={this.onChangeFile(uploadAvatar)}
-              />
-            </Wrapper>
-          );
-        }}
-      </Mutation>
+    return (
+      <Fragment>
+        <Wrapper
+          onMouseOver={this.onMouseOver}
+          onFocus={this.onMouseOver}
+          onMouseOut={this.onMouseOut}
+          onBlur={this.onMouseOut}
+          onClick={this.onClick}
+        >
+          <Img src={src} />
+          {this.state.hovered && <UpdateOverlay>Upload </UpdateOverlay>}
+        </Wrapper>
+        {this.state.inputImg && (
+          <FloatingEditor
+            image={this.state.inputImg}
+            onCloseEditor={this.onCloseEditor}
+          />
+        )}
+        <input
+          id="myInput"
+          key={fileInputKey}
+          type="file"
+          accept="image/*"
+          ref={ref => {
+            this.upload = ref;
+          }}
+          style={{ display: 'none' }}
+          onChange={this.onChangeFile}
+        />
+      </Fragment>
     );
   }
 }

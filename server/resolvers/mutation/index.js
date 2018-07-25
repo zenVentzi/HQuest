@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
+const { createWriteStream } = require('fs');
 const db = require('../../database');
 const { pubsub } = require('../../PubSub');
 
@@ -117,17 +119,28 @@ function removeQuestion(_, { questionId }, context) {
   };
 }
 
-async function uploadAvatar(_, { upload }, context) {
+async function saveAvatar(base64Img, userId) {
+  const src = `/public/images/avatar${userId}.jpeg`;
+
+  await new Promise((resolve, reject) => {
+    fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
+      const dbUser = db.users.find(usr => usr.id === userId);
+      dbUser.avatarSrc = src;
+      resolve(src);
+    });
+  });
+
+  return src;
+}
+
+async function uploadAvatar(_, { base64Img }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const { stream, filename, mimetype, encoding } = await upload;
-
-  console.dir(stream);
+  const avatarSrc = await saveAvatar(base64Img, context.user.id);
+  return avatarSrc;
 }
-
-// function updateUserAnswer()
 
 module.exports = {
   addBook,

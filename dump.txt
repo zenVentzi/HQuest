@@ -4,6 +4,4 @@ const GET_BOOKS = gql`
   }
 `;
 
-<Transition from={{ opacity: 0 }} enter={{ opacity: 1 }} leave={{ opacity: 0 }}>
-  {toggle ? ComponentA : ComponentB}
-</Transition>
+        test: [/\w/, /\.(png|jpg|gif)$/],
