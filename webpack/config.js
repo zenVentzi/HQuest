@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-// const path = require('path');
+const path = require('path');
 
 module.exports = {
   entry: [
@@ -16,6 +16,8 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     // contentBase: '/',
+    overlay: true,
+    stats: 'errors-only',
     hot: true,
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
