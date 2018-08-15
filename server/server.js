@@ -1,78 +1,50 @@
 const http = require('http');
-const express = require('express');
-const path = require('path');
 require('dotenv').config();
-const bodyParser = require('body-parser');
-const { ApolloServer, makeExecutableSchema } = require('apollo-server');
-const { SubscriptionServer } = require('subscriptions-transport-ws');
-const { execute, subscribe } = require('graphql');
-const jwt = require('express-jwt');
-const webpack = require('webpack');
-const webpackConfig = require('../webpack/config');
+const { ApolloServer } = require('apollo-server');
 const requireGraphQLFile = require('require-graphql-file');
+const app = require('./App');
+const { connect: mongoConnect } = require('./db');
 
-const typeDefs = requireGraphQLFile('./schema');
+const collections = require(`./db/collections`);
 const resolvers = require('./resolvers');
 
-const compiler = webpack(webpackConfig);
+const typeDefs = requireGraphQLFile('./schema');
 
 const PORT = process.env.PORT || 4000;
-const app = express();
 
-const auth = jwt({
-  secret: process.env.JWT_SECRET,
-  credentialsRequired: false,
-});
+mongoConnect(db => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req, connection }) => {
+      if (connection) {
+        // check connection for metadata
+        return {};
+      }
+      return {
+        user: req.user,
+        collections: collections(db),
+      };
+    },
+  });
+  server.applyMiddleware({ app });
 
-app.use(bodyParser.json(), auth);
+  const httpServer = http.createServer(app);
+  server.installSubscriptionHandlers(httpServer);
 
-app.use('/public', express.static('public'));
-
-// app.use(usersContent)
-
-app.use(
-  require('webpack-dev-middleware')(compiler, {
-    hot: true,
-    publicPath: webpackConfig.output.publicPath,
-  })
-);
-
-app.use(require('webpack-hot-middleware')(compiler));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'index.html'));
+  httpServer.listen(PORT, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    );
+    console.log(
+      `🚀 Subscriptions ready at ws://localhost:${PORT}${
+        server.subscriptionsPath
+      }`
+    );
+  });
 });
 
 // const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req, connection }) => {
-    if (connection) {
-      // check connection for metadata
-      return {};
-    }
-    return {
-      user: req.user,
-    };
-  },
-});
-server.applyMiddleware({ app });
-
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
-
-httpServer.listen(PORT, () => {
-  console.log(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-  );
-  console.log(
-    `🚀 Subscriptions ready at ws://localhost:${PORT}${
-      server.subscriptionsPath
-    }`
-  );
-});
 
 // server.listen().then(({ url }) => {
 //   console.log(`🚀 Server ready at ${url}`);

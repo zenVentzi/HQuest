@@ -1,102 +1,58 @@
 import { GET_QUESTIONS } from './index';
-import { viewedProfileId as userId } from '../index';
+// import { viewedProfileId as userId } from '../index';
 
-const ADD_QUESTION = 'editQuestion';
-const REMOVE_QUESTION = 'removeQuestion';
+const ADD_ANSWER = 'addAnswer';
+const EDIT_ANSWER = `editAnswer`;
+const REMOVE_ANSWER = 'removeAnswer';
 
-export { ADD_QUESTION, REMOVE_QUESTION };
+const CACHE_ACTIONS = { ADD_ANSWER, /* EDIT_ANSWER, */ REMOVE_ANSWER };
 
-const updateAnsweredQs = (action, aQs, mutatedQuestion) => {
+export { CACHE_ACTIONS };
+
+const updateQuestions = (action, questions, mutatedAnswer) => {
+  const { questionId } = mutatedAnswer;
+  let questionObj;
+  let questionIndex;
+
   switch (action) {
-    case ADD_QUESTION:
-      aQs.push(mutatedQuestion);
+    // apollo seems to automatically update in this case, so leave it for now
+    // case EDIT_ANSWER: {
+    //   debugger;
+    //   questionObj = questions.answered.find(q => q.id === questionId);
+    //   questionObj.answer.value = mutatedAnswer.value;
+    //   break;
+    // }
+    case ADD_ANSWER: {
+      questionObj = questions.unanswered.find(q => q.id === questionId);
+      questionIndex = questions.unanswered.findIndex(q => q.id === questionId);
+      questions.unanswered.splice(questionIndex, 1);
+      questionObj.answer = mutatedAnswer;
+      questions.answered.push(questionObj);
       break;
-    case REMOVE_QUESTION: {
-      const removedQuestionId = mutatedQuestion.id;
-      const i = aQs.findIndex(q => q.id === removedQuestionId);
-      aQs.splice(i, 1);
+    }
+    case REMOVE_ANSWER: {
+      questionObj = questions.answered.find(q => q.id === questionId);
+      questionIndex = questions.answered.findIndex(q => q.id === questionId);
+      questions.answered.splice(questionIndex, 1);
+      delete questionObj.answer;
+      questions.unanswered.push(questionObj);
       break;
     }
     default:
       break;
   }
-};
-
-const updateUnansweredQs = (action, uQs, mutatedQuestion) => {
-  switch (action) {
-    case ADD_QUESTION: {
-      const addedQuestionId = mutatedQuestion.id;
-      const i = uQs.findIndex(q => q.id === addedQuestionId);
-      uQs.splice(i, 1);
-      break;
-    }
-    case REMOVE_QUESTION: {
-      uQs.push(mutatedQuestion);
-      break;
-    }
-    default:
-      break;
-  }
-};
-
-const updateQuestions = (action, updateAnswered, store, mutatedQuestion) => {
-  const variables = { userId, all: true };
-
-  const { questions } = store.readQuery({
-    query: GET_QUESTIONS,
-    variables,
-  });
-
-  console.log(questions);
-
-  return;
-
-  switch (action) {
-    case ADD_QUESTION:
-      if (updateAnswered) {
-        questions.push(mutatedQuestion);
-      } else {
-        const removedQuestionId = mutatedQuestion.id;
-        const i = questions.findIndex(q => q.id === removedQuestionId);
-        questions.splice(i, 1);
-      }
-      break;
-    case REMOVE_QUESTION:
-      if (updateAnswered) {
-        const removedQuestionId = mutatedQuestion.id;
-        const i = questions.findIndex(q => q.id === removedQuestionId);
-        questions.splice(i, 1);
-      } else {
-        questions.push(mutatedQuestion);
-      }
-      break;
-    default:
-      break;
-  }
-
-  store.writeQuery({
-    query: GET_QUESTIONS,
-    variables,
-    data: { questions },
-  });
 };
 
 // const update = action => (store, { data: { [action]: mutatedQuestion } }) => {
 const update = action => (store, { data }) => {
-  const mutatedQuestion = data[action];
-  // try {
-  //   updateQuestions(userId, action, false, store, mutatedQuestion);
-  // } catch (error) {} // eslint-disable-line no-empty
-
-  const variables = { userId, all: true };
-
+  const mutatedAnswer = data[action];
+  const variables = { userId: mutatedAnswer.userId, all: true };
   const { questions } = store.readQuery({
     query: GET_QUESTIONS,
     variables,
   });
 
-  updateAnsweredQs(action, questions.answered, mutatedQuestion);
-  updateUnansweredQs(action, questions.unanswered, mutatedQuestion);
+  updateQuestions(action, questions, mutatedAnswer);
 
   store.writeQuery({
     query: GET_QUESTIONS,

@@ -25,12 +25,14 @@ type Question {
 }
 
 type Questions {
-  answered: [Question!]
-  unanswered: [Question!]
+  answered: [Question!]!
+  unanswered: [Question!]!
 }
 
 type Answer {
   id: ID!
+  userId: ID!
+  questionId: ID!
   value: String!
 }
 
@@ -46,9 +48,12 @@ type Mutation {
   addBook(title: String!, author: String!): Book!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): String
-  editQuestion(questionId: ID!, answerValue: String!): Question!
+  editAnswer(answerId: ID!, answerValue: String!): Answer!
+  addAnswer(questionId: ID!, answerValue: String!): Answer!
+  removeAnswer(answerId: ID!): Answer!
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
+  seedDb: String
 }
 
 type Subscription {

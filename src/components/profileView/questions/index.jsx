@@ -5,8 +5,6 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import AnsweredQuestions from './AnsweredQuestions';
 import UnansweredQuestions from './UnansweredQuestions';
-import QuestionViewer from './QuestionViewer';
-import QuestionEditor from './QuestionEditor';
 
 export const GET_QUESTIONS = gql`
   query questions($userId: ID!, $all: Boolean!) {
@@ -14,6 +12,7 @@ export const GET_QUESTIONS = gql`
       answered {
         ...questionFields
         answer {
+          id
           value
         }
       }

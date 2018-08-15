@@ -6,9 +6,13 @@ const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
 
   return (
     <div style={style}>
-      {questions.map(q => (
-        <CompleteQuestion key={q.id} showButtons={showButtons} question={q} />
-      ))}
+      {questions.length > 0 ? (
+        questions.map(q => (
+          <CompleteQuestion key={q.id} showButtons={showButtons} question={q} />
+        ))
+      ) : (
+        <div> No answered questions </div>
+      )}
     </div>
   );
 };

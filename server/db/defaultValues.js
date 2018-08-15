@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { ObjectID } = require('mongodb');
 
 const books = [
   { title: 'Hello', author: 'Pesho' },
@@ -20,78 +21,54 @@ const possibleValues = [
 
 const questions = [
   {
-    id: '1',
     type: TYPE_SCALE,
     possibleValues,
     value: 'q?',
     // 'How much do you use self-discipline?How much do you use self-discipline?',
   },
   {
-    id: '2',
     type: TYPE_SCALE,
     possibleValues,
     value: 'Where do you like to go the most?',
   },
   {
-    id: '3',
     type: TYPE_SCALE,
     possibleValues,
     value: 'How much do you work?',
   },
   {
-    id: '4',
     type: TYPE_SCALE,
     possibleValues,
     value: 'Test q?',
   },
   {
-    id: '5',
     type: TYPE_SCALE,
     possibleValues,
     value: 'Test q1?',
   },
 ];
 
-const answers = [
-  { id: '1', value: 2 },
-  { id: '2', value: 2 },
-  { id: '3', value: 2 },
-  { id: '4', value: 2 },
-  // { id: 2, type: TYPE_TEXT, value: 'I like going to the park the most', questionId: 2 },
-];
+// const answers = [
+//   { value: 2, questionId: ObjectID(`....`), authorId: ObjectID(`....`) },
+// ];
 
 const users = [
   {
-    id: '1',
     firstName: 'Pesho1',
     surName: 'Ivanov1',
     email: 'a',
-    password: bcrypt.hash('a', 10),
+    password: bcrypt.hashSync('a', 10),
     avatarSrc: ``,
-    questions: [
-      { id: '1', answer: { id: '3' } },
-      { id: '2', answer: { id: '4' } },
-      { id: '3', answer: { id: '4' } },
-      // { id: '4', answer: { id: '4' } },
-    ],
   },
   {
-    id: '2',
     firstName: 'Pesho2',
     surName: 'Ivanov2',
     email: 'a2',
-    password: bcrypt.hash('1234', 10),
+    password: bcrypt.hashSync('1234', 10),
     avatarSrc: ``,
-    questions: [
-      { id: '1', answer: { id: '2' } },
-      { id: '3', answer: { id: '1' } },
-    ],
   },
 ];
 
-module.exports = {
-  books,
-  questions,
-  answers,
-  users,
-};
+// function generateAnswersFor(userId, ques)
+
+module.exports = { books, questions, users };

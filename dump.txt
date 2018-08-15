@@ -1,7 +1,0 @@
-const GET_BOOKS = gql`
-  query books {
-    title
-  }
-`;
-
-        test: [/\w/, /\.(png|jpg|gif)$/],

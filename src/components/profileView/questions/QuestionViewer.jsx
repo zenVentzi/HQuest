@@ -3,30 +3,29 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Btn from './StyledBtn';
 import Scale from './Answer/Scale';
-import update, { REMOVE_QUESTION } from './CacheHelper';
+import update, { CACHE_ACTIONS } from './CacheHelper';
 
-const REMOVE_QUESTION_GQL = gql`
-  mutation removeQuestion($questionId: ID!) {
-    removeQuestion(questionId: $questionId) {
-      id
-      type
-      possibleValues
-      value
+const REMOVE_ANSWER = gql`
+  mutation removeAnswer($answerId: ID!) {
+    removeAnswer(answerId: $answerId) {
+      userId
+      questionId
     }
   }
 `;
 
 const QuestionViewer = props => {
   const onClickRemove = mutate => async () => {
-    const variables = {
-      questionId: props.question.id,
-    };
-
-    mutate({ variables, update: update(REMOVE_QUESTION) });
+    mutate({
+      variables: {
+        answerId: props.question.answer.id,
+      },
+      update: update(CACHE_ACTIONS.REMOVE_ANSWER),
+    });
   };
 
   return (
-    <Mutation mutation={REMOVE_QUESTION_GQL}>
+    <Mutation mutation={REMOVE_ANSWER}>
       {removeQuestion => {
         const question = props.question.value;
         const values = props.question.possibleValues;

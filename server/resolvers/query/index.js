@@ -1,55 +1,79 @@
-const { getAvatarSrcAsync } = require('../../utils');
-const db = require('../../database');
+const db = require('../../db');
+const { ObjectID } = require('mongodb');
 
-function books() {
-  return db.books;
+async function books(root, __, context) {
+  const { collections } = context;
+
+  const result = await collections.books.find().toArray();
+  return result;
 }
 
-function book() {
-  console.dir(db.books[0]);
-  return db.books[0];
+async function gqlUnansweredQs(collections, userId) {
+  const userAnswers = await collections.answers
+    .find({ userId: ObjectID(userId) })
+    .toArray();
+
+  const answeredQsIds = userAnswers.map(answer => answer.questionId);
+  const unansweredQs = await collections.questions
+    .find({
+      _id: { $nin: answeredQsIds },
+    })
+    .toArray();
+
+  return unansweredQs.map(q => ({
+    id: q._id.toString(),
+    type: q.type,
+    possibleValues: q.possibleValues,
+    value: q.value,
+  }));
 }
 
-function isAnswered(question, usr) {
-  return usr.questions.some(q => q.id === question.id);
+async function gqlAnsweredQs(collections, userId) {
+  const userAnswers = await collections.answers
+    .find({ userId: ObjectID(userId) })
+    .toArray();
+
+  const answeredQsIds = userAnswers.map(answer => answer.questionId);
+  const answeredQs = await collections.questions
+    .find({
+      _id: { $in: answeredQsIds },
+    })
+    .toArray();
+
+  return userAnswers.map(answer => {
+    const qId = answer.questionId;
+    const dbQuestion = answeredQs.find(q => q._id.equals(qId));
+
+    return {
+      id: dbQuestion._id.toString(),
+      type: dbQuestion.type,
+      possibleValues: dbQuestion.possibleValues,
+      value: dbQuestion.value,
+      answer: { id: answer._id.toString(), value: answer.value },
+    };
+  });
 }
 
-function questions(root, { userId, all }, context, info) {
+async function questions(root, { userId, all }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const usr = db.users.find(u => u.id === userId);
+  const { collections } = context;
 
-  const answeredQs = usr.questions.map(q => {
-    const dbQuestion = db.questions.find(dbQ => dbQ.id === q.id);
-    const dbAnswer = db.answers.find(dbA => dbA.id === q.answer.id);
-
-    return {
-      id: q.id,
-      type: dbQuestion.type,
-      possibleValues: dbQuestion.possibleValues,
-      value: dbQuestion.value,
-      answer: { id: dbAnswer.id, value: dbAnswer.value },
-    };
-  });
-
-  const result = { answered: answeredQs };
-
-  if (all) {
-    result.unanswered = db.questions.filter(q => !isAnswered(q, usr));
-  }
-
-  return result;
+  return {
+    answered: await gqlAnsweredQs(collections, userId),
+    unanswered: all ? await gqlUnansweredQs(collections, userId) : [],
+  };
 }
 
-function shapedUser(context, dbUser) {
+function gqlUser(context, dbUser) {
   return {
-    id: dbUser.id,
+    id: dbUser._id,
     email: dbUser.email,
     fullName: `${dbUser.firstName} ${dbUser.surName}`,
     avatarSrc: dbUser.avatarSrc,
-    me: context.user.id === dbUser.id,
+    me: context.user.id === dbUser._id.toString(),
   };
 }
 
@@ -64,26 +88,25 @@ function users(_, args, context) {
     return name.includes(match);
   });
 
-  const result = matchedDbUsers.map(dbUsr => shapedUser(context, dbUsr));
+  const result = matchedDbUsers.map(dbUsr => gqlUser(context, dbUsr));
 
   return result;
 }
 
-function user(_, { id }, context) {
+async function user(_, { id }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const dbUser = db.users.find(usr => usr.id === id);
+  const dbUser = await context.collections.users.findOne({ _id: ObjectID(id) });
 
   if (!dbUser) return null;
-  const usr = shapedUser(context, dbUser);
+  const usr = gqlUser(context, dbUser);
   return usr;
 }
 
 module.exports = {
   books,
-  book,
   users,
   user,
   questions,

@@ -1,13 +1,35 @@
 const bcrypt = require('bcrypt');
+const { ObjectID } = require('mongodb');
 const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
 const { createWriteStream } = require('fs');
-const db = require('../../database');
+const db = require('../../db');
+
+const defaultValues = require(`../../db/defaultValues`);
 const { pubsub } = require('../../PubSub');
 
-function addBook(root, args, context, info) {
+async function seedDb(
+  root,
+  __,
+  { collections: { questions, answers, users } }
+) {
+  // await questions.drop();
+  // await answers.drop();
+  // await users.drop();
+
+  await questions.insertMany(defaultValues.questions);
+  // answers will be added directly from the interface
+  await users.insertMany(defaultValues.users);
+
+  // const res = await collections.users.find().toArray();
+  // console.log(res);
+}
+
+async function addBook(root, args, context, info) {
+  const { collections } = context;
   const book = { title: args.title, author: args.author };
-  db.books.push(book);
+
+  await collections.books.insertOne(book);
 
   const payload = {
     bookAdded: book,
@@ -18,7 +40,7 @@ function addBook(root, args, context, info) {
   return book;
 }
 
-async function signUp(_, { firstName, surName, email, password }) {
+async function signUp(_, { firstName, surName, email, password }, context) {
   const user = {
     firstName,
     surName,
@@ -26,100 +48,110 @@ async function signUp(_, { firstName, surName, email, password }) {
     password: await bcrypt.hash(password, 10),
   };
 
-  db.users.push(user);
+  await context.collections.users.insertOne(user);
 
   // return json web token
   return jsonwebtoken.sign(
-    { id: user.id, email: user.email },
+    { id: user._id, email: user.email },
     process.env.JWT_SECRET,
-    { expiresIn: '1y' }
+    {
+      expiresIn: '1y',
+    }
   );
 }
 
-function login(_, { email, password }) {
-  const dbUser = db.users.find(usr => usr.email === email);
+async function login(_, { email, password }, context) {
+  // const dbUser = db.users.find(usr => usr.email === email);
+  const dbUser = await context.collections.users.findOne({
+    email,
+  });
 
   if (!dbUser) {
     throw new Error('No user with that email');
   }
-
-  const valid = bcrypt.compare(password, dbUser.password);
+  const passwordHash = dbUser.password;
+  const valid = await bcrypt.compare(password, passwordHash);
 
   if (!valid) {
     throw new Error('Incorrect password');
   }
 
-  // return json web token
   return jsonwebtoken.sign(
-    { id: dbUser.id, email: dbUser.email },
+    { id: dbUser._id, email: dbUser.email },
     process.env.JWT_SECRET,
-    { expiresIn: '1d' }
+    {
+      expiresIn: '1d',
+    }
   );
 }
 
-function editQuestion(_, { questionId, answerValue }, context) {
+async function editAnswer(_, { answerId, answerValue }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const userId = context.user.id;
-  const dbUser = db.users.find(u => u.id === userId);
-  const dbQuestion = db.questions.find(q => q.id === questionId);
-  const answeredQuestion = dbUser.questions.find(q => q.id === questionId);
+  const { collections } = context;
 
-  if (answeredQuestion) {
-    const dbAnswer = db.answers.find(a => a.id === answeredQuestion.answer.id);
-    dbAnswer.value = answerValue;
+  let modifiedObj = await collections.answers.findOneAndUpdate(
+    { _id: ObjectID(answerId) },
+    { $set: { value: answerValue } },
+    { returnOriginal: false }
+  );
 
-    return {
-      id: questionId,
-      type: dbQuestion.type,
-      possibleValues: dbQuestion.possibleValues,
-      value: dbQuestion.value,
-      answer: { id: dbAnswer.id, value: answerValue },
-    };
-  }
-
-  const newAnswerId = db.answers.length + 1;
-  db.answers.push({ id: newAnswerId, value: answerValue });
-  dbUser.questions.push({ id: questionId, answer: { id: newAnswerId } });
+  modifiedObj = modifiedObj.value;
 
   return {
-    id: questionId,
-    type: dbQuestion.type,
-    possibleValues: dbQuestion.possibleValues,
-    value: dbQuestion.value,
-    answer: { id: newAnswerId, value: answerValue },
+    id: modifiedObj._id.toString(),
+    questionId: modifiedObj.questionId.toString(),
+    userId: modifiedObj.userId.toString(),
+    value: modifiedObj.value,
   };
-
-  /* return {
-    id: questionId,
-    type: removedQ.type,
-    possibleValues: removedQ.possibleValues,
-    value: removedQ.value,
-  }; */
 }
 
-function removeQuestion(_, { questionId }, context) {
+async function addAnswer(_, { questionId, answerValue }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const userId = context.user.id;
-  const dbUser = db.users.find(u => u.id === userId);
-  const i = dbUser.questions.findIndex(q => q.id === questionId);
-  dbUser.questions.splice(i, 1);
-  const removedQ = db.questions.find(q => q.id === questionId);
+  const { collections } = context;
+
+  const objToInsert = {
+    userId: ObjectID(context.user.id),
+    questionId: ObjectID(questionId),
+    value: answerValue,
+  };
+
+  await collections.answers.insertOne(objToInsert);
+
+  const result = { ...objToInsert };
+  result.id = objToInsert._id.toString();
+  delete result._id;
+
+  return result;
+}
+
+async function removeAnswer(_, { answerId }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+
+  let removedObj = await collections.answers.findOneAndDelete({
+    _id: ObjectID(answerId),
+  });
+
+  removedObj = removedObj.value;
 
   return {
-    id: questionId,
-    type: removedQ.type,
-    possibleValues: removedQ.possibleValues,
-    value: removedQ.value,
+    id: removedObj._id.toString(),
+    questionId: removedObj.questionId.toString(),
+    userId: removedObj.userId.toString(),
+    value: removedObj.value,
   };
 }
 
-async function saveAvatar(base64Img, userId) {
+async function saveAvatarToFile(base64Img, userId) {
   const src = `/public/images/avatar${userId}.jpeg`;
 
   await new Promise((resolve, reject) => {
@@ -138,7 +170,7 @@ async function uploadAvatar(_, { base64Img }, context) {
     throw new Error('You are not authorized!');
   }
 
-  const avatarSrc = await saveAvatar(base64Img, context.user.id);
+  const avatarSrc = await saveAvatarToFile(base64Img, context.user.id);
   return avatarSrc;
 }
 
@@ -146,7 +178,9 @@ module.exports = {
   addBook,
   signUp,
   login,
-  editQuestion,
-  removeQuestion,
+  addAnswer,
+  editAnswer,
+  removeAnswer,
   uploadAvatar,
+  seedDb,
 };
