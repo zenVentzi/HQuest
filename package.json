@@ -34,6 +34,7 @@
     "history": "^4.7.2",
     "jsonwebtoken": "^8.3.0",
     "lodash.isequal": "^4.5.0",
+    "mongodb": "^3.1.1",
     "npm": "^6.1.0",
     "qs": "^6.5.2",
     "react": "^16.4.1",

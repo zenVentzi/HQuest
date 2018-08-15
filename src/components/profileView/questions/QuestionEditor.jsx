@@ -3,19 +3,26 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Btn from './StyledBtn';
 import Scale from './Answer/Scale';
-import update, { ADD_QUESTION } from './CacheHelper';
+import update, { CACHE_ACTIONS } from './CacheHelper';
 
-const EDIT_QUESTION = gql`
-  mutation editQuestion($questionId: ID!, $answerValue: String!) {
-    editQuestion(questionId: $questionId, answerValue: $answerValue) {
+const EDIT_ANSWER = gql`
+  mutation editAnswer($answerId: ID!, $answerValue: String!) {
+    editAnswer(answerId: $answerId, answerValue: $answerValue) {
       id
-      type
-      possibleValues
+      userId
+      questionId
       value
-      answer {
-        id
-        value
-      }
+    }
+  }
+`;
+
+const ADD_ANSWER = gql`
+  mutation addAnswer($questionId: ID!, $answerValue: String!) {
+    addAnswer(questionId: $questionId, answerValue: $answerValue) {
+      id
+      userId
+      questionId
+      value
     }
   }
 `;
@@ -30,18 +37,22 @@ class QuestionEditor extends Component {
   };
 
   onClickSave = mutation => async () => {
+    const mutationParams = {};
+
+    const isNewQuestion = !this.props.question.answer;
     const variables = {
-      questionId: this.props.question.id,
       answerValue: this.state.answerValue,
     };
 
-    const isNewQuestion = !this.props.question.answer;
-
-    const mutationParams = { variables };
-
     if (isNewQuestion) {
-      mutationParams.update = update(ADD_QUESTION);
+      variables.questionId = this.props.question.id;
+      mutationParams.update = update(CACHE_ACTIONS.ADD_ANSWER);
+    } else {
+      // mutationParams.update = update(CACHE_ACTIONS.EDIT_ANSWER);
+      variables.answerId = this.props.question.answer.id;
     }
+
+    mutationParams.variables = variables;
 
     await mutation(mutationParams);
     if (this.props.onSaved) this.props.onSaved();
@@ -54,9 +65,10 @@ class QuestionEditor extends Component {
   };
 
   render() {
+    const gqlMutation = this.props.question.answer ? EDIT_ANSWER : ADD_ANSWER;
     return (
-      <Mutation mutation={EDIT_QUESTION}>
-        {editQuestion => {
+      <Mutation mutation={gqlMutation}>
+        {mutation => {
           const question = this.props.question.value;
           const values = this.props.question.possibleValues;
           const { answerValue } = this.state;
@@ -69,7 +81,7 @@ class QuestionEditor extends Component {
                 value={answerValue}
                 onChange={this.onChange}
               />
-              <Btn onClick={this.onClickSave(editQuestion)}> Save </Btn>
+              <Btn onClick={this.onClickSave(mutation)}> Save </Btn>
             </Fragment>
           );
         }}

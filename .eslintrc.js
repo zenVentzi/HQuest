@@ -6,6 +6,7 @@ module.exports = {
     ],
     rules: {
         "no-console": "off",
+        'no-underscore-dangle': 'off',
         'no-plusplus': 'off',
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
