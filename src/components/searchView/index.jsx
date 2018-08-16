@@ -11,6 +11,7 @@ const GET_USERS = gql`
     users(match: $match) {
       id
       fullName
+      avatarSrc
     }
   }
 `;
