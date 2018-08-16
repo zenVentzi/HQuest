@@ -51,7 +51,7 @@ class ProfileView extends Component {
             <Fragment>
               <Navbar />
               <StyledView>
-                <Avatar src={user.avatarSrc} />
+                <Avatar src={user.avatarSrc} personal={user.me} />
                 <StyledUserName>
                   {/* <p> aaaafdfdfdf </p> */}
                   {user.fullName}

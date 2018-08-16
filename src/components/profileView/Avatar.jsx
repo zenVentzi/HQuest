@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   border: 2px solid black;
 
   &:hover {
-    cursor: pointer;
+    cursor: ${props => (props.personal ? 'pointer' : 'auto')};
   }
 `;
 
@@ -64,6 +64,7 @@ class Avatar extends Component {
   };
 
   onClick = () => {
+    if (!this.props.personal) return;
     this.upload.click();
   };
 
@@ -97,12 +98,13 @@ class Avatar extends Component {
   };
 
   render() {
-    // return <div> fdf </div>;
+    const { personal } = this.props;
     const { src, fileInputKey } = this.state;
 
     return (
       <Fragment>
         <Wrapper
+          personal={personal}
           onMouseOver={this.onMouseOver}
           onFocus={this.onMouseOver}
           onMouseOut={this.onMouseOut}
@@ -110,7 +112,8 @@ class Avatar extends Component {
           onClick={this.onClick}
         >
           <Img src={src} />
-          {this.state.hovered && <UpdateOverlay>Upload </UpdateOverlay>}
+          {personal &&
+            this.state.hovered && <UpdateOverlay>Upload </UpdateOverlay>}
         </Wrapper>
         {this.state.inputImg && (
           <FloatingEditor
