@@ -13,10 +13,13 @@ const Wrapper = styled.div`
 `;
 
 const Img = styled.img`
-  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+  /* position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
 `;
 
 Wrapper.defaultProps = {
