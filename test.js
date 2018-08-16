@@ -18,7 +18,7 @@ const { ObjectID } = require('mongodb');
 //   // });
 // });
 
-let a = { b: 5 };
-a = a.b;
+const arr = `pes ges`.split(' ');
 
-console.log(a);
+// arr.forEach(elem => console.log(elem));
+console.dir(arr[1]);

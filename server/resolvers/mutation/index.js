@@ -25,7 +25,7 @@ async function seedDb(
   // console.log(res);
 }
 
-async function addBook(root, args, context, info) {
+async function addBook(root, args, context) {
   const { collections } = context;
   const book = { title: args.title, author: args.author };
 
@@ -50,7 +50,6 @@ async function signUp(_, { firstName, surName, email, password }, context) {
 
   await context.collections.users.insertOne(user);
 
-  // return json web token
   return jsonwebtoken.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET,
@@ -61,7 +60,6 @@ async function signUp(_, { firstName, surName, email, password }, context) {
 }
 
 async function login(_, { email, password }, context) {
-  // const dbUser = db.users.find(usr => usr.email === email);
   const dbUser = await context.collections.users.findOne({
     email,
   });
@@ -154,15 +152,11 @@ async function removeAnswer(_, { answerId }, context) {
 async function saveAvatarToFile(base64Img, userId) {
   const src = `/public/images/avatar${userId}.jpeg`;
 
-  await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
-      const dbUser = db.users.find(usr => usr.id === userId);
-      dbUser.avatarSrc = src;
       resolve(src);
     });
   });
-
-  return src;
 }
 
 async function uploadAvatar(_, { base64Img }, context) {
@@ -170,7 +164,13 @@ async function uploadAvatar(_, { base64Img }, context) {
     throw new Error('You are not authorized!');
   }
 
+  const { collections } = context;
+
   const avatarSrc = await saveAvatarToFile(base64Img, context.user.id);
+  await collections.users.updateOne(
+    { _id: ObjectID(context.user.id) },
+    { $set: { avatarSrc } }
+  );
   return avatarSrc;
 }
 
