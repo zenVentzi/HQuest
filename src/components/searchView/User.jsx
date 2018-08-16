@@ -13,7 +13,6 @@ const StyledUser = styled.div`
   justify-content: space-around;
   z-index: 1;
   border-radius: 0.3em;
-  /* border: 1px solid black; */
 
   &:hover {
     background: black;
