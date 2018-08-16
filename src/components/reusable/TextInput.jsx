@@ -8,7 +8,8 @@ const TextInput = styled.input`
   border-radius: 0.2em;
   background-color: black;
   color: white;
-  font-family: "Arial Black", Gadget, sans-serif;
-  width: 300px;`;
+  font-family: 'Arial Black', Gadget, sans-serif;
+  width: 300px;
+`;
 
 export default TextInput;

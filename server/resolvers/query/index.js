@@ -69,7 +69,7 @@ async function questions(root, { userId, all }, context) {
 
 function gqlUser(context, dbUser) {
   return {
-    id: dbUser._id,
+    id: dbUser._id.toString(),
     email: dbUser.email,
     fullName: `${dbUser.firstName} ${dbUser.surName}`,
     avatarSrc: dbUser.avatarSrc,
@@ -77,18 +77,44 @@ function gqlUser(context, dbUser) {
   };
 }
 
-function users(_, args, context) {
+async function users(_, { match }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
   }
 
-  const matchedDbUsers = db.users.filter(usr => {
-    const name = `${usr.firstName.toLowerCase()} ${usr.surName.toLowerCase()}`;
-    const match = args.match.toLowerCase();
-    return name.includes(match);
-  });
+  const { collections } = context;
+  const matchWords = match.split(' ');
 
-  const result = matchedDbUsers.map(dbUsr => gqlUser(context, dbUsr));
+  let matchedUsers;
+
+  if (matchWords.length > 2) {
+    return [];
+  } else if (matchWords.length === 2) {
+    const fNameRegex = new RegExp(`.*${matchWords[0]}.*`, `i`);
+    const surNameRegex = new RegExp(`.*${matchWords[1]}.*`, `i`);
+
+    matchedUsers = await collections.users
+      .find({
+        $and: [
+          { firstName: { $regex: fNameRegex } },
+          { surName: { $regex: surNameRegex } },
+        ],
+      })
+      .toArray();
+  } else {
+    const regex = new RegExp(`.*${match}.*`, `i`);
+    matchedUsers = await collections.users
+      .find({
+        $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }],
+      })
+      .toArray();
+  }
+
+  /* 
+  problem: when writing the full name, the regex doesn't match
+  solution: check if the match variable contains space. if it does, split it into regex1 & regex2
+  */
+  const result = matchedUsers.map(usr => gqlUser(context, usr));
 
   return result;
 }
