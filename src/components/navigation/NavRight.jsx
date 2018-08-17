@@ -3,6 +3,7 @@
 import NavLeft from './NavLeft';
 
 const NavRight = NavLeft.extend`
-  float: right;`;
+  float: right;
+`;
 
 export default NavRight;

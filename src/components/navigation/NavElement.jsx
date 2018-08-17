@@ -6,6 +6,7 @@ const NavElement = styled.a`
   color: black;
   text-align: center;
   padding: 14px 16px;
-  text-decoration: none;`;
+  text-decoration: none;
+`;
 
 export default NavElement;
