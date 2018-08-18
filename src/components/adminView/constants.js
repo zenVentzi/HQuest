@@ -1,8 +1,8 @@
-const SCALE = `scale`;
-const TEXT = `text`;
-const OPTIONS = `options`;
-const WOULD_YOU_SINGLE = `would_u_single`;
-const WOULD_YOU_DOUBLE = `would_u_double`;
+const SCALE = `SCALE`;
+const TEXT = `TEXT`;
+const OPTIONS = `OPTIONS`;
+const WOULD_YOU_SINGLE = `WOULD_YOU_SINGLE`;
+const WOULD_YOU_DOUBLE = `WOULD_YOU_DOUBLE`;
 
 const QuestionTypes = {
   SCALE,

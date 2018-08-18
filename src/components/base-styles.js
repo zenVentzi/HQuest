@@ -8,6 +8,13 @@ const baseStyles = () => injectGlobal`
     font-family: "Arial Black", Gadget, sans-serif;
   }
 
+  hr {
+    background-color: black;
+    width: 100%;
+    height: .1em;
+    border-radius: 50%;
+  }
+
   input {
     padding: 0.2em 0.9em;
     border: none;
