@@ -83,6 +83,20 @@ async function login(_, { email, password }, context) {
   );
 }
 
+async function createQuestion(_, { question, type, possibleAnswers }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+
+  await collections.questions.insertOne({
+    question,
+    type,
+    possibleAnswers,
+  });
+}
+
 async function editAnswer(_, { answerId, answerValue }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
@@ -178,6 +192,7 @@ module.exports = {
   addBook,
   signUp,
   login,
+  createQuestion,
   addAnswer,
   editAnswer,
   removeAnswer,

@@ -1,11 +1,9 @@
 Snippets: rcc, rce, rfe, 
 
-Problem: ..
-Solution/s:..
-
-1) Search users
 2) Log out
 
-What comes next?
+Core features:
 
-1) Update all the db collections resolvers
+1) Questions
+
+On menu btn click, dropdown appear
