@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 
 const StyledBtn = styled.button`
@@ -12,44 +12,76 @@ const TextArea = styled.textarea`
   width: 95%;
 `;
 
-const Value = styled.input`
+const Option = styled.input`
   margin-bottom: 1em;
   width: 10em;
 `;
 
-const OptionsBody = () => {
-  const test = 5;
+class OptionsBody extends Component {
+  state = { question: null, possibleAnswers: [], numberOfOptions: 3 };
 
-  const renderOptions = () => {
-    const values = [];
+  onOptionChange = index => e => {
+    const option = e.target.value;
+    const newState = { ...this.state };
 
-    for (let i = 0; i < 3; i++) {
+    newState.possibleAnswers[index] = option;
+    this.setState(newState, () => this.props.onChange(this.state));
+  };
+
+  addOption = () => {
+    this.setState(oldState => {
+      const num = oldState.numberOfOptions + 1;
+      return { ...oldState, numberOfOptions: num };
+    });
+  };
+
+  removeOption = () => {
+    this.setState(oldState => {
+      const num = oldState.numberOfOptions - 1;
+      return { ...oldState, numberOfOptions: num };
+    });
+  };
+
+  renderOptions = () => {
+    const options = [];
+    const { numberOfOptions } = this.state;
+
+    for (let i = 0; i < numberOfOptions; i++) {
       const placeholder = `option name..`;
-      values.push(
+      const option = this.state.possibleAnswers[i];
+      options.push(
         <li key={i}>
-          <Value placeholder={placeholder} />
+          <Option
+            placeholder={placeholder}
+            defaultValue={option}
+            onChange={this.onOptionChange(i)}
+          />
         </li>
       );
     }
 
-    return values;
+    return options;
   };
 
-  return (
-    <Fragment>
-      <TextArea
-        placeholder="Enter the question here.."
-        onChange={() => {
-          const test = 5;
-        }}
-      />
-      <ul>{renderOptions()}</ul>
-      <div>
-        <StyledBtn>Add option</StyledBtn>
-        <StyledBtn>Remove option</StyledBtn>
-      </div>
-    </Fragment>
-  );
-};
+  render() {
+    return (
+      <Fragment>
+        <TextArea
+          placeholder="Enter the question here.."
+          onChange={e => {
+            const question = e.target.value;
+            const newState = { ...this.state, question };
+            this.setState(newState, () => this.props.onChange(this.state));
+          }}
+        />
+        <ul>{this.renderOptions()}</ul>
+        <div>
+          <StyledBtn onClick={this.addOption}>Add option</StyledBtn>
+          <StyledBtn onClick={this.removeOption}>Remove option</StyledBtn>
+        </div>
+      </Fragment>
+    );
+  }
+}
 
 export default OptionsBody;
