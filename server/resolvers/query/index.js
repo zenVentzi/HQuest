@@ -22,9 +22,9 @@ async function gqlUnansweredQs(collections, userId) {
 
   return unansweredQs.map(q => ({
     id: q._id.toString(),
+    question: q.question,
     type: q.type,
-    possibleValues: q.possibleValues,
-    value: q.value,
+    possibleAnswers: q.possibleAnswers,
   }));
 }
 
@@ -46,9 +46,9 @@ async function gqlAnsweredQs(collections, userId) {
 
     return {
       id: dbQuestion._id.toString(),
+      question: dbQuestion.question,
       type: dbQuestion.type,
-      possibleValues: dbQuestion.possibleValues,
-      value: dbQuestion.value,
+      possibleAnswers: dbQuestion.possibleAnswers,
       answer: { id: answer._id.toString(), value: answer.value },
     };
   });

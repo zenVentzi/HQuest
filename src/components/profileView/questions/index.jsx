@@ -24,9 +24,9 @@ export const GET_QUESTIONS = gql`
 
   fragment questionFields on Question {
     id
+    question
     type
-    possibleValues
-    value
+    possibleAnswers
   }
 `;
 
@@ -36,20 +36,6 @@ const StyledQuestionsContainer = styled.div`
   /* width: 50%; */
   /* border: 3px solid black; */
 `;
-
-const A = ({ bla, destroyed, ...style }) => (
-  // console.log(style);
-
-  <div style={style}>a</div>
-);
-
-const B = ({ bla, destroyed, ...style }) => {
-  const holder = 5;
-  // console.log(`b`);
-  // console.log(this.state.toggle);
-
-  return <div style={style}>b</div>;
-};
 
 const QuestionsContainer = ({ user, showAnswered }) => {
   const vars = { userId: user.id, all: user.me };

@@ -28,11 +28,11 @@ const StyledView = styled.div`
 `;
 
 class AdminView extends Component {
-  state = { questionType: 'default', sucessMsg: null };
+  state = { questionType: 'default', successMsg: null };
 
   onOptionSelected = e => {
     const val = e.target.value;
-    this.setState({ questionType: val });
+    this.setState({ questionType: val, successMsg: null });
   };
 
   onQuestionAdded = () => {

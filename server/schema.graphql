@@ -22,8 +22,8 @@ enum QuestionType {
 type Question {
   id: ID!
   type: QuestionType!
-  possibleValues: [String!]
-  value: String!
+  possibleAnswers: [String!]
+  question: String!
   answer: Answer
 }
 

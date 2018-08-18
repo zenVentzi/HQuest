@@ -69,15 +69,15 @@ class QuestionEditor extends Component {
     return (
       <Mutation mutation={gqlMutation}>
         {mutation => {
-          const question = this.props.question.value;
-          const values = this.props.question.possibleValues;
+          const { question } = this.props.question;
+          const { possibleAnswers } = this.props.question;
           const { answerValue } = this.state;
 
           return (
             <Fragment>
               <p> {question} </p>
               <Scale
-                values={values}
+                values={possibleAnswers}
                 value={answerValue}
                 onChange={this.onChange}
               />
