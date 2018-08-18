@@ -12,8 +12,11 @@ type User {
 }
 
 enum QuestionType {
-  Scale
-  Text
+  SCALE
+  TEXT
+  OPTIONS
+  WOULD_YOU_SINGLE
+  WOULD_YOU_DOUBLE
 }
 
 type Question {
@@ -48,6 +51,7 @@ type Mutation {
   addBook(title: String!, author: String!): Book!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): String
+  createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!]): String
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
