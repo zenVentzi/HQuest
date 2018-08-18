@@ -27,15 +27,15 @@ const QuestionViewer = props => {
   return (
     <Mutation mutation={REMOVE_ANSWER}>
       {removeQuestion => {
-        const question = props.question.value;
-        const values = props.question.possibleValues;
+        const { question } = props.question;
+        const { possibleAnswers } = props.question;
         const { value } = props.question.answer;
         const { hovered, onClickEdit, showButtons } = props;
 
         return (
           <Fragment>
             <p> {question} </p>
-            <Scale viewMode values={values} value={value} />
+            <Scale viewMode values={possibleAnswers} value={value} />
             {showButtons && (
               <Fragment>
                 <Btn onClick={onClickEdit} visible={hovered}>
