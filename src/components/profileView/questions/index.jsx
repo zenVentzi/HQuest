@@ -30,39 +30,37 @@ export const GET_QUESTIONS = gql`
   }
 `;
 
-const StyledQuestionsContainer = styled.div`
-  margin-top: 1em;
-  width: 100%;
-  /* width: 50%; */
-  /* border: 3px solid black; */
-`;
+// const StyledQuestionsContainer = styled.div`
+//   margin-top: 1em;
+//   width: 100%;
+//   /* width: 50%; */
+//   /* border: 3px solid black; */
+// `;
 
 const QuestionsContainer = ({ user, showAnswered }) => {
   const vars = { userId: user.id, all: user.me };
 
   return (
-    <StyledQuestionsContainer>
-      <Query query={GET_QUESTIONS} variables={vars}>
-        {({ loading, error, data: { questions } }) => {
-          if (loading) return <div> loading questions.. </div>;
-          if (error) return <div> {`Error ${error}`}</div>;
-          // not using object destructing cuz it didn't work at the time
-          const qs = showAnswered ? questions.answered : questions.unanswered;
+    <Query query={GET_QUESTIONS} variables={vars}>
+      {({ loading, error, data: { questions } }) => {
+        if (loading) return <div> loading questions.. </div>;
+        if (error) return <div> {`Error ${error}`}</div>;
+        // not using object destructing cuz it didn't work at the time
+        const qs = showAnswered ? questions.answered : questions.unanswered;
 
-          return (
-            <Transition
-              from={{ opacity: 0 }}
-              enter={{ opacity: 1 }}
-              leave={{ opacity: 0 }}
-              questions={qs}
-              showButtons={user.me}
-            >
-              {showAnswered ? AnsweredQuestions : UnansweredQuestions}
-            </Transition>
-          );
-        }}
-      </Query>
-    </StyledQuestionsContainer>
+        return (
+          <Transition
+            from={{ opacity: 0, width: '100%' }}
+            enter={{ opacity: 1 }}
+            leave={{ opacity: 0 }}
+            questions={qs}
+            showButtons={user.me}
+          >
+            {showAnswered ? AnsweredQuestions : UnansweredQuestions}
+          </Transition>
+        );
+      }}
+    </Query>
   );
 };
 
