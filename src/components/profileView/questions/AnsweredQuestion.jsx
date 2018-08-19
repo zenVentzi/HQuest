@@ -18,24 +18,16 @@ class AnsweredQuestion extends Component {
     viewMode: !!this.props.question.answer,
   };
 
-  onMouseEnter = () => {
-    this.toggleHovered();
+  onMouseOver = () => {
+    this.toggleHovered(true);
   };
 
   onMouseLeave = () => {
-    this.toggleHovered();
+    this.toggleHovered(false);
   };
 
-  onClickEdit = () => {
-    this.toggleViewMode();
-  };
-
-  onSaved = () => {
-    this.toggleViewMode();
-  };
-
-  toggleHovered = () => {
-    this.setState({ ...this.state, hovered: !this.state.hovered });
+  toggleHovered = value => {
+    this.setState({ ...this.state, hovered: value });
   };
 
   toggleViewMode = () => {
@@ -48,7 +40,7 @@ class AnsweredQuestion extends Component {
 
     return (
       <StyledQuestion
-        onMouseEnter={this.onMouseEnter}
+        onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
         style={style}
       >
@@ -57,10 +49,10 @@ class AnsweredQuestion extends Component {
             hovered={hovered}
             showButtons={showButtons}
             question={question}
-            onClickEdit={this.onClickEdit}
+            onClickEdit={this.toggleViewMode}
           />
         ) : (
-          <QuestionEditor question={question} onSaved={this.onSaved} />
+          <QuestionEditor question={question} onSaved={this.toggleViewMode} />
         )}
       </StyledQuestion>
     );
