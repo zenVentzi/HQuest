@@ -26,7 +26,7 @@ const Text = props => {
   return viewMode ? (
     <Viewer>{answer}</Viewer>
   ) : (
-    <TextArea defaultValue={answer} onChange={onChange} />
+    <TextArea defaultValue={answer} onChange={e => onChange(e.target.value)} />
   );
 };
 
