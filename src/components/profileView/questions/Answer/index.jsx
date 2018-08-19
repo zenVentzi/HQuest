@@ -1,5 +1,6 @@
 import React from 'react';
 import Scale from './Scale';
+import Options from './Options';
 import Text from './Text';
 import { QuestionTypes } from '../../../../constants';
 
@@ -13,7 +14,6 @@ const Answer = props => {
 
   let result;
   const answerValue = answer ? answer.value : undefined;
-  // debugger;
 
   switch (type) {
     case TEXT:
@@ -27,6 +27,16 @@ const Answer = props => {
           viewMode={viewMode}
           values={possibleAnswers}
           value={answerValue}
+          onChange={onChange}
+        />
+      );
+      break;
+    case OPTIONS:
+      result = (
+        <Options
+          viewMode={viewMode}
+          options={possibleAnswers}
+          option={answerValue}
           onChange={onChange}
         />
       );
