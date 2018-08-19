@@ -26,7 +26,7 @@ const Answer = props => {
         <Scale
           viewMode={viewMode}
           values={possibleAnswers}
-          value={answer.value}
+          value={answerValue}
           onChange={onChange}
         />
       );
