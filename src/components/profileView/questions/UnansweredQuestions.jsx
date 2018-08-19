@@ -1,17 +1,13 @@
-import React, { Fragment } from 'react';
-import QuestionEditor from './QuestionEditor';
+import React from 'react';
+import UnansweredQuestion from './UnansweredQuestion';
 
 const UnansweredQuestions = ({ questions, ...style }) => {
   if (!questions.length) {
-    return <div> Congrats. All questions are answered </div>;
+    return <div style={style}> Congrats. All questions are answered </div>;
   }
 
   const q = questions[0];
-  return (
-    <Fragment>
-      <QuestionEditor question={q} />
-    </Fragment>
-  );
+  return <UnansweredQuestion style={style} question={q} />;
 };
 
 export default UnansweredQuestions;
