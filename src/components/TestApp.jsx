@@ -1,28 +1,25 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import avatar from './avatar.png';
 
-const Wrapper = styled.div`
-  width: 100px;
+const Parent = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100px;
-  border-radius: 50%;
-  z-index: 100;
-  border: 4px solid red;
+  background: blue;
 `;
 
-const Img = styled.img`
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 50%;
+const Child = styled.div`
+  /* flex: 0.1; */
+  flex-grow: 0.2;
+  background: red;
+  align-self: center;
+  border: 1px solid black;
 `;
 
 const App = () => (
-  <Wrapper>
-    <Img
-      src="https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png"
-      alt="bla"
-    />
-  </Wrapper>
+  <Parent>
+    <Child>fddddddddddddddddddddddddddddd</Child>
+    <Child />
+  </Parent>
 );
-
 export default App;

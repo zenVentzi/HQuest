@@ -6,9 +6,13 @@ import QuestionEditor from './QuestionEditor';
 const StyledQuestion = styled.div`
   /* border: 3px solid black; */
   width: 100%;
+  /* height: 100px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-class CompleteQuestion extends Component {
+class AnsweredQuestion extends Component {
   state = {
     hovered: false,
     viewMode: !!this.props.question.answer,
@@ -40,12 +44,13 @@ class CompleteQuestion extends Component {
 
   render() {
     const { hovered, viewMode } = this.state;
-    const { question, showButtons } = this.props;
+    const { question, showButtons, style } = this.props;
 
     return (
       <StyledQuestion
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
+        style={style}
       >
         {viewMode ? (
           <QuestionViewer
@@ -62,4 +67,4 @@ class CompleteQuestion extends Component {
   }
 }
 
-export default CompleteQuestion;
+export default AnsweredQuestion;

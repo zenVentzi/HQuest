@@ -1,19 +1,24 @@
-import React from 'react';
-import CompleteQuestion from './CompleteQuestion';
+import React, { Fragment } from 'react';
+import AnsweredQuestion from './AnsweredQuestion';
 
 const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
   const test = 5;
 
   return (
-    <div style={style}>
+    <Fragment>
       {questions.length > 0 ? (
         questions.map(q => (
-          <CompleteQuestion key={q.id} showButtons={showButtons} question={q} />
+          <AnsweredQuestion
+            key={q.id}
+            style={style}
+            showButtons={showButtons}
+            question={q}
+          />
         ))
       ) : (
-        <div> No answered questions </div>
+        <div style={style}> No answered questions </div>
       )}
-    </div>
+    </Fragment>
   );
 };
 
