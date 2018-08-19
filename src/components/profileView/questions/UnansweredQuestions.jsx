@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import QuestionEditor from './QuestionEditor';
 
 const UnansweredQuestions = ({ questions, ...style }) => {
@@ -8,9 +8,9 @@ const UnansweredQuestions = ({ questions, ...style }) => {
 
   const q = questions[0];
   return (
-    <div style={style}>
+    <Fragment>
       <QuestionEditor question={q} />
-    </div>
+    </Fragment>
   );
 };
 

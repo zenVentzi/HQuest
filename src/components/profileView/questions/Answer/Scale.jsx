@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  margin-top: 0.6em;
+  width: 80%;
+  background: black;
+  color: white;
+  border-radius: 0.2em;
+  padding: 0.2em 1em;
 `;
 
 const Slider = styled.input`
@@ -12,7 +16,7 @@ const Slider = styled.input`
   width: 50%;
   height: 15px;
   border-radius: 5px;
-  background: black;
+  background: white;
   outline: none;
   transition: opacity 0.2s;
 
@@ -21,14 +25,14 @@ const Slider = styled.input`
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: white;
+    background: black;
     cursor: pointer;
   }
   &::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: white;
+    background: black;
     cursor: pointer;
   }
   &:hover {
@@ -36,25 +40,41 @@ const Slider = styled.input`
   }
 `;
 
-const Scale = props => {
-  const { viewMode, value } = props;
-  const minValue = 0;
-  const maxValue = props.values.length - 1;
-  const valueName = props.values[value];
+const DEFAULT_VALUE = 3;
 
-  return (
-    <Wrapper>
-      <p> {valueName} </p>
-      <Slider
-        disabled={viewMode}
-        type="range"
-        min={minValue}
-        max={maxValue}
-        defaultValue={value}
-        onChange={props.onChange}
-      />
-    </Wrapper>
-  );
-};
+class Scale extends Component {
+  state = { editedValue: null };
+
+  onChange = e => {
+    const editedValue = e.target.value;
+    this.setState({ editedValue });
+    this.props.onChange(editedValue);
+  };
+
+  render() {
+    const { viewMode, value, values } = this.props;
+    const defaultValue = value || DEFAULT_VALUE;
+    const minValue = 0;
+    const maxValue = values.length - 1;
+
+    const currentValue = this.state.editedValue || defaultValue;
+
+    const valueName = values[currentValue];
+
+    return (
+      <Wrapper>
+        <p> {valueName} </p>
+        <Slider
+          disabled={viewMode}
+          type="range"
+          min={minValue}
+          max={maxValue}
+          defaultValue={defaultValue}
+          onChange={this.onChange}
+        />
+      </Wrapper>
+    );
+  }
+}
 
 export default Scale;

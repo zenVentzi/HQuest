@@ -59,9 +59,8 @@ class QuestionEditor extends Component {
     if (this.props.onSaved) this.props.onSaved();
   };
 
-  onChange = e => {
-    const { value } = e.target;
-    const newState = { ...this.state, answerValue: value };
+  onChange = editedAnswer => {
+    const newState = { ...this.state, answerValue: editedAnswer };
     this.setState(newState);
   };
 
