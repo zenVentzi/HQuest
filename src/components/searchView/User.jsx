@@ -2,15 +2,41 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
-import StyledUserName from '../reusable/StyledUserName';
+
+const StyledUserName = styled.div`
+  /* font-size: 20px; */
+  /* margin-bottom: 1em; */
+`;
+
+const StyledDescription = styled.div`
+  font-size: 0.6em;
+  color: gray;
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  /* padding: 0.7em 0.3em; */
+  padding: 0.1em 0em 1.5em 0.3em;
+  /* padding-left: 0.3em; */
+  /* padding-bottom: 1.5em; */
+  /* margin-left: 0.6em; */
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const UserContent = styled.div`
+  display: flex;
+  width: 60%;
+  justify-content: flex-start;
+`;
 
 const StyledUser = styled.div`
   display: flex;
-  width: 100%;
-  flex-wrap: nowrap;
+  /* max-width: 100%; */
+  /* flex-wrap: nowrap; */
   height: 60px;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   z-index: 1;
   border-radius: 0.3em;
 
@@ -49,10 +75,15 @@ class User extends Component {
           this.setState({ redirect: true });
         }}
       >
-        <ThemeProvider theme={theme}>
-          <Avatar src={avatarSrc} />
-        </ThemeProvider>
-        <StyledUserName>{fullName}</StyledUserName>
+        <UserContent>
+          <ThemeProvider theme={theme}>
+            <Avatar src={avatarSrc} />
+          </ThemeProvider>
+          <TextContainer>
+            <StyledUserName>{fullName}</StyledUserName>
+            <StyledDescription>CEO at Microsoft</StyledDescription>
+          </TextContainer>
+        </UserContent>
       </StyledUser>
     );
   }
