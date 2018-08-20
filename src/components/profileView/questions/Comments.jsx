@@ -10,9 +10,11 @@ const GrayBackground = styled.div`
   background: rgba(255, 255, 255, 0.5);
 `;
 
-const StyledReactions = styled.div`
+const StyledComments = styled.div`
   position: fixed;
   display: flex;
+  flex: 1;
+  overflow-y: scroll;
   flex-direction: column;
   align-items: center;
   top: 20%;
@@ -22,17 +24,35 @@ const StyledReactions = styled.div`
   background: black;
   border-radius: 0.2em;
   color: white;
+
+  &::-webkit-scrollbar {
+    width: 0.8em;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ghostwhite;
+    margin-right: 1em;
+    /* change me to blue to match the background */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    background: black;
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
+  }
 `;
 
 const Input = styled.textarea`
+  margin-top: 2em;
   width: 80%;
-  /* box-sizing: border-box; */
+  min-height: min-content;
   background: white;
   color: black;
   margin-bottom: 1em;
 `;
 
 const CloseBtn = styled.button`
+  position: fixed;
   align-self: flex-end;
   margin-bottom: 1em;
 `;
@@ -41,11 +61,17 @@ const Comments = () => {
   const holder = 5;
   return (
     <GrayBackground>
-      <StyledReactions>
+      <StyledComments>
         <CloseBtn>&#x2718;</CloseBtn>
         <Input placeholder="Add a comment..." />
         <Comment />
-      </StyledReactions>
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+      </StyledComments>
     </GrayBackground>
   );
 };

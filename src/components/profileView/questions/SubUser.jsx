@@ -25,7 +25,7 @@ const StyledUser = styled.div`
   display: flex;
   /* height: 1em; */
   margin-bottom: 0.3em;
-  width: 80%;
+  width: 100%;
   align-items: center;
   justify-content: flex-start;
   z-index: 1;
