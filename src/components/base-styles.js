@@ -4,6 +4,10 @@ import reset from 'styled-reset';
 const baseStyles = () => injectGlobal`
   ${reset}
   
+  * {
+    box-sizing: border-box;
+  }
+
   body, select, button, input, textarea {
     font-family: "Arial Black", Gadget, sans-serif;
   }

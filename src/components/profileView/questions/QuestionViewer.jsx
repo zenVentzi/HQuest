@@ -7,6 +7,7 @@ import Answer from './Answer';
 import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheHelper';
 import Reactions from './Reactions';
+import Comments from './Comments';
 
 const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
@@ -46,7 +47,7 @@ const QuestionViewer = props => {
 
         return (
           <Fragment>
-            {/* <Reactions /> */}
+            <Comments />
             <QuestionText> {question.question} </QuestionText>
             <Answer viewMode question={question} />
             <div>
