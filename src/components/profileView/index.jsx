@@ -14,8 +14,6 @@ const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
 
-// let viewedProfileId;
-
 const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {
@@ -50,17 +48,12 @@ class ProfileView extends Component {
           if (error) return <div> {error} </div>;
           if (!user) return <div> User not found </div>;
 
-          // viewedProfileId = user.id;
-
           return (
             <Fragment>
               <Navbar />
               <StyledView>
                 <Avatar src={user.avatarSrc} personal={user.me} />
-                <StyledUserName>
-                  {/* <p> aaaafdfdfdf </p> */}
-                  {user.fullName}
-                </StyledUserName>
+                <StyledUserName>{user.fullName}</StyledUserName>
                 <Search
                   placeholder="Search questions.."
                   onChange={() => {
