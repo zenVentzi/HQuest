@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
+import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Btn from './StyledBtn';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheHelper';
+import Reactions from './Reactions';
 
 const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
@@ -12,6 +14,18 @@ const REMOVE_ANSWER = gql`
       userId
       questionId
     }
+  }
+`;
+
+const Span = styled.span`
+  cursor: pointer;
+  margin: 1em 0.6em;
+  font-size: 0.7em;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #555;
   }
 `;
 
@@ -32,9 +46,14 @@ const QuestionViewer = props => {
 
         return (
           <Fragment>
+            {/* <Reactions /> */}
             <QuestionText> {question.question} </QuestionText>
             <Answer viewMode question={question} />
-            {showButtons && (
+            <div>
+              <Span>15 Reactions</Span>
+              <Span>2 Comments</Span>
+            </div>
+            {/* showButtons */ false && (
               <div>
                 <Btn onClick={onClickEdit} visible={hovered}>
                   Edit

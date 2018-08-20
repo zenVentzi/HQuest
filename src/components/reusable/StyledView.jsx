@@ -5,10 +5,9 @@ const StyledView = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   margin: 70px auto;
-  align-items: center;
-  text-align: center;
+  /* align-items: center; */
+  /* text-align: center; */
   width: 500px;
-  /* border: 3px solid red; */
   overflow: hidden;
 `;
 
