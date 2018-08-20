@@ -15,11 +15,7 @@ const StyledDescription = styled.div`
 
 const TextContainer = styled.div`
   display: flex;
-  /* padding: 0.7em 0.3em; */
   padding: 0.1em 0em 1.5em 0.3em;
-  /* padding-left: 0.3em; */
-  /* padding-bottom: 1.5em; */
-  /* margin-left: 0.6em; */
   flex-direction: column;
   justify-content: space-between;
 `;
@@ -32,8 +28,6 @@ const UserContent = styled.div`
 
 const StyledUser = styled.div`
   display: flex;
-  /* max-width: 100%; */
-  /* flex-wrap: nowrap; */
   height: 60px;
   align-items: center;
   justify-content: center;
