@@ -30,7 +30,9 @@ const StyledComments = styled.div`
   }
 
   &::-webkit-scrollbar-track {
-    background: ghostwhite;
+    background: white;
+    border: 1px solid black;
+    border-radius: 1em;
     margin-right: 1em;
     /* change me to blue to match the background */
   }
