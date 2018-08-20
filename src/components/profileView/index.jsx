@@ -6,8 +6,13 @@ import StyledUserName from '../reusable/StyledUserName';
 import Search from './Search';
 import Navbar from '../navigation';
 import QuestionsContainer from './questions';
-import StyledView from '../reusable/StyledView';
+import StyledViewRaw from '../reusable/StyledView';
 import ToggleQuestions from './ToggleQuestions';
+import styled from '../../../node_modules/styled-components';
+
+const StyledView = styled(StyledViewRaw)`
+  align-items: center;
+`;
 
 // let viewedProfileId;
 

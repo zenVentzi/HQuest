@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const QuestionText = styled.div`
   /* overflow-wrap: break-word; */
   width: 80%;
+  text-align: center;
   /* flex-grow: 0.5; */
   /* align-self: center; */
   /* background-color: black; */
