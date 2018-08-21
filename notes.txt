@@ -6,8 +6,4 @@ Core features:
 
 1) Questions
 
-Which part is the question part? Is there any? Or shall we put all the data into the Answer component? What is the answer?
-Is the answer plain yes or no? For now yes. Later, we can add more such as once a week etc. I.e. there is no need for
-separating with *2nd*. The whole would you is going to be the question and the answers are going to be yes & no.
-WEll, this becomes a plain options question.. why not simply use option type? E.g. WOuld you be rich but you have to eat shit?
-Select an option.. yes/no/once a week etc.
+styled icons seem to slow down the reloading of the proj, not sure though

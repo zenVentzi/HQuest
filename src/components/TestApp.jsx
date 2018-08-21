@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { Facebook as FacebookLogo } from 'styled-icons/fa-brands';
 
 const Parent = styled.div`
   display: flex;
@@ -16,10 +17,5 @@ const Child = styled.div`
   border: 1px solid black;
 `;
 
-const App = () => (
-  <Parent>
-    <Child>fddddddddddddddddddddddddddddd</Child>
-    <Child />
-  </Parent>
-);
+const App = () => <FacebookLogo size="1em" />;
 export default App;

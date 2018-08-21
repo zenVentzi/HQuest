@@ -7,8 +7,9 @@ const Dropdown = styled.div`
   border: 2px solid black;
   border-radius: 5px;
   position: fixed;
-  margin-right: 200px;
-  margin-top: 2px;
+  /* margin-right: 200px; */
+  top: 2.4em;
+  right: 5em;
   background-color: white;
   width: 100px;
   /* left: 0; */

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
+import styled from 'styled-components';
 import User from './SubUser';
-import styled from '../../../../node_modules/styled-components';
 
 const Text = styled.p`
   /* width: 80%; */

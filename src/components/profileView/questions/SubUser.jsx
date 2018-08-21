@@ -4,32 +4,32 @@ import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../../reusable/Avatar';
 
 const StyledUserName = styled.div`
-  font-size: 0.6em;
+  font-size: ${props => `${0.6 * props.size}em`};
   /* margin-bottom: 1em; */
 `;
 
 const StyledDescription = styled.div`
-  font-size: 0.6em;
+  font-size: ${props => `${0.6 * props.size}em`};
   color: gray;
 `;
 
 const TextContainer = styled.div`
   display: flex;
   align-self: stretch;
-  padding: 0.3em;
+  padding: ${props => `${0.3 * props.size}em`};
   flex-direction: column;
   justify-content: space-between;
 `;
 
 const StyledUser = styled.div`
   display: flex;
-  /* height: 1em; */
   margin-bottom: 0.3em;
-  width: 100%;
+  /* width: 100%; */
   align-items: center;
   justify-content: flex-start;
   z-index: 1;
-  border-radius: 0.3em;
+  border-radius: 0.2em;
+  /* border: 1px solid white; */
   background: black;
 
   ${Avatar} {
@@ -60,6 +60,7 @@ class User extends Component {
   render() {
     const {
       user: { id, fullName, avatarSrc },
+      size = 1,
     } = this.props;
 
     if (this.state.redirect) {
@@ -68,7 +69,8 @@ class User extends Component {
     }
 
     const theme = {
-      avatarSize: '1.5em',
+      avatarSize: `${1.5 * size}em`,
+      reactionIconSize: `${1 * size}em`,
     };
     return (
       <StyledUser
@@ -80,9 +82,9 @@ class User extends Component {
         <ThemeProvider theme={theme}>
           <Avatar src={avatarSrc} />
         </ThemeProvider>
-        <TextContainer>
-          <StyledUserName>{fullName}</StyledUserName>
-          <StyledDescription>CEO at Microsoft</StyledDescription>
+        <TextContainer size={size}>
+          <StyledUserName size={size}>{fullName}</StyledUserName>
+          <StyledDescription size={size}>CEO at Microsoft</StyledDescription>
         </TextContainer>
       </StyledUser>
     );

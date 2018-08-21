@@ -1,9 +1,6 @@
 // import React from 'react';
-// import styled from 'styled-components';
-import NavLeft from './NavLeft';
+import styled from 'styled-components';
 
-const NavRight = NavLeft.extend`
-  float: right;
-`;
+const NavRight = styled.div``;
 
 export default NavRight;
