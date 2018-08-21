@@ -47,7 +47,8 @@ const QuestionViewer = props => {
 
         return (
           <Fragment>
-            <Comments />
+            {/* <Comments /> */}
+            <Reactions />
             <QuestionText> {question.question} </QuestionText>
             <Answer viewMode question={question} />
             <div>

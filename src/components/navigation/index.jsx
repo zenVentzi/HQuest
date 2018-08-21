@@ -3,8 +3,11 @@ import NavContainer from './NavContainer';
 import NavLeft from './NavLeft';
 import NavRight from './NavRight';
 import Search from './Search';
-import NavBtn from './NavBtn';
+import MenuBtn from './MenuBtn';
+import NotificationsBtn from './NotificationsBtn';
 import MenuDropdown from './MenuDropdown';
+import ProfileBtn from './ProfileBtn';
+import HomeBtn from './HomeBtn';
 
 class Navbar extends Component {
   state = {
@@ -20,17 +23,18 @@ class Navbar extends Component {
     const { menuVisible } = this.state;
 
     return (
-      <nav>
-        <NavContainer>
-          <NavLeft>
-            <Search />
-          </NavLeft>
-          <NavRight>
-            <NavBtn onClick={this.toggleMenu}>Menu</NavBtn>
-            <MenuDropdown visible={menuVisible} />
-          </NavRight>
-        </NavContainer>
-      </nav>
+      <NavContainer>
+        <NavLeft>
+          <Search />
+        </NavLeft>
+        <NavRight>
+          <HomeBtn />
+          <ProfileBtn />
+          <NotificationsBtn />
+          <MenuBtn onClick={this.toggleMenu} />
+          <MenuDropdown visible={menuVisible} />
+        </NavRight>
+      </NavContainer>
     );
   }
 }

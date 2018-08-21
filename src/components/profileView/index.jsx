@@ -1,18 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import Links from './Links';
 import Avatar from './Avatar';
-import StyledUserName from '../reusable/StyledUserName';
 import Search from './Search';
 import Navbar from '../navigation';
 import QuestionsContainer from './questions';
 import StyledViewRaw from '../reusable/StyledView';
 import ToggleQuestions from './ToggleQuestions';
 import styled from '../../../node_modules/styled-components';
-
-const StyledView = styled(StyledViewRaw)`
-  align-items: center;
-`;
 
 const GET_USER = gql`
   query user($id: ID!) {
@@ -23,6 +19,22 @@ const GET_USER = gql`
       me
     }
   }
+`;
+
+const StyledView = styled(StyledViewRaw)`
+  align-items: center;
+`;
+
+const StyledUserName = styled.div`
+  font-size: 1.2em;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+`;
+
+const StyledIntro = styled.div`
+  font-size: 0.8em;
+  margin-bottom: 0.6em;
+  color: #282828;
 `;
 
 class ProfileView extends Component {
@@ -54,6 +66,8 @@ class ProfileView extends Component {
               <StyledView>
                 <Avatar src={user.avatarSrc} personal={user.me} />
                 <StyledUserName>{user.fullName}</StyledUserName>
+                <StyledIntro>CEO at Microsoft</StyledIntro>
+                <Links />
                 <Search
                   placeholder="Search questions.."
                   onChange={() => {
