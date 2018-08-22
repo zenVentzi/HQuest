@@ -7,6 +7,7 @@ type User {
   id: ID!
   email: String!
   fullName: String!
+  intro: String!
   avatarSrc: String!
   me: Boolean!
 }
@@ -39,8 +40,15 @@ type Answer {
   value: String!
 }
 
+type Comment {
+  id: ID!
+  user: User!
+  comment: String!
+}
+
 type Query {
   books: [Book!]!
+  comments(answerId: ID!): [Comment!]
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
@@ -49,6 +57,7 @@ type Query {
 
 type Mutation {
   addBook(title: String!, author: String!): Book!
+  addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): String
   createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!]): String

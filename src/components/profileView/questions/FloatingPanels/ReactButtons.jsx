@@ -4,7 +4,7 @@ import { Smile } from 'styled-icons/fa-regular/Smile';
 import { Smiley } from 'styled-icons/octicons/Smiley';
 import { Heart } from 'styled-icons/feather/Heart';
 import { HandPeace } from 'styled-icons/fa-regular/HandPeace';
-import styled, { css } from '../../../../node_modules/styled-components';
+import styled, { css } from 'styled-components';
 
 const btnCss = `cursor: pointer; margin-right: 0.7em;`;
 

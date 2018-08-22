@@ -1,6 +1,13 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { CaretSquareDown } from 'styled-icons/fa-regular/CaretSquareDown';
 import User from './SubUser';
+
+const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
+  cursor: pointer;
+  margin-left: auto;
+  align-self: center;
+`;
 
 const Text = styled.p`
   /* width: 80%; */
@@ -14,20 +21,25 @@ const StyledComment = styled.div`
   margin-bottom: 0.8em;
 `;
 
-const Comment = () => {
-  const holder = 5;
+const Header = styled.div`
+  display: flex;
+  width: 100%;
+`;
 
-  return (
-    <StyledComment>
-      <User />
-      <Text>
+const Comment = ({ comment: { user, comment } }) => (
+  <StyledComment>
+    <Header>
+      <User user={user} />
+      <OptionsBtn />
+    </Header>
+    <Text>{comment}</Text>
+    {/* <Text>
         This is some very very long comment This is some very very long comment
         This is some very very long comment This is some very very long comment
         This is some very very long comment This is some very very long comment
         This is some very very long comment
-      </Text>
-    </StyledComment>
-  );
-};
+      </Text> */}
+  </StyledComment>
+);
 
 export default Comment;

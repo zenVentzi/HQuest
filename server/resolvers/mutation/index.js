@@ -3,9 +3,9 @@ const { ObjectID } = require('mongodb');
 const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
 const { createWriteStream } = require('fs');
-const db = require('../../db');
 
 const defaultValues = require(`../../db/defaultValues`);
+const { gqlComment } = require('../helper');
 const { pubsub } = require('../../PubSub');
 
 async function seedDb(
@@ -81,6 +81,30 @@ async function login(_, { email, password }, context) {
       expiresIn: '1d',
     }
   );
+}
+
+async function addComment(_, { answerId, comment }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+  const dbUser = await collections.users.findOne({
+    _id: ObjectID(context.user.id),
+  });
+
+  const answerObj = await collections.answers.findOneAndUpdate(
+    { _id: ObjectID(answerId) },
+    { $push: { comments: { _id: ObjectID(), comment, userId: dbUser._id } } },
+    { returnOriginal: false }
+  );
+
+  const { comments } = answerObj.value;
+  const newDbComment = comments[comments.length - 1];
+
+  const res = gqlComment(context, dbUser, newDbComment);
+
+  return res;
 }
 
 async function createQuestion(_, { question, type, possibleAnswers }, context) {
@@ -190,6 +214,7 @@ async function uploadAvatar(_, { base64Img }, context) {
 
 module.exports = {
   addBook,
+  addComment,
   signUp,
   login,
   createQuestion,
