@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const GrayBackground = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 100%;
   height: 100%;
@@ -48,10 +48,10 @@ const CloseBtn = styled.button`
   margin-bottom: 1em;
 `;
 
-const FixedPanel = ({ children }) => (
+const FixedPanel = ({ onClose, children }) => (
   <GrayBackground>
     <BlackPanel>
-      <CloseBtn>&#x2718;</CloseBtn>
+      <CloseBtn onClick={onClose}>&#x2718;</CloseBtn>
       {children}
     </BlackPanel>
   </GrayBackground>

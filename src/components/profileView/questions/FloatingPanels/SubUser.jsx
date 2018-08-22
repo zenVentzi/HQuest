@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import Avatar from '../../reusable/Avatar';
+import Avatar from '../../../reusable/Avatar';
 
 const StyledUserName = styled.div`
   font-size: ${props => `${0.6 * props.size}em`};
@@ -47,25 +47,29 @@ const StyledUser = styled.div`
 `;
 
 class User extends Component {
-  static defaultProps = {
-    user: {
-      id: '5b682375a23c7306b4a8d81e',
-      fullName: 'Default Ivanonv1',
-      avatarSrc: '/public/images/avatar5b682375a23c7306b4a8d81e.jpeg',
-    },
-  };
+  // static defaultProps = {
+  //   user: {
+  //     id: '5b682375a23c7306b4a8d81e',
+  //     fullName: 'Default Ivanonv1',
+  //     avatarSrc: '/public/images/avatar5b682375a23c7306b4a8d81e.jpeg',
+  //   },
+  // };
 
   state = { redirect: false };
 
   render() {
     const {
-      user: { id, fullName, avatarSrc },
+      user: { id, fullName, intro, avatarSrc, me },
       size = 1,
     } = this.props;
 
     if (this.state.redirect) {
-      const redirectTo = `/userProfile/${id}`;
-      return <Redirect push to={redirectTo} />;
+      if (me) {
+        window.location.reload();
+      } else {
+        const redirectTo = `/userProfile/${id}`;
+        return <Redirect push to={redirectTo} />;
+      }
     }
 
     const theme = {
@@ -75,7 +79,6 @@ class User extends Component {
     return (
       <StyledUser
         onClick={() => {
-          // redirect to user's page
           this.setState({ redirect: true });
         }}
       >
@@ -84,7 +87,7 @@ class User extends Component {
         </ThemeProvider>
         <TextContainer size={size}>
           <StyledUserName size={size}>{fullName}</StyledUserName>
-          <StyledDescription size={size}>CEO at Microsoft</StyledDescription>
+          <StyledDescription size={size}>{intro}</StyledDescription>
         </TextContainer>
       </StyledUser>
     );

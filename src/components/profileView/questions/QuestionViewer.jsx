@@ -1,13 +1,13 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Btn from './StyledBtn';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
-import update, { CACHE_ACTIONS } from './CacheHelper';
-import Reactions from './Reactions';
-import Comments from './Comments';
+import update, { CACHE_ACTIONS } from './CacheQuestions';
+import Reactions from './FloatingPanels/Reactions';
+import Comments from './FloatingPanels/Comments';
 
 const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
@@ -30,46 +30,70 @@ const Span = styled.span`
   }
 `;
 
-const QuestionViewer = props => {
-  const onClickRemove = mutate => async () => {
+class QuestionViewer extends Component {
+  state = { showComments: false, showReactions: false };
+
+  onClickRemove = mutate => async () => {
     mutate({
       variables: {
-        answerId: props.question.answer.id,
+        answerId: this.props.question.answer.id,
       },
       update: update(CACHE_ACTIONS.REMOVE_ANSWER),
     });
   };
 
-  return (
-    <Mutation mutation={REMOVE_ANSWER}>
-      {removeQuestion => {
-        const { hovered, onClickEdit, showButtons, question } = props;
+  toggleReactions = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showReactions: !prevState.showReactions,
+    }));
+  };
+  toggleComments = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showComments: !prevState.showComments,
+    }));
+  };
 
-        return (
-          <Fragment>
-            {/* <Comments /> */}
-            <Reactions />
-            <QuestionText> {question.question} </QuestionText>
-            <Answer viewMode question={question} />
-            <div>
-              <Span>15 Reactions</Span>
-              <Span>2 Comments</Span>
-            </div>
-            {/* showButtons */ false && (
+  render() {
+    return (
+      <Mutation mutation={REMOVE_ANSWER}>
+        {removeQuestion => {
+          const { hovered, onClickEdit, showButtons, question } = this.props;
+          const { showReactions, showComments } = this.state;
+          const answerId = question.answer.id;
+
+          return (
+            <Fragment>
+              {showComments && (
+                <Comments answerId={answerId} onClose={this.toggleComments} />
+              )}
+              {showReactions && <Reactions onClose={this.toggleReactions} />}
+              <QuestionText> {question.question} </QuestionText>
+              <Answer viewMode question={question} />
               <div>
-                <Btn onClick={onClickEdit} visible={hovered}>
-                  Edit
-                </Btn>
-                <Btn onClick={onClickRemove(removeQuestion)} visible={hovered}>
-                  Remove
-                </Btn>
+                <Span onClick={this.toggleReactions}>15 Reactions</Span>
+                <Span onClick={this.toggleComments}>2 Comments</Span>
               </div>
-            )}
-          </Fragment>
-        );
-      }}
-    </Mutation>
-  );
-};
+              {/* showButtons */ false && (
+                <div>
+                  <Btn onClick={onClickEdit} visible={hovered}>
+                    Edit
+                  </Btn>
+                  <Btn
+                    onClick={this.onClickRemove(removeQuestion)}
+                    visible={hovered}
+                  >
+                    Remove
+                  </Btn>
+                </div>
+              )}
+            </Fragment>
+          );
+        }}
+      </Mutation>
+    );
+  }
+}
 
 export default QuestionViewer;

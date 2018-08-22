@@ -1,11 +1,35 @@
-const db = require('../../db');
 const { ObjectID } = require('mongodb');
+const { gqlComment, gqlUser } = require('../helper');
 
 async function books(root, __, context) {
   const { collections } = context;
 
   const result = await collections.books.find().toArray();
   return result;
+}
+
+async function comments(_, { answerId }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+  const answer = await collections.answers.findOne({
+    _id: ObjectID(answerId),
+  });
+
+  const { comments: dbComments } = answer;
+
+  if (!dbComments.length) return [];
+
+  const promises = dbComments.map(async dbCom => {
+    const dbUser = await collections.users.findOne({
+      _id: dbCom.userId,
+    });
+    return gqlComment(context, dbUser, dbCom);
+  });
+
+  return Promise.all(promises);
 }
 
 async function gqlUnansweredQs(collections, userId) {
@@ -67,16 +91,6 @@ async function questions(root, { userId, all }, context) {
   };
 }
 
-function gqlUser(context, dbUser) {
-  return {
-    id: dbUser._id.toString(),
-    email: dbUser.email,
-    fullName: `${dbUser.firstName} ${dbUser.surName}`,
-    avatarSrc: dbUser.avatarSrc,
-    me: context.user.id === dbUser._id.toString(),
-  };
-}
-
 async function users(_, { match }, context) {
   if (!context.user) {
     throw new Error('You are not authorized!');
@@ -133,6 +147,7 @@ async function user(_, { id }, context) {
 
 module.exports = {
   books,
+  comments,
   users,
   user,
   questions,

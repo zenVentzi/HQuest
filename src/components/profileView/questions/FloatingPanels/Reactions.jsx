@@ -4,10 +4,10 @@ import Reaction from './Reaction';
 import FixedPanel from './FixedPanel';
 import ReactButtons from './ReactButtons';
 
-const Reactions = () => {
+const Reactions = ({ onClose }) => {
   const holder = 5;
   return (
-    <FixedPanel>
+    <FixedPanel onClose={onClose}>
       <ReactButtons />
       <Reaction reactionIcon={Smile} />
       <Reaction reactionIcon={Smile} />
