@@ -49,7 +49,7 @@ const CloseBtn = styled.button`
 `;
 
 const FixedPanel = ({ onClose, children }) => (
-  <GrayBackground>
+  <GrayBackground onClick={onClose}>
     <BlackPanel>
       <CloseBtn onClick={onClose}>&#x2718;</CloseBtn>
       {children}
