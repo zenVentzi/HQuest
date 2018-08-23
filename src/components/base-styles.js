@@ -8,6 +8,10 @@ const baseStyles = () => injectGlobal`
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body, select, button, input, textarea {
     font-family: "Arial Black", Gadget, sans-serif;
   }

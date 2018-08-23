@@ -51,7 +51,7 @@ const Input = styled.textarea`
 class Comments extends Component {
   state = { enteredComment: undefined };
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate() {
     return false;
   }
 
@@ -98,37 +98,32 @@ class Comments extends Component {
   };
 
   render() {
-    console.log(`render`);
     const { answerId, onClose } = this.props;
 
     return (
       <Query query={GET_COMMENTS} variables={{ answerId }}>
-        {({ loading, error, data: { comments } }) => {
-          const test = 5;
+        {({ loading, error, data: { comments } }) => (
+          <Mutation mutation={ADD_COMMENT} update={this.updateCache}>
+            {addComment => {
+              if (loading) return <div> Loading..</div>; // this should be below Input component
+              if (error) return <div> {error.message} </div>;
 
-          return (
-            <Mutation mutation={ADD_COMMENT} update={this.updateCache}>
-              {addComment => {
-                if (loading) return <div> Loading..</div>; // this should be below Input component
-                if (error) return <div> {error.message} </div>;
-
-                return (
-                  <FixedPanel onClose={onClose}>
-                    <Input
-                      innerRef={ref => {
-                        this.input = ref;
-                      }}
-                      placeholder="Add a comment..."
-                      onKeyPress={this.onKeyPress(addComment)}
-                      onChange={this.onChange}
-                    />
-                    {this.renderComments(comments)}
-                  </FixedPanel>
-                );
-              }}
-            </Mutation>
-          );
-        }}
+              return (
+                <FixedPanel onClose={onClose}>
+                  <Input
+                    innerRef={ref => {
+                      this.input = ref;
+                    }}
+                    placeholder="Add a comment..."
+                    onKeyPress={this.onKeyPress(addComment)}
+                    onChange={this.onChange}
+                  />
+                  {this.renderComments(comments)}
+                </FixedPanel>
+              );
+            }}
+          </Mutation>
+        )}
       </Query>
     );
   }

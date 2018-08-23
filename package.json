@@ -41,6 +41,7 @@
     "react-apollo": "^2.1.9",
     "react-avatar-editor": "^11.0.4",
     "react-dom": "^16.4.1",
+    "react-onclickoutside": "^6.7.1",
     "react-router-dom": "^4.3.1",
     "react-spring": "^5.4.0",
     "require-graphql-file": "^1.0.1",
