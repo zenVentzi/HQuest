@@ -2,6 +2,20 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
+// const Dropdown = styled.div`
+//   border: 2px solid black;
+//   border-radius: 5px;
+//   position: fixed;
+//   /* margin-right: 200px; */
+//   top: 2.4em;
+//   right: 5em;
+//   background-color: white;
+//   width: 20em;
+//   /* left: 0; */
+//   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+//   z-index: 1;
+// `;
+
 const Dropdown = styled.div`
   border: 2px solid black;
   border-radius: 5px;
@@ -9,7 +23,7 @@ const Dropdown = styled.div`
   top: 2.2em;
   right: 0;
   background-color: white;
-  width: 100px;
+  width: 20em;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 `;
@@ -36,7 +50,7 @@ const StyledBtn = styled.button`
 const LOG_OUT = `/logout`;
 const ADMIN = `/admin`;
 
-class MenuDropdown extends Component {
+class NotifDropdown extends Component {
   state = {
     redirectRoute: null,
   };
@@ -47,7 +61,6 @@ class MenuDropdown extends Component {
 
   render() {
     if (this.state.redirectRoute) {
-      console.log(`bla`);
       return <Redirect push to={this.state.redirectRoute} />;
     }
 
@@ -60,4 +73,4 @@ class MenuDropdown extends Component {
   }
 }
 
-export default MenuDropdown;
+export default NotifDropdown;

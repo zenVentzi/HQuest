@@ -60,7 +60,6 @@ const FixedPanel = ({ onClose, children }) => (
   <GrayBackground onClick={onClose}>
     <BlackPanel>
       <CloseBtn
-        size="1.4em"
         onClick={e => {
           e.stopPropagation();
           onClose();
