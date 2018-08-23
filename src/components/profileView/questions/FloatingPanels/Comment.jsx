@@ -28,17 +28,27 @@ const Header = styled.div`
   width: 100%;
 `;
 class Comment extends Component {
-  state = { showOptions: false };
+  state = { showOptionsDropdown: false, commentHovered: false };
 
   onClickOutsideOptions = e => {
     const isOptionsBtn =
       e.target === this.optionsBtn || e.target === this.optionsBtn.children[0];
     if (isOptionsBtn) return;
-    this.toggleOptions();
+    this.toggleOptionsDropdown();
   };
 
-  toggleOptions = () => {
-    this.setState(prevState => ({ showOptions: !prevState.showOptions }));
+  onMouseEnter = () => {
+    this.setState(prevState => ({ ...prevState, commentHovered: true }));
+  };
+
+  onMouseLeave = () => {
+    this.setState(prevState => ({ ...prevState, commentHovered: false }));
+  };
+
+  toggleOptionsDropdown = () => {
+    this.setState(prevState => ({
+      showOptionsDropdown: !prevState.showOptionsDropdown,
+    }));
   };
 
   render() {
@@ -46,17 +56,25 @@ class Comment extends Component {
       comment: { user, comment },
     } = this.props;
 
+    const { showOptionsDropdown, commentHovered } = this.state;
+    const showOptionsBtn = commentHovered || showOptionsDropdown;
+
     return (
-      <StyledComment>
+      <StyledComment
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+      >
         <Header>
           <User user={user} />
-          <OptionsBtn
-            innerRef={elem => {
-              this.optionsBtn = elem;
-            }}
-            onClick={this.toggleOptions}
-          />
-          {this.state.showOptions && (
+          {showOptionsBtn && (
+            <OptionsBtn
+              innerRef={elem => {
+                this.optionsBtn = elem;
+              }}
+              onClick={this.toggleOptionsDropdown}
+            />
+          )}
+          {showOptionsDropdown && (
             <CommentOptions onClickOutside={this.onClickOutsideOptions} />
           )}
         </Header>
