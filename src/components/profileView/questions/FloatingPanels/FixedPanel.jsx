@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
 
 const GrayBackground = styled.div`
   position: fixed;
@@ -11,6 +12,7 @@ const GrayBackground = styled.div`
 
 const BlackPanel = styled.div`
   position: fixed;
+  padding: 0.5em;
   display: flex;
   flex: 1;
   overflow-y: auto;
@@ -43,15 +45,28 @@ const BlackPanel = styled.div`
   }
 `;
 
-const CloseBtn = styled.button`
+const CloseBtn = styled(WindowClose).attrs({
+  size: '1.4em',
+})`
+  cursor: pointer;
+  color: white;
   align-self: flex-end;
+  flex-shrink: 0;
   margin-bottom: 1em;
+  /* margin: 1em; */
 `;
 
 const FixedPanel = ({ onClose, children }) => (
   <GrayBackground onClick={onClose}>
     <BlackPanel>
-      <CloseBtn onClick={onClose}>&#x2718;</CloseBtn>
+      <CloseBtn
+        size="1.4em"
+        onClick={e => {
+          e.stopPropagation();
+          onClose();
+        }}
+      />
+      {/* <Btn>ts</Btn> */}
       {children}
     </BlackPanel>
   </GrayBackground>
