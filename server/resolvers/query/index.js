@@ -1,11 +1,28 @@
 const { ObjectID } = require('mongodb');
-const { gqlComment, gqlUser } = require('../helper');
+const { gqlComment, gqlUser, gqlNotifications } = require('../helper');
 
 async function books(root, __, context) {
   const { collections } = context;
 
   const result = await collections.books.find().toArray();
   return result;
+}
+
+async function notifications(_, __, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+
+  const dbUser = await collections.users.findOne({
+    _id: ObjectID(context.user.id),
+  });
+
+  const dbNotifs = dbUser.notifications || [];
+
+  const res = gqlNotifications(dbNotifs);
+  return res;
 }
 
 async function comments(_, { answerId }, context) {
@@ -148,6 +165,7 @@ async function user(_, { id }, context) {
 module.exports = {
   books,
   comments,
+  notifications,
   users,
   user,
   questions,

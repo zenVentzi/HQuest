@@ -30,13 +30,6 @@ export const GET_QUESTIONS = gql`
   }
 `;
 
-// const StyledQuestionsContainer = styled.div`
-//   margin-top: 1em;
-//   width: 100%;
-//   /* width: 50%; */
-//   /* border: 3px solid black; */
-// `;
-
 const QuestionsContainer = ({ user, showAnswered }) => {
   const vars = { userId: user.id, all: user.me };
 

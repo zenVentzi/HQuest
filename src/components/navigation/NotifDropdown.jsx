@@ -17,9 +17,6 @@ const Dropdown = styled.div`
   z-index: 1;
 `;
 
-const LOG_OUT = `/logout`;
-const ADMIN = `/admin`;
-
 class NotifDropdown extends Component {
   state = {
     redirectRoute: null,
@@ -30,24 +27,17 @@ class NotifDropdown extends Component {
   };
 
   render() {
+    const { loading, error, notifications } = this.props;
+    if (loading) return <div> loading questions.. </div>;
+    if (error) return <div> {`Error ${error}`}</div>;
+
     if (this.state.redirectRoute) {
       return <Redirect push to={this.state.redirectRoute} />;
     }
 
     return (
       <Dropdown>
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
-        <Notif />
+        {notifications.map(n => <Notif key={n.id} notif={n} />)}
       </Dropdown>
     );
   }

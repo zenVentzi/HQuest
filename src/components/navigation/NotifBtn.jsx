@@ -21,15 +21,11 @@ const Badge = styled.span`
   right: 0;
 `;
 
-const NotifBtn = props => {
-  const holder = 5;
-
-  return (
-    <Btn>
-      <Notifications size="2em" css="cursor: pointer" {...props} />
-      <Badge>2</Badge>
-    </Btn>
-  );
-};
+const NotifBtn = ({ totalUnseen, ...rest }) => (
+  <Btn>
+    <Notifications size="2em" css="cursor: pointer" {...rest} />
+    <Badge>{totalUnseen}</Badge>
+  </Btn>
+);
 
 export default NotifBtn;
