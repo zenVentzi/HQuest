@@ -2,17 +2,12 @@ const bcrypt = require('bcrypt');
 const { ObjectID } = require('mongodb');
 const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
-const { createWriteStream } = require('fs');
 
 const defaultValues = require(`../../db/defaultValues`);
 const { gqlComment } = require('../helper');
 const { pubsub } = require('../../PubSub');
 
-async function seedDb(
-  root,
-  __,
-  { collections: { questions, answers, users } }
-) {
+async function seedDb(root, __, { collections: { questions, users } }) {
   // await questions.drop();
   // await answers.drop();
   // await users.drop();
@@ -74,13 +69,20 @@ async function login(_, { email, password }, context) {
     throw new Error('Incorrect password');
   }
 
-  return jsonwebtoken.sign(
+  const authToken = jsonwebtoken.sign(
     { id: dbUser._id, email: dbUser.email },
     process.env.JWT_SECRET,
     {
       expiresIn: '1d',
     }
   );
+
+  const result = {
+    authToken,
+    userId: dbUser._id.toString(),
+  };
+
+  return result;
 }
 
 async function addComment(_, { answerId, comment }, context) {
@@ -212,6 +214,38 @@ async function uploadAvatar(_, { base64Img }, context) {
   return avatarSrc;
 }
 
+async function follow(_, { userId, follow }, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+  const loggedUserId = context.user.id;
+  const otherUserId = userId;
+
+  if (follow) {
+    await collections.users.updateOne(
+      { _id: ObjectID(loggedUserId) },
+      { $push: { following: ObjectID(otherUserId) } },
+      { upsert: true }
+    );
+    await collections.users.updateOne(
+      { _id: ObjectID(otherUserId) },
+      { $push: { followers: ObjectID(loggedUserId) } },
+      { upsert: true }
+    );
+  } else {
+    await collections.users.updateOne(
+      { _id: ObjectID(loggedUserId) },
+      { $pull: { following: ObjectID(otherUserId) } }
+    );
+    await collections.users.updateOne(
+      { _id: ObjectID(otherUserId) },
+      { $pull: { followers: ObjectID(loggedUserId) } }
+    );
+  }
+}
+
 module.exports = {
   addBook,
   addComment,
@@ -222,5 +256,6 @@ module.exports = {
   editAnswer,
   removeAnswer,
   uploadAvatar,
+  follow,
   seedDb,
 };

@@ -1,12 +1,22 @@
 function gqlUser(context, dbUser) {
-  return {
+  let me = false;
+
+  if (context.user) {
+    me = context.user.id === dbUser._id.toString();
+  }
+
+  const res = {
     id: dbUser._id.toString(),
     email: dbUser.email,
     fullName: `${dbUser.firstName} ${dbUser.surName}`,
     intro: dbUser.intro,
     avatarSrc: dbUser.avatarSrc,
-    me: context.user.id === dbUser._id.toString(),
+    me,
+    followers: dbUser.followers || [],
+    following: dbUser.following || [],
   };
+
+  return res;
 }
 
 function gqlComment(context, dbUser, dbComment) {

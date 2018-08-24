@@ -12,6 +12,7 @@ import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
 import ToggleQuestions from './ToggleQuestions';
+import { loggedUserId } from '../../utils';
 
 const GET_USER = gql`
   query user($id: ID!) {
@@ -20,6 +21,8 @@ const GET_USER = gql`
       fullName
       avatarSrc
       me
+      followers
+      following
     }
   }
 `;
@@ -46,6 +49,7 @@ class ProfileView extends Component {
           if (loading) return <div> loading </div>;
           if (error) return <div> {error} </div>;
           if (!user) return <div> User not found </div>;
+          const isFollowed = user.followers.includes(loggedUserId());
 
           return (
             <Fragment>
@@ -55,7 +59,9 @@ class ProfileView extends Component {
                 <Username>{user.fullName}</Username>
                 <Intro>CEO at Microsoft</Intro>
                 <Links />
-                {!user.me && <FollowBtn following />}
+                {!user.me && (
+                  <FollowBtn isFollowed={isFollowed} userId={user.id} />
+                )}
                 <Search
                   placeholder="Search questions.."
                   onChange={() => {

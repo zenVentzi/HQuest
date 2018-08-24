@@ -15,7 +15,7 @@ const GET_USERS = gql`
 `;
 
 const CustomTextInput = styled(TextInput)`
-  margin-top: 0.5em;
+  margin-top: 0.3em;
 `;
 
 class CustomSearch extends Component {

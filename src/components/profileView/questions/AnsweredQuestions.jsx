@@ -1,5 +1,10 @@
 import React, { Fragment } from 'react';
+import styled from 'styled-components';
 import AnsweredQuestion from './AnsweredQuestion';
+
+const Empty = styled.div`
+  text-align: center;
+`;
 
 const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
   const test = 5;
@@ -14,7 +19,7 @@ const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
       />
     ))
   ) : (
-    <div style={style}> No answered questions </div>
+    <Empty style={style}> No answered questions </Empty>
   );
 };
 
