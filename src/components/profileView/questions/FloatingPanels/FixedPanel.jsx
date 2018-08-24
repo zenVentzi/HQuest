@@ -25,24 +25,6 @@ const BlackPanel = styled.div`
   background: black;
   border-radius: 0.2em;
   color: white;
-
-  &::-webkit-scrollbar {
-    width: 0.8em;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: white;
-    border: 1px solid black;
-    border-radius: 1em;
-    margin-right: 1em;
-    /* change me to blue to match the background */
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 1em;
-    background: black;
-    /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
-  }
 `;
 
 const CloseBtn = styled(WindowClose).attrs({

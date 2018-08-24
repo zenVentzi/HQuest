@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 const Dropdown = styled.div`
   border: 2px solid black;
-  border-radius: 5px;
+  border-radius: 0.2em;
+  text-align: center;
   position: absolute;
   top: 2.2em;
   right: 0;
@@ -16,21 +17,7 @@ const Dropdown = styled.div`
 
 const StyledBtn = styled.button`
   width: 95%;
-  font-size: 15px;
-  border: none;
-  outline: none;
-  font-family: 'Arial Black', Gadget, sans-serif;
-  background-color: black;
-  color: white;
-  border-radius: 0.3em;
-  /* padding: 0.2em 0.9em; */
-  cursor: pointer;
-  margin: 2px 2px 2px 2px;
-
-  transition-duration: 0.2s;
-  &:hover {
-    background-color: gray;
-  }
+  margin: 0.1em;
 `;
 
 const LOG_OUT = `/logout`;

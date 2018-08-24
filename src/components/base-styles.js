@@ -6,6 +6,18 @@ const baseStyles = () => injectGlobal`
   
   * {
     box-sizing: border-box;
+    transition-duration: 0.2s;
+  }
+
+  q {
+    quotes: "“" "”" "‘" "’";
+  }
+
+  q:before {
+    content: open-quote;
+  }
+  q:after {
+    content: close-quote;
   }
 
   html {
@@ -48,7 +60,6 @@ const baseStyles = () => injectGlobal`
     border-radius: 0.3em;
     padding: 0.3em 0.8em;
     cursor: pointer;
-    transition-duration: 0.2s;
   }
 
   button:hover {
@@ -60,6 +71,27 @@ const baseStyles = () => injectGlobal`
   }
   ul {
     list-style-type: upper-latin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.8em;
+    background: black;
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: white;
+    border: 1px solid black;
+    border-radius: 1em;
+    margin-right: 1em;
+    /* change me to blue to match the background */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    background: black;
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
   }
 `;
 
