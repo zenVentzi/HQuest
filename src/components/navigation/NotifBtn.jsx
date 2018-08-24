@@ -1,10 +1,35 @@
 import React from 'react';
 import { Notifications } from 'styled-icons/material/Notifications';
+import styled from 'styled-components';
+
+const Btn = styled.div`
+  display: inline-block; /* Inline elements with width and height. TL;DR they make the icon buttons stack from left-to-right instead of top-to-bottom */
+  position: relative;
+  padding: 2px 5px; /* Add some padding so it looks nice */
+`;
+
+const Badge = styled.span`
+  background-color: #fa3e3e;
+  border-radius: 2px;
+  color: white;
+
+  padding: 1px 3px;
+  font-size: 10px;
+
+  position: absolute; /* Position the badge within the relatively positioned button */
+  top: 0;
+  right: 0;
+`;
 
 const NotifBtn = props => {
   const holder = 5;
 
-  return <Notifications size="2em" css="cursor: pointer" {...props} />;
+  return (
+    <Btn>
+      <Notifications size="2em" css="cursor: pointer" {...props} />
+      <Badge>2</Badge>
+    </Btn>
+  );
 };
 
 export default NotifBtn;

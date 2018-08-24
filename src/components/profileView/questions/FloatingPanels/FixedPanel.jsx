@@ -31,6 +31,7 @@ const CloseBtn = styled(WindowClose).attrs({
   size: '1.4em',
 })`
   cursor: pointer;
+  position: fixed;
   color: white;
   align-self: flex-end;
   flex-shrink: 0;
