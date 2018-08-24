@@ -192,7 +192,7 @@ async function removeAnswer(_, { answerId }, context) {
 async function saveAvatarToFile(base64Img, userId) {
   const src = `/public/images/avatar${userId}.jpeg`;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
       resolve(src);
     });
@@ -220,28 +220,40 @@ async function follow(_, { userId, follow }, context) {
   }
 
   const { collections } = context;
-  const loggedUserId = context.user.id;
-  const otherUserId = userId;
+  const performerId = context.user.id;
+  const receiverId = userId;
 
   if (follow) {
-    await collections.users.updateOne(
-      { _id: ObjectID(loggedUserId) },
-      { $push: { following: ObjectID(otherUserId) } },
+    const cursor = await collections.users.findOneAndUpdate(
+      { _id: ObjectID(performerId) },
+      { $push: { following: ObjectID(receiverId) } },
       { upsert: true }
     );
+
+    const performer = cursor.value;
+
+    const performerName = `${performer.firstName} ${performer.surName}`;
+    const notif = {
+      _id: ObjectID(),
+      performerId,
+      performerAvatarSrc: performer.avatarSrc,
+      text: `${performerName} is following you`,
+      seen: false,
+    };
+
     await collections.users.updateOne(
-      { _id: ObjectID(otherUserId) },
-      { $push: { followers: ObjectID(loggedUserId) } },
+      { _id: ObjectID(receiverId) },
+      { $push: { followers: ObjectID(performerId), notifications: notif } },
       { upsert: true }
     );
   } else {
     await collections.users.updateOne(
-      { _id: ObjectID(loggedUserId) },
-      { $pull: { following: ObjectID(otherUserId) } }
+      { _id: ObjectID(performerId) },
+      { $pull: { following: ObjectID(receiverId) } }
     );
     await collections.users.updateOne(
-      { _id: ObjectID(otherUserId) },
-      { $pull: { followers: ObjectID(loggedUserId) } }
+      { _id: ObjectID(receiverId) },
+      { $pull: { followers: ObjectID(performerId) } }
     );
   }
 }

@@ -19,6 +19,18 @@ function gqlUser(context, dbUser) {
   return res;
 }
 
+function gqlNotifications(dbNotifs) {
+  const res = dbNotifs.map(notif => ({
+    id: notif._id.toString(),
+    performerId: notif.performerId,
+    performerAvatarSrc: notif.performerAvatarSrc,
+    text: notif.text,
+    seen: notif.seen,
+  }));
+
+  return res;
+}
+
 function gqlComment(context, dbUser, dbComment) {
   const usr = gqlUser(context, dbUser);
   return {
@@ -28,4 +40,4 @@ function gqlComment(context, dbUser, dbComment) {
   };
 }
 
-module.exports = { gqlComment, gqlUser };
+module.exports = { gqlComment, gqlUser, gqlNotifications };

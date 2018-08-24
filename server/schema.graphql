@@ -48,6 +48,14 @@ type Comment {
   comment: String!
 }
 
+type Notification {
+  id: ID!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+}
+
 type LoginResult {
   authToken: String!
   userId: ID!
@@ -56,6 +64,7 @@ type LoginResult {
 type Query {
   books: [Book!]!
   comments(answerId: ID!): [Comment!]
+  notifications: [Notification]!
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
@@ -73,7 +82,7 @@ type Mutation {
   removeAnswer(answerId: ID!): Answer!
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
-  follow(userId: ID!, follow: Boolean): Boolean
+  follow(userId: ID!, follow: Boolean!): Boolean
   seedDb: String
 }
 

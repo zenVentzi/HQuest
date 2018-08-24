@@ -33,7 +33,7 @@ const Right = styled.div`
   justify-content: space-between;
 `;
 
-const Message = styled.div`
+const Text = styled.div`
   font-size: 0.8em;
   text-align: left;
   word-break: break-all;
@@ -52,11 +52,9 @@ class Notif extends Component {
 
     // if msg length is > 80, cut and add ..
 
-    // const {
-    //   notif: { id: notifId, userId, questionId },
-    // } = this.props;
-
-    const avatarSrc = ``;
+    const {
+      notif: { performerId, performerAvatarSrc, text },
+    } = this.props;
 
     // if (this.state.redirect) {
     //   const redirectTo = `/userProfile/${userId}/${questionId}/${notifId}`;
@@ -71,14 +69,11 @@ class Notif extends Component {
       >
         <Left>
           <ThemeProvider theme={theme}>
-            <Avatar src={avatarSrc} />
+            <Avatar src={performerAvatarSrc} />
           </ThemeProvider>
         </Left>
         <Right>
-          <Message>
-            Pesho Goshev commented
-            <q>Hey, what about..?</q>
-          </Message>
+          <Text>{text}</Text>
           <Time>1 hour ago</Time>
         </Right>
       </StyledNotif>
