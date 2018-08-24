@@ -16,7 +16,7 @@ const StyledNotif = styled.div`
   }
 
   &:hover {
-    border: 0.1em solid white;
+    opacity: 0.5;
   }
 `;
 
