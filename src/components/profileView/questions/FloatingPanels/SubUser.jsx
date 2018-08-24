@@ -74,7 +74,6 @@ class User extends Component {
 
     const theme = {
       avatarSize: `${1.5 * size}em`,
-      reactionIconSize: `${1 * size}em`,
     };
     return (
       <StyledUser

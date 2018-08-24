@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Facebook as FacebookLogo } from 'styled-icons/fa-brands';
+import baseStyles from './base-styles';
 
 const Parent = styled.div`
   display: flex;
@@ -17,5 +18,11 @@ const Child = styled.div`
   border: 1px solid black;
 `;
 
-const App = () => <FacebookLogo size="1em" />;
+baseStyles();
+
+const App = () => (
+  <div>
+    fdfd <q>sth in quotes</q>
+  </div>
+);
 export default App;
