@@ -10,6 +10,8 @@ type User {
   intro: String!
   avatarSrc: String!
   me: Boolean!
+  following: [ID!]!
+  followers: [ID!]!
 }
 
 enum QuestionType {
@@ -46,6 +48,11 @@ type Comment {
   comment: String!
 }
 
+type LoginResult {
+  authToken: String!
+  userId: ID!
+}
+
 type Query {
   books: [Book!]!
   comments(answerId: ID!): [Comment!]
@@ -59,13 +66,14 @@ type Mutation {
   addBook(title: String!, author: String!): Book!
   addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
-  login(email: String!, password: String!): String
+  login(email: String!, password: String!): LoginResult!
   createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!]): String
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
+  follow(userId: ID!, follow: Boolean): Boolean
   seedDb: String
 }
 

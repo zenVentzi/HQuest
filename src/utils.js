@@ -1,13 +1,14 @@
 import createHistory from 'history/createBrowserHistory';
-import { AUTH_TOKEN } from './constants';
+import { AUTH_TOKEN, USER_ID } from './constants';
 
 const history = createHistory();
 
-function isAuthenticated(test) {
-  if (test) {
-    console.log(test);
-  }
+function isAuthenticated() {
   return localStorage.getItem(AUTH_TOKEN) !== null;
 }
 
-export { history, isAuthenticated };
+function loggedUserId() {
+  return localStorage.getItem(USER_ID);
+}
+
+export { history, isAuthenticated, loggedUserId };

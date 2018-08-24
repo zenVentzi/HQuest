@@ -1,4 +1,5 @@
-const AUTH_TOKEN = 'auth-token';
+const AUTH_TOKEN = 'AUTH_TOKEN';
+const USER_ID = `USER_ID`;
 
 const QuestionTypes = {
   SCALE: `SCALE`,
@@ -8,4 +9,4 @@ const QuestionTypes = {
   WOULD_YOU_DOUBLE: `WOULD_YOU_DOUBLE`,
 };
 
-export { AUTH_TOKEN, QuestionTypes };
+export { AUTH_TOKEN, USER_ID, QuestionTypes };
