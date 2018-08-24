@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 const StyledLinks = styled.div`
   display: flex;
-  margin-bottom: 1em;
+  margin-bottom: 0.4em;
 `;
 
 const Links = () => {
