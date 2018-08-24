@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 
 import ApolloClient from './ApolloClient';

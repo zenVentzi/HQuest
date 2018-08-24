@@ -5,7 +5,7 @@ import NavRight from './NavRight';
 import Search from './Search';
 import Menu from './Menu';
 import Notifications from './Notifications';
-import ProfileBtn from './ProfileBtn';
+import Profile from './Profile';
 import HomeBtn from './HomeBtn';
 
 const Navbar = () => (
@@ -15,7 +15,7 @@ const Navbar = () => (
     </NavLeft>
     <NavRight>
       <HomeBtn />
-      <ProfileBtn />
+      <Profile />
       <Notifications />
       <Menu />
     </NavRight>

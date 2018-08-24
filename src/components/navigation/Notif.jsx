@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
+import { history } from '../../utils';
 
 const StyledNotif = styled.div`
   background: black;
@@ -45,6 +46,13 @@ const Time = styled.div`
 
 class Notif extends Component {
   state = { redirect: false };
+
+  onCLick = () => {
+    const { performerId } = this.props.notif;
+    const redirectTo = `/userProfile/${performerId}`;
+    // return <Redirect push to={redirectTo} />;
+    history.push(redirectTo);
+  };
   render() {
     const theme = {
       avatarSize: `${2.3}em`,
@@ -57,16 +65,12 @@ class Notif extends Component {
     } = this.props;
 
     // if (this.state.redirect) {
-    //   const redirectTo = `/userProfile/${userId}/${questionId}/${notifId}`;
+    //   const redirectTo = `/userProfile/${performerId}`;
     //   return <Redirect push to={redirectTo} />;
     // }
 
     return (
-      <StyledNotif
-        onClick={() => {
-          this.setState({ redirect: true });
-        }}
-      >
+      <StyledNotif onClick={this.onCLick}>
         <Left>
           <ThemeProvider theme={theme}>
             <Avatar src={performerAvatarSrc} />
