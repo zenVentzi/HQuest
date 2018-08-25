@@ -22,6 +22,18 @@ ren	render
 rprop	Render Prop
 hoc	Higher Order Component
 
+
+
+prefix	snippet
+iap	import { ApolloProvider } from 'react-apollo';
+iaq	import { Query } from 'react-apollo';
+iam	import { Mutation } from 'react-apollo';
+iaqm	import { Query, Mutation } from 'react-apollo';
+iac	import { ApolloConsumer } from 'react-apollo';
+
+aq, aqf, am, amrf, asm
+
+
 imsc	import styled from 'styled-components';
 sc	const ${1} = styled.${2} / Styled-Component
 exsc	export const ${1} = styled.${2} / Export styled-component
