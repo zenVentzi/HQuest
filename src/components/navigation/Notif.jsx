@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
 import { history } from '../../utils';
@@ -44,9 +43,30 @@ const Time = styled.div`
   font-size: 0.5em;
 `;
 
-class Notif extends Component {
-  state = { redirect: false };
+const timeAgoText = createdOn => {
+  const startDate = new Date(createdOn).getTime();
+  const timeNow = new Date().getTime();
+  const seconds = (timeNow - startDate) / 1000;
+  const mins = seconds / 60;
+  const hours = mins / 60;
+  const days = hours / 24;
 
+  let res;
+
+  if (days) {
+    res = days > 1 ? `${days} days ago` : `yesterday`;
+  } else if (hours) {
+    res = hours > 1 ? `${hours} hours ago` : `1 hour ago`;
+  } else if (mins) {
+    res = days > 1 ? `${mins} mins ago` : `a minute ago`;
+  } else {
+    res = days > 1 ? `${seconds} seconds ago` : `a second ago`;
+  }
+
+  return res;
+};
+
+class Notif extends Component {
   onCLick = () => {
     const { performerId } = this.props.notif;
     const redirectTo = `/userProfile/${performerId}`;
@@ -61,13 +81,10 @@ class Notif extends Component {
     // if msg length is > 80, cut and add ..
 
     const {
-      notif: { performerId, performerAvatarSrc, text },
+      notif: { performerAvatarSrc, text, createdOn },
     } = this.props;
 
-    // if (this.state.redirect) {
-    //   const redirectTo = `/userProfile/${performerId}`;
-    //   return <Redirect push to={redirectTo} />;
-    // }
+    console.log(new Date(createdOn));
 
     return (
       <StyledNotif onClick={this.onCLick}>
@@ -78,7 +95,7 @@ class Notif extends Component {
         </Left>
         <Right>
           <Text>{text}</Text>
-          <Time>1 hour ago</Time>
+          <Time>{timeAgoText(createdOn)}</Time>
         </Right>
       </StyledNotif>
     );

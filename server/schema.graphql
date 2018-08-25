@@ -1,5 +1,8 @@
+scalar DateTime
+
 type Book {
   title: String!
+  created: DateTime!
   author: String!
 }
 
@@ -54,6 +57,7 @@ type Notification {
   performerAvatarSrc: String!
   text: String!
   seen: Boolean!
+  createdOn: DateTime!
 }
 
 type LoginResult {

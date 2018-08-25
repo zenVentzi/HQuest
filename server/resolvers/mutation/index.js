@@ -22,7 +22,7 @@ async function seedDb(root, __, { collections: { questions, users } }) {
 
 async function addBook(root, args, context) {
   const { collections } = context;
-  const book = { title: args.title, author: args.author };
+  const book = { title: args.title, author: args.author, created: new Date() };
 
   await collections.books.insertOne(book);
 
