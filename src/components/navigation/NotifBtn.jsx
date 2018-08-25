@@ -24,7 +24,7 @@ const Badge = styled.span`
 const NotifBtn = ({ totalUnseen, ...rest }) => (
   <Btn>
     <Notifications size="2em" css="cursor: pointer" {...rest} />
-    <Badge>{totalUnseen}</Badge>
+    {totalUnseen > 0 && <Badge>{totalUnseen}</Badge>}
   </Btn>
 );
 
