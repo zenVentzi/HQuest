@@ -79,12 +79,6 @@ class Comment extends Component {
           )}
         </Header>
         <Text>{comment}</Text>
-        {/* <Text>
-          This is some very very long comment This is some very very long comment
-          This is some very very long comment This is some very very long comment
-          This is some very very long comment This is some very very long comment
-          This is some very very long comment
-        </Text> */}
       </StyledComment>
     );
   }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import onClickOutside from 'react-onclickoutside';
 import styled from 'styled-components';
 import Notif from './Notif';
 
@@ -18,22 +18,14 @@ const Dropdown = styled.div`
 `;
 
 class NotifDropdown extends Component {
-  state = {
-    redirectRoute: null,
-  };
-
-  onClick = route => () => {
-    this.setState({ redirectRoute: route });
+  handleClickOutside = e => {
+    this.props.onClickOutside(e);
   };
 
   render() {
     const { loading, error, notifications } = this.props;
     if (loading) return <div> loading questions.. </div>;
     if (error) return <div> {`Error ${error}`}</div>;
-
-    if (this.state.redirectRoute) {
-      return <Redirect push to={this.state.redirectRoute} />;
-    }
 
     return (
       <Dropdown>
@@ -43,4 +35,4 @@ class NotifDropdown extends Component {
   }
 }
 
-export default NotifDropdown;
+export default onClickOutside(NotifDropdown);
