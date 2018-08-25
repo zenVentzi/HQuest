@@ -26,6 +26,7 @@ function gqlNotifications(dbNotifs) {
     performerAvatarSrc: notif.performerAvatarSrc,
     text: notif.text,
     seen: notif.seen,
+    createdOn: notif._id.getTimestamp(),
   }));
 
   return res;

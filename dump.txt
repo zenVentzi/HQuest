@@ -1,15 +1,1 @@
-font-size: 15px;
-  max-width: 100px;
-  border: none;
-  outline: none;
-  font-family: 'Arial Black', Gadget, sans-serif;
-  background-color: white;
-  color: black;
-  border-radius: 0.3em;
-  /* padding: 0.2em 0.9em; */
-  margin-top: 0.5em;
-  cursor: pointer;
-  transition-duration: 0.2s;
-  &:hover {
-    background-color: gray;
-  }
+{"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViNjgyMzc1YTIzYzczMDZiNGE4ZDgxZSIsImVtYWlsIjoiYSIsImlhdCI6MTUzNDg2MzMyOSwiZXhwIjoxNTM0OTQ5NzI5fQ.A9CrK9yzFvAuHZdP267IYl_qmKZ7INuenta473eA53M"}

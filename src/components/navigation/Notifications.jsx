@@ -13,9 +13,13 @@ const NOTIFICATIONS = gql`
       performerAvatarSrc
       text
       seen
+      createdOn
     }
   }
 `;
+
+// const MARK_SEEN_NOTIF = gql`
+//   mutation`
 
 const numOfUnseen = notifications =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
