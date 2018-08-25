@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Notifications } from 'styled-icons/material/Notifications';
 import styled from 'styled-components';
 
@@ -21,11 +21,11 @@ const Badge = styled.span`
   right: 0;
 `;
 
-const NotifBtn = ({ totalUnseen, ...rest }) => (
-  <Btn>
-    <Notifications size="2em" css="cursor: pointer" {...rest} />
+const NotifBtn = React.forwardRef(({ totalUnseen, onClick }, ref) => (
+  <Btn innerRef={ref} onClick={onClick}>
+    <Notifications size="2em" css="cursor: pointer" />
     {totalUnseen > 0 && <Badge>{totalUnseen}</Badge>}
   </Btn>
-);
+));
 
 export default NotifBtn;

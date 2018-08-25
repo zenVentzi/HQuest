@@ -32,10 +32,26 @@ class Notifications extends Component {
     showDropdown: false,
   };
 
+  onClickOutsideDropdown = e => {
+    const isNotifBtn = this.isTargetNotifBtn(e.target);
+    if (isNotifBtn) return;
+    this.toggleDropdown();
+  };
+
   onClick = markSeen => async () => {
+    console.log(`here`);
     this.toggleDropdown();
     await markSeen();
   };
+
+  isTargetNotifBtn = target => {
+    const buttonWrapper = this.notifBtn.current;
+    const btnChildren = buttonWrapper.querySelectorAll('*');
+
+    return target === buttonWrapper || [...btnChildren].includes(target);
+  };
+
+  notifBtn = React.createRef();
 
   toggleDropdown = () => {
     const current = this.state.showDropdown;
@@ -48,7 +64,12 @@ class Notifications extends Component {
     return (
       <Query query={NOTIFICATIONS}>
         {({ loading, error, data: { notifications } }) => {
-          const dropdownProps = { loading, error, notifications };
+          const dropdownProps = {
+            loading,
+            error,
+            notifications,
+            onClickOutside: this.onClickOutsideDropdown,
+          };
           const totalUnseen = numOfUnseen(notifications);
 
           return (
@@ -56,6 +77,7 @@ class Notifications extends Component {
               {markSeen => (
                 <NavItem>
                   <NotifBtn
+                    ref={this.notifBtn}
                     onClick={this.onClick(markSeen)}
                     totalUnseen={totalUnseen}
                   />

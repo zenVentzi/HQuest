@@ -6,7 +6,6 @@ import { loggedUserId, history } from '../../utils';
 const Profile = () => {
   const onClick = () => {
     const redirectTo = `/userProfile/${loggedUserId()}`;
-    // return <Redirect push to={redirectTo} />;
     history.push(redirectTo);
   };
 
