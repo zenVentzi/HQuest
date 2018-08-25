@@ -258,8 +258,23 @@ async function follow(_, { userId, follow }, context) {
   }
 }
 
+async function notifsMarkSeen(_, args, context) {
+  if (!context.user) {
+    throw new Error('You are not authorized!');
+  }
+
+  const { collections } = context;
+  const searchQuery = {
+    _id: ObjectID(context.user.id),
+    'notifications.seen': false,
+  };
+  const updateObj = { $set: { 'notifications.$[].seen': true } };
+  await collections.users.update(searchQuery, updateObj);
+}
+
 module.exports = {
   addBook,
+  notifsMarkSeen,
   addComment,
   signUp,
   login,

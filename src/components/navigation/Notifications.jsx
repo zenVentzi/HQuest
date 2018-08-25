@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import NotifBtn from './NotifBtn';
 import NotifDropdown from './NotifDropdown';
 import NavItem from './NavItem';
@@ -18,8 +18,11 @@ const NOTIFICATIONS = gql`
   }
 `;
 
-// const MARK_SEEN_NOTIF = gql`
-//   mutation`
+const NOTIFS_MARK_SEEN = gql`
+  mutation notifsMarkSeen {
+    notifsMarkSeen
+  }
+`;
 
 const numOfUnseen = notifications =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
@@ -29,9 +32,9 @@ class Notifications extends Component {
     showDropdown: false,
   };
 
-  onClick = () => {
-    // mark unseen ones as seen
+  onClick = markSeen => async () => {
     this.toggleDropdown();
+    await markSeen();
   };
 
   toggleDropdown = () => {
@@ -49,10 +52,17 @@ class Notifications extends Component {
           const totalUnseen = numOfUnseen(notifications);
 
           return (
-            <NavItem>
-              <NotifBtn onClick={this.onClick} totalUnseen={totalUnseen} />
-              {showDropdown && <NotifDropdown {...dropdownProps} />}
-            </NavItem>
+            <Mutation mutation={NOTIFS_MARK_SEEN}>
+              {markSeen => (
+                <NavItem>
+                  <NotifBtn
+                    onClick={this.onClick(markSeen)}
+                    totalUnseen={totalUnseen}
+                  />
+                  {showDropdown && <NotifDropdown {...dropdownProps} />}
+                </NavItem>
+              )}
+            </Mutation>
           );
         }}
       </Query>

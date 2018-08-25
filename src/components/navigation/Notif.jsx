@@ -84,8 +84,6 @@ class Notif extends Component {
       notif: { performerAvatarSrc, text, createdOn },
     } = this.props;
 
-    console.log(new Date(createdOn));
-
     return (
       <StyledNotif onClick={this.onCLick}>
         <Left>
