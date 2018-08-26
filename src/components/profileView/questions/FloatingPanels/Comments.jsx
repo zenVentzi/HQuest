@@ -67,6 +67,10 @@ class Comments extends Component {
     }
   };
 
+  onInputClick = e => {
+    e.stopPropagation();
+  };
+
   onChange = e => {
     this.setState({ enteredComment: e.target.value });
   };
@@ -117,6 +121,7 @@ class Comments extends Component {
                     placeholder="Add a comment..."
                     onKeyPress={this.onKeyPress(addComment)}
                     onChange={this.onChange}
+                    onClick={this.onInputClick}
                   />
                   {this.renderComments(comments)}
                 </FixedPanel>

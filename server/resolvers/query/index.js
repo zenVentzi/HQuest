@@ -37,7 +37,7 @@ async function comments(_, { answerId }, context) {
 
   const { comments: dbComments } = answer;
 
-  if (!dbComments.length) return [];
+  if (!dbComments) return [];
 
   const promises = dbComments.map(async dbCom => {
     const dbUser = await collections.users.findOne({
