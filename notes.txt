@@ -9,3 +9,6 @@ Core features:
 1) Questions
 
 styled icons seem to slow down the reloading of the proj, not sure though
+
+1) refetch after mutation
+2) update manually the cached notifs

@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { loggedUserId } from '../../utils';
 
-const NOTIFICATIONS = gql`
+const GET_NOTIFICATIONS = gql`
   query notifications {
     notifications {
       id
@@ -48,29 +48,33 @@ const run = subscribeToMore => {
         notifications: [...prev.notifications, newNotification],
       };
 
-      console.log(prev);
-      console.log(updatedQuery);
-
       return updatedQuery;
     },
+  });
+};
+
+const updateSeen = cache => {
+  const { notifications } = cache.readQuery({ query: GET_NOTIFICATIONS });
+  const updated = notifications.map(n => ({ ...n, seen: true }));
+
+  cache.writeQuery({
+    query: GET_NOTIFICATIONS,
+    data: { notifications: updated },
   });
 };
 
 let subscribed = false;
 
 const NotificationsGQL = ({ children }) => (
-  <Query query={NOTIFICATIONS}>
+  <Query query={GET_NOTIFICATIONS}>
     {({ loading, error, data: { notifications }, subscribeToMore }) => {
       if (!subscribed) {
-        console.log(`subscribing`);
         run(subscribeToMore);
         subscribed = true;
       }
 
-      // console.log(notifications);
-
       return (
-        <Mutation mutation={NOTIFS_MARK_SEEN}>
+        <Mutation mutation={NOTIFS_MARK_SEEN} update={updateSeen}>
           {markSeen => children(loading, error, notifications, markSeen)}
         </Mutation>
       );
