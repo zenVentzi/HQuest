@@ -1,3 +1,4 @@
+const { withFilter } = require('apollo-server');
 const { pubsub } = require('../../PubSub');
 
 const bookAdded = {
@@ -18,6 +19,22 @@ const bookAdded = {
   },
 };
 
+const newNotification = {
+  resolve: payload => payload.notif,
+  subscribe: withFilter(
+    () => {
+      console.dir(`subscribed!`);
+      return pubsub.asyncIterator(`newNotification`);
+    },
+    (payload, variables) => {
+      const holder = 5;
+
+      return payload.receiverId === variables.userId;
+    }
+  ),
+};
+
 module.exports = {
+  newNotification,
   bookAdded,
 };

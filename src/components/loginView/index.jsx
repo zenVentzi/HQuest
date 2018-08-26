@@ -25,7 +25,6 @@ const LoginView = props => {
       password,
     };
     const result = await mutation({ variables });
-    debugger;
     const { authToken, userId } = result.data.login;
     localStorage.setItem(AUTH_TOKEN, authToken);
     localStorage.setItem(USER_ID, userId);
