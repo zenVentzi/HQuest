@@ -65,6 +65,11 @@ type LoginResult {
   userId: ID!
 }
 
+type NewNotification {
+  receiverId: ID!
+  notification: Notification!
+}
+
 type Query {
   books: [Book!]!
   comments(answerId: ID!): [Comment!]
@@ -93,4 +98,5 @@ type Mutation {
 
 type Subscription {
   bookAdded: Book!
+  newNotification(userId: ID!): Notification!
 }

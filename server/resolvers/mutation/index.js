@@ -4,7 +4,7 @@ const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
 
 const defaultValues = require(`../../db/defaultValues`);
-const { gqlComment } = require('../helper');
+const { gqlComment, gqlNotfication } = require('../helper');
 const { pubsub } = require('../../PubSub');
 
 async function seedDb(root, __, { collections: { questions, users } }) {
@@ -246,6 +246,10 @@ async function follow(_, { userId, follow }, context) {
       { $push: { followers: ObjectID(performerId), notifications: notif } },
       { upsert: true }
     );
+
+    const payload = { receiverId, notif: gqlNotfication(notif) };
+
+    pubsub.publish('newNotification', payload);
   } else {
     await collections.users.updateOne(
       { _id: ObjectID(performerId) },

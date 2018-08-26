@@ -1,28 +1,8 @@
 import React, { Component } from 'react';
-import gql from 'graphql-tag';
-import { Query, Mutation } from 'react-apollo';
 import NotifBtn from './NotifBtn';
 import NotifDropdown from './NotifDropdown';
 import NavItem from './NavItem';
-
-const NOTIFICATIONS = gql`
-  query notifications {
-    notifications {
-      id
-      performerId
-      performerAvatarSrc
-      text
-      seen
-      createdOn
-    }
-  }
-`;
-
-const NOTIFS_MARK_SEEN = gql`
-  mutation notifsMarkSeen {
-    notifsMarkSeen
-  }
-`;
+import NotificationsGQL from './NotificationsGQL';
 
 const numOfUnseen = notifications =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
@@ -39,10 +19,11 @@ class Notifications extends Component {
   };
 
   onClick = markSeen => async () => {
-    console.log(`here`);
     this.toggleDropdown();
     await markSeen();
   };
+
+  subscribed = false;
 
   isTargetNotifBtn = target => {
     const buttonWrapper = this.notifBtn.current;
@@ -62,8 +43,8 @@ class Notifications extends Component {
     const { showDropdown } = this.state;
 
     return (
-      <Query query={NOTIFICATIONS}>
-        {({ loading, error, data: { notifications } }) => {
+      <NotificationsGQL>
+        {(loading, error, notifications, markSeen) => {
           const dropdownProps = {
             loading,
             error,
@@ -73,21 +54,17 @@ class Notifications extends Component {
           const totalUnseen = numOfUnseen(notifications);
 
           return (
-            <Mutation mutation={NOTIFS_MARK_SEEN}>
-              {markSeen => (
-                <NavItem>
-                  <NotifBtn
-                    ref={this.notifBtn}
-                    onClick={this.onClick(markSeen)}
-                    totalUnseen={totalUnseen}
-                  />
-                  {showDropdown && <NotifDropdown {...dropdownProps} />}
-                </NavItem>
-              )}
-            </Mutation>
+            <NavItem>
+              <NotifBtn
+                ref={this.notifBtn}
+                onClick={this.onClick(markSeen)}
+                totalUnseen={totalUnseen}
+              />
+              {showDropdown && <NotifDropdown {...dropdownProps} />}
+            </NavItem>
           );
         }}
-      </Query>
+      </NotificationsGQL>
     );
   }
 }

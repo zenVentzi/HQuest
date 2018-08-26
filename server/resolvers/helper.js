@@ -32,6 +32,17 @@ function gqlNotifications(dbNotifs) {
   return res;
 }
 
+function gqlNotfication(dbNotif) {
+  return {
+    id: dbNotif._id.toString(),
+    performerId: dbNotif.performerId,
+    performerAvatarSrc: dbNotif.performerAvatarSrc,
+    text: dbNotif.text,
+    seen: dbNotif.seen,
+    createdOn: dbNotif._id.getTimestamp(),
+  };
+}
+
 function gqlComment(context, dbUser, dbComment) {
   const usr = gqlUser(context, dbUser);
   return {
@@ -41,4 +52,4 @@ function gqlComment(context, dbUser, dbComment) {
   };
 }
 
-module.exports = { gqlComment, gqlUser, gqlNotifications };
+module.exports = { gqlComment, gqlUser, gqlNotfication, gqlNotifications };

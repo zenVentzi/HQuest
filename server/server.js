@@ -1,4 +1,5 @@
 const http = require('http');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { ApolloServer } = require('apollo-server');
 const requireGraphQLFile = require('require-graphql-file');
@@ -12,14 +13,44 @@ const typeDefs = requireGraphQLFile('./schema');
 
 const PORT = process.env.PORT || 4000;
 
+async function verifyToken(authToken) {
+  const secret = process.env.JWT_SECRET;
+  return new Promise((resolve, reject) => {
+    jwt.verify(authToken, secret, (err, decoded) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(decoded);
+      }
+    });
+  });
+}
+
 mongoConnect(db => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    subscriptions: {
+      onConnect: async (connectionParams, webSocket) => {
+        if (connectionParams.authToken) {
+          const decoded = await verifyToken(connectionParams.authToken);
+
+          return { user: decoded };
+        }
+
+        throw new Error('Missing auth token!');
+      },
+      onDisconnect: () => {
+        console.log(`ondisconnect`);
+      },
+    },
     context: ({ req, connection }) => {
       if (connection) {
         // check connection for metadata
-        return {};
+        return {
+          user: connection.user,
+          collections: collections(db),
+        };
       }
       return {
         user: req.user,
