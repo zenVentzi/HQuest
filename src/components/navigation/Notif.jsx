@@ -1,15 +1,25 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
 import { history } from '../../utils';
 
-const StyledNotif = styled.div`
+const StyledNotif = styled(Link)`
   background: black;
+  text-decoration: none;
   display: flex;
   padding: 0.7em;
   color: white;
   width: 100%;
   cursor: pointer;
+
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
 
   ${Avatar} {
     border-color: white;
@@ -68,9 +78,9 @@ const timeAgoText = createdOn => {
 
 class Notif extends Component {
   onCLick = () => {
-    const { performerId } = this.props.notif;
-    const redirectTo = `/userProfile/${performerId}`;
-    // return <Redirect push to={redirectTo} />;
+    const { performerId, questionId } = this.props.notif;
+    // const redirectTo = `/userProfile/${performerId}`;
+    const redirectTo = `/userProfile/${performerId}/${questionId}`;
     history.push(redirectTo);
   };
   render() {
@@ -85,7 +95,7 @@ class Notif extends Component {
     } = this.props;
 
     return (
-      <StyledNotif onClick={this.onCLick}>
+      <StyledNotif to="/" onClick={this.onCLick}>
         <Left>
           <ThemeProvider theme={theme}>
             <Avatar src={performerAvatarSrc} />

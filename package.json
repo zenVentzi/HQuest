@@ -5,11 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/server.js",
+    "cosmos": "cosmos",
+    "cosmos:export": "cosmos-export",
     "lint:css": "stylelint './src/**/*.jsx' --formatter verbose"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@atlaskit/button": "^9.0.7",
+    "@atlaskit/theme": "^6.0.1",
     "@okgrow/graphql-scalars": "^0.4.1",
     "apollo-boost": "^0.1.10",
     "apollo-cache-inmemory": "^1.2.5",
@@ -20,7 +24,8 @@
     "apollo-link-error": "^1.1.0",
     "apollo-link-http": "^1.5.4",
     "apollo-link-ws": "^1.0.8",
-    "apollo-server": "^2.0.0-rc.6",
+    "apollo-server": "^2.0.5",
+    "apollo-server-express": "^2.0.4",
     "apollo-upload-client": "^8.1.0",
     "apollo-utilities": "^1.0.19",
     "babel-polyfill": "^6.26.0",
@@ -75,6 +80,7 @@
     "eslint-plugin-react": "^7.10.0",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
+    "react-cosmos": "^4.6.4",
     "style-loader": "^0.21.0",
     "stylelint": "^9.3.0",
     "stylelint-config-recommended": "^2.1.0",

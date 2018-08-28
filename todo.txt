@@ -1,0 +1,2 @@
+1) Read IOC with react(Medium acritcle with js generator functions)
+2) Read about generator fns
