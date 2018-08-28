@@ -1,7 +1,7 @@
-import createHistory from 'history/createBrowserHistory';
+import createBrowserHistory from 'history/createBrowserHistory';
 import { AUTH_TOKEN, USER_ID } from './constants';
 
-const history = createHistory();
+const history = createBrowserHistory();
 
 function loggedUserToken() {
   return localStorage.getItem(AUTH_TOKEN);

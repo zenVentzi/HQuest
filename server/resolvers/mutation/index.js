@@ -91,20 +91,40 @@ async function addComment(_, { answerId, comment }, context) {
   }
 
   const { collections } = context;
-  const dbUser = await collections.users.findOne({
+  const performer = await collections.users.findOne({
     _id: ObjectID(context.user.id),
   });
 
   const answerObj = await collections.answers.findOneAndUpdate(
     { _id: ObjectID(answerId) },
-    { $push: { comments: { _id: ObjectID(), comment, userId: dbUser._id } } },
+    {
+      $push: { comments: { _id: ObjectID(), comment, userId: performer._id } },
+    },
     { returnOriginal: false }
   );
 
   const { comments } = answerObj.value;
   const newDbComment = comments[comments.length - 1];
 
-  const res = gqlComment(context, dbUser, newDbComment);
+  const res = gqlComment(context, performer, newDbComment);
+  const performerId = performer._id.toString();
+
+  const performerName = `${performer.firstName} ${performer.surName}`;
+  const notif = {
+    _id: ObjectID(),
+    performerId,
+    performerAvatarSrc: performer.avatarSrc,
+    text: `${performerName} commented: "${comment} "`,
+    seen: false,
+  };
+
+  const receiverId = answerObj.userId;
+
+  await collections.users.updateOne(
+    { _id: ObjectID(receiverId) },
+    { $push: { followers: ObjectID(performerId), notifications: notif } },
+    { upsert: true }
+  );
 
   return res;
 }

@@ -1,8 +1,7 @@
 const http = require('http');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-// const { ApolloServer } = require('apollo-server');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server');
 const requireGraphQLFile = require('require-graphql-file');
 const app = require('./App');
 const { connect: mongoConnect } = require('./db');

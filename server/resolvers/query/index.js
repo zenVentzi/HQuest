@@ -38,7 +38,7 @@ async function comments(_, { answerId }, context) {
   const { comments: dbComments } = answer;
 
   if (!dbComments) return [];
-
+  // TODO: This can be optimized with Dataloader
   const promises = dbComments.map(async dbCom => {
     const dbUser = await collections.users.findOne({
       _id: dbCom.userId,

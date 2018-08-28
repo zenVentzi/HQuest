@@ -9,6 +9,10 @@ const baseStyles = () => injectGlobal`
     transition-duration: 0.2s;
   }
 
+  body {
+    background: black;
+  }
+
   q {
     quotes: "“" "”" "‘" "’";
   }
