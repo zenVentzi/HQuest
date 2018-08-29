@@ -35,16 +35,19 @@ const StyledUser = styled.div`
   border-radius: 0.3em;
 
   &:hover {
-    background: black;
+    opacity: 0.5;
     cursor: pointer;
     ${StyledUserName} {
       color: white;
     }
-    ${Avatar} {
-      border-color: white;
-    }
   }
 `;
+
+/* &: hover {
+  ${Avatar} {
+      border-color: white;
+    }
+} */
 
 class User extends Component {
   state = { redirect: false };

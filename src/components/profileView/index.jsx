@@ -4,7 +4,7 @@ import { Query } from 'react-apollo';
 import styled from '../../../node_modules/styled-components';
 import Navbar from '../navigation';
 import StyledViewRaw from '../reusable/StyledView';
-import Avatar from './Avatar';
+import Avatar from '../reusable/Avatar';
 import Username from './Username';
 import Intro from './Intro';
 import FollowBtn from './FollowBtn';
@@ -46,7 +46,7 @@ class ProfileView extends Component {
     return (
       <Query query={GET_USER} variables={vars}>
         {({ loading, error, data: { user } }) => {
-          if (loading) return <div> loading </div>;
+          if (loading) return <div> loading profile view </div>;
           if (error) return <div> {error} </div>;
           if (!user) return <div> User not found </div>;
           const isFollowed = user.followers.includes(loggedUserId());
@@ -55,7 +55,7 @@ class ProfileView extends Component {
             <Fragment>
               <Navbar />
               <StyledView>
-                <Avatar src={user.avatarSrc} personal={user.me} />
+                <Avatar src={user.avatarSrc} editable={user.me} />
                 <Username>{user.fullName}</Username>
                 <Intro>CEO at Microsoft</Intro>
                 <Links />

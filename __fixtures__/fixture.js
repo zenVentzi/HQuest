@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-// import { Theme } from '@atlaskit/theme';
-// import Button from '@atlaskit/button';
 import Button from './bla/Button';
+import Avatar from '../src/components/reusable/Avatar';
 
-export default [{ component: Button }];
+export default [{ component: Avatar }];
