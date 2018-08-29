@@ -1,5 +1,4 @@
-export default theme => ({
-  ...theme,
+export default {
   backgroundColor: 'black',
   textColor: 'white',
-});
+};

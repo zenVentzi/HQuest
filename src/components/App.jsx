@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
-import { Theme } from '@atlaskit/theme';
+import { ThemeProvider } from 'styled-components';
 
 import ApolloClient from './ApolloClient';
 import ProtectedRoute from './reusable/ProtectedRoute';
@@ -12,12 +12,13 @@ import LoginView from './loginView';
 import SignUpView from './signUpView';
 import appTheme from './appTheme';
 import baseStyles from './base-styles';
+import Avatar from './reusable/Avatar';
 
 const App = () => {
   baseStyles();
   return (
     <ApolloProvider client={ApolloClient}>
-      <Theme values={appTheme}>
+      <ThemeProvider theme={appTheme}>
         <BrowserRouter>
           <Switch>
             <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
@@ -27,7 +28,7 @@ const App = () => {
             <Route path="/signup" component={SignUpView} />
           </Switch>
         </BrowserRouter>
-      </Theme>
+      </ThemeProvider>
     </ApolloProvider>
   );
 };

@@ -7,6 +7,7 @@ const baseStyles = () => injectGlobal`
   * {
     box-sizing: border-box;
     transition-duration: 0.2s;
+    color: white;
   }
 
   body {
@@ -52,15 +53,15 @@ const baseStyles = () => injectGlobal`
     resize: none;
     border: none;
     border-radius: 0.2em;
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
   }
 
   button {
     border: none;
     /* outline: none; */
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
     border-radius: 0.3em;
     padding: 0.3em 0.8em;
     cursor: pointer;
