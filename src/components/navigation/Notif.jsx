@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
-import { history } from '../../utils';
 
 const StyledNotif = styled(Link)`
   background: black;
@@ -76,38 +75,27 @@ const timeAgoText = createdOn => {
   return res;
 };
 
-class Notif extends Component {
-  onCLick = () => {
-    const { performerId, questionId } = this.props.notif;
-    // const redirectTo = `/userProfile/${performerId}`;
-    const redirectTo = `/userProfile/${performerId}/${questionId}`;
-    history.push(redirectTo);
+const Notif = ({
+  notif: { performerAvatarSrc, performerId, questionId, text, createdOn },
+}) => {
+  const theme = {
+    avatarSize: `${2.3}em`,
   };
-  render() {
-    const theme = {
-      avatarSize: `${2.3}em`,
-    };
+  const redirectLink = `/userProfile/${performerId}/${questionId}`;
 
-    // if msg length is > 80, cut and add ..
-
-    const {
-      notif: { performerAvatarSrc, text, createdOn },
-    } = this.props;
-
-    return (
-      <StyledNotif to="/" onClick={this.onCLick}>
-        <Left>
-          <ThemeProvider theme={theme}>
-            <Avatar src={performerAvatarSrc} />
-          </ThemeProvider>
-        </Left>
-        <Right>
-          <Text>{text}</Text>
-          <Time>{timeAgoText(createdOn)}</Time>
-        </Right>
-      </StyledNotif>
-    );
-  }
-}
+  return (
+    <StyledNotif to={redirectLink}>
+      <Left>
+        <ThemeProvider theme={theme}>
+          <Avatar src={performerAvatarSrc} />
+        </ThemeProvider>
+      </Left>
+      <Right>
+        <Text>{text}</Text>
+        <Time>{timeAgoText(createdOn)}</Time>
+      </Right>
+    </StyledNotif>
+  );
+};
 
 export default Notif;

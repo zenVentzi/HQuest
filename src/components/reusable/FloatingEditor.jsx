@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import AvatarEditor from 'react-avatar-editor';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import Btn from '../reusable/StyledBtn';
+import Btn from './Btn';
 
 const UPLOAD_AVATAR = gql`
   mutation uploadAvatar($base64Img: String!) {

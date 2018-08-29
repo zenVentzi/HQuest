@@ -10,9 +10,9 @@ import SearchView from './searchView';
 import ProfileView from './profileView';
 import LoginView from './loginView';
 import SignUpView from './signUpView';
+import NotFoundView from './notFoundView';
 import appTheme from './appTheme';
 import baseStyles from './base-styles';
-import Avatar from './reusable/Avatar';
 
 const App = () => {
   baseStyles();
@@ -26,6 +26,7 @@ const App = () => {
             <ProtectedRoute path="/search" component={SearchView} />
             <Route path="/login" component={LoginView} />
             <Route path="/signup" component={SignUpView} />
+            <Route component={NotFoundView} />
           </Switch>
         </BrowserRouter>
       </ThemeProvider>

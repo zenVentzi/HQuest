@@ -1,11 +1,12 @@
 import React from 'react';
-import {
-  Facebook as FacebookLogo,
-  Twitter as TwitterLogo,
-  Instagram as InstagramLogo,
-  Linkedin as LinkedInLogo,
-} from 'styled-icons/fa-brands';
+
 import styled from 'styled-components';
+import { Facebook as FacebookLogo } from 'styled-icons/fa-brands/Facebook';
+import { TwitterSquare as TwitterLogo } from 'styled-icons/fa-brands/TwitterSquare';
+import { Instagram as InstagramLogo } from 'styled-icons/feather/Instagram';
+import { Linkedin as LinkedInLogo } from 'styled-icons/fa-brands/Linkedin';
+
+// export default () => <FacebookLogo />;
 
 const StyledLinks = styled.div`
   display: flex;

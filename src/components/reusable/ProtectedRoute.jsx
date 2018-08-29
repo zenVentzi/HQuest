@@ -1,22 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { isAuthenticated } from '../../utils';
 
-class ProtectedRoute extends Component {
-  render() {
-    const { component: Component, ...props } = this.props;
+const ProtectedRoute = ({ component: Component, ...props }) => {
+  const holder = 5;
 
-    return (
-      <Route
-          {...props}
-          render={props => (
-            isAuthenticated() ?
-              <Component {...props} /> :
-              <Redirect to="/login" />
-          )}
-        />
-    );
-  }
-}
+  return (
+    <Route
+      {...props}
+      render={prps =>
+        isAuthenticated() ? <Component {...prps} /> : <Redirect to="/login" />
+      }
+    />
+  );
+};
 
 export default ProtectedRoute;

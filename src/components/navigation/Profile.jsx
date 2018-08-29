@@ -1,17 +1,14 @@
 import React from 'react';
 import ProfileBtn from './ProfileBtn';
 import NavItem from './NavItem';
-import { loggedUserId, history } from '../../utils';
+import { loggedUserId } from '../../utils';
 
 const Profile = () => {
-  const onClick = () => {
-    const redirectTo = `/userProfile/${loggedUserId()}`;
-    history.push(redirectTo);
-  };
+  const link = `/userProfile/${loggedUserId()}`;
 
   return (
     <NavItem>
-      <ProfileBtn onClick={onClick} />
+      <ProfileBtn link={link} />
     </NavItem>
   );
 };
