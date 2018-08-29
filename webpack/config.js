@@ -6,11 +6,7 @@ const Visualizer = require('webpack-visualizer-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: [
-    'webpack-hot-middleware/client?reload=true',
-    'babel-polyfill',
-    './src/index.jsx',
-  ],
+  entry: ['webpack-hot-middleware/client', 'babel-polyfill', './src/index.jsx'],
   mode: 'development',
   output: {
     // path: path.resolve(process.cwd(), 'dist'),
@@ -21,6 +17,7 @@ module.exports = {
   devServer: {
     // contentBase: '/',
     overlay: true,
+    clientLogLevel: 'warning',
     stats: 'errors-only',
     hot: true,
   },
@@ -29,7 +26,7 @@ module.exports = {
   // },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
     new Visualizer(),
   ],
   cache: true,
