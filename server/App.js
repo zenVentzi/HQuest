@@ -39,7 +39,11 @@ app.use(
   }))
 } */
 
-app.use(require('webpack-hot-middleware')(compiler));
+app.use(
+  require('webpack-hot-middleware')(compiler, {
+    log: false,
+  })
+);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));

@@ -73,7 +73,7 @@ class QuestionViewer extends Component {
               <Answer viewMode question={question} />
               <div>
                 <Span onClick={this.toggleReactions}>15 Reactions</Span>
-                <Span onClick={this.toggleComments}>2 Comments</Span>
+                <Span onClick={this.toggleComments}>2 Commenssts</Span>
               </div>
               {/* showButtons */ false && (
                 <div>
