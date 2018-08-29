@@ -1,10 +1,14 @@
 const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
+const Visualizer = require('webpack-visualizer-plugin');
+
 const path = require('path');
 
 module.exports = {
   entry: [
-    'babel-polyfill',
     'webpack-hot-middleware/client?reload=true',
+    'babel-polyfill',
     './src/index.jsx',
   ],
   mode: 'development',
@@ -13,14 +17,22 @@ module.exports = {
     publicPath: '/',
     filename: 'bundle.js',
   },
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-eval-source-map',
   devServer: {
     // contentBase: '/',
     overlay: true,
     stats: 'errors-only',
     hot: true,
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  // optimization: {
+  //   minimize: true,
+  // },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new BundleAnalyzerPlugin(),
+    new Visualizer(),
+  ],
+  cache: true,
   module: {
     rules: [
       {
