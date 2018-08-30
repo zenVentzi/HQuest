@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
+import distanceInWords from 'date-fns/distance_in_words';
 import { getTheme } from 'Utils';
 import Avatar from '../reusable/Avatar';
 
@@ -45,28 +46,18 @@ const Text = styled.div`
 `;
 
 const Time = styled.div`
+  color: black;
   font-size: 0.5em;
 `;
 
 const timeAgoText = createdOn => {
   const startDate = new Date(createdOn).getTime();
-  const timeNow = new Date().getTime();
-  const seconds = (timeNow - startDate) / 1000;
-  const mins = seconds / 60;
-  const hours = mins / 60;
-  const days = hours / 24;
+  const dateTimeNow = new Date().getTime();
 
-  let res;
-
-  if (days) {
-    res = days > 1 ? `${days} days ago` : `yesterday`;
-  } else if (hours) {
-    res = hours > 1 ? `${hours} hours ago` : `1 hour ago`;
-  } else if (mins) {
-    res = days > 1 ? `${mins} mins ago` : `a minute ago`;
-  } else {
-    res = days > 1 ? `${seconds} seconds ago` : `a second ago`;
-  }
+  const res = distanceInWords(startDate, dateTimeNow, {
+    includeSeconds: true,
+    addSuffix: true,
+  });
 
   return res;
 };
@@ -77,7 +68,7 @@ const Notif = ({
   const theme = {
     avatarSize: `${2.3}em`,
   };
-  const redirectLink = `/userProfile/${performerId}/${questionId}`;
+  const redirectLink = `/userProfile/${performerId}/${questionId || ''}`;
 
   return (
     <StyledNotif to={redirectLink}>

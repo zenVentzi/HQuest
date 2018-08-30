@@ -10,7 +10,15 @@ import { getMainDefinition } from 'apollo-utilities';
 // import { AUTH_TOKEN } from '../constants';
 import { loggedUserToken } from '../utils';
 
-const uploadLink = createUploadLink({ uri: 'http://localhost:4000/graphql' });
+const getHttpURI = isTunnel => {
+  return isTunnel
+    ? 'http://hquest.localtunnel.me/graphql'
+    : 'http://localhost:4000/graphql';
+};
+
+const uploadLink = createUploadLink({
+  uri: getHttpURI(false),
+});
 
 const authLink = setContext((_, { headers }) => {
   const token = loggedUserToken();
@@ -35,8 +43,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
+const getWsURI = isTunnel => {
+  return isTunnel
+    ? `ws://hquest.localtunnel.me/graphql`
+    : `ws://localhost:4000/graphql`;
+};
+
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000/graphql`,
+  uri: getWsURI(false),
   options: {
     reconnect: true,
     connectionParams: {

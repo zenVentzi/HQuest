@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/server.js",
+    "build": "webpack -p --config ./webpack/config.js",
     "cosmos": "cosmos",
     "cosmos:export": "cosmos-export",
     "lint:css": "stylelint './src/**/*.jsx' --formatter verbose"
@@ -32,6 +33,7 @@
     "bcrypt": "^2.0.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "date-fns": "^1.29.0",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",

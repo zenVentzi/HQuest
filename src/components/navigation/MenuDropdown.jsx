@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const Dropdown = styled.div`
   border-radius: 0.2em;
-  background: black;
+  background: white;
   text-align: center;
   position: absolute;
   top: 2.2em;
