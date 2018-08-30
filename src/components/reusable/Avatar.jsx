@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   height: ${props => props.theme.avatarSize};
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 2px solid ${props => (props.invertColors ? 'black' : 'white')};
 
   &:hover {
     cursor: ${props => (props.editable ? 'pointer' : 'auto')};
@@ -23,12 +23,6 @@ const Img = styled.img`
   max-height: 100%;
   border-radius: 50%;
 `;
-
-Wrapper.defaultProps = {
-  theme: {
-    avatarSize: '150px',
-  },
-};
 
 const UpdateOverlay = styled.div`
   position: absolute;
@@ -96,13 +90,14 @@ class Avatar extends Component {
   };
 
   render() {
-    const { editable, className } = this.props;
+    const { editable, className, invertColors } = this.props;
     const { src, fileInputKey } = this.state;
 
     return (
       <Fragment>
         <Wrapper
           className={className}
+          invertColors={invertColors}
           editable={editable}
           onMouseOver={this.onMouseOver}
           onFocus={this.onMouseOver}

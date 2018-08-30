@@ -43,12 +43,6 @@ const StyledUser = styled.div`
   }
 `;
 
-/* &: hover {
-  ${Avatar} {
-      border-color: white;
-    }
-} */
-
 class User extends Component {
   state = { redirect: false };
 
@@ -73,7 +67,12 @@ class User extends Component {
         }}
       >
         <UserContent>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider
+            theme={t => {
+              console.log(t);
+              return {};
+            }}
+          >
             <Avatar src={avatarSrc} />
           </ThemeProvider>
           <TextContainer>

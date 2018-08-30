@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
+import { getTheme } from 'Utils';
 import Avatar from '../reusable/Avatar';
 
 const StyledNotif = styled(Link)`
-  background: black;
   text-decoration: none;
   display: flex;
   padding: 0.7em;
-  color: white;
   width: 100%;
   cursor: pointer;
 
@@ -18,10 +17,6 @@ const StyledNotif = styled(Link)`
   &:link,
   &:active {
     text-decoration: none;
-  }
-
-  ${Avatar} {
-    border-color: white;
   }
 
   &:hover {
@@ -44,6 +39,7 @@ const Right = styled.div`
 
 const Text = styled.div`
   font-size: 0.8em;
+  color: black;
   text-align: left;
   word-break: break-all;
 `;
@@ -86,8 +82,8 @@ const Notif = ({
   return (
     <StyledNotif to={redirectLink}>
       <Left>
-        <ThemeProvider theme={theme}>
-          <Avatar src={performerAvatarSrc} />
+        <ThemeProvider theme={getTheme(theme)}>
+          <Avatar src={performerAvatarSrc} invertColors />
         </ThemeProvider>
       </Left>
       <Right>

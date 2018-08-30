@@ -80,14 +80,14 @@ const baseStyles = () => injectGlobal`
 
   ::-webkit-scrollbar {
     width: 0.8em;
-    background: black;
+    background: white;
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
   }
 
   ::-webkit-scrollbar-track {
     background: white;
-    border: 1px solid black;
+    border: 0px solid black;
     border-radius: 1em;
     margin-right: 1em;
     /* change me to blue to match the background */
@@ -95,6 +95,8 @@ const baseStyles = () => injectGlobal`
 
   ::-webkit-scrollbar-thumb {
     border-radius: 1em;
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
     background: black;
     /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
   }
