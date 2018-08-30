@@ -5,7 +5,6 @@ import FixedPanel from './FixedPanel';
 import ReactButtons from './ReactButtons';
 
 const Reactions = ({ onClose }) => {
-  const holder = 5;
   return (
     <FixedPanel onClose={onClose}>
       <ReactButtons />

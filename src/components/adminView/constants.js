@@ -11,5 +11,6 @@ const QuestionTypes = {
   WOULD_YOU_SINGLE,
   WOULD_YOU_DOUBLE,
 };
+const test = 5;
 
-export { QuestionTypes };
+export { QuestionTypes, test };

@@ -14,28 +14,27 @@ const StyledLinks = styled.div`
 `;
 
 const Links = () => {
-  const test = 5;
   return (
     <StyledLinks>
       <FacebookLogo
         size="2em"
         css="cursor: pointer"
-        onClick={e => console.log('click')}
+        onClick={() => console.log('click')}
       />
       <TwitterLogo
         size="2em"
         css="cursor: pointer"
-        onClick={e => console.log('click')}
+        onClick={() => console.log('click')}
       />
       <InstagramLogo
         size="2em"
         css="cursor: pointer"
-        onClick={e => console.log('click')}
+        onClick={() => console.log('click')}
       />
       <LinkedInLogo
         size="2em"
         css="cursor: pointer"
-        onClick={e => console.log('click')}
+        onClick={() => console.log('click')}
       />
     </StyledLinks>
   );

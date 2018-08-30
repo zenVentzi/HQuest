@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import User from './SubUser';
 
@@ -12,8 +12,6 @@ const StyledReaction = styled.div`
 `;
 
 const Reaction = ({ reactionIcon: ReactionIcon }) => {
-  const test = 5;
-
   return (
     <StyledReaction>
       <User size={1.5} />

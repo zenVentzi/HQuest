@@ -2,7 +2,7 @@ import { GET_QUESTIONS } from './index';
 // import { viewedProfileId as userId } from '../index';
 
 const ADD_ANSWER = 'addAnswer';
-const EDIT_ANSWER = `editAnswer`;
+// const EDIT_ANSWER = `editAnswer`;
 const REMOVE_ANSWER = 'removeAnswer';
 
 const CACHE_ACTIONS = { ADD_ANSWER, /* EDIT_ANSWER, */ REMOVE_ANSWER };

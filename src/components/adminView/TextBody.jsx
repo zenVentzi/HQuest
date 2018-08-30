@@ -8,8 +8,6 @@ const TextArea = styled.textarea`
 `;
 
 const TextBody = ({ onChange }) => {
-  const test = 5;
-
   return (
     <Fragment>
       <TextArea

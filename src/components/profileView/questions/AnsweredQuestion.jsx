@@ -41,7 +41,9 @@ class AnsweredQuestion extends Component {
     return (
       <StyledQuestion
         onMouseOver={this.onMouseOver}
+        onFocus={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
+        onBlur={this.onMouseLeave}
         style={style}
       >
         {viewMode ? (

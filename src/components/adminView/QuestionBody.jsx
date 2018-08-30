@@ -82,8 +82,6 @@ class QuestionBody extends Component {
     return (
       <Mutation mutation={CREATE_QUESTION_MUTATION}>
         {createQuestion => {
-          const test = 5;
-
           return (
             <Fragment>
               <Body onChange={this.onBodyChange} />

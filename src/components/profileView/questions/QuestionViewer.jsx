@@ -59,7 +59,11 @@ class QuestionViewer extends Component {
     return (
       <Mutation mutation={REMOVE_ANSWER}>
         {removeQuestion => {
-          const { hovered, onClickEdit, showButtons, question } = this.props;
+          const {
+            hovered,
+            onClickEdit,
+            /* showButtons */ question,
+          } = this.props;
           const { showReactions, showComments } = this.state;
           const answerId = question.answer.id;
 

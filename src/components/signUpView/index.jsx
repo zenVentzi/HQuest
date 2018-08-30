@@ -29,7 +29,7 @@ const SignUpView = props => {
   return (
     <StyledView>
       <Mutation mutation={SIGNUP_MUTATION}>
-        {(signUp, { data }) => (
+        {signUp => (
           <div>
             <TextInput
               placeholder="First name.."
@@ -67,7 +67,7 @@ const SignUpView = props => {
                   password,
                 };
 
-                const result = await signUp({ variables });
+                await signUp({ variables });
                 props.history.push('/login');
               }}
             >

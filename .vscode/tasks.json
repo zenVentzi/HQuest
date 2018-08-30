@@ -7,6 +7,14 @@
       "type": "npm",
       "script": "install",
       "problemMatcher": []
-    }
+    },
+    {
+      "label": "TSCompileAll",
+      "type": "shell",
+      "command": "./node_modules/.bin/tsc --watch --noEmit --project .",
+      "problemMatcher": [
+        "$tsc-watch"
+      ]
+    },
   ]
 }

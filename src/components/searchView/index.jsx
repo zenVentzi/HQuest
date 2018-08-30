@@ -21,8 +21,6 @@ function getMatchParam() {
 }
 
 const SearchView = () => {
-  const test = 5;
-
   return (
     <Fragment>
       <Navbar />
@@ -37,7 +35,9 @@ const SearchView = () => {
 
             return (
               <Fragment>
-                {users.map(user => <User key={user.id} user={user} />)}
+                {users.map(user => (
+                  <User key={user.id} user={user} />
+                ))}
               </Fragment>
             );
           }}

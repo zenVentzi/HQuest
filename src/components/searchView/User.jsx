@@ -37,7 +37,7 @@ const StyledUser = styled.div`
   &:hover {
     opacity: 0.5;
     cursor: pointer;
-    ${StyledUserName} {
+    ${/* sc-selector */ StyledUserName} {
       color: white;
     }
   }
@@ -56,9 +56,9 @@ class User extends Component {
       return <Redirect push to={redirectTo} />;
     }
 
-    const theme = {
-      avatarSize: '50px',
-    };
+    // const theme = {
+    //   avatarSize: '50px',
+    // };
     return (
       <StyledUser
         onClick={() => {

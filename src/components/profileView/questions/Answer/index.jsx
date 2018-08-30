@@ -5,7 +5,7 @@ import Text from './Text';
 import { QuestionTypes } from '../../../../constants';
 
 const Answer = props => {
-  const { TEXT, SCALE, OPTIONS, WOULD_YOU_SINGLE } = QuestionTypes;
+  const { TEXT, SCALE, OPTIONS /* WOULD_YOU_SINGLE */ } = QuestionTypes;
   const {
     viewMode,
     onChange,
