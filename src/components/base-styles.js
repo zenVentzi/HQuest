@@ -42,10 +42,15 @@ const baseStyles = () => injectGlobal`
 
   input {
     padding: 0.2em 0.9em;
-    border: none;
+    border: 2px solid white;
     border-radius: 0.2em;
-    background-color: black;
+    background: black;
     color: white;
+  }
+
+  input:hover {
+    background-color: white;
+    color: black;
   }
 
   textarea {
@@ -58,17 +63,18 @@ const baseStyles = () => injectGlobal`
   }
 
   button {
-    border: none;
+    border: 2px solid white;
     /* outline: none; */
-    background-color: white;
-    color: black;
+    background: black;
+    color: white;
     border-radius: 0.3em;
     padding: 0.3em 0.8em;
     cursor: pointer;
   }
 
   button:hover {
-    background-color: gray;
+    background-color: white;
+    color: black;
   }
 
   ol {

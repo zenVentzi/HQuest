@@ -9,8 +9,8 @@ module.exports = {
   entry: ['webpack-hot-middleware/client', 'babel-polyfill', './src/index.jsx'],
   mode: 'development',
   output: {
-    // path: path.resolve(process.cwd(), 'dist'),
-    publicPath: '/',
+    // path: path.resolve(process.cwd(), 'public'),
+    publicPath: '/public',
     filename: 'bundle.js',
   },
   devtool: 'cheap-module-eval-source-map',
@@ -21,9 +21,6 @@ module.exports = {
     stats: 'errors-only',
     hot: true,
   },
-  // optimization: {
-  //   minimize: true,
-  // },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     // new BundleAnalyzerPlugin(),
