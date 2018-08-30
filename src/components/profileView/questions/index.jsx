@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Transition } from 'react-spring';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';

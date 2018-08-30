@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import StyledView from '../reusable/StyledView';
@@ -15,7 +15,7 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const LoginView = props => {
+const LoginView = () => {
   let email;
   let password;
 

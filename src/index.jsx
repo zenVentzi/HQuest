@@ -3,11 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './components/App';
-import TestApp from './components/TestApp';
+// import TestApp from './components/TestApp';
 
 if (module.hot) {
   module.hot.accept();
 
+  /*eslint-disable */
   (function(global) {
     const console_log = global.console.log;
     global.console.log = function() {
@@ -22,6 +23,7 @@ if (module.hot) {
       }
     };
   })(window);
+  /* eslint-enable */
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));

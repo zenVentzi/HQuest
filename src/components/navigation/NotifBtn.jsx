@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Notifications } from 'styled-icons/material/Notifications';
 import styled from 'styled-components';
 

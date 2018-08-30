@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import QuestionViewer from './QuestionViewer';
 import QuestionEditor from './QuestionEditor';
 
 const StyledQuestion = styled.div`

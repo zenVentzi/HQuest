@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import StyledViewRaw from '../reusable/StyledView';
 
 const NotFoundView = () => (

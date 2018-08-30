@@ -8,7 +8,7 @@ module.exports = {
     ],
     rules: {
         "no-console": "off",
-        // "arrow-body-style": 0,
+        "arrow-body-style": 0,
         'no-underscore-dangle': 'off',
         'no-plusplus': 'off',
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],

@@ -62,12 +62,7 @@ class ProfileView extends Component {
                 {!user.me && (
                   <FollowBtn isFollowed={isFollowed} userId={user.id} />
                 )}
-                <Search
-                  placeholder="Search questions.."
-                  onChange={() => {
-                    const test = 5;
-                  }}
-                />
+                <Search placeholder="Search questions.." onChange={() => {}} />
                 {user.me && (
                   <ToggleQuestions onClick={this.onToggleQuestions} />
                 )}

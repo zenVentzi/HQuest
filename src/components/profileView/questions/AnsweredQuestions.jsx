@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import AnsweredQuestion from './AnsweredQuestion';
 
@@ -7,8 +7,6 @@ const Empty = styled.div`
 `;
 
 const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
-  const test = 5;
-
   return questions.length > 0 ? (
     questions.map(q => (
       <AnsweredQuestion

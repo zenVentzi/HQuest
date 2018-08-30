@@ -6,7 +6,7 @@ import { Heart } from 'styled-icons/feather/Heart';
 import { HandPeace } from 'styled-icons/fa-regular/HandPeace';
 import styled, { css } from 'styled-components';
 
-const btnCss = `cursor: pointer; margin-right: 0.7em;`;
+// const btnCss = `cursor: pointer; margin-right: 0.7em;`;
 
 const common = css`
   cursor: pointer;
@@ -54,7 +54,7 @@ const StyledButtons = styled.div`
 
 const ReactButtons = () => (
   <StyledButtons>
-    <ThumbsUpBtn onClick={e => console.log(`click`)} />
+    <ThumbsUpBtn onClick={() => console.log(`click`)} />
     <SmileBtn />
     <SmileyBtn />
     <HeartBtn />

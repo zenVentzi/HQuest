@@ -39,7 +39,6 @@ const common = css`
   top: 50%;
   left: 50%;
   font-size: 10px;
-  // font-family: Verdana, sans-serif;
 `;
 
 const On = styled.span`
@@ -54,27 +53,25 @@ const Off = styled.span`
 const Input = styled.input`
   display: none;
 
-  &:checked + ${Slider} {
-  }
-  &:focus + ${Slider} {
+  &:focus + ${/* sc-selector */ Slider} {
     box-shadow: 0 0 1px #2196f3;
   }
-  &:checked + ${Slider} {
+  &:checked + ${/* sc-selector */ Slider} {
     &:before {
       transform: translateX(95px);
     }
   }
-  &:checked + ${Slider} ${On} {
+  &:checked + ${/* sc-selector */ Slider} ${/* sc-selector */ On} {
     display: block;
   }
-  &:checked + ${Slider} ${Off} {
+  /* stylelint-disable */
+  &:checked + ${/* sc-selector */ Slider} ${/* sc-selector */ Off} {
     display: none;
   }
+  /* stylelint-enable */
 `;
 
 const ToggleBtn = props => {
-  const test = 5;
-
   return (
     // eslint-disable-next-line jsx-a11y/label-has-for
     <Switch>
