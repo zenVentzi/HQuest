@@ -15,4 +15,6 @@ function loggedUserId() {
   return localStorage.getItem(USER_ID);
 }
 
-export { history, isAuthenticated, loggedUserId, loggedUserToken };
+const getTheme = neww => current => ({ ...current, ...neww });
+
+export { history, isAuthenticated, loggedUserId, loggedUserToken, getTheme };

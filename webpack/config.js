@@ -52,6 +52,10 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: {
+      Utils: path.resolve(process.cwd(), './src/utils/'),
+      Reusable: path.resolve(process.cwd(), './src/components/reusable'),
+    },
     extensions: ['*', '.js', '.jsx', '.css', 'png', 'jpg', 'gif'],
   },
 };

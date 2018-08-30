@@ -29,7 +29,9 @@ class NotifDropdown extends Component {
 
     return (
       <Dropdown>
-        {notifications.map(n => <Notif key={n.id} notif={n} />)}
+        {notifications.map(n => (
+          <Notif key={n.id} notif={n} />
+        ))}
       </Dropdown>
     );
   }
