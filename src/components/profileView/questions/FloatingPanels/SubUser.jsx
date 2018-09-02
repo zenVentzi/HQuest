@@ -75,6 +75,7 @@ class User extends Component {
     const theme = {
       avatarSize: `${1.5 * size}em`,
     };
+
     return (
       <StyledUser
         onClick={() => {

@@ -8,6 +8,8 @@ module.exports = {
     ],
     rules: {
         "no-console": "off",
+        "no-unreachable": 0,
+        "no-unused-vars": 0,
         "arrow-body-style": 0,
         'no-underscore-dangle': 'off',
         'no-plusplus': 'off',
@@ -35,6 +37,7 @@ module.exports = {
     env: {
         "browser": true,
         "es6": true,
+        "jest": true,
     },
     parser: "babel-eslint",
     plugins: [
