@@ -32,14 +32,6 @@ const StyledUser = styled.div`
   /* border: 1px solid white; */
   background: black;
 
-  ${Avatar} {
-    border-color: white;
-  }
-
-  ${StyledUserName} {
-    color: white;
-  }
-
   &:hover {
     /* background: white; */
     cursor: pointer;
@@ -47,14 +39,6 @@ const StyledUser = styled.div`
 `;
 
 class User extends Component {
-  // static defaultProps = {
-  //   user: {
-  //     id: '5b682375a23c7306b4a8d81e',
-  //     fullName: 'Default Ivanonv1',
-  //     avatarSrc: '/public/images/avatar5b682375a23c7306b4a8d81e.jpeg',
-  //   },
-  // };
-
   state = { redirect: false };
 
   render() {

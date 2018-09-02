@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-/*eslint-disable */
 import styled, { ThemeProvider, withTheme } from 'styled-components';
-  /* eslint-enable */
 import distanceInWords from 'date-fns/distance_in_words';
 import { getTheme, inverseColor } from 'Utils';
 import Avatar from '../reusable/Avatar';
-
-/*  */
 
 const StyledNotif = styled(Link)`
   text-decoration: none;
@@ -51,7 +47,7 @@ const Time = styled.div`
   font-size: 0.5em;
 `;
 
-const timeAgoText = createdOn => {
+const getTime = createdOn => {
   const startDate = new Date(createdOn).getTime();
   const dateTimeNow = new Date().getTime();
 
@@ -60,6 +56,22 @@ const timeAgoText = createdOn => {
   });
 
   return `${res} ago`;
+};
+
+const getLink = notif => {
+  const { performerId, questionId, commentId } = notif;
+  switch (notif.type) {
+    case 'NEW_FOLLOWER':
+      return `/userProfile/${performerId}`;
+      break;
+    case 'NEW_COMMENT':
+      return `/userProfile/${performerId}/${questionId}/${commentId}`;
+      break;
+    default:
+      break;
+  }
+
+  return null;
 };
 
 class Notif extends Component {
@@ -80,10 +92,8 @@ class Notif extends Component {
   };
 
   render() {
-    const {
-      notif: { performerAvatarSrc, performerId, questionId, text, createdOn },
-    } = this.props;
-    const redirectLink = `/userProfile/${performerId}/${questionId || ''}`;
+    const { notif } = this.props;
+    const redirectLink = getLink(notif);
 
     const { theme } = this.state;
 
@@ -95,11 +105,11 @@ class Notif extends Component {
           onMouseLeave={this.toggleTheme}
         >
           <Left>
-            <Avatar src={performerAvatarSrc} invertColors />
+            <Avatar src={notif.performerAvatarSrc} invertColors />
           </Left>
           <Right>
-            <Text>{text}</Text>
-            <Time>{timeAgoText(createdOn)}</Time>
+            <Text>{notif.text}</Text>
+            <Time>{getTime(notif.createdOn)}</Time>
           </Right>
         </StyledNotif>
       </ThemeProvider>

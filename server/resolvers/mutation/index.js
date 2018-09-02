@@ -112,19 +112,23 @@ async function addComment(_, { answerId, comment }, context) {
   const performerName = `${performer.firstName} ${performer.surName}`;
   const notif = {
     _id: ObjectID(),
+    type: 'NEW_COMMENT',
     performerId,
     performerAvatarSrc: performer.avatarSrc,
     text: `${performerName} commented: "${comment} "`,
     seen: false,
   };
 
-  const receiverId = answerObj.userId;
+  const receiverId = answerObj.value.userId;
 
   await collections.users.updateOne(
     { _id: ObjectID(receiverId) },
-    { $push: { followers: ObjectID(performerId), notifications: notif } },
+    { $push: { notifications: notif } },
     { upsert: true }
   );
+
+  const payload = { receiverId, notif: gqlNotfication(notif) };
+  pubsub.publish('newNotification', payload);
 
   return res;
 }
@@ -255,6 +259,7 @@ async function follow(_, { userId, follow }, context) {
     const performerName = `${performer.firstName} ${performer.surName}`;
     const notif = {
       _id: ObjectID(),
+      type: 'NEW_FOLLOWER',
       performerId,
       performerAvatarSrc: performer.avatarSrc,
       text: `${performerName} is following you`,

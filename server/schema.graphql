@@ -51,8 +51,35 @@ type Comment {
   comment: String!
 }
 
-type Notification {
+enum NotificationType {
+  NEW_FOLLOWER
+  NEW_COMMENT
+}
+
+interface Notification {
   id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type NewComment implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  commentId: ID!
+}
+
+type NewFollower implements Notification {
+  id: ID!
+  type: NotificationType!
   performerId: ID!
   performerAvatarSrc: String!
   text: String!
@@ -63,11 +90,6 @@ type Notification {
 type LoginResult {
   authToken: String!
   userId: ID!
-}
-
-type NewNotification {
-  receiverId: ID!
-  notification: Notification!
 }
 
 type Query {
