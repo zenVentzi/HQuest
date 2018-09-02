@@ -1,0 +1,1 @@
+{"__schema":{"types":[{"kind":"INTERFACE","name":"Notification","possibleTypes":[{"name":"NewComment"},{"name":"NewFollower"}]}]}}

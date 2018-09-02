@@ -9,4 +9,4 @@ const QuestionTypes = {
   WOULD_YOU_DOUBLE: `WOULD_YOU_DOUBLE`,
 };
 
-export { AUTH_TOKEN, USER_ID, QuestionTypes };
+module.exports = { AUTH_TOKEN, USER_ID, QuestionTypes };

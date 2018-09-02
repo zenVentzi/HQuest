@@ -3,15 +3,36 @@ import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { loggedUserId } from '../../utils';
 
+// const Fragments = {
+//   NotifFields: gql`
+//     fragment NotifFields on Notification {
+//       id
+//       type
+//       performerId
+//       performerAvatarSrc
+//       text
+//       seen
+//       createdOn
+//       ... on NewComment {
+//         commentId
+//       }
+//     }
+//   `,
+// };
+
 const GET_NOTIFICATIONS = gql`
   query notifications {
     notifications {
       id
+      type
       performerId
       performerAvatarSrc
       text
       seen
       createdOn
+      ... on NewComment {
+        commentId
+      }
     }
   }
 `;
@@ -26,6 +47,7 @@ const NEW_NOTIFICATION = gql`
   subscription newNotification($userId: ID!) {
     newNotification(userId: $userId) {
       id
+      type
       performerId
       performerAvatarSrc
       text

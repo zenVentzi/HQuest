@@ -2,12 +2,15 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloLink, split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { createUploadLink } from 'apollo-upload-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { getMainDefinition } from 'apollo-utilities';
+import introspectionQueryResultData from '../fragmentTypes.json';
 
-// import { AUTH_TOKEN } from '../constants';
 import { loggedUserToken } from '../utils';
 
 const getHttpURI = isTunnel => {
@@ -72,9 +75,13 @@ const link = split(
   httpLink
 );
 
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData,
+});
+
 const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({ fragmentMatcher }),
 });
 
 export default client;

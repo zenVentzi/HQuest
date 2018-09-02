@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-/* stylelint-disable */
+const LinkBtn = styled(Link)``;
+
 const StyledBtn = styled.button``;
-/* stylelint-enable */
 
 StyledBtn.defaultProps = {};
 
@@ -14,7 +14,7 @@ const Btn = ({ children, onClick, link }) => {
   }
 
   return link ? (
-    <Link to={link}>{children}</Link>
+    <LinkBtn to={link}>{children}</LinkBtn>
   ) : (
     <StyledBtn onClick={onClick}>{children}</StyledBtn>
   );
