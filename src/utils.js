@@ -15,6 +15,20 @@ function loggedUserId() {
   return localStorage.getItem(USER_ID);
 }
 
-const getTheme = neww => current => ({ ...current, ...neww });
+const getTheme = neww => current => {
+  const res = { ...current, ...neww };
+  return res;
+};
 
-export { history, isAuthenticated, loggedUserId, loggedUserToken, getTheme };
+const inverseColor = color => {
+  return color === 'white' ? 'black' : 'white';
+};
+
+export {
+  history,
+  isAuthenticated,
+  loggedUserId,
+  loggedUserToken,
+  getTheme,
+  inverseColor,
+};

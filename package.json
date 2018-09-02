@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/server.js",
+    "test": "jest",
     "build": "webpack -p --config ./webpack/config.js",
     "cosmos": "cosmos",
-    "cosmos:export": "cosmos-export",
-    "lint:css": "stylelint './src/**/*.jsx' --formatter verbose"
+    "cosmos:export": "cosmos-export"
   },
   "author": "",
   "license": "ISC",
@@ -64,6 +64,7 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
+    "babel-jest": "^23.4.2",
     "babel-loader": "^7.1.5",
     "babel-plugin-styled-components": "^1.5.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -85,6 +86,7 @@
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "react-cosmos": "^4.6.4",
+    "regenerator-runtime": "^0.12.1",
     "style-loader": "^0.21.0",
     "stylelint": "^9.3.0",
     "stylelint-config-recommended": "^2.1.0",

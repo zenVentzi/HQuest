@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   height: ${props => props.theme.avatarSize};
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid ${props => (props.invertColors ? 'black' : 'white')};
+  border: 2px solid ${props => props.theme.foregroundColor};
 
   &:hover {
     cursor: ${props => (props.editable ? 'pointer' : 'auto')};

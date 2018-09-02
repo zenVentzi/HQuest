@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
+/*eslint-disable */
+import styled, { ThemeProvider, withTheme } from 'styled-components';
+  /* eslint-enable */
 import distanceInWords from 'date-fns/distance_in_words';
-import { getTheme } from 'Utils';
+import { getTheme, inverseColor } from 'Utils';
 import Avatar from '../reusable/Avatar';
+
+/*  */
 
 const StyledNotif = styled(Link)`
   text-decoration: none;
   display: flex;
-  padding: 0.7em;
+  padding: 0.4em;
   width: 100%;
   cursor: pointer;
+  background: ${props => props.theme.backgroundColor};
 
   &:focus,
   &:hover,
@@ -18,10 +23,6 @@ const StyledNotif = styled(Link)`
   &:link,
   &:active {
     text-decoration: none;
-  }
-
-  &:hover {
-    opacity: 0.5;
   }
 `;
 
@@ -40,13 +41,13 @@ const Right = styled.div`
 
 const Text = styled.div`
   font-size: 0.8em;
-  color: black;
+  color: ${props => props.theme.foregroundColor};
   text-align: left;
   word-break: break-all;
 `;
 
 const Time = styled.div`
-  color: black;
+  color: ${props => props.theme.foregroundColor};
   font-size: 0.5em;
 `;
 
@@ -56,33 +57,55 @@ const timeAgoText = createdOn => {
 
   const res = distanceInWords(startDate, dateTimeNow, {
     includeSeconds: true,
-    addSuffix: true,
   });
 
-  return res;
+  return `${res} ago`;
 };
 
-const Notif = ({
-  notif: { performerAvatarSrc, performerId, questionId, text, createdOn },
-}) => {
-  const theme = {
-    avatarSize: `${2.3}em`,
+class Notif extends Component {
+  state = {
+    theme: {
+      backgroundColor: 'white',
+      foregroundColor: 'black',
+      avatarSize: `${2.2}em`,
+    },
   };
-  const redirectLink = `/userProfile/${performerId}/${questionId || ''}`;
 
-  return (
-    <StyledNotif to={redirectLink}>
-      <Left>
-        <ThemeProvider theme={getTheme(theme)}>
-          <Avatar src={performerAvatarSrc} invertColors />
-        </ThemeProvider>
-      </Left>
-      <Right>
-        <Text>{text}</Text>
-        <Time>{timeAgoText(createdOn)}</Time>
-      </Right>
-    </StyledNotif>
-  );
-};
+  toggleTheme = () => {
+    const old = this.state.theme;
+    const neww = { ...old };
+    neww.backgroundColor = inverseColor(old.backgroundColor);
+    neww.foregroundColor = inverseColor(old.foregroundColor);
+    this.setState({ theme: neww });
+  };
 
+  render() {
+    const {
+      notif: { performerAvatarSrc, performerId, questionId, text, createdOn },
+    } = this.props;
+    const redirectLink = `/userProfile/${performerId}/${questionId || ''}`;
+
+    const { theme } = this.state;
+
+    return (
+      <ThemeProvider theme={getTheme(theme)}>
+        <StyledNotif
+          to={redirectLink}
+          onMouseEnter={this.toggleTheme}
+          onMouseLeave={this.toggleTheme}
+        >
+          <Left>
+            <Avatar src={performerAvatarSrc} invertColors />
+          </Left>
+          <Right>
+            <Text>{text}</Text>
+            <Time>{timeAgoText(createdOn)}</Time>
+          </Right>
+        </StyledNotif>
+      </ThemeProvider>
+    );
+  }
+}
+
+// export default withTheme(Notif);
 export default Notif;
