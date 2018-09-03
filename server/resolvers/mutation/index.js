@@ -6,6 +6,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const defaultValues = require(`../../db/defaultValues`);
 const { gqlComment, gqlNotfication } = require('../helper');
 const { pubsub } = require('../../PubSub');
+const controllers = require('../../controllers');
 
 async function seedDb(root, __, { collections: { questions, users } }) {
   // await questions.drop();
@@ -21,16 +22,22 @@ async function seedDb(root, __, { collections: { questions, users } }) {
 }
 
 async function addBook(root, args, context) {
-  const { collections } = context;
+  const {
+    models: { Book },
+  } = context;
   const book = { title: args.title, author: args.author, created: new Date() };
 
-  await collections.books.insertOne(book);
+  const newBook = new Book(book);
 
-  const payload = {
-    bookAdded: book,
-  };
+  await newBook.save();
 
-  pubsub.publish('bookAdded', payload);
+  // await collections.books.insertOne(book);
+
+  // const payload = {
+  //   bookAdded: book,
+  // };
+
+  // pubsub.publish('bookAdded', payload);
 
   return book;
 }
@@ -86,51 +93,67 @@ async function login(_, { email, password }, context) {
 }
 
 async function addComment(_, { answerId, comment }, context) {
-  if (!context.user) {
-    throw new Error('You are not authorized!');
-  }
+  // if (!context.user) {
+  //   throw new Error('You are not authorized!');
+  // }
 
-  const { collections } = context;
-  const performer = await collections.users.findOne({
-    _id: ObjectID(context.user.id),
-  });
-
-  const answerObj = await collections.answers.findOneAndUpdate(
-    { _id: ObjectID(answerId) },
-    {
-      $push: { comments: { _id: ObjectID(), comment, userId: performer._id } },
-    },
-    { returnOriginal: false }
+  // const performer = await controllers.user.find(loggedUser.id);
+  const newComment = await controllers.user.addComment(
+    comment,
+    answerId,
+    context
   );
 
-  const { comments } = answerObj.value;
-  const newDbComment = comments[comments.length - 1];
+  // await controllers.user.notify(newComment);
+  return newComment;
 
-  const res = gqlComment(context, performer, newDbComment);
-  const performerId = performer._id.toString();
+  // const { collections } = context;
+  // #region old code
+  // const performer = await collections.users.findOne({
+  //   _id: ObjectID(context.user.id),
+  // });
 
-  const performerName = `${performer.firstName} ${performer.surName}`;
-  const notif = {
-    _id: ObjectID(),
-    type: 'NEW_COMMENT',
-    performerId,
-    performerAvatarSrc: performer.avatarSrc,
-    text: `${performerName} commented: "${comment} "`,
-    seen: false,
-  };
+  // const answerObj = await collections.answers.findOneAndUpdate(
+  //   { _id: ObjectID(answerId) },
+  //   {
+  //     $push: { comments: { _id: ObjectID(), comment, userId: performer._id } },
+  //   },
+  //   { returnOriginal: false }
+  // );
 
-  const receiverId = answerObj.value.userId;
+  // const { comments } = answerObj.value;
+  // const newDbComment = comments[comments.length - 1];
 
-  await collections.users.updateOne(
-    { _id: ObjectID(receiverId) },
-    { $push: { notifications: notif } },
-    { upsert: true }
-  );
+  // const res = gqlComment(context, performer, newDbComment);
+  // const performerId = performer._id.toString();
+  // const questionId = answerObj.value.questionId.toString();
+  // const commentId = newDbComment._id.toString();
 
-  const payload = { receiverId, notif: gqlNotfication(notif) };
-  pubsub.publish('newNotification', payload);
+  // const performerName = `${performer.firstName} ${performer.surName}`;
+  // const notif = {
+  //   _id: ObjectID(),
+  //   type: 'NEW_COMMENT',
+  //   questionId,
+  //   commentId,
+  //   performerId,
+  //   performerAvatarSrc: performer.avatarSrc,
+  //   text: `${performerName} commented: "${comment} "`,
+  //   seen: false,
+  // };
 
-  return res;
+  // const receiverId = answerObj.value.userId;
+
+  // await collections.users.updateOne(
+  //   { _id: ObjectID(receiverId) },
+  //   { $push: { notifications: notif } },
+  //   { upsert: true }
+  // );
+
+  // const payload = { receiverId, notif: gqlNotfication(notif) };
+  // pubsub.publish('newNotification', payload);
+
+  // return res;
+  // #endregion
 }
 
 async function createQuestion(_, { question, type, possibleAnswers }, context) {

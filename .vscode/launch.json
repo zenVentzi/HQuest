@@ -13,8 +13,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "test.js",
-      "program": "${workspaceFolder}/test.js"
+      "name": "test",
+      "program": "${workspaceFolder}/mongoosetest.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "server1",
+      "program": "${workspaceFolder}/server/server1.js"
     },
   ]
 }

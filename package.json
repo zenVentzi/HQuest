@@ -44,6 +44,7 @@
     "jsonwebtoken": "^8.3.0",
     "lodash.isequal": "^4.5.0",
     "mongodb": "^3.1.1",
+    "mongoose": "^5.2.12",
     "node-fetch": "^2.2.0",
     "npm": "^6.1.0",
     "qs": "^6.5.2",

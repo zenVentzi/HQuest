@@ -8,11 +8,11 @@ type Book {
 
 type User {
   id: ID!
+  me: Boolean!
   email: String!
   fullName: String!
   intro: String!
   avatarSrc: String!
-  me: Boolean!
   following: [ID!]!
   followers: [ID!]!
 }
@@ -74,6 +74,7 @@ type NewComment implements Notification {
   text: String!
   seen: Boolean!
   createdOn: DateTime!
+  questionId: ID!
   commentId: ID!
 }
 

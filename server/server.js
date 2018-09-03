@@ -7,7 +7,7 @@ const requireGraphQLFile = require('require-graphql-file');
 const app = require('./App');
 const { connect: mongoConnect } = require('./db');
 
-const collections = require(`./db/collections`);
+const getCollections = require(`./db/collections`);
 const resolvers = require('./resolvers');
 
 const typeDefs = requireGraphQLFile('./schema');
@@ -28,6 +28,8 @@ async function verifyToken(authToken) {
 }
 
 mongoConnect(db => {
+  const collections = getCollections(db);
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -47,15 +49,14 @@ mongoConnect(db => {
     },
     context: ({ req, connection }) => {
       if (connection) {
-        // check connection for metadata
         return {
           user: connection.user,
-          collections: collections(db),
+          collections: getCollections(db),
         };
       }
       return {
         user: req.user,
-        collections: collections(db),
+        collections: getCollections(db),
       };
     },
   });

@@ -20,7 +20,7 @@ function gqlUser(context, dbUser) {
 }
 
 function gqlNotfication(dbNotif) {
-  return {
+  const res = {
     id: dbNotif._id.toString(),
     type: dbNotif.type,
     performerId: dbNotif.performerId,
@@ -29,6 +29,18 @@ function gqlNotfication(dbNotif) {
     seen: dbNotif.seen,
     createdOn: dbNotif._id.getTimestamp(),
   };
+
+  switch (dbNotif.type) {
+    case 'NEW_COMMENT':
+      res.questionId = dbNotif.questionId;
+      res.commentId = dbNotif.commentId;
+      break;
+
+    default:
+      break;
+  }
+
+  return res;
 }
 
 function gqlNotifications(dbNotifs) {
