@@ -15,6 +15,8 @@ function loggedUserId() {
   return localStorage.getItem(USER_ID);
 }
 
+const isPersonal = userId => loggedUserId === userId;
+
 const getTheme = neww => current => {
   const res = { ...current, ...neww };
   return res;
@@ -29,6 +31,7 @@ export {
   isAuthenticated,
   loggedUserId,
   loggedUserToken,
+  isPersonal,
   getTheme,
   inverseColor,
 };

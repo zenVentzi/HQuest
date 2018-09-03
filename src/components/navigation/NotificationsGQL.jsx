@@ -3,26 +3,9 @@ import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { loggedUserId } from '../../utils';
 
-// const Fragments = {
-//   NotifFields: gql`
-//     fragment NotifFields on Notification {
-//       id
-//       type
-//       performerId
-//       performerAvatarSrc
-//       text
-//       seen
-//       createdOn
-//       ... on NewComment {
-//         commentId
-//       }
-//     }
-//   `,
-// };
-
-const GET_NOTIFICATIONS = gql`
-  query notifications {
-    notifications {
+const Fragments = {
+  NotifFields: gql`
+    fragment NotifFields on Notification {
       id
       type
       performerId
@@ -32,9 +15,19 @@ const GET_NOTIFICATIONS = gql`
       createdOn
       ... on NewComment {
         commentId
+        questionId
       }
     }
+  `,
+};
+
+const GET_NOTIFICATIONS = gql`
+  query notifications {
+    notifications {
+      ...NotifFields
+    }
   }
+  ${Fragments.NotifFields}
 `;
 
 const NOTIFS_MARK_SEEN = gql`
@@ -93,6 +86,10 @@ const NotificationsGQL = ({ children }) => (
       if (!subscribed) {
         run(subscribeToMore);
         subscribed = true;
+      }
+
+      if (notifications) {
+        console.log('TCL: notifications', notifications);
       }
 
       return (

@@ -6,7 +6,7 @@ const interfaces = require('./interfaces');
 
 const Notification = {
   __resolveType(obj, context, info) {
-    if (obj.commentId) {
+    if (obj.type === 'NEW_COMMENT') {
       return 'NewComment';
     }
 
