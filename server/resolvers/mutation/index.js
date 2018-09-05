@@ -171,7 +171,7 @@ async function uploadAvatar(_, { base64Img }, context) {
 async function follow(_, { userId, follow: shouldFollow }, context) {
   if (shouldFollow) {
     await userController.follow(userId, context);
-    await notificationController.newFollower(userId, context);
+    // await notificationController.newFollower(userId, context);
   } else {
     await userController.unfollow(userId, context);
   }
