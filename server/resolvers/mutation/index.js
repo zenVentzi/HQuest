@@ -75,7 +75,7 @@ async function addComment(_, args, context) {
   // }
 
   // const performer = await controllers.user.find(loggedUser.id);
-  const newComment = await commentController.add(args, context);
+  const newComment = await commentController.addCommentToAnswer(args, context);
   return newComment;
 
   // const { collections } = context;

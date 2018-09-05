@@ -53,8 +53,8 @@ const mapGqlNotifications = notifs => {
   return notifs.map(mapGqlNotification);
 };
 
-function mapGqlComment(context, performer, comment) {
-  const usr = mapGqlUser(context, performer);
+function mapGqlComment(context, commentAuthor, comment) {
+  const usr = mapGqlUser(context, commentAuthor);
   return {
     id: comment._id.toString(),
     user: usr,

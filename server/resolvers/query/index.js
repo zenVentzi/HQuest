@@ -17,7 +17,7 @@ async function notifications(_, __, context) {
 }
 
 async function comments(_, { answerId }, context) {
-  return commentController.getMany(answerId, context);
+  return commentController.getAnswerComments(answerId, context);
 }
 
 async function questions(root, { userId, all }, context) {

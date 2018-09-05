@@ -109,7 +109,7 @@ class Comments extends Component {
         {({ loading, error, data: { comments } }) => (
           <Mutation mutation={ADD_COMMENT} update={this.updateCache}>
             {addComment => {
-              if (loading) return <div> Loading..</div>; // this should be below Input component
+              if (loading) return <div> Loading comments..</div>; // this should be below Input component
               if (error) return <div> {error.message} </div>;
 
               return (
