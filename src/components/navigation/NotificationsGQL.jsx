@@ -39,15 +39,10 @@ const NOTIFS_MARK_SEEN = gql`
 const NEW_NOTIFICATION = gql`
   subscription newNotification($userId: ID!) {
     newNotification(userId: $userId) {
-      id
-      type
-      performerId
-      performerAvatarSrc
-      text
-      seen
-      createdOn
+      ...NotifFields
     }
   }
+  ${Fragments.NotifFields}
 `;
 
 const run = subscribeToMore => {
