@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 const {
   mapGqlNotification,
@@ -128,6 +129,28 @@ const getUsers = async (match, context) => {
   return mapGqlUsers(context, matchedUsers);
 };
 
+const saveAvatarToFile = async (base64Img, userId) => {
+  const src = `/public/images/avatar${userId}.jpeg`;
+
+  return new Promise(resolve => {
+    fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
+      resolve(src);
+    });
+  });
+};
+
+const uploadAvatar = async (base64Img, context) => {
+  const {
+    models: { User },
+    user,
+  } = context;
+
+  const { collections } = context;
+  const avatarSrc = await saveAvatarToFile(base64Img, user.id);
+  await User.findByIdAndUpdate(user.id, { $set: { avatarSrc } });
+  return avatarSrc;
+};
+
 module.exports = {
   signUp,
   login,
@@ -135,4 +158,5 @@ module.exports = {
   unfollow,
   getUser,
   getUsers,
+  uploadAvatar,
 };

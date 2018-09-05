@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
-import styled from '../../../node_modules/styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import Navbar from '../navigation';
 import StyledViewRaw from '../reusable/StyledView';
 import Avatar from '../reusable/Avatar';
@@ -12,7 +12,7 @@ import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
 import ToggleQuestions from './ToggleQuestions';
-import { loggedUserId } from '../../utils';
+import { loggedUserId, getTheme } from '../../utils';
 
 const GET_USER = gql`
   query user($id: ID!) {
@@ -43,6 +43,9 @@ class ProfileView extends Component {
   render() {
     const { id } = this.props.match.params;
     const vars = { id };
+    const theme = {
+      avatarSize: '150px',
+    };
 
     return (
       <Query query={GET_USER} variables={vars}>
@@ -55,23 +58,28 @@ class ProfileView extends Component {
           return (
             <Fragment>
               <Navbar />
-              <StyledView>
-                <Avatar src={user.avatarSrc} editable={user.me} />
-                <Username>{user.fullName}</Username>
-                <Intro>{user.intro}</Intro>
-                <Links />
-                {!user.me && (
-                  <FollowBtn isFollowed={isFollowed} userId={user.id} />
-                )}
-                <Search placeholder="Search questions.." onChange={() => {}} />
-                {user.me && (
-                  <ToggleQuestions onClick={this.onToggleQuestions} />
-                )}
-                <QuestionsContainer
-                  user={user}
-                  showAnswered={this.state.answered}
-                />
-              </StyledView>
+              <ThemeProvider theme={getTheme(theme)}>
+                <StyledView>
+                  <Avatar src={user.avatarSrc} editable={user.me} />
+                  <Username>{user.fullName}</Username>
+                  <Intro>{user.intro}</Intro>
+                  <Links />
+                  {!user.me && (
+                    <FollowBtn isFollowed={isFollowed} userId={user.id} />
+                  )}
+                  <Search
+                    placeholder="Search questions.."
+                    onChange={() => {}}
+                  />
+                  {user.me && (
+                    <ToggleQuestions onClick={this.onToggleQuestions} />
+                  )}
+                  <QuestionsContainer
+                    user={user}
+                    showAnswered={this.state.answered}
+                  />
+                </StyledView>
+              </ThemeProvider>
             </Fragment>
           );
         }}
@@ -79,7 +87,5 @@ class ProfileView extends Component {
     );
   }
 }
-
-// export { viewedProfileId };
 
 export default ProfileView;

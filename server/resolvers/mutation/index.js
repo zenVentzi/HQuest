@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongoose').Types;
-const fs = require('fs');
 const jsonwebtoken = require('jsonwebtoken');
 const { createError } = require('apollo-errors');
 
@@ -94,28 +93,8 @@ async function removeAnswer(_, args, context) {
   return answerController.remove(args, context);
 }
 
-async function saveAvatarToFile(base64Img, userId) {
-  const src = `/public/images/avatar${userId}.jpeg`;
-
-  return new Promise(resolve => {
-    fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
-      resolve(src);
-    });
-  });
-}
-
 async function uploadAvatar(_, { base64Img }, context) {
-  if (!context.user) {
-    throw new Error('You are not authorized!');
-  }
-
-  const { collections } = context;
-
-  const avatarSrc = await saveAvatarToFile(base64Img, context.user.id);
-  await collections.users.updateOne(
-    { _id: ObjectId(context.user.id) },
-    { $set: { avatarSrc } }
-  );
+  const avatarSrc = await userController.uploadAvatar(base64Img, context);
   return avatarSrc;
 }
 
