@@ -1,5 +1,5 @@
 const { withFilter } = require('apollo-server');
-const { pubsub } = require('../../PubSub');
+const { pubsub, NEW_NOTIFICATION } = require('../../PubSub');
 
 const bookAdded = {
   resolve: payload => {
@@ -24,12 +24,11 @@ const newNotification = {
   subscribe: withFilter(
     () => {
       console.dir(`subscribed!`);
-      return pubsub.asyncIterator(`newNotification`);
+      return pubsub.asyncIterator(NEW_NOTIFICATION);
     },
     (payload, variables) => {
-      const holder = 5;
-
-      return payload.receiverId === variables.userId;
+      const subscriberId = variables.userId;
+      return payload.receiverId === subscriberId;
     }
   ),
 };

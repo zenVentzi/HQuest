@@ -4,6 +4,7 @@ const {
   mapGqlNotifications,
   mapGqlNotification,
 } = require('../resolvers/helper');
+const { pubsub, NEW_NOTIFICATION } = require('../PubSub');
 
 const newFollower = async (userId, context) => {
   const {
@@ -32,10 +33,12 @@ const newFollower = async (userId, context) => {
     { upsert: true }
   );
 
-  const userIdToNotify = followedId;
-  const payload = { userIdToNotify, notif: mapGqlNotification(notif) };
+  const payload = {
+    receiverId: followedId,
+    notif: mapGqlNotification(notif),
+  };
 
-  // pubsub.publish('newNotification', payload);
+  pubsub.publish(NEW_NOTIFICATION, payload);
 };
 
 const markSeen = async context => {
