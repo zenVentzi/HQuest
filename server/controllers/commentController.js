@@ -1,45 +1,41 @@
 const { ObjectId } = require('mongoose').Types;
 const { mapGqlComment } = require('../resolvers/helper');
 
-const add = async ({ comment, answerId }, { context }) => {
+const addCommentToAnswer = async ({ comment, answerId }, context) => {
   const {
     models: { User, Answer },
     user,
   } = context;
   const performerId = user.id;
 
-  const performer = await User.findById(performerId);
-  const comments = await Answer.findOneAndUpdate(
-    { _id: ObjectId(answerId) },
+  const performer = await User.findById(performerId).lean();
+  const { comments } = await Answer.findByIdAndUpdate(
+    answerId,
     {
       $push: { comments: { _id: ObjectId(), comment, userId: performer._id } },
     },
-    { returnOriginal: false, fields: 'comments' }
-  );
+    { new: true, fields: 'comments -_id' }
+  ).lean();
 
-  // const { comments } = answer;
-  const commentObj = comments[comments.length - 1];
-  const res = mapGqlComment(context, performer, commentObj);
-  return res;
+  const addedComment = comments[comments.length - 1];
+  return mapGqlComment(context, performer, addedComment);
 };
 
-const getMany = async (answerId, context) => {
+const getAnswerComments = async (answerId, context) => {
   const {
     models: { Answer, User },
   } = context;
 
-  const answer = await Answer.findById(answerId);
-
-  const { comments } = answer;
+  const { comments } = await Answer.findById(answerId).lean();
 
   if (!comments) return [];
   // TODO: This can be optimized with Dataloader
   const commentsPromises = comments.map(async com => {
-    const commentAuthor = await User.findById(com.userId);
+    const commentAuthor = await User.findById(com.userId).lean();
     return mapGqlComment(context, commentAuthor, com);
   });
 
   return Promise.all(commentsPromises);
 };
 
-module.exports = { add, getMany };
+module.exports = { addCommentToAnswer, getAnswerComments };
