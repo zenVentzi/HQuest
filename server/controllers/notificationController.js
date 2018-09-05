@@ -1,6 +1,9 @@
 const { ObjectId } = require('mongoose').Types;
 const bcrypt = require('bcrypt');
-const { mapGqlNotifications } = require('../resolvers/helper');
+const {
+  mapGqlNotifications,
+  mapGqlNotification,
+} = require('../resolvers/helper');
 
 const newFollower = async (userId, context) => {
   const {
@@ -8,34 +11,31 @@ const newFollower = async (userId, context) => {
     user,
   } = context;
 
-  const performerId = user.id;
-  const receiverId = userId;
+  const followerId = user.id;
+  const followedId = userId;
 
-  const performer = await User.findOneAndUpdate(
-    { _id: ObjectId(performerId) },
-    { $push: { following: ObjectId(receiverId) } },
-    { upsert: true }
-  );
+  const follower = await User.findById(followerId).lean();
 
-  const performerName = `${performer.firstName} ${performer.surName}`;
+  const followerName = `${follower.firstName} ${follower.surName}`;
   const notif = {
     _id: ObjectId(),
     type: 'NEW_FOLLOWER',
-    performerId,
-    performerAvatarSrc: performer.avatarSrc,
-    text: `${performerName} is following you`,
+    performerId: followerId,
+    performerAvatarSrc: follower.avatarSrc,
+    text: `${followerName} is following you`,
     seen: false,
   };
 
-  await User.updateOne(
-    { _id: ObjectId(receiverId) },
+  await User.findByIdAndUpdate(
+    followedId,
     { $push: { notifications: notif } },
     { upsert: true }
   );
 
-  const payload = { receiverId, notif: mapGqlNotification(notif) };
+  const userIdToNotify = followedId;
+  const payload = { userIdToNotify, notif: mapGqlNotification(notif) };
 
-  pubsub.publish('newNotification', payload);
+  // pubsub.publish('newNotification', payload);
 };
 
 const markSeen = async context => {
