@@ -4,6 +4,7 @@ import AnsweredQuestion from './AnsweredQuestion';
 
 const Empty = styled.div`
   text-align: center;
+  width: 100%;
 `;
 
 const AnsweredQuestions = ({ showButtons, questions, ...style }) => {

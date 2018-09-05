@@ -79,7 +79,7 @@ class QuestionViewer extends Component {
                 <Span onClick={this.toggleReactions}>15 Reactions</Span>
                 <Span onClick={this.toggleComments}>2 Comments</Span>
               </div>
-              {/* showButtons */ false && (
+              {/* showButtons */ true && (
                 <div>
                   <Btn onClick={onClickEdit} visible={hovered}>
                     Edit

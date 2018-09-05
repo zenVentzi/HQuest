@@ -1,7 +1,20 @@
-const getSchemas = mongoose => {
-  return {
-    defaultSchema: new mongoose.Schema({}, { strict: false }),
-  };
-};
+const mongoose = require('mongoose');
 
-module.exports = { getSchemas };
+const { ObjectId } = mongoose.SchemaTypes;
+
+const getDefaultSchema = () => new mongoose.Schema({}, { strict: false });
+const getUserSchema = () =>
+  new mongoose.Schema({
+    firstName: String,
+    surName: String,
+    email: String,
+    password: String,
+    avatarSrc: String,
+    followers: [ObjectId],
+    following: [ObjectId],
+    notifications: [],
+  });
+const getAnswerSchema = () => new mongoose.Schema({});
+const getQuestionSchema = () => new mongoose.Schema({});
+
+module.exports = { getDefaultSchema };

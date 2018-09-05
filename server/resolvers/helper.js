@@ -1,39 +1,45 @@
-function gqlUser(context, dbUser) {
+const { ObjectId } = require('mongoose').Types;
+
+function mapGqlUser(context, user) {
   let me = false;
 
   if (context.user) {
-    me = context.user.id === dbUser._id.toString();
+    me = context.user.id === user._id.toString();
   }
 
   const res = {
-    id: dbUser._id.toString(),
-    email: dbUser.email,
-    fullName: `${dbUser.firstName} ${dbUser.surName}`,
-    intro: dbUser.intro,
-    avatarSrc: dbUser.avatarSrc,
+    id: user._id.toString(),
+    email: user.email,
+    fullName: `${user.firstName} ${user.surName}`,
+    intro: user.intro,
+    avatarSrc: user.avatarSrc || '',
     me,
-    followers: dbUser.followers || [],
-    following: dbUser.following || [],
+    followers: user.followers || [],
+    following: user.following || [],
   };
 
   return res;
 }
 
-function gqlNotfication(dbNotif) {
+const mapGqlUsers = (context, users) => {
+  return users.map(u => mapGqlUser(context, u));
+};
+
+const mapGqlNotification = notif => {
   const res = {
-    id: dbNotif._id.toString(),
-    type: dbNotif.type,
-    performerId: dbNotif.performerId,
-    performerAvatarSrc: dbNotif.performerAvatarSrc,
-    text: dbNotif.text,
-    seen: dbNotif.seen,
-    createdOn: dbNotif._id.getTimestamp(),
+    id: notif._id.toString(),
+    type: notif.type,
+    performerId: notif.performerId,
+    performerAvatarSrc: notif.performerAvatarSrc,
+    text: notif.text,
+    seen: notif.seen,
+    createdOn: notif._id.getTimestamp(),
   };
 
-  switch (dbNotif.type) {
+  switch (notif.type) {
     case 'NEW_COMMENT':
-      res.questionId = dbNotif.questionId;
-      res.commentId = dbNotif.commentId;
+      res.questionId = notif.questionId;
+      res.commentId = notif.commentId;
       break;
 
     default:
@@ -41,21 +47,54 @@ function gqlNotfication(dbNotif) {
   }
 
   return res;
-}
+};
 
-function gqlNotifications(dbNotifs) {
-  const res = dbNotifs.map(gqlNotfication);
+const mapGqlNotifications = notifs => {
+  return notifs.map(mapGqlNotification);
+};
 
-  return res;
-}
-
-function gqlComment(context, dbUser, dbComment) {
-  const usr = gqlUser(context, dbUser);
+function mapGqlComment(context, performer, comment) {
+  const usr = mapGqlUser(context, performer);
   return {
-    id: dbComment._id.toString(),
+    id: comment._id.toString(),
     user: usr,
-    comment: dbComment.comment,
+    comment: comment.comment,
   };
 }
 
-module.exports = { gqlComment, gqlUser, gqlNotfication, gqlNotifications };
+const mapGqlQuestions = questions => {
+  return questions.map(q => {
+    const shapedQuestion = {
+      id: q._id.toString(),
+      question: q.question,
+      type: q.type,
+      possibleAnswers: q.possibleAnswers,
+    };
+
+    if (q.answer) {
+      shapedQuestion.answer = {
+        id: q.answer._id.toString(),
+        value: q.answer.value,
+      };
+    }
+
+    return shapedQuestion;
+  });
+};
+
+const mapGqlAnswer = answer => ({
+  id: answer._id.toString(),
+  questionId: answer.questionId.toString(),
+  userId: answer.userId.toString(),
+  value: answer.value,
+});
+
+module.exports = {
+  mapGqlComment,
+  mapGqlAnswer,
+  mapGqlUser,
+  mapGqlUsers,
+  mapGqlNotification,
+  mapGqlNotifications,
+  mapGqlQuestions,
+};

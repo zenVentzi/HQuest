@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { BrowserRouter, Link } from 'react-router-dom';
+import { Transition } from 'react-spring';
 import styled, { ThemeProvider, withTheme } from 'styled-components';
 
 const St = styled(Link)`
@@ -9,14 +10,30 @@ const St = styled(Link)`
 
 const theme = { backgroundColor: 'red' };
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <St theme={theme} to="/">
-        bla
-      </St>
-    </BrowserRouter>
-  );
-};
+class App extends Component {
+  state = { showAnswered: true };
+
+  toggleAnswered = () => {
+    this.setState({ showAnswered: !this.state.showAnswered });
+  };
+  render() {
+    const { showAnswered } = this.state;
+
+    return (
+      <div>
+        <Transition
+          from={{ opacity: 0 }}
+          enter={{ opacity: 1 }}
+          leave={{ opacity: 0 }}
+        >
+          {showAnswered
+            ? styles => <div style={styles}>answerd</div>
+            : styles => <div style={styles}>unanswered</div>}
+        </Transition>
+        <button onClick={this.toggleAnswered}>toggle</button>
+      </div>
+    );
+  }
+}
 
 export default App;

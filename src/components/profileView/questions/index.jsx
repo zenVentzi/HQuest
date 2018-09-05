@@ -5,6 +5,12 @@ import { Query } from 'react-apollo';
 import AnsweredQuestions from './AnsweredQuestions';
 import UnansweredQuestions from './UnansweredQuestions';
 
+/* 
+
+
+
+*/
+
 export const GET_QUESTIONS = gql`
   query questions($userId: ID!, $all: Boolean!) {
     questions(userId: $userId, all: $all) {
@@ -40,16 +46,10 @@ const QuestionsContainer = ({ user, showAnswered }) => {
         // not using object destructing cuz it didn't work at the time
         const qs = showAnswered ? questions.answered : questions.unanswered;
 
-        return (
-          <Transition
-            from={{ opacity: 0, width: '100%' }}
-            enter={{ opacity: 1 }}
-            leave={{ opacity: 0 }}
-            questions={qs}
-            showButtons={user.me}
-          >
-            {showAnswered ? AnsweredQuestions : UnansweredQuestions}
-          </Transition>
+        return showAnswered ? (
+          <AnsweredQuestions showButtons={user.me} questions={qs} />
+        ) : (
+          <UnansweredQuestions questions={qs} />
         );
       }}
     </Query>
