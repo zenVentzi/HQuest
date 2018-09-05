@@ -69,62 +69,13 @@ async function login(_, args, context) {
   return result;
 }
 
-async function addComment(_, args, context) {
-  // if (!context.user) {
-  //   throw new Error('You are not authorized!');
-  // }
-
-  // const performer = await controllers.user.find(loggedUser.id);
-  const newComment = await commentController.addCommentToAnswer(args, context);
-  return newComment;
-
-  // const { collections } = context;
-  // #region old code
-  // const performer = await collections.users.findOne({
-  //   _id: ObjectID(context.user.id),
-  // });
-
-  // const answerObj = await collections.answers.findOneAndUpdate(
-  //   { _id: ObjectID(answerId) },
-  //   {
-  //     $push: { comments: { _id: ObjectID(), comment, userId: performer._id } },
-  //   },
-  //   { returnOriginal: false }
-  // );
-
-  // const { comments } = answerObj.value;
-  // const newDbComment = comments[comments.length - 1];
-
-  // const res = gqlComment(context, performer, newDbComment);
-  // const performerId = performer._id.toString();
-  // const questionId = answerObj.value.questionId.toString();
-  // const commentId = newDbComment._id.toString();
-
-  // const performerName = `${performer.firstName} ${performer.surName}`;
-  // const notif = {
-  //   _id: ObjectID(),
-  //   type: 'NEW_COMMENT',
-  //   questionId,
-  //   commentId,
-  //   performerId,
-  //   performerAvatarSrc: performer.avatarSrc,
-  //   text: `${performerName} commented: "${comment} "`,
-  //   seen: false,
-  // };
-
-  // const receiverId = answerObj.value.userId;
-
-  // await collections.users.updateOne(
-  //   { _id: ObjectID(receiverId) },
-  //   { $push: { notifications: notif } },
-  //   { upsert: true }
-  // );
-
-  // const payload = { receiverId, notif: gqlNotfication(notif) };
-  // pubsub.publish('newNotification', payload);
-
-  // return res;
-  // #endregion
+async function addComment(_, { answerId, comment }, context) {
+  const commentObj = await commentController.addCommentToAnswer(
+    { answerId, comment },
+    context
+  );
+  await notificationController.newComment(answerId, commentObj, context);
+  return commentObj;
 }
 
 async function createQuestion(_, args, context) {

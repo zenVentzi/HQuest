@@ -29,7 +29,7 @@ const add = async ({ questionId, answerValue }, context) => {
     value: answerValue,
   };
 
-  const newAnswer = await Answer.create(answer).lean();
+  const newAnswer = await Answer.create(answer);
 
   return mapGqlAnswer(newAnswer);
 };

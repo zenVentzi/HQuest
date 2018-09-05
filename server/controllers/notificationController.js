@@ -6,14 +6,57 @@ const {
 } = require('../resolvers/helper');
 const { pubsub, NEW_NOTIFICATION } = require('../PubSub');
 
-const newFollower = async (userId, context) => {
+const notify = async (receiverId, notif, userModel) => {
+  await userModel.findByIdAndUpdate(
+    receiverId,
+    { $push: { notifications: notif } },
+    { upsert: true }
+  );
+
+  const payload = {
+    receiverId: receiverId.toString(),
+    notif: mapGqlNotification(notif),
+  };
+
+  pubsub.publish(NEW_NOTIFICATION, payload);
+};
+
+const newComment = async (answerId, commentObj, context) => {
+  const {
+    models: { User, Answer },
+    user,
+  } = context;
+
+  const { questionId, userId: receiverId } = await Answer.findById(
+    answerId
+  ).lean();
+
+  const performerId = commentObj.user.id;
+  const performer = await User.findById(performerId).lean();
+
+  const performerName = `${performer.firstName} ${performer.surName}`;
+  const notif = {
+    _id: ObjectId(),
+    type: 'NEW_COMMENT',
+    questionId,
+    commentId: commentObj.id,
+    performerId,
+    performerAvatarSrc: performer.avatarSrc,
+    text: `${performerName} commented: "${commentObj.comment} "`,
+    seen: false,
+  };
+
+  await notify(receiverId, notif, User);
+};
+
+const newFollower = async (receiverId, context) => {
   const {
     models: { User },
     user,
   } = context;
 
   const followerId = user.id;
-  const followedId = userId;
+  const followedId = receiverId;
 
   const follower = await User.findById(followerId).lean();
 
@@ -27,18 +70,7 @@ const newFollower = async (userId, context) => {
     seen: false,
   };
 
-  await User.findByIdAndUpdate(
-    followedId,
-    { $push: { notifications: notif } },
-    { upsert: true }
-  );
-
-  const payload = {
-    receiverId: followedId,
-    notif: mapGqlNotification(notif),
-  };
-
-  pubsub.publish(NEW_NOTIFICATION, payload);
+  await notify(receiverId, notif, User);
 };
 
 const markSeen = async context => {
@@ -69,6 +101,7 @@ const getNotifications = async context => {
 
 module.exports = {
   newFollower,
+  newComment,
   getNotifications,
   markSeen,
 };
