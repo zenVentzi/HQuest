@@ -36,7 +36,7 @@ async function questions(root, { userId, all }, context) {
 }
 
 async function users(_, { match }, context) {
-  return userController.getMatchingUsers(match, context);
+  return userController.getUsers(match, context);
 }
 
 async function user(_, { id }, context) {

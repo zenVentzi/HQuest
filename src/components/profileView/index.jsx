@@ -20,6 +20,7 @@ const GET_USER = gql`
       id
       fullName
       avatarSrc
+      intro
       me
       followers
       following
@@ -57,7 +58,7 @@ class ProfileView extends Component {
               <StyledView>
                 <Avatar src={user.avatarSrc} editable={user.me} />
                 <Username>{user.fullName}</Username>
-                <Intro>CEO at Microsoft</Intro>
+                <Intro>{user.intro}</Intro>
                 <Links />
                 {!user.me && (
                   <FollowBtn isFollowed={isFollowed} userId={user.id} />

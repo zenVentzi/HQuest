@@ -49,30 +49,33 @@ const login = async ({ email, password }, context) => {
   return mapGqlUser(context, user);
 };
 
-const followBase = async ({ userId, follow: shouldFollow }, context) => {
+const followBase = async ({ userId, follow: addFollower }, context) => {
   const {
     models: { User },
     user,
   } = context;
 
-  const performerId = user.id;
-  const receiverId = userId;
+  const followerId = user.id;
+  const followedId = userId;
 
-  if (shouldFollow) {
-    const performer = await User.findOneAndUpdate(
-      { _id: ObjectId(performerId) },
-      { $push: { following: ObjectId(receiverId) } },
-      { upsert: true }
+  if (addFollower) {
+    await User.findByIdAndUpdate(
+      followerId,
+      { $push: { following: ObjectId(followedId) } },
+      { new: true, upsert: true }
+    );
+    await User.findByIdAndUpdate(
+      followedId,
+      { $push: { followers: ObjectId(followerId) } },
+      { new: true, upsert: true }
     );
   } else {
-    await User.updateOne(
-      { _id: ObjectId(performerId) },
-      { $pull: { following: ObjectId(receiverId) } }
-    );
-    await User.updateOne(
-      { _id: ObjectId(receiverId) },
-      { $pull: { followers: ObjectId(performerId) } }
-    );
+    await User.findByIdAndUpdate(followerId, {
+      $pull: { following: ObjectId(followedId) },
+    });
+    await User.findByIdAndUpdate(followedId, {
+      $pull: { followers: ObjectId(followerId) },
+    });
   }
 };
 
@@ -93,7 +96,7 @@ const getUser = async (userId, context) => {
   return mapGqlUser(context, userDoc.toObject());
 };
 
-const getMatchingUsers = async (match, context) => {
+const getUsers = async (match, context) => {
   const {
     models: { User },
   } = context;
@@ -114,17 +117,15 @@ const getMatchingUsers = async (match, context) => {
         { firstName: { $regex: firstNameRegex } },
         { surName: { $regex: surNameRegex } },
       ],
-    });
+    }).lean();
   } else {
     const regex = new RegExp(`.*${match}.*`, `i`);
     matchedUsers = await User.find({
       $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }],
-    });
+    }).lean();
   }
 
-  const result = mapGqlUsers(matchedUsers);
-
-  return result;
+  return mapGqlUsers(context, matchedUsers);
 };
 
 module.exports = {
@@ -133,5 +134,5 @@ module.exports = {
   follow,
   unfollow,
   getUser,
-  getMatchingUsers,
+  getUsers,
 };
