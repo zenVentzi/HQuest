@@ -88,10 +88,6 @@ const NotificationsGQL = ({ children }) => (
         subscribed = true;
       }
 
-      if (notifications) {
-        console.log('TCL: notifications', notifications);
-      }
-
       return (
         <Mutation mutation={NOTIFS_MARK_SEEN} update={updateSeen}>
           {markSeen => children(loading, error, notifications, markSeen)}

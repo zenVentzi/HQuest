@@ -1,13 +1,11 @@
 const http = require('http');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-// const { ApolloServer } = require('apollo-server');
 const { ApolloServer, gql } = require('apollo-server-express');
 const requireGraphQLFile = require('require-graphql-file');
 const app = require('./App');
-const { connect: mongoConnect } = require('./db');
+const { connect: mongooseConnect } = require('./db');
 
-const getCollections = require(`./db/collections`);
 const resolvers = require('./resolvers');
 
 const typeDefs = requireGraphQLFile('./schema');
@@ -27,9 +25,7 @@ async function verifyToken(authToken) {
   });
 }
 
-mongoConnect(db => {
-  const collections = getCollections(db);
-
+mongooseConnect(models => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -51,12 +47,12 @@ mongoConnect(db => {
       if (connection) {
         return {
           user: connection.user,
-          collections: getCollections(db),
+          models,
         };
       }
       return {
         user: req.user,
-        collections: getCollections(db),
+        models,
       };
     },
   });

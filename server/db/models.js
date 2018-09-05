@@ -1,7 +1,8 @@
-const { getSchemas } = require('./schemas');
+const mongoose = require('mongoose');
+const { getDefaultSchema } = require('./schemas');
 
-const getModels = mongoose => {
-  const { defaultSchema } = getSchemas(mongoose);
+const getModels = () => {
+  const defaultSchema = getDefaultSchema(mongoose);
 
   return {
     Book: mongoose.model('Book', defaultSchema),

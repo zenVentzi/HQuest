@@ -13,11 +13,12 @@ mongoose.connect(
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
+db.once('open', async () => {
   const { User, Question, Answer } = getModels(mongoose);
-  const pesho = new User({ name: 'Pesho' });
-
-  pesho.save((err, res) => {
-    if (err) return console.error(err);
-  });
+  // const pesho = new User({ name: 'Gosho' });
+  const gosho = await User.findOne({ name: 'Gosho' });
+  const bla = 5;
+  // pesho.save((err, res) => {
+  //   if (err) return console.error(err);
+  // });
 });

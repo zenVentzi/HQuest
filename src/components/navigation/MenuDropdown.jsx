@@ -32,7 +32,6 @@ class MenuDropdown extends Component {
 
   render() {
     if (this.state.redirectRoute) {
-      console.log(`bla`);
       return <Redirect push to={this.state.redirectRoute} />;
     }
 
