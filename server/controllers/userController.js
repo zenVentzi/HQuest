@@ -8,14 +8,21 @@ const signUp = async ({ firstName, surName, email, password }, context) => {
     models: { User },
   } = context;
 
-  const obj = {
+  const newUser = {
     firstName,
     surName,
     email,
+    intro: 'Hey, I am an intro',
+    socialMediaLinks: {
+      facebookLink: '',
+      twitterLink: '',
+      instagramLink: '',
+      linkedInLink: '',
+    },
     password: await bcrypt.hash(password, 10),
   };
 
-  const userDoc = await User.create(obj);
+  const userDoc = await User.create(newUser);
   return mapGqlUser(context, userDoc.toObject());
 };
 
@@ -81,13 +88,6 @@ const follow = async (userId, context) => {
 const unfollow = async (userId, context) => {
   await followBase({ userId, follow: false }, context);
 };
-
-/* 
-input EditUserInput {
-  fullName: String!
-  intro: String!
-  socialMediaLinks: SocialMediaLinks!
-} */
 
 const editUser = async (input, context) => {
   const {

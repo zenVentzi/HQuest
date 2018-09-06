@@ -9,7 +9,7 @@ import ProfileViewer from './ProfileViewer';
 import ProfileEditor from './ProfileEditor';
 import NotFoundView from '../notFoundView';
 
-const GET_USER = gql`
+export const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {
       id
