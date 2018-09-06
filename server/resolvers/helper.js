@@ -12,6 +12,7 @@ function mapGqlUser(context, user) {
     email: user.email,
     fullName: `${user.firstName} ${user.surName}`,
     intro: user.intro,
+    socialMediaLinks: user.socialMediaLinks,
     avatarSrc: user.avatarSrc || '',
     me,
     followers: user.followers || [],

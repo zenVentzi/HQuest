@@ -7,12 +7,12 @@ module.exports = {
         "prettier/react"
     ],
     rules: {
-        "no-console": "off",
-        "no-unreachable": 0,
-        "no-unused-vars": 0,
+        "no-console": 0,
+        "no-unreachable": 1,
+        "no-unused-vars": 1,
         "arrow-body-style": 0,
-        'no-underscore-dangle': 'off',
-        'no-plusplus': 'off',
+        'no-underscore-dangle': 0,
+        'no-plusplus': 1,
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
         "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],
