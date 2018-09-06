@@ -3,6 +3,7 @@ import { Mutation } from 'react-apollo';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { GET_USER } from './index';
 
 const EDIT_USER = gql`
   mutation editUser($input: EditUserInput) {
@@ -18,6 +19,7 @@ const Input = styled.input`
 
 const ProfileEditor = ({
   user: {
+    id,
     me,
     fullName,
     intro,
@@ -65,16 +67,16 @@ const ProfileEditor = ({
       },
     };
 
-    await editUser({ variables });
+    await editUser({
+      variables,
+      refetchQueries: [
+        {
+          query: GET_USER,
+          variables: { id },
+        },
+      ],
+    });
     history.goBack();
-  };
-
-  // const { links } = user;
-  const links = {
-    facebook: 'fb.com/user',
-    twitter: 'twitter.com/user',
-    instagram: 'insta/user',
-    linkedIn: 'lin/user',
   };
 
   return (
