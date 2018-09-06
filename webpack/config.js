@@ -6,7 +6,11 @@ const Visualizer = require('webpack-visualizer-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: ['webpack-hot-middleware/client', 'babel-polyfill', './src/index.jsx'],
+  entry: [
+    'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
+    'babel-polyfill',
+    './src/index.jsx',
+  ],
   mode: 'development',
   output: {
     // path: path.resolve(process.cwd(), 'public'),
@@ -17,8 +21,6 @@ module.exports = {
   devServer: {
     // contentBase: '/',
     overlay: true,
-    clientLogLevel: 'warning',
-    stats: 'errors-only',
     hot: true,
   },
   plugins: [

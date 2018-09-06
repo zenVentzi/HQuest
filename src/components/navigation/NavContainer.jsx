@@ -8,7 +8,7 @@ const NavContainer = styled.div`
   top: 0;
   width: 100%;
   padding: 0.2em 5em 0em 5em;
-  ${'' /* background: linear-gradient(#d0d0d0, #fafafa, white); */};
+  background: black;
 `;
 
 export default NavContainer;

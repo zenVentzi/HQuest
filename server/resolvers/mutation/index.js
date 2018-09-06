@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const { ObjectId } = require('mongoose').Types;
 const jsonwebtoken = require('jsonwebtoken');
 const { createError } = require('apollo-errors');
 
@@ -68,6 +66,10 @@ async function login(_, args, context) {
   return result;
 }
 
+const editUser = async (_, { input }, context) => {
+  return userController.editUser(input, context);
+};
+
 async function addComment(_, { answerId, comment }, context) {
   const commentObj = await commentController.addCommentToAnswer(
     { answerId, comment },
@@ -115,6 +117,7 @@ module.exports = {
   addBook,
   notifsMarkSeen,
   addComment,
+  editUser,
   signUp,
   login,
   createQuestion,

@@ -1,13 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const {
-  mapGqlNotification,
-  mapGqlComment,
-  mapGqlQuestions,
-  mapGqlUser,
-  mapGqlUsers,
-} = require('../resolvers/helper');
+const { mapGqlUser, mapGqlUsers } = require('../resolvers/helper');
 
 const signUp = async ({ firstName, surName, email, password }, context) => {
   const {
@@ -88,6 +82,30 @@ const unfollow = async (userId, context) => {
   await followBase({ userId, follow: false }, context);
 };
 
+/* 
+input EditUserInput {
+  fullName: String!
+  intro: String!
+  socialMediaLinks: SocialMediaLinks!
+} */
+
+const editUser = async (input, context) => {
+  const {
+    models: { User },
+    user,
+  } = context;
+  const { fullName, intro, socialMediaLinks } = input;
+
+  const [firstName, surName] = fullName.split(' ');
+  const update = { $set: { firstName, surName, intro, socialMediaLinks } };
+  const updatedUser = await User.findByIdAndUpdate(user.id, update, {
+    new: true,
+    upsert: true,
+  }).lean();
+
+  return mapGqlUser(context, updatedUser);
+};
+
 const getUser = async (userId, context) => {
   const {
     models: { User },
@@ -154,6 +172,7 @@ const uploadAvatar = async (base64Img, context) => {
 module.exports = {
   signUp,
   login,
+  editUser,
   follow,
   unfollow,
   getUser,

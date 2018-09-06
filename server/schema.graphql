@@ -6,12 +6,20 @@ type Book {
   author: String!
 }
 
+type SocialMediaLinks {
+  facebookLink: String!
+  twitterLink: String!
+  instagramLink: String!
+  linkedInLink: String!
+}
+
 type User {
   id: ID!
   me: Boolean!
   email: String!
   fullName: String!
   intro: String!
+  socialMediaLinks: SocialMediaLinks!
   avatarSrc: String!
   following: [ID!]!
   followers: [ID!]!
@@ -103,8 +111,22 @@ type Query {
   questions(userId: ID!, all: Boolean!): Questions
 }
 
+input SocialMediaLinksInput {
+  facebookLink: String!
+  twitterLink: String!
+  instagramLink: String!
+  linkedInLink: String!
+}
+
+input EditUserInput {
+  fullName: String!
+  intro: String!
+  socialMediaLinks: SocialMediaLinksInput!
+}
+
 type Mutation {
   addBook(title: String!, author: String!): Book!
+  editUser(input: EditUserInput): User!
   notifsMarkSeen: Boolean
   addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
