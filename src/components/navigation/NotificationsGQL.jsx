@@ -1,49 +1,9 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
-import { loggedUserId } from '../../utils';
-
-const Fragments = {
-  NotifFields: gql`
-    fragment NotifFields on Notification {
-      id
-      type
-      performerId
-      performerAvatarSrc
-      text
-      seen
-      createdOn
-      ... on NewComment {
-        commentId
-        questionId
-      }
-    }
-  `,
-};
-
-const GET_NOTIFICATIONS = gql`
-  query notifications {
-    notifications {
-      ...NotifFields
-    }
-  }
-  ${Fragments.NotifFields}
-`;
-
-const NOTIFS_MARK_SEEN = gql`
-  mutation notifsMarkSeen {
-    notifsMarkSeen
-  }
-`;
-
-const NEW_NOTIFICATION = gql`
-  subscription newNotification($userId: ID!) {
-    newNotification(userId: $userId) {
-      ...NotifFields
-    }
-  }
-  ${Fragments.NotifFields}
-`;
+import { GET_NOTIFICATIONS } from 'Queries';
+import { NOTIFS_MARK_SEEN } from 'Mutations';
+import { NEW_NOTIFICATION } from 'Subscriptions';
+import { loggedUserId } from 'Utils';
 
 const run = subscribeToMore => {
   subscribeToMore({

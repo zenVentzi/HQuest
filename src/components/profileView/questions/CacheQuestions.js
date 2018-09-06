@@ -1,4 +1,4 @@
-import { GET_QUESTIONS } from './index';
+import { GET_QUESTIONS } from 'Queries';
 // import { viewedProfileId as userId } from '../index';
 
 const ADD_ANSWER = 'addAnswer';

@@ -13,6 +13,7 @@ const signUp = async ({ firstName, surName, email, password }, context) => {
     surName,
     email,
     intro: 'Hey, I am an intro',
+    avatarSrc: '',
     socialMediaLinks: {
       facebookLink: '',
       twitterLink: '',
