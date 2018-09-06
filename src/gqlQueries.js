@@ -1,30 +1,28 @@
 import gql from 'graphql-tag';
-import { NotificationFields } from 'Fragments';
+import { NotificationFields, QuestionFields } from 'Fragments';
 
-export const a = 5;
+export const GET_ANSWER_QUESTION = gql``;
 
-export const GET_QUESTIONS = gql`
-  query questions($userId: ID!, $all: Boolean!) {
-    questions(userId: $userId, all: $all) {
-      answered {
-        ...questionFields
-        answer {
-          id
-          value
-        }
-      }
-      unanswered @include(if: $all) {
-        ...questionFields
+export const GET_ANSWERED_QUESTIONS = gql`
+  query questions($userId: ID!) {
+    questions(userId: $userId, answered: true) {
+      ...QuestionFields
+      answer {
+        id
+        value
       }
     }
   }
+  ${QuestionFields}
+`;
 
-  fragment questionFields on Question {
-    id
-    question
-    type
-    possibleAnswers
+export const GET_UNANSWERED_QUESTIONS = gql`
+  query questions($userId: ID!) {
+    questions(userId: $userId, answered: false) {
+      ...QuestionFields
+    }
   }
+  ${QuestionFields}
 `;
 
 export const GET_NOTIFICATIONS = gql`

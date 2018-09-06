@@ -41,11 +41,6 @@ type Question {
   answer: Answer
 }
 
-type Questions {
-  answered: [Question!]!
-  unanswered: [Question!]!
-}
-
 type Answer {
   id: ID!
   userId: ID!
@@ -108,7 +103,7 @@ type Query {
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
-  questions(userId: ID!, all: Boolean!): Questions
+  questions(userId: ID!, answered: Boolean!): [Question!]!
 }
 
 input SocialMediaLinksInput {
