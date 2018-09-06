@@ -1,5 +1,4 @@
 const { ObjectId } = require('mongoose').Types;
-const bcrypt = require('bcrypt');
 const { mapGqlQuestions } = require('../resolvers/helper');
 
 const createQuestion = async ({ question, type, possibleAnswers }, context) => {

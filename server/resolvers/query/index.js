@@ -20,19 +20,10 @@ async function comments(_, { answerId }, context) {
   return commentController.getAnswerComments(answerId, context);
 }
 
-async function questions(root, { userId, all }, context) {
-  const res = {
-    answered: await questionController.getAnsweredQuestions(userId, context),
-  };
-
-  if (all) {
-    res.unanswered = await questionController.getUnansweredQuestions(
-      userId,
-      context
-    );
-  }
-
-  return res;
+async function questions(root, { userId, answered }, context) {
+  return answered
+    ? questionController.getAnsweredQuestions(userId, context)
+    : questionController.getUnansweredQuestions(userId, context);
 }
 
 async function users(_, { match }, context) {
