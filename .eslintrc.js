@@ -12,6 +12,7 @@ module.exports = {
         "no-unused-vars": 1,
         "arrow-body-style": 0,
         'no-underscore-dangle': 0,
+        "import/prefer-default-export": 0,
         'no-plusplus': 1,
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],

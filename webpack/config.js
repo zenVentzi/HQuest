@@ -52,7 +52,11 @@ module.exports = {
   },
   resolve: {
     alias: {
-      Utils: path.resolve(process.cwd(), './src/utils/'),
+      Utils: path.resolve(process.cwd(), './src/utils'),
+      Queries: path.resolve(process.cwd(), './src/gqlQueries'),
+      Mutations: path.resolve(process.cwd(), './src/gqlMutations'),
+      Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
+      Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
       Reusable: path.resolve(process.cwd(), './src/components/reusable'),
     },
     extensions: ['*', '.js', '.jsx', '.css', 'png', 'jpg', 'gif'],

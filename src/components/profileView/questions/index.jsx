@@ -1,39 +1,8 @@
 import React from 'react';
-import { Transition } from 'react-spring';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import { GET_QUESTIONS } from 'Queries';
 import AnsweredQuestions from './AnsweredQuestions';
 import UnansweredQuestions from './UnansweredQuestions';
-
-/* 
-
-
-
-*/
-
-export const GET_QUESTIONS = gql`
-  query questions($userId: ID!, $all: Boolean!) {
-    questions(userId: $userId, all: $all) {
-      answered {
-        ...questionFields
-        answer {
-          id
-          value
-        }
-      }
-      unanswered @include(if: $all) {
-        ...questionFields
-      }
-    }
-  }
-
-  fragment questionFields on Question {
-    id
-    question
-    type
-    possibleAnswers
-  }
-`;
 
 const QuestionsContainer = ({ user, showAnswered }) => {
   const vars = { userId: user.id, all: user.me };

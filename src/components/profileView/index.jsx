@@ -7,6 +7,7 @@ import Navbar from '../navigation';
 import StyledViewRaw from '../reusable/StyledView';
 import ProfileViewer from './ProfileViewer';
 import ProfileEditor from './ProfileEditor';
+import CommentPin from './CommentPin';
 import NotFoundView from '../notFoundView';
 
 export const GET_USER = gql`
@@ -49,13 +50,16 @@ const ProfileView = ({ match }) => {
             <StyledView>
               <Switch>
                 <Route
-                  exact
-                  path="/userProfile/:id"
-                  render={props => <ProfileViewer {...props} user={user} />}
+                  path="/userProfile/:id/:questionId/:commentId"
+                  render={props => <CommentPin {...props} user={user} />}
                 />
                 <Route
                   path="/userProfile/:id/edit"
                   render={props => <ProfileEditor {...props} user={user} />}
+                />
+                <Route
+                  path="/userProfile/:id"
+                  render={props => <ProfileViewer {...props} user={user} />}
                 />
                 <Route component={NotFoundView} />
               </Switch>
