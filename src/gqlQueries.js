@@ -28,6 +28,7 @@ export const GET_ANSWERED_QUESTION = gql`
       answer {
         id
         value
+        numOfComments
       }
     }
   }

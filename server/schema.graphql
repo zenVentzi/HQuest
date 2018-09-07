@@ -46,6 +46,7 @@ type Answer {
   userId: ID!
   questionId: ID!
   value: String!
+  numOfComments: Int!
 }
 
 type Comment {

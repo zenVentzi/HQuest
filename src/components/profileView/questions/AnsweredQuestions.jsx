@@ -11,7 +11,12 @@ const AnsweredQuestions = ({ editable, questions, ...style }) => {
   return questions.length > 0 ? (
     questions.map(q => (
       <Fragment key={q.id}>
-        <AnsweredQuestion style={style} editable={editable} question={q} />
+        <AnsweredQuestion
+          collapseComments
+          style={style}
+          editable={editable}
+          question={q}
+        />
       </Fragment>
     ))
   ) : (
