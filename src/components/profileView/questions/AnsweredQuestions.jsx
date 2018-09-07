@@ -7,15 +7,11 @@ const Empty = styled.div`
   width: 100%;
 `;
 
-const AnsweredQuestions = ({ showButtons, questions, ...style }) => {
+const AnsweredQuestions = ({ editable, questions, ...style }) => {
   return questions.length > 0 ? (
     questions.map(q => (
       <Fragment key={q.id}>
-        <AnsweredQuestion
-          style={style}
-          showButtons={showButtons}
-          question={q}
-        />
+        <AnsweredQuestion style={style} editable={editable} question={q} />
       </Fragment>
     ))
   ) : (

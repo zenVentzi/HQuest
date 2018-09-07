@@ -26,6 +26,10 @@ async function questions(root, { userId, answered }, context) {
     : questionController.getUnansweredQuestions(userId, context);
 }
 
+async function answeredQuestion(_, { userId, questionId }, context) {
+  return questionController.getAnsweredQuestion(userId, questionId, context);
+}
+
 async function users(_, { match }, context) {
   return userController.getUsers(match, context);
 }
@@ -41,4 +45,5 @@ module.exports = {
   users,
   user,
   questions,
+  answeredQuestion,
 };

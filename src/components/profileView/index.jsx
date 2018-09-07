@@ -3,32 +3,13 @@ import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
 import { Route, Switch } from 'react-router-dom';
+import { GET_USER } from 'Queries';
 import Navbar from '../navigation';
 import StyledViewRaw from '../reusable/StyledView';
 import ProfileViewer from './ProfileViewer';
 import ProfileEditor from './ProfileEditor';
-import CommentPin from './CommentPin';
+import QuestionPin from './QuestionPin';
 import NotFoundView from '../notFoundView';
-
-export const GET_USER = gql`
-  query user($id: ID!) {
-    user(id: $id) {
-      id
-      fullName
-      avatarSrc
-      intro
-      socialMediaLinks {
-        facebookLink
-        twitterLink
-        instagramLink
-        linkedInLink
-      }
-      me
-      followers
-      following
-    }
-  }
-`;
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -51,7 +32,9 @@ const ProfileView = ({ match }) => {
               <Switch>
                 <Route
                   path="/userProfile/:id/:questionId/:commentId"
-                  render={props => <CommentPin {...props} user={user} />}
+                  render={props => (
+                    <QuestionPin {...props} editable={user.me} />
+                  )}
                 />
                 <Route
                   path="/userProfile/:id/edit"

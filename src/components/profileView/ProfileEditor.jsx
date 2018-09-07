@@ -1,17 +1,9 @@
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { GET_USER } from './index';
-
-const EDIT_USER = gql`
-  mutation editUser($input: EditUserInput) {
-    editUser(input: $input) {
-      id
-    }
-  }
-`;
+import { EDIT_USER } from 'Mutations';
+import { GET_USER } from 'Queries';
 
 const Input = styled.input`
   margin-bottom: 0.5em;
