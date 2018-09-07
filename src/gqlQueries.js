@@ -21,6 +21,27 @@ export const GET_USER = gql`
   }
 `;
 
+export const GET_FOLLOWERS = gql`
+  query followers($userId: ID!) {
+    followers(userId: $userId) {
+      id
+      fullName
+      avatarSrc
+      intro
+    }
+  }
+`;
+export const GET_FOLLOWING = gql`
+  query following($userId: ID!) {
+    following(userId: $userId) {
+      id
+      fullName
+      avatarSrc
+      intro
+    }
+  }
+`;
+
 export const GET_ANSWERED_QUESTION = gql`
   query answeredQuestion($userId: ID!, $questionId: ID!) {
     answeredQuestion(userId: $userId, questionId: $questionId) {
@@ -42,6 +63,7 @@ export const GET_ANSWERED_QUESTIONS = gql`
       answer {
         id
         value
+        numOfComments
       }
     }
   }

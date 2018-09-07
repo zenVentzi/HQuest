@@ -104,6 +104,8 @@ type Query {
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
+  followers(userId: ID!): [User!]!
+  following(userId: ID!): [User!]!
   questions(userId: ID!, answered: Boolean!): [Question!]!
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }

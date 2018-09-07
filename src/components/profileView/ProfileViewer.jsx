@@ -1,14 +1,13 @@
-import gql from 'graphql-tag';
 import React, { Component, Fragment } from 'react';
-import { Query } from 'react-apollo';
-import styled, { ThemeProvider } from 'styled-components';
-import Navbar from '../navigation';
+import { ThemeProvider } from 'styled-components';
 import Avatar from '../reusable/Avatar';
 import Username from './Username';
 import Intro from './Intro';
 import FollowBtn from './FollowBtn';
 import FollowingBtn from './FollowingBtn';
 import FollowersBtn from './FollowersBtn';
+import Followers from './Followers';
+import Following from './Following';
 import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
@@ -16,15 +15,30 @@ import ToggleQuestions from './ToggleQuestions';
 import { loggedUserId, getTheme } from '../../utils';
 
 class ProfileViewer extends Component {
-  state = { answered: true };
+  state = { answered: true, showFollowers: false, showFollowing: false };
 
   onToggleQuestions = e => {
     const isOn = e.target.checked;
     this.setState({ answered: !isOn });
   };
 
+  toggleFollowers = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showFollowers: !prevState.showFollowers,
+    }));
+  };
+
+  toggleFollowing = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showFollowing: !prevState.showFollowing,
+    }));
+  };
+
   render() {
     const { user } = this.props;
+    const { showFollowers, showFollowing } = this.state;
     const isFollowed = user.followers.includes(loggedUserId());
     const theme = {
       avatarSize: '150px',
@@ -38,9 +52,21 @@ class ProfileViewer extends Component {
           <Intro>{user.intro}</Intro>
           {!user.me && <FollowBtn isFollowed={isFollowed} userId={user.id} />}
           <div>
-            <FollowingBtn following={user.following} />
-            <FollowersBtn followers={user.followers} />
+            <FollowingBtn
+              following={user.following}
+              onClick={this.toggleFollowing}
+            />
+            <FollowersBtn
+              followers={user.followers}
+              onClick={this.toggleFollowers}
+            />
           </div>
+          {showFollowers && (
+            <Followers userId={user.id} onClose={this.toggleFollowers} />
+          )}
+          {showFollowing && (
+            <Following userId={user.id} onClose={this.toggleFollowing} />
+          )}
           <Links />
           <Search placeholder="Search questions.." onChange={() => {}} />
           {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
