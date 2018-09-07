@@ -1,6 +1,4 @@
-import React from 'react';
 import styled from 'styled-components';
-import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
 
 const StyledPanel = styled.div`
   width: 100%;

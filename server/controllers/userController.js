@@ -90,6 +90,34 @@ const unfollow = async (userId, context) => {
   await followBase({ userId, follow: false }, context);
 };
 
+async function getFollowers(userId, context) {
+  const {
+    models: { User },
+  } = context;
+
+  const { followers: followersIds } = await User.findById(userId).lean();
+  const followers = await User.find({
+    _id: {
+      $in: followersIds,
+    },
+  }).lean();
+  return mapGqlUsers(context, followers);
+}
+
+async function getFollowing(userId, context) {
+  const {
+    models: { User },
+  } = context;
+
+  const { following: followingIds } = await User.findById(userId).lean();
+  const following = await User.find({
+    _id: {
+      $in: followingIds,
+    },
+  }).lean();
+  return mapGqlUsers(context, following);
+}
+
 const editUser = async (input, context) => {
   const {
     models: { User },
@@ -176,6 +204,8 @@ module.exports = {
   editUser,
   follow,
   unfollow,
+  getFollowers,
+  getFollowing,
   getUser,
   getUsers,
   uploadAvatar,

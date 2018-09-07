@@ -5,10 +5,10 @@ const Btn = styled.button`
   margin-bottom: 1em;
 `;
 
-const FollowingBtn = ({ following }) => {
-  const onClick = () => {};
+const FollowingBtn = ({ following, onClick }) => {
+  // const onClick = () => {};
 
-  return <Btn onClick={onClick()}>Following {following.length}</Btn>;
+  return <Btn onClick={onClick}>Following {following.length}</Btn>;
 };
 
 export default FollowingBtn;

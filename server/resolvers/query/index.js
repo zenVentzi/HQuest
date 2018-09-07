@@ -20,6 +20,14 @@ async function comments(_, { answerId }, context) {
   return commentController.getAnswerComments(answerId, context);
 }
 
+async function followers(_, { userId }, context) {
+  return userController.getFollowers(userId, context);
+}
+
+async function following(_, { userId }, context) {
+  return userController.getFollowing(userId, context);
+}
+
 async function questions(root, { userId, answered }, context) {
   return answered
     ? questionController.getAnsweredQuestions(userId, context)
@@ -43,6 +51,8 @@ module.exports = {
   comments,
   notifications,
   users,
+  followers,
+  following,
   user,
   questions,
   answeredQuestion,
