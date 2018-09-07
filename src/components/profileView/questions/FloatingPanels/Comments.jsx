@@ -4,6 +4,7 @@ import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Comment from './Comment';
 import FixedPanel from './FixedPanel';
+import CommentsPanel from './CommentsPanel';
 
 const ADD_COMMENT = gql`
   mutation addComment($answerId: ID!, $comment: String!) {
@@ -113,7 +114,7 @@ class Comments extends Component {
               if (error) return <div> {error.message} </div>;
 
               return (
-                <FixedPanel onClose={onClose}>
+                <CommentsPanel onClose={onClose}>
                   <Input
                     innerRef={ref => {
                       this.input = ref;
@@ -124,7 +125,7 @@ class Comments extends Component {
                     onClick={this.onInputClick}
                   />
                   {this.renderComments(comments)}
-                </FixedPanel>
+                </CommentsPanel>
               );
             }}
           </Mutation>
