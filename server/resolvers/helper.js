@@ -63,23 +63,27 @@ function mapGqlComment(context, commentAuthor, comment) {
   };
 }
 
+const mapGqlQuestion = question => {
+  const shapedQuestion = {
+    id: question._id.toString(),
+    question: question.question,
+    type: question.type,
+    possibleAnswers: question.possibleAnswers,
+  };
+
+  if (question.answer) {
+    shapedQuestion.answer = {
+      id: question.answer._id.toString(),
+      value: question.answer.value,
+    };
+  }
+
+  return shapedQuestion;
+};
+
 const mapGqlQuestions = questions => {
   return questions.map(q => {
-    const shapedQuestion = {
-      id: q._id.toString(),
-      question: q.question,
-      type: q.type,
-      possibleAnswers: q.possibleAnswers,
-    };
-
-    if (q.answer) {
-      shapedQuestion.answer = {
-        id: q.answer._id.toString(),
-        value: q.answer.value,
-      };
-    }
-
-    return shapedQuestion;
+    return mapGqlQuestion(q);
   });
 };
 
@@ -98,4 +102,5 @@ module.exports = {
   mapGqlNotification,
   mapGqlNotifications,
   mapGqlQuestions,
+  mapGqlQuestion,
 };

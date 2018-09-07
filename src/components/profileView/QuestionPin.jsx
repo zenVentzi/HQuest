@@ -3,24 +3,35 @@ import { Query } from 'react-apollo';
 import { GET_ANSWERED_QUESTION } from 'Queries';
 import AnsweredQuestion from './questions/AnsweredQuestion';
 
-const CommentPin = ({ match: { params } }) => {
-  const vars = {};
+const QuestionPin = ({
+  match: {
+    params: { id: userId, questionId },
+  },
+  editable,
+}) => {
+  const vars = { userId, questionId };
 
   // return <div>comment pin</div>;
 
   return (
     <Query query={GET_ANSWERED_QUESTION} variables={vars}>
-      {({ loading, error, data: { question } }) => {
+      {({ loading, error, data: { answeredQuestion: q } }) => {
         if (loading) {
           return <div>Loading question..</div>;
         } else if (error) {
           return <div>{error}</div>;
         }
 
-        return <AnsweredQuestion question={question} />;
+        return (
+          <AnsweredQuestion
+            collapseComments={false}
+            editable={editable}
+            question={q}
+          />
+        );
       }}
     </Query>
   );
 };
 
-export default CommentPin;
+export default QuestionPin;

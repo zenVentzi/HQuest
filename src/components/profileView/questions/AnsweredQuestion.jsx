@@ -36,7 +36,7 @@ class AnsweredQuestion extends Component {
 
   render() {
     const { hovered, viewMode } = this.state;
-    const { question, showButtons, style } = this.props;
+    const { question, editable, collapseComments, style } = this.props;
 
     return (
       <StyledQuestion
@@ -49,8 +49,9 @@ class AnsweredQuestion extends Component {
         {viewMode ? (
           <QuestionViewer
             hovered={hovered}
-            showButtons={showButtons}
+            editable={editable}
             question={question}
+            collapseComments={collapseComments}
             onClickEdit={this.toggleViewMode}
           />
         ) : (

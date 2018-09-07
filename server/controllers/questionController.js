@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
-const { mapGqlQuestions } = require('../resolvers/helper');
+const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
 const createQuestion = async ({ question, type, possibleAnswers }, context) => {
   const {
@@ -13,13 +13,33 @@ const createQuestion = async ({ question, type, possibleAnswers }, context) => {
   });
 };
 
-const pairAnswerToQuestion = (answers, questions) => {
+const pairAnswerToQuestion = (answer, question) => {
+  return { ...question, answer };
+};
+
+const pairAnswersToQuestions = (answers, questions) => {
   const pairs = answers.map(answer => {
     const question = questions.find(q => q._id.equals(answer.questionId));
-    return { ...question, answer };
+    return pairAnswerToQuestion(answer, question);
   });
 
   return pairs;
+};
+
+const getAnsweredQuestion = async (userId, questionId, context) => {
+  const {
+    models: { Answer, Question },
+  } = context;
+
+  const answerQuery = {
+    userId: ObjectId(userId),
+    questionId: ObjectId(questionId),
+  };
+
+  const answer = await Answer.findOne(answerQuery).lean();
+  const question = await Question.findById(questionId).lean();
+  const answeredQuestion = pairAnswerToQuestion(answer, question);
+  return mapGqlQuestion(answeredQuestion);
 };
 
 const getUserQuestions = async (userId, context) => {
@@ -41,7 +61,7 @@ const getUserQuestions = async (userId, context) => {
     const answeredQuestionsOnly = await Question.find({
       _id: { $in: answeredQuestionsIds },
     }).lean();
-    result.answeredQuestions = pairAnswerToQuestion(
+    result.answeredQuestions = pairAnswersToQuestions(
       answers,
       answeredQuestionsOnly
     );
@@ -68,6 +88,7 @@ const getUnansweredQuestions = async (userId, context) => {
 
 module.exports = {
   createQuestion,
+  getAnsweredQuestion,
   getAnsweredQuestions,
   getUnansweredQuestions,
 };

@@ -104,6 +104,7 @@ type Query {
   users(match: String): [User!]!
   user(id: ID!): User
   questions(userId: ID!, answered: Boolean!): [Question!]!
+  answeredQuestion(userId: ID!, questionId: ID!): Question!
 }
 
 input SocialMediaLinksInput {

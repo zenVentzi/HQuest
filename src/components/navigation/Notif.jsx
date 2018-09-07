@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { ThemeProvider, withTheme } from 'styled-components';
 import distanceInWords from 'date-fns/distance_in_words';
-import { getTheme, inverseColor } from 'Utils';
+import { loggedUserId, getTheme, inverseColor } from 'Utils';
 import Avatar from '../reusable/Avatar';
 
 const StyledNotif = styled(Link)`
@@ -60,13 +60,17 @@ const getTime = createdOn => {
 
 const getLink = notif => {
   const { performerId, questionId, commentId } = notif;
+  const loggedUsrId = loggedUserId();
+
   switch (notif.type) {
     case 'NEW_FOLLOWER':
       return `/userProfile/${performerId}`;
       break;
-    case 'NEW_COMMENT':
-      return `/userProfile/${performerId}/${questionId}/${commentId}`;
-      break;
+    case 'NEW_COMMENT' /* 
+    answerOwnerId in this case the current logged userid
+    later, when we get notifications for other people's posts' comments we will upgrade that
+    */:
+      return `/userProfile/${loggedUsrId}/${questionId}/${commentId}`;
     default:
       break;
   }

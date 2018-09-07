@@ -1,9 +1,29 @@
 import gql from 'graphql-tag';
 import { NotificationFields, QuestionFields } from 'Fragments';
 
+export const GET_USER = gql`
+  query user($id: ID!) {
+    user(id: $id) {
+      id
+      fullName
+      avatarSrc
+      intro
+      socialMediaLinks {
+        facebookLink
+        twitterLink
+        instagramLink
+        linkedInLink
+      }
+      me
+      followers
+      following
+    }
+  }
+`;
+
 export const GET_ANSWERED_QUESTION = gql`
-  query question($userId: ID!, $questionId: ID!) {
-    question(userId: $userId, questionId: $questionId) {
+  query answeredQuestion($userId: ID!, $questionId: ID!) {
+    answeredQuestion(userId: $userId, questionId: $questionId) {
       ...QuestionFields
       answer {
         id

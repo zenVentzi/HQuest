@@ -6,8 +6,8 @@ import Btn from './StyledBtn';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheQuestions';
-import Reactions from './FloatingPanels/Reactions';
-import Comments from './FloatingPanels/Comments';
+import Reactions from './Panels/Reactions';
+import Comments from './Panels/Comments';
 
 const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
@@ -31,7 +31,7 @@ const Span = styled.span`
 `;
 
 class QuestionViewer extends Component {
-  state = { showComments: false, showReactions: false };
+  state = { showComments: !this.props.collapseComments, showReactions: false };
 
   onClickRemove = mutate => async () => {
     mutate({
@@ -61,6 +61,7 @@ class QuestionViewer extends Component {
         {removeAnswer => {
           const {
             hovered,
+            editable,
             onClickEdit,
             /* showButtons */ question,
           } = this.props;
