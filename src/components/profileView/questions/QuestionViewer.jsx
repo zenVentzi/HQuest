@@ -59,13 +59,16 @@ class QuestionViewer extends Component {
     return (
       <Mutation mutation={REMOVE_ANSWER}>
         {removeAnswer => {
+          const { showReactions, showComments } = this.state;
           const {
             hovered,
             editable,
             onClickEdit,
             /* showButtons */ question,
           } = this.props;
-          const { showReactions, showComments } = this.state;
+          const { numOfComments } = question.answer;
+          const commentBtnText =
+            numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
           const answerId = question.answer.id;
 
           return (
@@ -74,7 +77,7 @@ class QuestionViewer extends Component {
               <Answer viewMode question={question} />
               <div>
                 <Span onClick={this.toggleReactions}>15 Reactions</Span>
-                <Span onClick={this.toggleComments}>2 Comments</Span>
+                <Span onClick={this.toggleComments}>{commentBtnText}</Span>
               </div>
               {showComments && (
                 <Comments answerId={answerId} onClose={this.toggleComments} />
