@@ -58,7 +58,7 @@ class QuestionViewer extends Component {
   render() {
     return (
       <Mutation mutation={REMOVE_ANSWER}>
-        {removeQuestion => {
+        {removeAnswer => {
           const {
             hovered,
             onClickEdit,
@@ -69,23 +69,23 @@ class QuestionViewer extends Component {
 
           return (
             <Fragment>
-              {showComments && (
-                <Comments answerId={answerId} onClose={this.toggleComments} />
-              )}
-              {showReactions && <Reactions onClose={this.toggleReactions} />}
               <QuestionText> {question.question} </QuestionText>
               <Answer viewMode question={question} />
               <div>
                 <Span onClick={this.toggleReactions}>15 Reactions</Span>
                 <Span onClick={this.toggleComments}>2 Comments</Span>
               </div>
-              {/* showButtons */ true && (
+              {showComments && (
+                <Comments answerId={answerId} onClose={this.toggleComments} />
+              )}
+              {showReactions && <Reactions onClose={this.toggleReactions} />}
+              {/* showButtons */ false && (
                 <div>
                   <Btn onClick={onClickEdit} visible={hovered}>
                     Edit
                   </Btn>
                   <Btn
-                    onClick={this.onClickRemove(removeQuestion)}
+                    onClick={this.onClickRemove(removeAnswer)}
                     visible={hovered}
                   >
                     Remove

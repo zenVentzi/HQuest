@@ -1,7 +1,18 @@
 import gql from 'graphql-tag';
 import { NotificationFields, QuestionFields } from 'Fragments';
 
-export const GET_ANSWER_QUESTION = gql``;
+export const GET_ANSWERED_QUESTION = gql`
+  query question($userId: ID!, $questionId: ID!) {
+    question(userId: $userId, questionId: $questionId) {
+      ...QuestionFields
+      answer {
+        id
+        value
+      }
+    }
+  }
+  ${QuestionFields}
+`;
 
 export const GET_ANSWERED_QUESTIONS = gql`
   query questions($userId: ID!) {
