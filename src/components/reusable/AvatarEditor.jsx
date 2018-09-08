@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import AvatarEditor from 'react-avatar-editor';
+import Editor from 'react-avatar-editor';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Btn from './Btn';
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
 `;
 
-class FloatingEditor extends Component {
+class AvatarEditor extends Component {
   onClickSave = uploadAvatar => async () => {
     if (this.editor) {
       const canvasScaled = this.editor.getImageScaledToCanvas();
@@ -51,7 +51,7 @@ class FloatingEditor extends Component {
 
           return (
             <Wrapper>
-              <AvatarEditor
+              <Editor
                 ref={this.setEditorRef}
                 image={image}
                 width={150}
@@ -74,4 +74,4 @@ class FloatingEditor extends Component {
   }
 }
 
-export default FloatingEditor;
+export default AvatarEditor;

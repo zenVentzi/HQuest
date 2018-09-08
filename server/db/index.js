@@ -1,20 +1,26 @@
-const bcrypt = require('bcrypt');
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const { getModels } = require('../db/models');
 
-const DbName = `test`;
+const atlasDbName = `test`;
 // const DbName = `hquest`;
 
 const atlasURI = `mongodb+srv://zenVentzi:${
-  process.env.MONGO_PASS
+  process.env.MONGO_ATLAS_PASS
 }@cluster0-rsehw.mongodb.net/test?retryWrites=true`;
+const mLabURI = `mongodb://zenVentzi:${
+  process.env.MLAB_PASS
+}@ds149732.mlab.com:49732/hquest`;
+
+/* 
+    { useNewUrlParser: true, dbName: DbName }
+the obve options are for mAtlas
+*/
 
 const connect = onConnected => {
   mongoose.connect(
-    atlasURI,
-    { useNewUrlParser: true, dbName: DbName }
+    mLabURI,
+    { useNewUrlParser: true }
   );
 
   const db = mongoose.connection;

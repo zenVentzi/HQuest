@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { CaretSquareDown } from 'styled-icons/fa-regular/CaretSquareDown';
-import User from './SubUser';
+import User from 'Reusable/UserRow';
 import CommentOptions from './CommentOptions';
 
 const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`

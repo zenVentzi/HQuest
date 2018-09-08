@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import User from './SubUser';
+import User from 'Reusable/UserRow';
 
 const StyledReaction = styled.div`
   width: 80%;

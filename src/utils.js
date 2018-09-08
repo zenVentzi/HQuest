@@ -17,7 +17,7 @@ function loggedUserId() {
 
 const isPersonal = userId => loggedUserId === userId;
 
-const getTheme = neww => current => {
+const overrideTheme = neww => current => {
   const res = { ...current, ...neww };
   return res;
 };
@@ -26,12 +26,19 @@ const inverseColor = color => {
   return color === 'white' ? 'black' : 'white';
 };
 
+const inverseTheme = theme => {
+  const backgroundColor = inverseColor(theme.backgroundColor);
+  const foregroundColor = inverseColor(theme.foregroundColor);
+  return { ...theme, backgroundColor, foregroundColor };
+};
+
 export {
   history,
   isAuthenticated,
   loggedUserId,
   loggedUserToken,
   isPersonal,
-  getTheme,
+  overrideTheme,
   inverseColor,
+  inverseTheme,
 };

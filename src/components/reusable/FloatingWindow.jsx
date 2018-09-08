@@ -2,17 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
 
-const GrayBackground = styled.div`
+const BackgroundShade = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.5);
+  background: black;
 `;
 
-const BlackPanel = styled.div`
+const StyledWindow = styled.div`
   position: fixed;
-  padding: 0.5em;
+  padding: 1em;
   display: flex;
   flex: 1;
   overflow-y: auto;
@@ -22,26 +22,29 @@ const BlackPanel = styled.div`
   left: 30%;
   width: 40%;
   height: 60%;
-  background: black;
+  background: white;
   border-radius: 0.2em;
-  color: white;
+  color: black;
+  z-index: 1;
 `;
 
 const CloseBtn = styled(WindowClose).attrs({
   size: '1.4em',
 })`
   cursor: pointer;
-  position: fixed;
-  color: white;
+  position: sticky;
+  background: black;
   align-self: flex-end;
   flex-shrink: 0;
+  margin-top: -0.5em;
+  margin-right: -0.5em;
   margin-bottom: 1em;
   /* margin: 1em; */
 `;
 
-const FixedPanel = ({ onClose, children }) => (
-  <GrayBackground onClick={onClose}>
-    <BlackPanel>
+const Window = ({ onClose, children }) => (
+  <BackgroundShade onClick={onClose}>
+    <StyledWindow>
       <CloseBtn
         onClick={e => {
           e.stopPropagation();
@@ -50,8 +53,8 @@ const FixedPanel = ({ onClose, children }) => (
       />
       {/* <Btn>ts</Btn> */}
       {children}
-    </BlackPanel>
-  </GrayBackground>
+    </StyledWindow>
+  </BackgroundShade>
 );
 
-export default FixedPanel;
+export default Window;

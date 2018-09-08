@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
-import FloatingEditor from './FloatingEditor';
+import Editor from './AvatarEditor';
 
 const Wrapper = styled.div`
   position: relative;
@@ -33,7 +33,7 @@ const UpdateOverlay = styled.div`
   display: inline-block;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: black;
 
   color: white;
   line-height: 150px;
@@ -110,7 +110,7 @@ class Avatar extends Component {
             this.state.hovered && <UpdateOverlay>Upload</UpdateOverlay>}
         </Wrapper>
         {this.state.inputImg && (
-          <FloatingEditor
+          <Editor
             image={this.state.inputImg}
             onCloseEditor={this.onCloseEditor}
           />

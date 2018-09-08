@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Comment from './Comment';
-import FixedPanel from './FixedPanel';
 import CommentsPanel from './CommentsPanel';
 
 const ADD_COMMENT = gql`

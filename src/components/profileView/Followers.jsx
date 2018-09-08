@@ -1,6 +1,6 @@
 import React from 'react';
 import { Query } from 'react-apollo';
-import FixedPanel from 'Reusable/FixedPanel';
+import FloatingWindow from 'Reusable/FloatingWindow';
 import User from 'Reusable/UserRow';
 import { GET_FOLLOWERS } from 'Queries';
 
@@ -12,11 +12,11 @@ const Followers = ({ userId, onClose }) => {
         if (error) return <div> {error.message} </div>;
 
         return (
-          <FixedPanel onClose={onClose}>
+          <FloatingWindow onClose={onClose}>
             {followers.map(f => (
-              <User key={f.id} user={f} />
+              <User inversedColors size={2} key={f.id} user={f} />
             ))}
-          </FixedPanel>
+          </FloatingWindow>
         );
       }}
     </Query>

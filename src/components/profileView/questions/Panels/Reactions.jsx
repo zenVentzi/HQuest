@@ -1,12 +1,12 @@
 import React from 'react';
 import { Smile } from 'styled-icons/fa-regular/Smile';
+import FloatingWindow from 'Reusable/FloatingWindow';
 import Reaction from './Reaction';
-import FixedPanel from './FixedPanel';
 import ReactButtons from './ReactButtons';
 
 const Reactions = ({ onClose }) => {
   return (
-    <FixedPanel onClose={onClose}>
+    <FloatingWindow onClose={onClose}>
       <ReactButtons />
       <Reaction reactionIcon={Smile} />
       <Reaction reactionIcon={Smile} />
@@ -18,7 +18,7 @@ const Reactions = ({ onClose }) => {
       <Reaction reactionIcon={Smile} />
       <Reaction reactionIcon={Smile} />
       <Reaction reactionIcon={Smile} />
-    </FixedPanel>
+    </FloatingWindow>
   );
 };
 

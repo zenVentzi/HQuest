@@ -1,3 +1,4 @@
 1) Read IOC with react(Medium acritcle with js generator functions)
 2) generator/iterator fns
 3) js Symbol
+4) Check answerQuestion onMouseEnter, currently is onMouseOver
