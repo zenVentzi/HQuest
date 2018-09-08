@@ -1,22 +1,26 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
+import { overrideTheme, inverseTheme } from 'Utils';
+import { normalColors, inversedColors } from '../appTheme';
 import Avatar from './Avatar';
 
 const StyledUserName = styled.div`
+  color: ${props => props.theme.foregroundColor};
   font-size: ${props => `${0.6 * props.size}em`};
   /* margin-bottom: 1em; */
 `;
 
-const StyledDescription = styled.div`
-  font-size: ${props => `${0.6 * props.size}em`};
-  color: gray;
+const StyledIntro = styled.div`
+  font-size: ${props => `${0.4 * props.size}em`};
+  font-style: oblique;
+  color: ${props => props.theme.foregroundColor};
 `;
 
 const TextContainer = styled.div`
   display: flex;
   align-self: stretch;
-  padding: ${props => `${0.3 * props.size}em`};
+  padding: ${props => `${0.4 * props.size}em`};
   flex-direction: column;
   justify-content: space-between;
 `;
@@ -24,22 +28,50 @@ const TextContainer = styled.div`
 const StyledUser = styled.div`
   display: flex;
   margin-bottom: 0.3em;
-  /* width: 100%; */
+  width: 100%;
   align-items: center;
   justify-content: flex-start;
   z-index: 1;
   border-radius: 0.2em;
   /* border: 1px solid white; */
-  background: black;
+  background: ${props => props.theme.backgroundColor};
 
   &:hover {
-    /* background: white; */
     cursor: pointer;
   }
 `;
 
 class User extends Component {
-  state = { redirect: false };
+  static defaultProps = { size: 2 };
+
+  constructor(props) {
+    super(props);
+
+    const avatarSize = `${1.5 * props.size}em`;
+    const themeColors = props.inversedColors ? inversedColors : normalColors;
+
+    this.state = {
+      redirect: false,
+      theme: {
+        avatarSize,
+        ...themeColors,
+      },
+    };
+  }
+
+  onMouseEnter = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      theme: inverseTheme(prevState.theme),
+    }));
+  };
+
+  onMouseLeave = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      theme: inverseTheme(prevState.theme),
+    }));
+  };
 
   render() {
     const {
@@ -56,24 +88,26 @@ class User extends Component {
       }
     }
 
-    const theme = {
-      avatarSize: `${1.5 * size}em`,
-    };
+    const { theme } = this.state;
 
     return (
-      <StyledUser
-        onClick={() => {
-          this.setState({ redirect: true });
-        }}
-      >
-        <ThemeProvider theme={theme}>
+      <ThemeProvider theme={overrideTheme(theme)}>
+        <StyledUser
+          onMouseEnter={this.onMouseEnter}
+          onFocus={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+          onBlur={this.onMouseLeave}
+          onClick={() => {
+            this.setState({ redirect: true });
+          }}
+        >
           <Avatar src={avatarSrc} />
-        </ThemeProvider>
-        <TextContainer size={size}>
-          <StyledUserName size={size}>{fullName}</StyledUserName>
-          <StyledDescription size={size}>{intro}</StyledDescription>
-        </TextContainer>
-      </StyledUser>
+          <TextContainer size={size}>
+            <StyledUserName size={size}>{fullName}</StyledUserName>
+            <StyledIntro size={size}>{intro}</StyledIntro>
+          </TextContainer>
+        </StyledUser>
+      </ThemeProvider>
     );
   }
 }

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import TextInput from '../reusable/TextInput';
 
-const CustomInput = styled(TextInput)`
+const CustomInput = styled.input`
+  width: 20em;
   margin-bottom: 1em;
 `;
 

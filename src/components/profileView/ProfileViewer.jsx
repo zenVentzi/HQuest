@@ -12,7 +12,7 @@ import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
 import ToggleQuestions from './ToggleQuestions';
-import { loggedUserId, getTheme } from '../../utils';
+import { loggedUserId, overrideTheme } from '../../utils';
 
 class ProfileViewer extends Component {
   state = { answered: true, showFollowers: false, showFollowing: false };
@@ -45,7 +45,7 @@ class ProfileViewer extends Component {
     };
 
     return (
-      <ThemeProvider theme={getTheme(theme)}>
+      <ThemeProvider theme={overrideTheme(theme)}>
         <Fragment>
           <Avatar src={user.avatarSrc} editable={user.me} />
           <Username>{user.fullName}</Username>

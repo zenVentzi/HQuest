@@ -1,20 +1,10 @@
 import React, { Fragment } from 'react';
 import { parse } from 'qs';
 import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+import { GET_USERS } from 'Queries';
+import User from 'Reusable/UserRow';
 import StyledView from '../reusable/StyledView';
-import User from './User';
 import Navbar from '../navigation';
-
-const GET_USERS = gql`
-  query users($match: String) {
-    users(match: $match) {
-      id
-      fullName
-      avatarSrc
-    }
-  }
-`;
 
 function getMatchParam() {
   return parse(window.location.search.substr(1)).match;

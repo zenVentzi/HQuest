@@ -15,30 +15,32 @@ const Slider = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: black;
+  background-color: white;
   transition: 0.4s;
   border-radius: 15px;
+  z-index: -1;
 
   &:before {
     position: absolute;
+    z-index: -1;
     content: '';
     height: 19px;
     width: 19px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: black;
     transition: 1s;
     border-radius: 50%;
   }
 `;
 
 const common = css`
-  color: white;
+  color: black;
   position: absolute;
   transform: translate(-50%, -50%);
   top: 50%;
-  left: 50%;
-  font-size: 10px;
+  left: 47%;
+  font-size: 0.7em;
 `;
 
 const On = styled.span`

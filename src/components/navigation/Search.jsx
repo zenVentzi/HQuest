@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
-import TextInput from '../reusable/TextInput';
 import UsersDataList from './UsersDataList';
 
 const GET_USERS = gql`
@@ -12,6 +11,10 @@ const GET_USERS = gql`
       fullName
     }
   }
+`;
+
+const TextInput = styled.input`
+  width: 20em;
 `;
 
 const CustomTextInput = styled(TextInput)`

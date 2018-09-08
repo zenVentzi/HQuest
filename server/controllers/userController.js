@@ -32,11 +32,9 @@ const login = async ({ email, password }, context) => {
     models: { User },
   } = context;
 
-  const doc = await User.findOne({
+  const user = await User.findOne({
     email,
-  });
-
-  const user = doc.toObject();
+  }).lean();
 
   if (!user) {
     throw new Error('No user with that email');
@@ -139,9 +137,8 @@ const getUser = async (userId, context) => {
   const {
     models: { User },
   } = context;
-
-  const userDoc = await User.findById(userId);
-  return mapGqlUser(context, userDoc.toObject());
+  const user = await User.findById(userId).lean();
+  return mapGqlUser(context, user);
 };
 
 const getUsers = async (match, context) => {

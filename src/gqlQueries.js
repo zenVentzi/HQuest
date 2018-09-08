@@ -21,6 +21,17 @@ export const GET_USER = gql`
   }
 `;
 
+export const GET_USERS = gql`
+  query users($match: String) {
+    users(match: $match) {
+      id
+      fullName
+      avatarSrc
+      intro
+    }
+  }
+`;
+
 export const GET_FOLLOWERS = gql`
   query followers($userId: ID!) {
     followers(userId: $userId) {

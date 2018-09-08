@@ -1,8 +1,8 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import styled from 'styled-components';
 import StyledView from '../reusable/StyledView';
-import TextInput from '../reusable/TextInput';
 
 const SIGNUP_MUTATION = gql`
   mutation SignUpMutation(
@@ -18,6 +18,10 @@ const SIGNUP_MUTATION = gql`
       password: $password
     )
   }
+`;
+
+const TextInput = styled.input`
+  width: 10em;
 `;
 
 const SignUpView = props => {

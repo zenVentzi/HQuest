@@ -1,8 +1,8 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import styled from 'styled-components';
 import StyledView from '../reusable/StyledView';
-import TextInput from '../reusable/TextInput';
 import { AUTH_TOKEN, USER_ID } from '../../constants';
 import { history } from '../../utils';
 
@@ -13,6 +13,10 @@ const LOGIN_MUTATION = gql`
       userId
     }
   }
+`;
+
+const TextInput = styled.input`
+  width: 10em;
 `;
 
 const LoginView = () => {
