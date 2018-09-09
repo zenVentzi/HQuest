@@ -6,7 +6,6 @@ const baseStyles = () => injectGlobal`
   
   * {
     box-sizing: border-box;
-    transition-duration: 0.2s;
     color: white;
   }
 

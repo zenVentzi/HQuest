@@ -24,7 +24,7 @@ const Menu = () => {
     </TextBtn>,
   ];
   //  textForBtn="btn"
-  return <Dropdown pivot="left" iconForBtn={MenuIcon} items={items} />;
+  return <Dropdown pivot="right" iconForBtn={MenuIcon} items={items} />;
 };
 
 export default Menu;

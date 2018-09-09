@@ -8,6 +8,7 @@ import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheQuestions';
 import Reactions from './Panels/Reactions';
 import Comments from './Panels/Comments';
+import QuestionOptions from './QuestionOptions';
 
 const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
@@ -28,6 +29,11 @@ const Span = styled.span`
     text-decoration: none;
     text-shadow: 1px 1px 1px #555;
   }
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 class QuestionViewer extends Component {
@@ -62,10 +68,11 @@ class QuestionViewer extends Component {
           const { showReactions, showComments } = this.state;
           const {
             hovered,
-            editable,
+            isPersonal = true,
             onClickEdit,
             /* showButtons */ question,
           } = this.props;
+
           const { numOfComments } = question.answer;
           const commentBtnText =
             numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
@@ -73,12 +80,21 @@ class QuestionViewer extends Component {
 
           return (
             <Fragment>
-              <QuestionText> {question.question} </QuestionText>
+              <Row>
+                <QuestionText> {question.question}</QuestionText>
+                {isPersonal && (
+                  <QuestionOptions
+                    hideIcon={!hovered}
+                    onClickEdit={onClickEdit}
+                    onClickRemove={removeAnswer}
+                  />
+                )}
+              </Row>
               <Answer viewMode question={question} />
-              <div>
+              <Row>
                 <Span onClick={this.toggleReactions}>15 Reactions</Span>
                 <Span onClick={this.toggleComments}>{commentBtnText}</Span>
-              </div>
+              </Row>
               {showComments && (
                 <Comments answerId={answerId} onClose={this.toggleComments} />
               )}

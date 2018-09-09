@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div`
   width: 80%;
   background: black;
   color: white;
+  text-align: center;
   border-radius: 0.2em;
-  padding: 0.2em 1em;
+  padding: 0.2em 0.2em;
+  margin-bottom: 0.3em;
 `;
 
 const Slider = styled.input`
@@ -14,30 +16,27 @@ const Slider = styled.input`
   display: block;
   margin: 0 auto;
   width: 50%;
-  height: 15px;
+  height: 1.5em;
   border-radius: 5px;
   background: white;
   outline: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.1s;
+  cursor: pointer;
 
   &::-webkit-slider-thumb {
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 1.3em;
+    height: 1.3em;
     border-radius: 50%;
     background: black;
-    cursor: pointer;
-  }
-  &::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: black;
-    cursor: pointer;
   }
   &:hover {
     opacity: 0.9;
   }
+`;
+
+const ValueName = styled.p`
+  margin-bottom: 0.3em;
 `;
 
 const DEFAULT_VALUE = 3;
@@ -63,7 +62,7 @@ class Scale extends Component {
 
     return (
       <Wrapper>
-        <p> {valueName} </p>
+        <ValueName> {valueName} </ValueName>
         <Slider
           disabled={viewMode}
           type="range"

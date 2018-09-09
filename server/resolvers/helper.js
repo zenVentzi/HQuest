@@ -75,8 +75,12 @@ const mapGqlQuestion = question => {
     shapedQuestion.answer = {
       id: question.answer._id.toString(),
       value: question.answer.value,
-      numOfComments: question.answer.comments.length,
     };
+    if (question.answer.comments) {
+      shapedQuestion.answer.numOfComments = question.answer.comments.length;
+    } else {
+      shapedQuestion.answer.numOfComments = 0;
+    }
   }
 
   return shapedQuestion;
