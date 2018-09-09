@@ -25,14 +25,16 @@ const StyledBtn = styled.div`
 
 StyledBtn.defaultProps = {};
 
-const Btn = ({ children, onClick, link }) => {
+const Btn = React.forwardRef(({ children, onClick, link }, ref) => {
   return link ? (
-    <StyledLink onClick={onClick} to={link}>
+    <StyledLink innerRef={ref} onClick={onClick} to={link}>
       {children}
     </StyledLink>
   ) : (
-    <StyledBtn onClick={onClick}>{children}</StyledBtn>
+    <StyledBtn innerRef={ref} onClick={onClick}>
+      {children}
+    </StyledBtn>
   );
-};
+});
 
 export default Btn;

@@ -11,8 +11,26 @@ const StyledDropdown = styled.div`
 `;
 
 class Dropdown extends Component {
-  state = {
-    showDropdown: false,
+  constructor(props) {
+    super(props);
+
+    this.btnRef = React.createRef();
+
+    this.state = {
+      showDropdown: false,
+    };
+  }
+
+  onClickOutside = e => {
+    if (this.isDropdownBtnClicked(e)) return;
+    this.toggleDropdown();
+  };
+
+  isDropdownBtnClicked = event => {
+    return (
+      event.target === this.btnRef.current ||
+      event.target === this.btnRef.current.children[0]
+    );
   };
 
   toggleDropdown = () => {
@@ -24,10 +42,19 @@ class Dropdown extends Component {
     const { textForBtn, iconForBtn } = this.props;
 
     if (textForBtn) {
-      console.log(`textforbtn`);
-      return <TextBtn onClick={this.toggleDropdown}>{textForBtn}</TextBtn>;
+      return (
+        <TextBtn ref={this.btnRef} onClick={this.toggleDropdown}>
+          {textForBtn}
+        </TextBtn>
+      );
     } else if (iconForBtn) {
-      return <IconBtn icon={iconForBtn} onClick={this.toggleDropdown} />;
+      return (
+        <IconBtn
+          ref={this.btnRef}
+          icon={iconForBtn}
+          onClick={this.toggleDropdown}
+        />
+      );
     }
     throw new Error('Dropdown button must be either text or icon.');
   };
@@ -39,7 +66,13 @@ class Dropdown extends Component {
     return (
       <StyledDropdown>
         {this.renderBtn()}
-        {showDropdown && <DropdownList items={items} pivot={pivot} />}
+        {showDropdown && (
+          <DropdownList
+            items={items}
+            pivot={pivot}
+            onClickOutside={this.onClickOutside}
+          />
+        )}
       </StyledDropdown>
     );
   }

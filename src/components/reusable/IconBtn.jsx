@@ -27,8 +27,8 @@ const StyledBtn = styled.div`
 
 StyledBtn.defaultProps = {};
 
-const Btn = ({ icon, onClick, link }) => {
-  const content = <StyledIcon icon={icon} />;
+const Btn = React.forwardRef(({ icon, onClick, link }, ref) => {
+  const content = <StyledIcon innerRef={ref} icon={icon} />;
 
   return link ? (
     <StyledLink onClick={onClick} to={link}>
@@ -37,6 +37,6 @@ const Btn = ({ icon, onClick, link }) => {
   ) : (
     <StyledBtn onClick={onClick}>{content}</StyledBtn>
   );
-};
+});
 
 export default Btn;

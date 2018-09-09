@@ -23,7 +23,7 @@ const Menu = () => {
       Log out
     </TextBtn>,
   ];
-
+  //  textForBtn="btn"
   return <Dropdown pivot="left" iconForBtn={MenuIcon} items={items} />;
 };
 
