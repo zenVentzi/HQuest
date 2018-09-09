@@ -1,61 +1,48 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import onClickOutside from 'react-onclickoutside';
-/* 
-  display: flex;
- */
+import PropTypes from 'prop-types';
+import DropdownList from 'Reusable/DropdownList';
+import TextBtn from 'Reusable/TextBtn';
+import IconBtn from 'Reusable/IconBtn';
+
 const StyledDropdown = styled.div`
-  background: white;
-  color: black;
-  top: 2.3em;
-  z-index: 1;
-  right: 0;
-  position: absolute;
-  flex-direction: column;
-  justify-content: space-evenly;
-  text-align: center;
+  display: inline-block;
+  position: relative;
 `;
 
-const Option = styled.button`
-  flex: 30px 0 0;
-`;
-
-/* 
-
-  static defaultProps = {
-    items: [
-      { name: 'Edit', onClick: () => {} },
-      { name: 'Log out', onClick: () => {} },
-    ],
-  }; */
-
-class CommentOptions extends Component {
-  static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        onClick: PropTypes.func.isRequired,
-      })
-    ).isRequired,
+class Dropdown extends Component {
+  state = {
+    showDropdown: false,
   };
 
-  handleClickOutside = e => {
-    this.props.onClickOutside(e);
+  toggleDropdown = () => {
+    const current = this.state.showDropdown;
+    this.setState({ showDropdown: !current });
+  };
+
+  renderBtn = () => {
+    const { textForBtn, iconForBtn } = this.props;
+
+    if (textForBtn) {
+      console.log(`textforbtn`);
+      return <TextBtn onClick={this.toggleDropdown}>{textForBtn}</TextBtn>;
+    } else if (iconForBtn) {
+      return <IconBtn icon={iconForBtn} onClick={this.toggleDropdown} />;
+    }
+    throw new Error('Dropdown button must be either text or icon.');
   };
 
   render() {
-    const { items } = this.props;
+    const { showDropdown } = this.state;
+    const { items, pivot } = this.props;
+
     return (
       <StyledDropdown>
-        {items.map(i => (
-          <Option key={i.name} onClick={i.onClick}>
-            {i.name}
-          </Option>
-        ))}
+        {this.renderBtn()}
+        {showDropdown && <DropdownList items={items} pivot={pivot} />}
       </StyledDropdown>
     );
   }
 }
 
-export default onClickOutside(CommentOptions);
+export default Dropdown;

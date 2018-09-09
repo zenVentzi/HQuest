@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Editor from 'react-avatar-editor';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import Btn from './Btn';
+import TextBtn from 'Reusable/TextBtn';
 
 const UPLOAD_AVATAR = gql`
   mutation uploadAvatar($base64Img: String!) {
@@ -63,8 +63,8 @@ class AvatarEditor extends Component {
               />
               <div>Drag to adjust</div>
               <div>
-                <Btn onClick={this.onClickSave(uploadAvatar)}>Save</Btn>
-                <Btn onClick={this.onClickCancel}>Cancel</Btn>
+                <TextBtn onClick={this.onClickSave(uploadAvatar)}>Save</TextBtn>
+                <TextBtn onClick={this.onClickCancel}>Cancel</TextBtn>
               </div>
             </Wrapper>
           );

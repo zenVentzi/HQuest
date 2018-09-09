@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import baseStyles from './components/base-styles';
 
 import App from './components/App';
 import TestApp from './components/TestApp';
@@ -26,4 +27,6 @@ if (module.hot) {
   /* eslint-enable */
 }
 
-ReactDOM.render(<App />, document.getElementById('app'));
+baseStyles();
+
+ReactDOM.render(<TestApp />, document.getElementById('app'));

@@ -62,21 +62,6 @@ const baseStyles = () => injectGlobal`
     color: black;
   }
 
-  button {
-    border: 2px solid white;
-    /* outline: none; */
-    background: black;
-    color: white;
-    border-radius: 0.3em;
-    padding: 0.3em 0.8em;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: white;
-    color: black;
-  }
-
   ol {
     list-style-type: decimal;
   }
