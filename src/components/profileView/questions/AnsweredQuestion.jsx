@@ -18,7 +18,7 @@ class AnsweredQuestion extends Component {
     viewMode: !!this.props.question.answer,
   };
 
-  onMouseOver = () => {
+  onMouseEnter = () => {
     this.toggleHovered(true);
   };
 
@@ -40,8 +40,8 @@ class AnsweredQuestion extends Component {
 
     return (
       <StyledQuestion
-        onMouseOver={this.onMouseOver}
-        onFocus={this.onMouseOver}
+        onMouseEnter={this.onMouseEnter}
+        onFocus={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         onBlur={this.onMouseLeave}
         style={style}

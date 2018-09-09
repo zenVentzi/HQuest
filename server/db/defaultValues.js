@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const { ObjectID } = require('mongodb');
 
 const books = [
   { title: 'Hello', author: 'Pesho' },

@@ -1,42 +1,27 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import StyledIcon from 'Reusable/StyledIcon';
-
-const common = css`
-  & * {
-    background: black;
-    color: white;
-    border-radius: 0.3em;
-    cursor: pointer;
-  }
-
-  &:hover * {
-    background: white;
-    color: black;
-  }
-`;
-
-const StyledLink = styled(Link)`
-  ${common};
-`;
+import { iconBtn } from 'Reusable/css';
 
 const StyledBtn = styled.div`
-  ${common};
+  ${iconBtn};
+  display: inline-block;
 `;
 
 StyledBtn.defaultProps = {};
 
-const Btn = React.forwardRef(({ icon, onClick, link }, ref) => {
-  const content = <StyledIcon innerRef={ref} icon={icon} />;
-
-  return link ? (
-    <StyledLink onClick={onClick} to={link}>
-      {content}
-    </StyledLink>
-  ) : (
-    <StyledBtn onClick={onClick}>{content}</StyledBtn>
+const Btn = React.forwardRef(({ icon, size, onClick, hide }, ref) => {
+  const content = (
+    <StyledIcon
+      innerRef={ref}
+      onClick={onClick}
+      size={size}
+      icon={icon}
+      hide={hide}
+    />
   );
+
+  return <StyledBtn>{content}</StyledBtn>;
 });
 
 export default Btn;

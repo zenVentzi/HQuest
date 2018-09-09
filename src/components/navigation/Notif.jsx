@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { ThemeProvider, withTheme } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import distanceInWords from 'date-fns/distance_in_words';
-import { loggedUserId, getTheme, inverseColor } from 'Utils';
+import { loggedUserId, overrideTheme, inverseColor } from 'Utils';
 import Avatar from '../reusable/Avatar';
 
 const StyledNotif = styled(Link)`
@@ -102,7 +102,7 @@ class Notif extends Component {
     const { theme } = this.state;
 
     return (
-      <ThemeProvider theme={getTheme(theme)}>
+      <ThemeProvider theme={overrideTheme(theme)}>
         <StyledNotif
           to={redirectLink}
           onMouseEnter={this.toggleTheme}

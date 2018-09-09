@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Mutation } from 'react-apollo';
+import TextBtn from 'Reusable/TextBtn';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 
@@ -9,8 +10,8 @@ const FOLLOW = gql`
   }
 `;
 
-const Btn = styled.button`
-  margin-bottom: 1em;
+const Btn = styled(TextBtn)`
+  margin-bottom: 0.5em;
 `;
 
 class FollowBtn extends Component {

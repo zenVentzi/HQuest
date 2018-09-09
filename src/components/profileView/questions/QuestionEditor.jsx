@@ -1,32 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import Btn from './StyledBtn';
+import { EDIT_ANSWER, ADD_ANSWER } from 'Mutations';
+import TextBtn from 'Reusable/TextBtn';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheQuestions';
-
-const EDIT_ANSWER = gql`
-  mutation editAnswer($answerId: ID!, $answerValue: String!) {
-    editAnswer(answerId: $answerId, answerValue: $answerValue) {
-      id
-      userId
-      questionId
-      value
-    }
-  }
-`;
-
-const ADD_ANSWER = gql`
-  mutation addAnswer($questionId: ID!, $answerValue: String!) {
-    addAnswer(questionId: $questionId, answerValue: $answerValue) {
-      id
-      userId
-      questionId
-      value
-    }
-  }
-`;
 
 const DEFAULT_ANSWER = 3;
 
@@ -54,7 +33,7 @@ class QuestionEditor extends Component {
     }
 
     mutationParams.variables = variables;
-
+    debugger;
     await mutation(mutationParams);
     if (this.props.onSaved) this.props.onSaved();
   };
@@ -70,8 +49,6 @@ class QuestionEditor extends Component {
       <Mutation mutation={gqlMutation}>
         {mutation => {
           const { question } = this.props;
-          // const { possibleAnswers } = question;
-          // const { answerValue } = this.state;
 
           return (
             <Fragment>
@@ -81,7 +58,7 @@ class QuestionEditor extends Component {
                 question={question}
                 onChange={this.onChange}
               />
-              <Btn onClick={this.onClickSave(mutation)}> Save </Btn>
+              <TextBtn onClick={this.onClickSave(mutation)}> Save </TextBtn>
             </Fragment>
           );
         }}

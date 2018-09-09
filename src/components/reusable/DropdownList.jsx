@@ -8,7 +8,7 @@ const StyledDropdown = styled.div`
   background: white;
   border-radius: 0.2em;
   color: black;
-  top: 2.3em;
+  top: ${props => props.marginTop};
   ${props => `${props.pivot}: 0;`} z-index: 1;
   position: absolute;
   flex-direction: column;
@@ -31,9 +31,9 @@ class DropdownList extends Component {
   };
 
   render() {
-    const { items, pivot } = this.props;
+    const { items, pivot, marginTop = '2.3em' } = this.props;
     return (
-      <StyledDropdown pivot={pivot}>
+      <StyledDropdown marginTop={marginTop} pivot={pivot}>
         <Fragment>{items}</Fragment>
       </StyledDropdown>
     );

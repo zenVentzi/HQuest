@@ -18,7 +18,7 @@ const Slider = styled.div`
   background-color: white;
   transition: 0.4s;
   border-radius: 15px;
-  z-index: -1;
+  z-index: 0;
 
   &:before {
     position: absolute;
