@@ -138,6 +138,11 @@ const getUser = async (userId, context) => {
     models: { User },
   } = context;
   const user = await User.findById(userId).lean();
+
+  if (!user) {
+    throw new Error(`User with id ${userId} was not found`);
+  }
+
   return mapGqlUser(context, user);
 };
 

@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
 import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
+import shortid from 'shortid';
 import { Route, Switch } from 'react-router-dom';
 import { GET_USER } from 'Queries';
 import Navbar from '../navigation';
@@ -19,11 +19,18 @@ const ProfileView = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
   return (
-    <Query query={GET_USER} variables={vars}>
+    <Query query={GET_USER} variables={vars} errorPolicy="all">
       {({ loading, error, data: { user } }) => {
         if (loading) return <div> loading user data.. </div>;
-        if (error) return <div> {error} </div>;
-        if (!user) return <div> User not found </div>;
+        if (error) {
+          return (
+            <pre>
+              {error.graphQLErrors.map(({ message }, i) => (
+                <span key={`${shortid.generate()}`}>{message}</span>
+              ))}
+            </pre>
+          );
+        }
 
         return (
           <Fragment>

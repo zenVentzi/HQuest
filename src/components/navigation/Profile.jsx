@@ -1,5 +1,6 @@
 import React from 'react';
-import ProfileBtn from './ProfileBtn';
+import IconBtn from 'Reusable/IconBtn';
+import { UserCircle } from 'styled-icons/fa-solid/UserCircle';
 import NavItem from './NavItem';
 import { loggedUserId } from '../../utils';
 
@@ -8,7 +9,7 @@ const Profile = () => {
 
   return (
     <NavItem>
-      <ProfileBtn link={link} />
+      <IconBtn icon={UserCircle} link={link} />
     </NavItem>
   );
 };
