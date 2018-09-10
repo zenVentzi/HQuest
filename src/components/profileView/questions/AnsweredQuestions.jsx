@@ -7,14 +7,14 @@ const Empty = styled.div`
   width: 100%;
 `;
 
-const AnsweredQuestions = ({ editable, questions, ...style }) => {
+const AnsweredQuestions = ({ isPersonal, questions, ...style }) => {
   return questions.length > 0 ? (
     questions.map(q => (
       <Fragment key={q.id}>
         <AnsweredQuestion
           collapseComments
           style={style}
-          editable={editable}
+          isPersonal={isPersonal}
           question={q}
         />
       </Fragment>

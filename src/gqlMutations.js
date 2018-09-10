@@ -31,6 +31,7 @@ export const ADD_ANSWER = gql`
       id
       userId
       questionId
+      numOfComments
       value
     }
   }
