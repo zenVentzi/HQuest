@@ -26,6 +26,7 @@ const add = async ({ questionId, answerValue }, context) => {
   const answer = {
     userId: ObjectId(context.user.id),
     questionId: ObjectId(questionId),
+    comments: [],
     value: answerValue,
   };
 

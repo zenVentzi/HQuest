@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { NotificationFields, QuestionFields } from 'Fragments';
+import { NotificationFields, QuestionFields, AnswerFields } from 'Fragments';
 
 export const GET_USER = gql`
   query user($id: ID!) {
@@ -72,13 +72,12 @@ export const GET_ANSWERED_QUESTIONS = gql`
     questions(userId: $userId, answered: true) {
       ...QuestionFields
       answer {
-        id
-        value
-        numOfComments
+        ...AnswerFields
       }
     }
   }
   ${QuestionFields}
+  ${AnswerFields}
 `;
 
 export const GET_UNANSWERED_QUESTIONS = gql`

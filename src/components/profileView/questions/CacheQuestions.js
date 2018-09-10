@@ -1,4 +1,4 @@
-import { GET_QUESTIONS } from 'Queries';
+import { GET_ANSWERED_QUESTIONS, GET_UNANSWERED_QUESTIONS } from 'Queries';
 // import { viewedProfileId as userId } from '../index';
 
 const ADD_ANSWER = 'addAnswer';
@@ -43,21 +43,42 @@ const updateQuestions = (action, questions, mutatedAnswer) => {
   }
 };
 
-// const update = action => (store, { data: { [action]: mutatedQuestion } }) => {
 const update = action => (store, { data }) => {
   const mutatedAnswer = data[action];
-  const variables = { userId: mutatedAnswer.userId, all: true };
-  const { questions } = store.readQuery({
-    query: GET_QUESTIONS,
-    variables,
-  });
+  const variables = { userId: mutatedAnswer.userId };
 
-  updateQuestions(action, questions, mutatedAnswer);
+  let answered;
+  let unanswered;
+  try {
+    answered = store.readQuery({
+      query: GET_ANSWERED_QUESTIONS,
+      variables,
+    }).questions;
+  } catch (err) {
+    answered = [];
+  }
+
+  try {
+    unanswered = store.readQuery({
+      query: GET_UNANSWERED_QUESTIONS,
+      variables,
+    }).questions;
+  } catch (err) {
+    unanswered = [];
+  }
+
+  updateQuestions(action, { answered, unanswered }, mutatedAnswer);
 
   store.writeQuery({
-    query: GET_QUESTIONS,
+    query: GET_ANSWERED_QUESTIONS,
     variables,
-    data: { questions },
+    data: { questions: answered },
+  });
+
+  store.writeQuery({
+    query: GET_UNANSWERED_QUESTIONS,
+    variables,
+    data: { questions: unanswered },
   });
 };
 

@@ -63,6 +63,17 @@ function mapGqlComment(context, commentAuthor, comment) {
   };
 }
 
+const mapGqlAnswer = answer => {
+  const res = {
+    id: answer._id.toString(),
+    questionId: answer.questionId.toString(),
+    userId: answer.userId.toString(),
+    numOfComments: answer.comments.length,
+    value: answer.value,
+  };
+  return res;
+};
+
 const mapGqlQuestion = question => {
   const shapedQuestion = {
     id: question._id.toString(),
@@ -72,15 +83,7 @@ const mapGqlQuestion = question => {
   };
 
   if (question.answer) {
-    shapedQuestion.answer = {
-      id: question.answer._id.toString(),
-      value: question.answer.value,
-    };
-    if (question.answer.comments) {
-      shapedQuestion.answer.numOfComments = question.answer.comments.length;
-    } else {
-      shapedQuestion.answer.numOfComments = 0;
-    }
+    shapedQuestion.answer = mapGqlAnswer(question.answer);
   }
 
   return shapedQuestion;
@@ -91,13 +94,6 @@ const mapGqlQuestions = questions => {
     return mapGqlQuestion(q);
   });
 };
-
-const mapGqlAnswer = answer => ({
-  id: answer._id.toString(),
-  questionId: answer.questionId.toString(),
-  userId: answer.userId.toString(),
-  value: answer.value,
-});
 
 module.exports = {
   mapGqlComment,

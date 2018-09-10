@@ -40,7 +40,7 @@ class QuestionViewer extends Component {
   state = { showComments: !this.props.collapseComments, showReactions: false };
 
   onClickRemove = mutate => async () => {
-    mutate({
+    await mutate({
       variables: {
         answerId: this.props.question.answer.id,
       },
@@ -70,7 +70,7 @@ class QuestionViewer extends Component {
             hovered,
             isPersonal = true,
             onClickEdit,
-            /* showButtons */ question,
+            question,
           } = this.props;
 
           const { numOfComments } = question.answer;
@@ -86,7 +86,7 @@ class QuestionViewer extends Component {
                   <QuestionOptions
                     hideIcon={!hovered}
                     onClickEdit={onClickEdit}
-                    onClickRemove={removeAnswer}
+                    onClickRemove={this.onClickRemove(removeAnswer)}
                   />
                 )}
               </Row>

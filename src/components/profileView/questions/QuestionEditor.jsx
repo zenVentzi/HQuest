@@ -17,12 +17,22 @@ class QuestionEditor extends Component {
   };
 
   onClickSave = mutation => async () => {
-    const mutationParams = {};
+    await mutation(this.getMutationParams());
+    if (this.props.onSaved) this.props.onSaved();
+  };
 
-    const isNewQuestion = !this.props.question.answer;
+  onChange = editedAnswer => {
+    const newState = { ...this.state, answerValue: editedAnswer };
+    this.setState(newState);
+  };
+
+  getMutationParams = () => {
+    const mutationParams = {};
     const variables = {
       answerValue: this.state.answerValue,
     };
+
+    const isNewQuestion = !this.props.question.answer;
 
     if (isNewQuestion) {
       variables.questionId = this.props.question.id;
@@ -33,14 +43,7 @@ class QuestionEditor extends Component {
     }
 
     mutationParams.variables = variables;
-    debugger;
-    await mutation(mutationParams);
-    if (this.props.onSaved) this.props.onSaved();
-  };
-
-  onChange = editedAnswer => {
-    const newState = { ...this.state, answerValue: editedAnswer };
-    this.setState(newState);
+    return mutationParams;
   };
 
   render() {

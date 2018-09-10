@@ -17,7 +17,7 @@ const QuestionsContainer = ({ user, showAnswered }) => {
         if (error) return <div> {`Error ${error}`}</div>;
 
         return showAnswered ? (
-          <AnsweredQuestions editable={user.me} questions={questions} />
+          <AnsweredQuestions isPersonal={user.me} questions={questions} />
         ) : (
           <UnansweredQuestions questions={questions} />
         );
