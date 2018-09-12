@@ -13,11 +13,13 @@ const CREATE_QUESTION_MUTATION = gql`
     $question: String!
     $type: QuestionType!
     $possibleAnswers: [String!]
+    $tags: [String!]!
   ) {
     createQuestion(
       question: $question
       type: $type
       possibleAnswers: $possibleAnswers
+      tags: $tags
     )
   }
 `;
@@ -28,15 +30,18 @@ const CreateBtn = styled.button`
 
 class QuestionBody extends Component {
   state = { body: null };
+  tagsInputRef = React.createRef();
 
   onCreate = createQuestion => async () => {
     const { body } = this.state;
     const { questionType } = this.props;
+    const tags = this.tagsInputRef.current.value.replace(/ /g, '').split(',');
 
     const variables = {
       question: body.question,
       type: questionType,
       possibleAnswers: body.possibleAnswers,
+      tags,
     };
 
     await createQuestion({ variables });
@@ -85,6 +90,10 @@ class QuestionBody extends Component {
           return (
             <Fragment>
               <Body onChange={this.onBodyChange} />
+              <p>
+                Tags: <br />
+                <input ref={this.tagsInputRef} type="text" />{' '}
+              </p>
               <CreateBtn onClick={this.onCreate(createQuestion)}>
                 Create
               </CreateBtn>

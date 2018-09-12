@@ -80,6 +80,7 @@ const mapGqlQuestion = question => {
     question: question.question,
     type: question.type,
     possibleAnswers: question.possibleAnswers,
+    tags: question.tags,
   };
 
   if (question.answer) {

@@ -28,11 +28,15 @@ async function following(_, { userId }, context) {
   return userController.getFollowing(userId, context);
 }
 
-async function questions(root, { userId, answered }, context) {
+async function questions(root, { userId, answered, tags }, context) {
   return answered
-    ? questionController.getAnsweredQuestions(userId, context)
-    : questionController.getUnansweredQuestions(userId, context);
+    ? questionController.getAnsweredQuestions(userId, tags, context)
+    : questionController.getUnansweredQuestions(userId, tags, context);
 }
+
+const questionsTags = async (_, __, context) => {
+  return questionController.getAllTags(context);
+};
 
 async function answeredQuestion(_, { userId, questionId }, context) {
   return questionController.getAnsweredQuestion(userId, questionId, context);
@@ -55,5 +59,6 @@ module.exports = {
   following,
   user,
   questions,
+  questionsTags,
   answeredQuestion,
 };

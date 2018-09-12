@@ -68,8 +68,8 @@ export const GET_ANSWERED_QUESTION = gql`
 `;
 
 export const GET_ANSWERED_QUESTIONS = gql`
-  query questions($userId: ID!) {
-    questions(userId: $userId, answered: true) {
+  query questions($userId: ID!, $tags: [String]) {
+    questions(userId: $userId, tags: $tags, answered: true) {
       ...QuestionFields
       answer {
         ...AnswerFields
@@ -81,12 +81,18 @@ export const GET_ANSWERED_QUESTIONS = gql`
 `;
 
 export const GET_UNANSWERED_QUESTIONS = gql`
-  query questions($userId: ID!) {
-    questions(userId: $userId, answered: false) {
+  query questions($userId: ID!, $tags: [String]) {
+    questions(userId: $userId, tags: $tags, answered: false) {
       ...QuestionFields
     }
   }
   ${QuestionFields}
+`;
+
+export const GET_QUESTIONS_TAGS = gql`
+  query questionsTags {
+    questionsTags
+  }
 `;
 
 export const GET_NOTIFICATIONS = gql`

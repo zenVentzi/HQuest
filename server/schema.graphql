@@ -37,6 +37,7 @@ type Question {
   id: ID!
   type: QuestionType!
   possibleAnswers: [String!]
+  tags: [String!]!
   question: String!
   answer: Answer
 }
@@ -104,9 +105,10 @@ type Query {
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User
+  questionsTags: [String!]!
   followers(userId: ID!): [User!]!
   following(userId: ID!): [User!]!
-  questions(userId: ID!, answered: Boolean!): [Question!]!
+  questions(userId: ID!, tags: [String], answered: Boolean!): [Question!]!
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }
 
@@ -130,7 +132,7 @@ type Mutation {
   addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): LoginResult!
-  createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!]): String
+  createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!], tags: [String!]!): String
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!

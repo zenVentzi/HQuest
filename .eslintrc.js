@@ -10,6 +10,8 @@ module.exports = {
         "no-console": 0,
         "no-unreachable": 1,
         "react/require-default-props": 0,
+        "react/prefer-stateless-function": 0,
+        "react/sort-comp": 0,
         "no-unused-vars": 1,
         "arrow-body-style": 0,
         'no-underscore-dangle': 0,

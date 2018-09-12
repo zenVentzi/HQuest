@@ -25,6 +25,15 @@ export const EDIT_ANSWER = gql`
   }
 `;
 
+export const REMOVE_ANSWER = gql`
+  mutation removeAnswer($answerId: ID!) {
+    removeAnswer(answerId: $answerId) {
+      userId
+      questionId
+    }
+  }
+`;
+
 export const ADD_ANSWER = gql`
   mutation addAnswer($questionId: ID!, $answerValue: String!) {
     addAnswer(questionId: $questionId, answerValue: $answerValue) {
