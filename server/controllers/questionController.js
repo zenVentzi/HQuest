@@ -1,16 +1,38 @@
 const { ObjectId } = require('mongoose').Types;
 const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
-const createQuestion = async ({ question, type, possibleAnswers }, context) => {
+const createQuestion = async (
+  { question, type, possibleAnswers, tags },
+  context
+) => {
   const {
     models: { Question },
   } = context;
+
+  /* store the tags in separate collection? */
 
   await Question.create({
     question,
     type,
     possibleAnswers,
+    tags,
   });
+};
+
+const getAllTags = async context => {
+  const {
+    models: { Question },
+  } = context;
+
+  const questions = await Question.find().lean();
+  const reducer = (tags, currentQuestion) => {
+    const questionTags = currentQuestion.tags.filter(t => !tags.includes(t));
+
+    return [...tags, ...questionTags];
+  };
+
+  const tags = questions.reduce(reducer, []);
+  return tags;
 };
 
 const pairAnswerToQuestion = (answer, question) => {
@@ -42,9 +64,9 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
   return mapGqlQuestion(answeredQuestion);
 };
 
-const getUserQuestions = async (userId, context) => {
+const getUserQuestions = async (userId, tags, context) => {
   const {
-    models: { Answer, Question, User },
+    models: { Answer, Question },
   } = context;
 
   const result = {
@@ -58,36 +80,49 @@ const getUserQuestions = async (userId, context) => {
 
   if (answers.length > 0) {
     answeredQuestionsIds = answers.map(a => a.questionId);
-    const answeredQuestionsOnly = await Question.find({
+    const query = {
       _id: { $in: answeredQuestionsIds },
-    }).lean();
+      tags: { $in: tags },
+    };
+
+    if (!tags.length) {
+      delete query.tags;
+    }
+    const answeredQuestionsOnly = await Question.find(query).lean();
     result.answeredQuestions = pairAnswersToQuestions(
       answers,
       answeredQuestionsOnly
     );
   }
 
-  result.unansweredQuestions = await Question.find({
+  const query = {
     _id: {
       $nin: answeredQuestionsIds,
     },
-  }).lean();
+    tags: { $in: tags },
+  };
+  if (!tags.length) {
+    delete query.tags;
+  }
+
+  result.unansweredQuestions = await Question.find(query).lean();
 
   return result;
 };
 
-const getAnsweredQuestions = async (userId, context) => {
-  const { answeredQuestions } = await getUserQuestions(userId, context);
+const getAnsweredQuestions = async (userId, tags, context) => {
+  const { answeredQuestions } = await getUserQuestions(userId, tags, context);
   return mapGqlQuestions(answeredQuestions);
 };
 
-const getUnansweredQuestions = async (userId, context) => {
-  const { unansweredQuestions } = await getUserQuestions(userId, context);
+const getUnansweredQuestions = async (userId, tags, context) => {
+  const { unansweredQuestions } = await getUserQuestions(userId, tags, context);
   return mapGqlQuestions(unansweredQuestions);
 };
 
 module.exports = {
   createQuestion,
+  getAllTags,
   getAnsweredQuestion,
   getAnsweredQuestions,
   getUnansweredQuestions,

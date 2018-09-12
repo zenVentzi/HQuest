@@ -68,7 +68,7 @@ class ProfileViewer extends Component {
             <Following userId={user.id} onClose={this.toggleFollowing} />
           )}
           <Links />
-          <Search placeholder="Search questions.." onChange={() => {}} />
+          {/* <Search placeholder="Search questions.." onChange={() => {}} /> */}
           {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
           <QuestionsContainer user={user} showAnswered={this.state.answered} />
         </Fragment>

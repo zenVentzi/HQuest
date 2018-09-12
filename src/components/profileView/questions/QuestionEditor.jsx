@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import styled from 'styled-components';
 import { EDIT_ANSWER, ADD_ANSWER } from 'Mutations';
 import TextBtn from 'Reusable/TextBtn';
 import Answer from './Answer';
@@ -8,6 +8,15 @@ import QuestionText from './QuestionText';
 import update, { CACHE_ACTIONS } from './CacheQuestions';
 
 const DEFAULT_ANSWER = 3;
+
+const EditorButtons = styled.div`
+  display: flex;
+  width: 80%;
+  justify-content: center;
+  & + {
+    margin-right: 1em;
+  }
+`;
 
 class QuestionEditor extends Component {
   state = {
@@ -61,7 +70,15 @@ class QuestionEditor extends Component {
                 question={question}
                 onChange={this.onChange}
               />
-              <TextBtn onClick={this.onClickSave(mutation)}> Save </TextBtn>
+              <EditorButtons>
+                <div>
+                  <TextBtn onClick={this.onClickSave(mutation)}>Save</TextBtn>
+                  <TextBtn onClick={this.onClickSave(mutation)}>Next</TextBtn>
+                </div>
+                <TextBtn onClick={this.onClickSave(mutation)}>
+                  Does not apply
+                </TextBtn>
+              </EditorButtons>
             </Fragment>
           );
         }}

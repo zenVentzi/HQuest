@@ -6,6 +6,7 @@ export const QuestionFields = gql`
     question
     type
     possibleAnswers
+    tags
   }
 `;
 

@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
-import gql from 'graphql-tag';
+import { REMOVE_ANSWER } from 'Mutations';
 import { Mutation } from 'react-apollo';
 import Btn from './StyledBtn';
 import Answer from './Answer';
@@ -9,15 +9,6 @@ import update, { CACHE_ACTIONS } from './CacheQuestions';
 import Reactions from './Panels/Reactions';
 import Comments from './Panels/Comments';
 import QuestionOptions from './QuestionOptions';
-
-const REMOVE_ANSWER = gql`
-  mutation removeAnswer($answerId: ID!) {
-    removeAnswer(answerId: $answerId) {
-      userId
-      questionId
-    }
-  }
-`;
 
 const Span = styled.span`
   cursor: pointer;
