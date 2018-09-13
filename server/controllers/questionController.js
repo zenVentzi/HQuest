@@ -2,7 +2,7 @@ const { ObjectId } = require('mongoose').Types;
 const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
 const createQuestion = async (
-  { question, type, possibleAnswers, tags },
+  { question, type, defaultAnswer, possibleAnswers, tags },
   context
 ) => {
   const {
@@ -14,6 +14,7 @@ const createQuestion = async (
   await Question.create({
     question,
     type,
+    defaultAnswer,
     possibleAnswers,
     tags,
   });

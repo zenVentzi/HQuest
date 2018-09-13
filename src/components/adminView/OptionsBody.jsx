@@ -46,7 +46,7 @@ class OptionsBody extends Component {
     const options = [];
     const { numberOfOptions } = this.state;
 
-    for (let i = 0; i < numberOfOptions; i++) {
+    for (let i = 0; i < numberOfOptions; i += 1) {
       const placeholder = `option name..`;
       const option = this.state.possibleAnswers[i];
       options.push(

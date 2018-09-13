@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import TextBtn from 'Reusable/TextBtn';
 import QuestionEditor from './QuestionEditor';
 
 const StyledQuestion = styled.div`
@@ -11,13 +12,41 @@ const StyledQuestion = styled.div`
   align-items: center;
 `;
 
+const EditorButtons = styled.div`
+  display: flex;
+  width: 80%;
+  justify-content: center;
+  & + {
+    margin-right: 1em;
+  }
+`;
+
 class UnansweredQuestion extends Component {
   render() {
-    const { question, style } = this.props;
+    const { question, style, onAdd, onNext, onDoesNotApply } = this.props;
 
     return (
+      // on save, refetch
       <StyledQuestion style={style}>
-        <QuestionEditor question={question} onSaved={this.toggleViewMode} />
+        <QuestionEditor
+          question={question}
+          onChange={answerValue => {
+            this.answerValue = answerValue;
+          }}
+        />
+        <EditorButtons>
+          <div>
+            <TextBtn
+              onClick={() => {
+                onAdd(this.answerValue);
+              }}
+            >
+              Add
+            </TextBtn>
+            <TextBtn onClick={onNext}>Next</TextBtn>
+          </div>
+          <TextBtn onClick={onDoesNotApply}>Does not apply</TextBtn>
+        </EditorButtons>
       </StyledQuestion>
     );
   }

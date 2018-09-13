@@ -80,6 +80,8 @@ export const GET_ANSWERED_QUESTIONS = gql`
   ${AnswerFields}
 `;
 
+export const b = 5;
+
 export const GET_UNANSWERED_QUESTIONS = gql`
   query questions($userId: ID!, $tags: [String]) {
     questions(userId: $userId, tags: $tags, answered: false) {

@@ -79,6 +79,7 @@ const mapGqlQuestion = question => {
     id: question._id.toString(),
     question: question.question,
     type: question.type,
+    defaultAnswer: question.defaultAnswer,
     possibleAnswers: question.possibleAnswers,
     tags: question.tags,
   };

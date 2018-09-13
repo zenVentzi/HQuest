@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
+import TextBtn from 'Reusable/TextBtn';
 import QuestionViewer from './QuestionViewer';
 import QuestionEditor from './QuestionEditor';
 
@@ -55,7 +56,11 @@ class AnsweredQuestion extends Component {
             onClickEdit={this.toggleViewMode}
           />
         ) : (
-          <QuestionEditor question={question} onSaved={this.toggleViewMode} />
+          // onSave, refetch
+          <Fragment>
+            <QuestionEditor question={question} onSaved={this.toggleViewMode} />
+            <TextBtn onClick={this.onSave}>Save</TextBtn>
+          </Fragment>
         )}
       </StyledQuestion>
     );

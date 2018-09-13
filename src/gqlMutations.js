@@ -14,6 +14,24 @@ export const EDIT_USER = gql`
   }
 `;
 
+export const CREATE_QUESTION_MUTATION = gql`
+  mutation CreateQuestionMutation(
+    $question: String!
+    $type: QuestionType!
+    $defaultAnswer: Int
+    $possibleAnswers: [String!]
+    $tags: [String!]!
+  ) {
+    createQuestion(
+      question: $question
+      type: $type
+      defaultAnswer: $defaultAnswer
+      possibleAnswers: $possibleAnswers
+      tags: $tags
+    )
+  }
+`;
+
 export const EDIT_ANSWER = gql`
   mutation editAnswer($answerId: ID!, $answerValue: String!) {
     editAnswer(answerId: $answerId, answerValue: $answerValue) {

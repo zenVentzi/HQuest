@@ -26,27 +26,45 @@ const Value = styled.input`
 class ScaleBody extends Component {
   state = { question: null, possibleAnswers: [] };
 
-  renderValues = () => {
-    const values = [];
+  onChangePossibleAnswer = index => e => {
+    const { value } = e.target;
+    const newState = { ...this.state };
 
-    const onValueChange = index => e => {
-      const { value } = e.target;
-      const newState = { ...this.state };
+    newState.possibleAnswers[index] = value;
+    this.setState(newState);
+    this.props.onChange(newState);
+  };
 
-      newState.possibleAnswers[index] = value;
-      this.setState(newState, () => this.props.onChange(this.state));
-    };
+  onChangeDefaultAnswer = e => {
+    const { value } = e.target;
+    const newState = { ...this.state };
+    newState.defaultAnswer = value;
+    this.setState(newState);
+    this.props.onChange(newState);
+  };
 
-    for (let i = 0; i < 7; i++) {
-      const placeholder = `${i}th value name`;
-      values.push(
+  onChangeQuestion = ({ target: { value } }) => {
+    const newState = { ...this.state, question: value };
+    this.setState(newState);
+    this.props.onChange(newState);
+  };
+
+  renderPossibleAnswers = () => {
+    const answers = [];
+
+    for (let i = 0; i < 7; i += 1) {
+      const placeholder = `${i}th answer name`;
+      answers.push(
         <li key={i}>
-          <Value placeholder={placeholder} onChange={onValueChange(i)} />
+          <Value
+            placeholder={placeholder}
+            onChange={this.onChangePossibleAnswer(i)}
+          />
         </li>
       );
     }
 
-    return values;
+    return answers;
   };
 
   render() {
@@ -54,13 +72,13 @@ class ScaleBody extends Component {
       <Fragment>
         <TextArea
           placeholder="Enter the question here.."
-          onChange={e => {
-            const question = e.target.value;
-            const newState = { ...this.state, question };
-            this.setState(newState, () => this.props.onChange(this.state));
-          }}
+          onChange={this.onChangeQuestion}
         />
-        <ol start="0">{this.renderValues()}</ol>
+        <ol start="0">{this.renderPossibleAnswers()}</ol>
+        <Value
+          placeholder="Default answer(index)"
+          onChange={this.onChangeDefaultAnswer}
+        />
       </Fragment>
     );
   }
