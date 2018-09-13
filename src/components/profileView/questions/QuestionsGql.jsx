@@ -5,7 +5,7 @@ import AnsweredQuestions from './AnsweredQuestions';
 import QuestionTags from './QuestionTags';
 import UnansweredQuestions from './UnansweredQuestions';
 
-class QuestionsContainer extends Component {
+class QuestionsGql extends Component {
   state = { selectedTags: [] };
 
   onSelectedTags = tags => {
@@ -14,8 +14,11 @@ class QuestionsContainer extends Component {
     });
   };
 
+  onAddNewAnswer = (questionId, answerValue) => {};
+  onEditAnswer = (answerId, answerValue) => {};
+
   render() {
-    const { user, showAnswered } = this.props;
+    const { user, showAnswered, children } = this.props;
     const { selectedTags } = this.state;
 
     const vars = { userId: user.id, tags: selectedTags };
@@ -28,14 +31,7 @@ class QuestionsContainer extends Component {
         <QuestionTags onSelected={this.onSelectedTags} />
         <Query query={query} variables={vars} fetchPolicy="cache-and-network">
           {({ loading, error, data: { questions } }) => {
-            if (loading) return <div> loading questions.. </div>;
-            if (error) return <div> {`Error ${error}`}</div>;
-
-            return showAnswered ? (
-              <AnsweredQuestions isPersonal={user.me} questions={questions} />
-            ) : (
-              <UnansweredQuestions questions={questions} />
-            );
+            return children(loading, error, questions);
           }}
         </Query>
       </Fragment>
@@ -43,4 +39,4 @@ class QuestionsContainer extends Component {
   }
 }
 
-export default QuestionsContainer;
+export default QuestionsGql;

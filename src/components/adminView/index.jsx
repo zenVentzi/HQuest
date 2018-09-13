@@ -62,7 +62,6 @@ class AdminView extends Component {
             <option value={QuestionTypes.WOULD_YOU_SINGLE}>
               Would-you-single
             </option>
-            {/* <option value={QuestionTypes.WOULD_YOU_DOUBLE}>Would-u-double</option> */}
           </Select>
           {successMsg && <div>{successMsg}</div>}
           <hr />

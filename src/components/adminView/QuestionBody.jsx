@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import { CREATE_QUESTION_MUTATION } from 'Mutations';
 import styled from 'styled-components';
 import ScaleBody from './ScaleBody';
 import TextBody from './TextBody';
@@ -8,39 +8,24 @@ import OptionsBody from './OptionsBody';
 import WouldYouSingleBody from './WouldYouSingleBody';
 import { QuestionTypes } from './constants';
 
-const CREATE_QUESTION_MUTATION = gql`
-  mutation CreateQuestionMutation(
-    $question: String!
-    $type: QuestionType!
-    $possibleAnswers: [String!]
-    $tags: [String!]!
-  ) {
-    createQuestion(
-      question: $question
-      type: $type
-      possibleAnswers: $possibleAnswers
-      tags: $tags
-    )
-  }
-`;
-
 const CreateBtn = styled.button`
   margin-top: 0.5em;
 `;
 
 class QuestionBody extends Component {
-  state = { body: null };
+  state = { questionValues: null };
   tagsInputRef = React.createRef();
 
   onCreate = createQuestion => async () => {
-    const { body } = this.state;
+    const { questionValues } = this.state;
     const { questionType } = this.props;
     const tags = this.tagsInputRef.current.value.replace(/ /g, '').split(',');
 
     const variables = {
-      question: body.question,
+      question: questionValues.question,
       type: questionType,
-      possibleAnswers: body.possibleAnswers,
+      defaultAnswer: questionValues.defaultAnswer,
+      possibleAnswers: questionValues.possibleAnswers,
       tags,
     };
 
@@ -48,20 +33,14 @@ class QuestionBody extends Component {
     this.props.onAdded();
   };
 
-  onBodyChange = body => {
-    this.setState({ body });
+  onQuestionValuesChange = questionValues => {
+    this.setState({ questionValues });
   };
 
   render() {
     const { questionType } = this.props;
 
-    const {
-      SCALE,
-      TEXT,
-      OPTIONS,
-      WOULD_YOU_SINGLE,
-      WOULD_YOU_DOUBLE,
-    } = QuestionTypes;
+    const { SCALE, TEXT, OPTIONS, WOULD_YOU_SINGLE } = QuestionTypes;
 
     let Body;
 
@@ -78,8 +57,6 @@ class QuestionBody extends Component {
       case WOULD_YOU_SINGLE:
         Body = WouldYouSingleBody;
         break;
-      case WOULD_YOU_DOUBLE:
-        break;
       default:
         return null;
     }
@@ -89,7 +66,7 @@ class QuestionBody extends Component {
         {createQuestion => {
           return (
             <Fragment>
-              <Body onChange={this.onBodyChange} />
+              <Body onChange={this.onQuestionValuesChange} />
               <p>
                 Tags: <br />
                 <input ref={this.tagsInputRef} type="text" />{' '}

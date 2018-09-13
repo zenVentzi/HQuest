@@ -37,6 +37,8 @@ type Question {
   id: ID!
   type: QuestionType!
   possibleAnswers: [String!]
+  #TODO consistency, change the type from int to string
+  defaultAnswer: Int
   tags: [String!]!
   question: String!
   answer: Answer
@@ -132,7 +134,7 @@ type Mutation {
   addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): LoginResult!
-  createQuestion(question: String!, type: QuestionType!, possibleAnswers: [String!], tags: [String!]!): String
+  createQuestion(question: String!, type: QuestionType!, defaultAnswer: Int, possibleAnswers: [String!], tags: [String!]!): String
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!

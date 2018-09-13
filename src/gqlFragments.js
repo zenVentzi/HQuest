@@ -5,6 +5,7 @@ export const QuestionFields = gql`
     id
     question
     type
+    defaultAnswer
     possibleAnswers
     tags
   }

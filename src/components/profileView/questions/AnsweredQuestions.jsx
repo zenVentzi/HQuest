@@ -8,6 +8,8 @@ const Empty = styled.div`
 `;
 
 const AnsweredQuestions = ({ isPersonal, questions, ...style }) => {
+  const onEditAnswer = answerId => answerValue => {};
+
   return questions.length > 0 ? (
     questions.map(q => (
       <Fragment key={q.id}>
@@ -16,6 +18,7 @@ const AnsweredQuestions = ({ isPersonal, questions, ...style }) => {
           style={style}
           isPersonal={isPersonal}
           question={q}
+          onSave={onEditAnswer(q.answer.id)}
         />
       </Fragment>
     ))
