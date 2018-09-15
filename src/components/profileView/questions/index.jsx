@@ -36,7 +36,7 @@ class QuestionsContainer extends Component {
             if (loading) return <div> loading questions.. </div>;
             if (error) return <div> {`Error ${error}`}</div>;
 
-            console.log('TCL: render -> questions', questions.length);
+            console.log('TCL: render -> questions', questions);
 
             return showAnswered ? (
               <AnsweredQuestions isPersonal={user.me} questions={questions} />

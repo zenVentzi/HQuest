@@ -78,17 +78,12 @@ const getAnsweredQuestionsIds = async answers => {
 };
 
 const getUserAnsweredQuestions = async (
-  { userId, tags, first, after },
+  { answeredQuestionsIds, tags, first, after },
   context
 ) => {
   const {
     models: { Question },
   } = context;
-
-  const answers = await getUserAnswers({ userId }, context);
-  const answeredQuestionsIds = await getAnsweredQuestionsIds(answers);
-
-  const limit = first;
 
   const query = { _id: { $in: answeredQuestionsIds } };
 
@@ -101,15 +96,74 @@ const getUserAnsweredQuestions = async (
   }
 
   const questions = await Question.find(query)
-    .limit(limit)
+    .limit(first)
     .lean();
+
+  return questions;
+};
+
+const getUserUnansweredQuestions = async (
+  { answeredQuestionsIds, tags, first, after },
+  context
+) => {
+  const {
+    models: { Question },
+  } = context;
+
+  const query = { _id: { $nin: answeredQuestionsIds } };
+
+  if (after) {
+    query._id = { ...query._id, $gt: ObjectId(after) };
+  }
+
+  if (tags.length) {
+    query.tags = { $in: tags };
+  }
+
+  const questions = await Question.find(query)
+    .limit(first)
+    .lean();
+
+  return questions;
+};
+
+const getEdges = nodes => {
+  return nodes.map(node => {
+    const cursor = node.id;
+    return {
+      cursor,
+      node,
+    };
+  });
+};
+
+const getUserQuestionsPage = async (args, context) => {
+  const {
+    models: { Question },
+  } = context;
+
+  const answeredQuestionsIds = await getAnsweredQuestionsIds(args.answers);
+
+  let questions;
+
+  if (args.answered) {
+    questions = await getUserAnsweredQuestions(
+      { ...args, answeredQuestionsIds },
+      context
+    );
+  } else {
+    questions = await getUserUnansweredQuestions(
+      { ...args, answeredQuestionsIds },
+      context
+    );
+  }
 
   const hasPreviousPage = async () => {
     let result = false;
 
-    if (after) {
+    if (args.after) {
       const hasPrevQuery = {
-        _id: { $in: answeredQuestionsIds, $lt: ObjectId(after) },
+        _id: { $in: answeredQuestionsIds, $lt: ObjectId(args.after) },
       };
       const prevQuestions = await Question.find(hasPrevQuery)
         .limit(1)
@@ -131,11 +185,7 @@ const getUserAnsweredQuestions = async (
     const hasMoreQuestions = !!questionsAfterLast.length;
     return hasMoreQuestions;
   };
-  /* 
-  TODO: the hasNextPrev logic can be abstracted 1 layer up
-  basically, a HOF that will take the first and last elements and
-  check if there are more before or after them
-  */
+
   let startCursor;
   let endCursor;
 
@@ -153,53 +203,6 @@ const getUserAnsweredQuestions = async (
   return res;
 };
 
-const getUserUnansweredQuestions = async (
-  { userId, tags, first, after },
-  context
-) => {
-  const {
-    models: { Question },
-  } = context;
-
-  const { answers } = await getUserAnswers({ userId }, context);
-  const answeredQuestionsIds = await getAnsweredQuestionsIds(answers);
-
-  const query = {
-    _id: { $nin: answeredQuestionsIds },
-  };
-
-  if (tags.length) {
-    query.tags = { $in: tags };
-  }
-
-  const limit = first;
-  let beginFromId;
-
-  if (after) {
-    beginFromId = ObjectId(after);
-  } else {
-    beginFromId = await Question.find(query).limit(1);
-  }
-
-  query._id = { ...query._id, $gt: beginFromId };
-
-  const res =
-    (await Question.find(query)
-      .limit(limit)
-      .lean()) || [];
-  return res;
-};
-
-const getEdges = nodes => {
-  return nodes.map(node => {
-    const cursor = node.id;
-    return {
-      cursor,
-      node,
-    };
-  });
-};
-
 const getAnsweredQuestionsConnection = async (args, context) => {
   const {
     questions,
@@ -207,9 +210,8 @@ const getAnsweredQuestionsConnection = async (args, context) => {
     endCursor,
     hasPreviousPage,
     hasNextPage,
-  } = await getUserAnsweredQuestions(args, context);
-  const answers = await getUserAnswers(args, context);
-  const merged = mergeAnswersWithQuestions(answers, questions);
+  } = await getUserQuestionsPage(args, context);
+  const merged = mergeAnswersWithQuestions(args.answers, questions);
   const nodes = mapGqlQuestions(merged);
   const edges = getEdges(nodes);
 
@@ -217,7 +219,7 @@ const getAnsweredQuestionsConnection = async (args, context) => {
   const connection = { pageInfo, edges };
   return connection;
 };
-const getUnansweredQuestionsEdges = async (args, context) => {
+const getUnansweredQuestionsConnection = async (args, context) => {
   /* 
   interface Edge {
   cursor : String!
@@ -226,37 +228,31 @@ const getUnansweredQuestionsEdges = async (args, context) => {
 
   const {
     questions,
-    hasPreviousPage,
-    hasNextPage,
-  } = await getUserUnansweredQuestions(args, context);
-  const nodes = mapGqlQuestions(questions);
-  return getEdges(nodes);
-};
-
-const getPageInfo = edges => {
-  const startCursor = edges[0].cursor;
-  const endCursor = edges[edges.length - 1].cursor;
-  /* 
-    const hasNextPage = is the endCursor the last in the collection
-    const hasPreviousPage = is are there other edges before the startCursor
-  */
-  const hasNextPage = isLastInCollection(endCursor);
-  const hasPreviousPage = isFirstInCollection(startCursor);
-  return {
     startCursor,
     endCursor,
-    hasNextPage,
     hasPreviousPage,
-  };
+    hasNextPage,
+  } = await getUserQuestionsPage(args, context);
+  const nodes = mapGqlQuestions(questions);
+  const edges = getEdges(nodes);
+
+  const pageInfo = { startCursor, endCursor, hasNextPage, hasPreviousPage };
+  const connection = { pageInfo, edges };
+  return connection;
 };
 
 const getUserQuestionConnection = async (args, context) => {
   let connection;
+  const answers = await getUserAnswers({ userId: args.userId }, context);
+  const argsWithAnswers = { ...args, answers };
 
   if (args.answered) {
-    connection = await getAnsweredQuestionsConnection(args, context);
+    connection = await getAnsweredQuestionsConnection(argsWithAnswers, context);
   } else {
-    connection = await getUnansweredQuestionsEdges(args, context);
+    connection = await getUnansweredQuestionsConnection(
+      argsWithAnswers,
+      context
+    );
   }
 
   return connection;
