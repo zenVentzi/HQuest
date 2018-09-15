@@ -12,13 +12,31 @@ class UnansweredQuestions extends Component {
   //   yield* this.props.questions;
   // }
 
-  setNextQuestion = () => {
+  setNextQuestion = async () => {
     this.setState((prevState, props) => {
       this.currentIndex += 1;
 
       const currentQuestion = props.questions[this.currentIndex];
       return { ...prevState, currentQuestion };
     });
+
+    if (this.currentIndex >= this.props.questions.length - 1) {
+      await this.props.fetchMore({
+        variables: {
+          skip: this.props.questions.length,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          console.log(
+            `questions/index questions: ${fetchMoreResult.questions}`
+          );
+          return {
+            ...prev,
+            questions: [...prev.questions, ...fetchMoreResult.questions],
+          };
+        },
+      });
+    }
   };
 
   onAddAnswer = addAnswer => async answerValue => {

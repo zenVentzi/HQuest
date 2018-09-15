@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
-import { GET_ANSWERED_QUESTIONS, GET_UNANSWERED_QUESTIONS } from 'Queries';
+import { GET_QUESTIONS } from 'Queries';
 import AnsweredQuestions from './AnsweredQuestions';
 import QuestionTags from './QuestionTags';
 import UnansweredQuestions from './UnansweredQuestions';
@@ -17,24 +17,34 @@ class QuestionsContainer extends Component {
   render() {
     const { user, showAnswered } = this.props;
     const { selectedTags } = this.state;
-
-    const vars = { userId: user.id, tags: selectedTags };
-    const query = showAnswered
-      ? GET_ANSWERED_QUESTIONS
-      : GET_UNANSWERED_QUESTIONS;
+    const vars = {
+      answered: showAnswered,
+      userId: user.id,
+      tags: selectedTags,
+      first: 2,
+    };
 
     return (
       <Fragment>
         <QuestionTags onSelected={this.onSelectedTags} />
-        <Query query={query} variables={vars} fetchPolicy="cache-and-network">
-          {({ loading, error, data: { questions } }) => {
+        <Query
+          query={GET_QUESTIONS}
+          variables={vars}
+          fetchPolicy="cache-and-network"
+        >
+          {({ loading, error, data: { questions }, fetchMore }) => {
             if (loading) return <div> loading questions.. </div>;
             if (error) return <div> {`Error ${error}`}</div>;
+
+            console.log('TCL: render -> questions', questions.length);
 
             return showAnswered ? (
               <AnsweredQuestions isPersonal={user.me} questions={questions} />
             ) : (
-              <UnansweredQuestions questions={questions} />
+              <UnansweredQuestions
+                questions={questions}
+                fetchMore={fetchMore}
+              />
             );
           }}
         </Query>

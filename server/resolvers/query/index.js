@@ -28,10 +28,8 @@ async function following(_, { userId }, context) {
   return userController.getFollowing(userId, context);
 }
 
-async function questions(root, { userId, answered, tags }, context) {
-  return answered
-    ? questionController.getAnsweredQuestions(userId, tags, context)
-    : questionController.getUnansweredQuestions(userId, tags, context);
+async function questions(root, args, context) {
+  return questionController.getUserQuestionConnection(args, context);
 }
 
 const questionsTags = async (_, __, context) => {
