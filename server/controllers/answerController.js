@@ -21,8 +21,6 @@ const add = async ({ questionId, answerValue }, context) => {
     models: { Answer },
   } = context;
 
-  const { collections } = context;
-
   const answer = {
     userId: ObjectId(context.user.id),
     questionId: ObjectId(questionId),

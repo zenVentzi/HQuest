@@ -6,6 +6,37 @@ type Book {
   author: String!
 }
 
+type PageInfo {
+  startCursor: String!,
+  endCursor: String!,
+  hasNextPage: Boolean!,  
+  hasPreviousPage: Boolean!
+}
+
+interface Node {
+  id: ID!
+}
+
+interface Edge {
+  cursor : String!
+  node: Node!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
+  edges: [Edge!]!
+}
+
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
 type SocialMediaLinks {
   facebookLink: String!
   twitterLink: String!
@@ -33,7 +64,7 @@ enum QuestionType {
   WOULD_YOU_DOUBLE
 }
 
-type Question {
+type Question implements Node {
   id: ID!
   type: QuestionType!
   possibleAnswers: [String!]
@@ -42,6 +73,16 @@ type Question {
   tags: [String!]!
   question: String!
   answer: Answer
+}
+
+type QuestionEdge implements Edge {
+  cursor: String!
+  node: Question!
+}
+
+type QuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [QuestionEdge!]!
 }
 
 type Answer {
@@ -61,16 +102,6 @@ type Comment {
 enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
-}
-
-interface Notification {
-  id: ID!
-  type: NotificationType!
-  performerId: ID!
-  performerAvatarSrc: String!
-  text: String!
-  seen: Boolean!
-  createdOn: DateTime!
 }
 
 type NewComment implements Notification {
@@ -110,7 +141,7 @@ type Query {
   questionsTags: [String!]!
   followers(userId: ID!): [User!]!
   following(userId: ID!): [User!]!
-  questions(userId: ID!, tags: [String], answered: Boolean!): [Question!]!
+  questions(answered: Boolean!, userId: ID!, tags: [String], first: Int!, after: String): QuestionConnection!
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }
 

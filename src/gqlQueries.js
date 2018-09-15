@@ -1,5 +1,9 @@
 import gql from 'graphql-tag';
-import { NotificationFields, QuestionFields, AnswerFields } from 'Fragments';
+import {
+  NotificationFields,
+  QuestionFields,
+  QuestionConnectionFields,
+} from 'Fragments';
 
 export const GET_USER = gql`
   query user($id: ID!) {
@@ -67,29 +71,46 @@ export const GET_ANSWERED_QUESTION = gql`
   ${QuestionFields}
 `;
 
-export const GET_ANSWERED_QUESTIONS = gql`
-  query questions($userId: ID!, $tags: [String]) {
-    questions(userId: $userId, tags: $tags, answered: true) {
-      ...QuestionFields
-      answer {
-        ...AnswerFields
-      }
+export const GET_QUESTIONS = gql`
+  query questions(
+    $answered: Boolean!
+    $userId: ID!
+    $tags: [String]
+    $first: Int!
+    $after: String
+  ) {
+    questions(
+      answered: $answered
+      userId: $userId
+      tags: $tags
+      first: $first
+      after: $after
+    ) {
+      ...QuestionConnectionFields
     }
   }
-  ${QuestionFields}
-  ${AnswerFields}
+  ${QuestionConnectionFields}
 `;
 
-export const b = 5;
-
-export const GET_UNANSWERED_QUESTIONS = gql`
-  query questions($userId: ID!, $tags: [String]) {
-    questions(userId: $userId, tags: $tags, answered: false) {
-      ...QuestionFields
-    }
-  }
-  ${QuestionFields}
-`;
+// export const GET_UNANSWERED_QUESTIONS = gql`
+//   query questions(
+//     $userId: ID!
+//     $tags: [String]
+//     $first: Int!
+//     $after: String!
+//   ) {
+//     questions(
+//       userId: $userId
+//       tags: $tags
+//       answered: false
+//       first: $first
+//       after: $after
+//     ) {
+//       ...QuestionFields
+//     }
+//   }
+//   ${QuestionFields}
+// `;
 
 export const GET_QUESTIONS_TAGS = gql`
   query questionsTags {
