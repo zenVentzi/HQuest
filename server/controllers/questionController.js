@@ -40,13 +40,16 @@ const mergeAnswerWithQuestion = (answer, question) => {
   return { ...question, answer };
 };
 
-const mergeAnswersWithQuestions = (answers, questions) => {
-  const pairs = answers.map(answer => {
-    const question = questions.find(q => q._id.equals(answer.questionId));
-    return mergeAnswerWithQuestion(answer, question);
+const mergeAnswersWithQuestions = (allUserAnswers, paginatedQuestions) => {
+  const result = [];
+
+  paginatedQuestions.forEach(question => {
+    const answer = allUserAnswers.find(a => a.questionId.equals(question._id));
+    const merged = mergeAnswerWithQuestion(answer, question);
+    result.push(merged);
   });
 
-  return pairs;
+  return result;
 };
 
 const getAnsweredQuestion = async (userId, questionId, context) => {
@@ -65,20 +68,8 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
   return mapGqlQuestion(answeredQuestion);
 };
 
-const getUserAnswers = async ({ userId }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
-  return Answer.find({ userId: ObjectId(userId) }).lean();
-};
-
-const getAnsweredQuestionsIds = async answers => {
-  return answers.map(a => a.questionId);
-};
-
 const getUserAnsweredQuestions = async (
-  { answeredQuestionsIds, tags, first, after },
+  { answers, answeredQuestionsIds, tags },
   context
 ) => {
   const {
@@ -87,23 +78,17 @@ const getUserAnsweredQuestions = async (
 
   const query = { _id: { $in: answeredQuestionsIds } };
 
-  if (after) {
-    query._id = { ...query._id, $gt: ObjectId(after) };
-  }
-
   if (tags.length) {
     query.tags = { $in: tags };
   }
 
-  const questions = await Question.find(query)
-    .limit(first)
-    .lean();
+  const questions = await Question.find(query).lean();
 
-  return questions;
+  return mapGqlQuestions(mergeAnswersWithQuestions(answers, questions));
 };
 
 const getUserUnansweredQuestions = async (
-  { answeredQuestionsIds, tags, first, after },
+  { answeredQuestionsIds, tags },
   context
 ) => {
   const {
@@ -112,30 +97,16 @@ const getUserUnansweredQuestions = async (
 
   const query = { _id: { $nin: answeredQuestionsIds } };
 
-  if (after) {
-    query._id = { ...query._id, $gt: ObjectId(after) };
-  }
-
   if (tags.length) {
     query.tags = { $in: tags };
   }
 
-  const questions = await Question.find(query)
-    .limit(first)
-    .lean();
+  const questions = await Question.find(query).lean();
 
-  return questions;
+  return mapGqlQuestions(questions);
 };
 
-const getEdges = nodes => {
-  return nodes.map(node => {
-    const cursor = node.id;
-    return {
-      cursor,
-      node,
-    };
-  });
-};
+const getAnsweredQuestionsIds = answers => answers.map(a => a.questionId);
 
 const getUserQuestionsPage = async (args, context) => {
   const {
@@ -176,6 +147,7 @@ const getUserQuestionsPage = async (args, context) => {
   };
 
   const hasNextPage = async () => {
+    if (!questions.length) return false;
     const lastQuestionId = questions[questions.length - 1]._id;
     const questionsAfterLast = await Question.find({
       _id: { $in: answeredQuestionsIds, $gt: lastQuestionId },
@@ -194,7 +166,7 @@ const getUserQuestionsPage = async (args, context) => {
     endCursor = questions[questions.length - 1]._id.toString();
   }
   const res = {
-    questions: questions || [],
+    questions: mapGqlQuestions(questions) || [],
     startCursor,
     endCursor,
     hasPreviousPage: await hasPreviousPage(),
@@ -203,75 +175,75 @@ const getUserQuestionsPage = async (args, context) => {
   return res;
 };
 
-const getAnsweredQuestionsConnection = async (args, context) => {
-  const {
-    questions,
-    startCursor,
-    endCursor,
-    hasPreviousPage,
-    hasNextPage,
-  } = await getUserQuestionsPage(args, context);
-  const merged = mergeAnswersWithQuestions(args.answers, questions);
-  const nodes = mapGqlQuestions(merged);
-  const edges = getEdges(nodes);
-
-  const pageInfo = { startCursor, endCursor, hasNextPage, hasPreviousPage };
-  const connection = { pageInfo, edges };
-  return connection;
+const getAllEdges = nodes => {
+  return nodes.map(node => {
+    const cursor = node.id;
+    return {
+      cursor,
+      node,
+    };
+  });
 };
-const getUnansweredQuestionsConnection = async (args, context) => {
-  /* 
-  interface Edge {
-  cursor : String!
-  node: Node!
-} */
+const getCurrentPageEdges = ({ first, after }, allEdges) => {
+  const startIndex = after ? allEdges.findIndex(e => e.cursor === after) : 0;
+  const endIndex = first;
+  const res = allEdges.slice(startIndex, endIndex);
+  return res;
+};
 
-  const {
-    questions,
+const getPageInfo = (allEdges, currentPageEdges) => {
+  let startCursor;
+  let endCursor;
+  let hasPreviousPage = false;
+  let hasNextPage = false;
+
+  if (!allEdges.length) {
+    hasPreviousPage = false;
+    hasNextPage = false;
+  } else if (!currentPageEdges.length) {
+    hasPreviousPage = true;
+    hasNextPage = false;
+  } else {
+    startCursor = currentPageEdges[0].cursor;
+    endCursor = currentPageEdges[currentPageEdges.length - 1].cursor;
+    const beforeStartCursor = edge =>
+      ObjectId(edge.cursor) < ObjectId(startCursor);
+    const afterEndCursor = edge => ObjectId(edge.cursor) > ObjectId(endCursor);
+
+    hasPreviousPage = allEdges.filter(beforeStartCursor).length > 0;
+    hasNextPage = allEdges.filter(afterEndCursor).length > 0;
+  }
+
+  return {
     startCursor,
     endCursor,
     hasPreviousPage,
     hasNextPage,
-  } = await getUserQuestionsPage(args, context);
-  const nodes = mapGqlQuestions(questions);
-  const edges = getEdges(nodes);
-
-  const pageInfo = { startCursor, endCursor, hasNextPage, hasPreviousPage };
-  const connection = { pageInfo, edges };
-  return connection;
+  };
 };
 
 const getUserQuestionConnection = async (args, context) => {
-  let connection;
-  const answers = await getUserAnswers({ userId: args.userId }, context);
-  const argsWithAnswers = { ...args, answers };
+  const answeredQuestionsIds = await getAnsweredQuestionsIds(args.answers);
+  let questions;
 
   if (args.answered) {
-    connection = await getAnsweredQuestionsConnection(argsWithAnswers, context);
+    questions = await getUserAnsweredQuestions(
+      { ...args, answeredQuestionsIds },
+      context
+    );
   } else {
-    connection = await getUnansweredQuestionsConnection(
-      argsWithAnswers,
+    questions = await getUserUnansweredQuestions(
+      { ...args, answeredQuestionsIds },
       context
     );
   }
 
+  const allEdges = getAllEdges(questions);
+  const currentPageEdges = getCurrentPageEdges(args, allEdges);
+  const pageInfo = getPageInfo(allEdges, currentPageEdges);
+
+  const connection = { pageInfo, edges: currentPageEdges };
   return connection;
-};
-
-const getUserQuestions = async (args, context) => {
-  let result;
-
-  if (args.answered) {
-    const answeredQuestions = await getUserAnsweredQuestions(args, context);
-    const answers = await getUserAnswers(args, context);
-    const merged = mergeAnswersWithQuestions(answers, answeredQuestions);
-    result = mapGqlQuestions(merged);
-  } else {
-    const unansweredQuestions = await getUserUnansweredQuestions(args, context);
-    result = mapGqlQuestions(unansweredQuestions);
-  }
-
-  return result;
 };
 
 module.exports = {

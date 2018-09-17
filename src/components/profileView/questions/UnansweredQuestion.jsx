@@ -43,7 +43,6 @@ class UnansweredQuestion extends Component {
             >
               Add
             </TextBtn>
-            <TextBtn onClick={onNext}>Next</TextBtn>
           </div>
           <TextBtn onClick={onDoesNotApply}>Does not apply</TextBtn>
         </EditorButtons>
