@@ -5,31 +5,45 @@ import { ADD_ANSWER } from 'Mutations';
 import UnansweredQuestion from './UnansweredQuestion';
 
 class UnansweredQuestions extends Component {
-  currentIndex = 0;
-  state = { currentQuestion: this.props.questions[this.currentIndex] };
+  constructor(props) {
+    super(props);
+
+    const { edges } = this.props.questions;
+    this.currentIndex = 0;
+    let currentQuestion;
+    if (edges.length) {
+      currentQuestion = edges[this.currentIndex];
+    }
+
+    this.state = { currentQuestion };
+  }
 
   // *questionsGen() {
   //   yield* this.props.questions;
   // }
 
-  setNextQuestion = async () => {
-    this.setState((prevState, props) => {
-      this.currentIndex += 1;
+  onNextQuestionSet = async () => {
+    const { edges } = this.props.questions;
+    const {
+      pageInfo: { hasNextPage },
+    } = this.props;
+    const isAtTheEnd = this.currentIndex >= edges.length - 1;
 
-      const currentQuestion = props.questions[this.currentIndex];
-      return { ...prevState, currentQuestion };
-    });
+    console.log(
+      'TCL: UnansweredQuestions -> onNextQuestionSet -> hasNextPage',
+      hasNextPage
+    );
 
-    if (this.currentIndex >= this.props.questions.length - 1) {
+    if (isAtTheEnd && hasNextPage) {
+      const lastEdgeCursor = edges[edges.length - 1].cursor;
+      const after = lastEdgeCursor;
+
       await this.props.fetchMore({
-        variables: {
-          skip: this.props.questions.length,
-        },
+        variables: { after },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
-          console.log(
-            `questions/index questions: ${fetchMoreResult.questions}`
-          );
+          console.log(`unansweredqs : ${fetchMoreResult.questions}`);
+
           return {
             ...prev,
             questions: [...prev.questions, ...fetchMoreResult.questions],
@@ -37,6 +51,22 @@ class UnansweredQuestions extends Component {
         },
       });
     }
+  };
+
+  setNextQuestion = async () => {
+    const { edges } = this.props.questions;
+
+    this.setState(
+      prevState => {
+        this.currentIndex += 1;
+
+        const currentQuestion = edges[this.currentIndex].node;
+        return { ...prevState, currentQuestion };
+      },
+      () => {
+        this.onNextQuestionSet();
+      }
+    );
   };
 
   onAddAnswer = addAnswer => async answerValue => {
@@ -65,17 +95,18 @@ class UnansweredQuestions extends Component {
     return (
       <Mutation mutation={ADD_ANSWER}>
         {addAnswer => {
-          return (
-            <Fragment>
-              <UnansweredQuestion
-                style={style}
-                question={currentQuestion}
-                onAdd={this.onAddAnswer(addAnswer)}
-                onNext={this.onNext}
-                onDoesNotApply={this.onDoesNotApply}
-              />
-            </Fragment>
-          );
+          const { edges } = this.props.questions;
+
+          return edges.map(e => (
+            <UnansweredQuestion
+              key={e.cursor}
+              style={style}
+              question={e.node}
+              onAdd={this.onAddAnswer(addAnswer)}
+              onNext={this.onNext}
+              onDoesNotApply={this.onDoesNotApply}
+            />
+          ));
         }}
       </Mutation>
     );

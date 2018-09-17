@@ -5,6 +5,7 @@ const {
   userController,
   commentController,
   questionController,
+  answerController,
   notificationController,
 } = require('../../controllers');
 
@@ -29,7 +30,15 @@ async function following(_, { userId }, context) {
 }
 
 async function questions(root, args, context) {
-  return questionController.getUserQuestionConnection(args, context);
+  const answers = await answerController.getUserAnswers(
+    { userId: args.userId },
+    context
+  );
+
+  return questionController.getUserQuestionConnection(
+    { ...args, answers },
+    context
+  );
 }
 
 const questionsTags = async (_, __, context) => {

@@ -2,6 +2,14 @@ const { ObjectId } = require('mongoose').Types;
 const bcrypt = require('bcrypt');
 const { mapGqlAnswer } = require('../resolvers/helper');
 
+const getUserAnswers = async ({ userId }, context) => {
+  const {
+    models: { Answer },
+  } = context;
+
+  return Answer.find({ userId: ObjectId(userId) }).lean();
+};
+
 const edit = async ({ answerId, answerValue }, context) => {
   const {
     models: { Answer },
@@ -43,4 +51,4 @@ const remove = async ({ answerId }, context) => {
   return mapGqlAnswer(deletedAnswer);
 };
 
-module.exports = { add, edit, remove };
+module.exports = { add, edit, remove, getUserAnswers };

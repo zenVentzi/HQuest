@@ -21,7 +21,7 @@ class QuestionsContainer extends Component {
       answered: showAnswered,
       userId: user.id,
       tags: selectedTags,
-      first: 2,
+      first: 5,
     };
 
     return (
@@ -35,8 +35,6 @@ class QuestionsContainer extends Component {
           {({ loading, error, data: { questions }, fetchMore }) => {
             if (loading) return <div> loading questions.. </div>;
             if (error) return <div> {`Error ${error}`}</div>;
-
-            console.log('TCL: render -> questions', questions);
 
             return showAnswered ? (
               <AnsweredQuestions isPersonal={user.me} questions={questions} />

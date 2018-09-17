@@ -7,8 +7,8 @@ type Book {
 }
 
 type PageInfo {
-  startCursor: String!,
-  endCursor: String!,
+  startCursor: String,
+  endCursor: String,
   hasNextPage: Boolean!,  
   hasPreviousPage: Boolean!
 }
@@ -24,7 +24,7 @@ interface Edge {
 
 interface Connection {
   pageInfo: PageInfo!
-  edges: [Edge!]!
+  edges: [Edge!]
 }
 
 interface Notification {
@@ -38,22 +38,22 @@ interface Notification {
 }
 
 type SocialMediaLinks {
-  facebookLink: String!
-  twitterLink: String!
-  instagramLink: String!
-  linkedInLink: String!
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
 }
 
 type User {
   id: ID!
-  me: Boolean!
-  email: String!
-  fullName: String!
-  intro: String!
-  socialMediaLinks: SocialMediaLinks!
-  avatarSrc: String!
-  following: [ID!]!
-  followers: [ID!]!
+  me: Boolean
+  email: String
+  fullName: String
+  intro: String
+  socialMediaLinks: SocialMediaLinks
+  avatarSrc: String
+  following: [ID!]
+  followers: [ID!]
 }
 
 enum QuestionType {
@@ -64,13 +64,14 @@ enum QuestionType {
   WOULD_YOU_DOUBLE
 }
 
+# question should be made an interface
 type Question implements Node {
   id: ID!
   type: QuestionType!
   possibleAnswers: [String!]
   #TODO consistency, change the type from int to string
   defaultAnswer: Int
-  tags: [String!]!
+  tags: [String!]
   question: String!
   answer: Answer
 }
@@ -82,7 +83,7 @@ type QuestionEdge implements Edge {
 
 type QuestionConnection implements Connection {
   pageInfo: PageInfo!
-  edges: [QuestionEdge!]!
+  edges: [QuestionEdge!]
 }
 
 type Answer {

@@ -1,7 +1,5 @@
-const a = 5;
+const { ObjectId } = require('mongoose').Types;
 
-const fn = function fn() {
-  console.log(this.a);
-};
-
-fn().bind(this);
+const arr = [1, 2, 3];
+const a = arr.slice(0, -1);
+console.log(a);
