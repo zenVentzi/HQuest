@@ -185,8 +185,13 @@ const getAllEdges = nodes => {
   });
 };
 const getCurrentPageEdges = ({ first, after }, allEdges) => {
-  const startIndex = after ? allEdges.findIndex(e => e.cursor === after) : 0;
-  const endIndex = first;
+  let startIndex = 0;
+
+  if (after) {
+    startIndex = allEdges.findIndex(e => e.cursor === after) + 1;
+  }
+
+  const endIndex = startIndex + first;
   const res = allEdges.slice(startIndex, endIndex);
   return res;
 };

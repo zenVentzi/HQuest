@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import TextBtn from 'Reusable/TextBtn';
 import QuestionEditor from './QuestionEditor';
 
@@ -22,8 +23,31 @@ const EditorButtons = styled.div`
 `;
 
 class UnansweredQuestion extends Component {
+  onAdd = () => {
+    const { onAddAnswer, question } = this.props;
+
+    if (!this.answerValue && !question.defaultAnswer) {
+      toast.error('🦄 Answer not provided', {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    /* else if < minimumAnswerLength .toast.. */
+
+    onAddAnswer({
+      questionId: question.id,
+      answerValue: this.answerValue || question.defaultAnswer,
+    });
+  };
+
   render() {
-    const { question, style, onAdd, onNext, onDoesNotApply } = this.props;
+    const { question, style, onDoesNotApply } = this.props;
 
     return (
       // on save, refetch
@@ -36,13 +60,7 @@ class UnansweredQuestion extends Component {
         />
         <EditorButtons>
           <div>
-            <TextBtn
-              onClick={() => {
-                onAdd(this.answerValue);
-              }}
-            >
-              Add
-            </TextBtn>
+            <TextBtn onClick={this.onAdd}>Add</TextBtn>
           </div>
           <TextBtn onClick={onDoesNotApply}>Does not apply</TextBtn>
         </EditorButtons>

@@ -8,102 +8,40 @@ class UnansweredQuestions extends Component {
   constructor(props) {
     super(props);
 
-    const { edges } = this.props.questions;
-    this.currentIndex = 0;
-    let currentQuestion;
-    if (edges.length) {
-      currentQuestion = edges[this.currentIndex];
-    }
-
-    this.state = { currentQuestion };
+    this.state = {};
   }
 
-  // *questionsGen() {
-  //   yield* this.props.questions;
-  // }
-
-  onNextQuestionSet = async () => {
-    const { edges } = this.props.questions;
-    const {
-      pageInfo: { hasNextPage },
-    } = this.props;
-    const isAtTheEnd = this.currentIndex >= edges.length - 1;
-
-    console.log(
-      'TCL: UnansweredQuestions -> onNextQuestionSet -> hasNextPage',
-      hasNextPage
-    );
-
-    if (isAtTheEnd && hasNextPage) {
-      const lastEdgeCursor = edges[edges.length - 1].cursor;
-      const after = lastEdgeCursor;
-
-      await this.props.fetchMore({
-        variables: { after },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          console.log(`unansweredqs : ${fetchMoreResult.questions}`);
-
-          return {
-            ...prev,
-            questions: [...prev.questions, ...fetchMoreResult.questions],
-          };
-        },
-      });
-    }
-  };
-
-  setNextQuestion = async () => {
-    const { edges } = this.props.questions;
-
-    this.setState(
-      prevState => {
-        this.currentIndex += 1;
-
-        const currentQuestion = edges[this.currentIndex].node;
-        return { ...prevState, currentQuestion };
-      },
-      () => {
-        this.onNextQuestionSet();
-      }
-    );
-  };
-
-  onAddAnswer = addAnswer => async answerValue => {
-    const { currentQuestion } = this.state;
-
-    const { defaultAnswer } = currentQuestion;
+  /* when to fetch more? When the last question is visible */
+  onAddAnswer = addAnswer => async ({ questionId, answerValue }) => {
     const variables = {
-      questionId: currentQuestion.id,
-      answerValue: answerValue || defaultAnswer,
+      questionId,
+      answerValue,
     };
-    await addAnswer({ variables });
-    this.setNextQuestion();
+    const res = await addAnswer({ variables });
+    return res;
   };
 
-  onNext = () => {};
   onDoesNotApply = () => {};
 
   render() {
-    const { style } = this.props;
-    const { currentQuestion } = this.state;
+    const {
+      style,
+      questions: { edges },
+    } = this.props;
 
-    if (!currentQuestion) {
-      return <div style={style}> Congrats. All questions are answered </div>;
+    if (!edges.length) {
+      return <div style={style}> All questions are answered </div>;
     }
 
     return (
       <Mutation mutation={ADD_ANSWER}>
         {addAnswer => {
-          const { edges } = this.props.questions;
-
           return edges.map(e => (
             <UnansweredQuestion
               key={e.cursor}
               style={style}
               question={e.node}
-              onAdd={this.onAddAnswer(addAnswer)}
-              onNext={this.onNext}
+              onAddAnswer={this.onAddAnswer(addAnswer)}
               onDoesNotApply={this.onDoesNotApply}
             />
           ));

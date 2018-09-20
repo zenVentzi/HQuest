@@ -9,7 +9,7 @@ const NavContainer = styled.div`
   width: 100%;
   padding: 0.2em 5em 0em 5em;
   background: black;
-  z-index: 100;
+  z-index: 1;
 `;
 
 export default NavContainer;
