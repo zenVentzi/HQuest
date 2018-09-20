@@ -30,12 +30,7 @@ class QuestionsContainer extends Component {
       window.innerHeight + window.pageYOffset - bottomMarginPx;
     const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
 
-    if (isCloseToBottom && !this.isFetching && this.hasNextPage) {
-      console.log(
-        'TCL: QuestionsContainer -> onScroll -> isCloseToBottom',
-        isCloseToBottom
-      );
-      console.log(`fetchinggg`);
+    if (isCloseToBottom && !this.isLoading && this.hasNextPage) {
       this.fetchMore({
         variables: {
           after: this.fetchAfter,
@@ -53,11 +48,6 @@ class QuestionsContainer extends Component {
             ...fetchMoreResult.questions.edges,
           ];
 
-          console.log(
-            'TCL: QuestionsContainer -> onScroll -> res',
-            res.questions.pageInfo.hasNextPage
-          );
-
           return res;
         },
       });
@@ -71,6 +61,16 @@ class QuestionsContainer extends Component {
     this.setState(prev => {
       return { ...prev, selectedTags: tags };
     });
+  };
+
+  renderQuestions = questions => {
+    const { user, showAnswered } = this.props;
+
+    return showAnswered ? (
+      <AnsweredQuestions isPersonal={user.me} questions={questions} />
+    ) : (
+      <UnansweredQuestions questions={questions} />
+    );
   };
 
   render() {
@@ -94,22 +94,21 @@ class QuestionsContainer extends Component {
           notifyOnNetworkStatusChange
         >
           {({ loading, error, data: { questions }, fetchMore }) => {
-            this.isFetching = true;
-            if (loading) return <div> loading questions.. </div>;
-            // return <TestQuestions />;
+            if (loading) {
+              this.isLoading = true;
+            } else {
+              this.isLoading = false;
+              this.hasNextPage = questions.pageInfo.hasNextPage;
+              this.fetchAfter = questions.pageInfo.endCursor;
+              this.fetchMore = fetchMore;
+            }
             if (error) return <div> {`Error ${error}`}</div>;
-            this.isFetching = false;
-            this.hasNextPage = questions.pageInfo.hasNextPage;
-            this.fetchAfter = questions.pageInfo.endCursor;
-            this.fetchMore = fetchMore;
 
-            return showAnswered ? (
-              <AnsweredQuestions isPersonal={user.me} questions={questions} />
-            ) : (
-              <UnansweredQuestions
-                questions={questions}
-                fetchMore={fetchMore}
-              />
+            return (
+              <Fragment>
+                {questions && this.renderQuestions(questions)}
+                {loading && <div>loading questions..</div>}
+              </Fragment>
             );
           }}
         </Query>
