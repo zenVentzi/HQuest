@@ -22,8 +22,10 @@ class QuestionsContainer extends Component {
     const offsetBottom =
       window.innerHeight + window.pageYOffset - bottomMarginPx;
     const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
+    const isLoading = this.isInitialLoad || this.isFetchingMore;
+    const shouldFetchMore = isCloseToBottom && !isLoading && this.hasNextPage;
 
-    if (isCloseToBottom && !this.isLoading && this.hasNextPage) {
+    if (shouldFetchMore) {
       this.fetchMore({
         variables: {
           after: this.fetchAfter,
@@ -57,12 +59,28 @@ class QuestionsContainer extends Component {
   };
 
   renderQuestions = questions => {
+    // if loading and has no questions return null
+    // if loading but has questions return questions
+
+    if (!questions) return null;
+
+    /* problem is that when I switch from answered to unanswered,
+    the questions are not empty but are filled with answered
+    
+    
+    most desireable solution would be to separately check if is fetching for more or if it is initial fetch 
+    
+    1) if initialFetch, don't render at all
+    2) if fetchForMore render */
+
     const { user, showAnswered } = this.props;
 
+    const questionNodes = questions.edges.map(e => e.node);
+
     return showAnswered ? (
-      <AnsweredQuestions isPersonal={user.me} questions={questions} />
+      <AnsweredQuestions isPersonal={user.me} questions={questionNodes} />
     ) : (
-      <UnansweredQuestions questions={questions} />
+      <UnansweredQuestions questions={questionNodes} />
     );
   };
 
@@ -86,20 +104,27 @@ class QuestionsContainer extends Component {
           fetchPolicy="cache-and-network"
           notifyOnNetworkStatusChange
         >
-          {({ loading, error, data: { questions }, fetchMore }) => {
-            if (loading) {
-              this.isLoading = true;
-            } else {
-              this.isLoading = false;
+          {({
+            loading,
+            error,
+            data: { questions },
+            fetchMore,
+            networkStatus,
+          }) => {
+            if (error) return <div> {`Error ${error}`}</div>;
+
+            this.isInitialLoad = networkStatus === 1;
+            this.isFetchingMore = networkStatus === 3;
+
+            if (questions) {
               this.hasNextPage = questions.pageInfo.hasNextPage;
               this.fetchAfter = questions.pageInfo.endCursor;
               this.fetchMore = fetchMore;
             }
-            if (error) return <div> {`Error ${error}`}</div>;
 
             return (
               <Fragment>
-                {questions && this.renderQuestions(questions)}
+                {!this.isInitialLoad && this.renderQuestions(questions)}
                 {loading && <div>loading questions..</div>}
               </Fragment>
             );

@@ -5,13 +5,23 @@ import { ADD_ANSWER } from 'Mutations';
 import UnansweredQuestion from './UnansweredQuestion';
 
 class UnansweredQuestions extends Component {
-  constructor(props) {
-    super(props);
+  state = { unansweredQuestions: [] };
 
-    this.state = {};
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // console.log(`derived`);
+    return { unansweredQuestions: nextProps.questions };
   }
 
-  /* when to fetch more? When the last question is visible */
+  removeFromUnanswered = questionId => {
+    this.setState(prevState => {
+      return {
+        unansweredQuestions: prevState.unansweredQuestions.filter(
+          q => q.id !== questionId
+        ),
+      };
+    });
+  };
+
   onAddAnswer = addAnswer => async ({ questionId, answerValue }) => {
     const variables = {
       questionId,
@@ -24,23 +34,21 @@ class UnansweredQuestions extends Component {
   onDoesNotApply = () => {};
 
   render() {
-    const {
-      style,
-      questions: { edges },
-    } = this.props;
+    const { style } = this.props;
+    const { unansweredQuestions } = this.state;
 
-    if (!edges.length) {
+    if (!unansweredQuestions.length) {
       return <div style={style}> All questions are answered </div>;
     }
 
     return (
       <Mutation mutation={ADD_ANSWER}>
         {addAnswer => {
-          return edges.map(e => (
+          return unansweredQuestions.map(q => (
             <UnansweredQuestion
-              key={e.cursor}
+              key={q.id}
               style={style}
-              question={e.node}
+              question={q}
               onAddAnswer={this.onAddAnswer(addAnswer)}
               onDoesNotApply={this.onDoesNotApply}
             />
