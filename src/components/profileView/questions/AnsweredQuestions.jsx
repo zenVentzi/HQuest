@@ -10,15 +10,15 @@ const Empty = styled.div`
 const AnsweredQuestions = ({ isPersonal, questions, ...style }) => {
   const onEditAnswer = answerId => answerValue => {};
 
-  return questions.edges.length > 0 ? (
-    questions.edges.map(edge => (
-      <Fragment key={edge.node.id}>
+  return questions.length > 0 ? (
+    questions.map(q => (
+      <Fragment key={q.id}>
         <AnsweredQuestion
           collapseComments
           style={style}
           isPersonal={isPersonal}
-          question={edge.node}
-          onSave={onEditAnswer(edge.node.answer.id)}
+          question={q}
+          onSave={onEditAnswer(q.answer.id)}
         />
       </Fragment>
     ))
