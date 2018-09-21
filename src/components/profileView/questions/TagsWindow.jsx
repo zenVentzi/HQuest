@@ -1,36 +1,37 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
-import GET_TAGS from 'Queries';
 import FloatingWindow from 'Reusable/FloatingWindow';
 import styled from 'styled-components';
 import TextBtn from 'Reusable/TextBtn';
 
 const TagBtn = styled(TextBtn)`
   border: 0px;
-  & :active {
-    background: white;
-    color: black;
-  }
+  margin: 0.2em;
+  background: white;
+  color: black;
+  /* stylelint-disable */
+  border: 1px solid ${props => (props.selected ? 'black' : 'white')};
+  /* stylelint-enable */
 `;
 
 export default class TagsWindow extends Component {
   static propTypes = {};
   state = { selectedTags: [] };
 
-  toggleSelected = tag => event => {
-    event.stopPropagation();
+  isSelected = tag => {
+    return this.state.selectedTags.includes(tag);
+  };
 
-    const { selectedTags } = this.state;
-    const tagIndex = selectedTags.findIndex(t => t.id === tag.id);
+  onClickTag = tag => () => {
+    const isSelected = this.state.selectedTags.includes(tag);
 
-    if (tagIndex) {
-      selectedTags.splice(tagIndex, 1);
-      event.target.blur();
+    let selectedTags;
+
+    if (isSelected) {
+      selectedTags = this.state.selectedTags.filter(t => t !== tag);
     } else {
-      selectedTags.push(tag);
-      event.target.focus();
+      selectedTags = [...this.state.selectedTags, tag];
     }
 
     this.setState({ selectedTags });
@@ -42,10 +43,24 @@ export default class TagsWindow extends Component {
 
     return (
       <FloatingWindow>
-        {tags.map(t => (
-          <TagBtn key={t.id}>{t}</TagBtn>
-        ))}
-        <TextBtn onClick={onSelect(selectedTags)}>Select</TextBtn>
+        <div>
+          {tags.map(t => (
+            <TagBtn
+              key={t}
+              onClick={this.onClickTag(t)}
+              selected={this.isSelected(t)}
+            >
+              {t}
+            </TagBtn>
+          ))}
+        </div>
+        <TextBtn
+          onClick={() => {
+            onSelect(selectedTags);
+          }}
+        >
+          Select
+        </TextBtn>
       </FloatingWindow>
     );
   }

@@ -18,13 +18,6 @@ class QuestionsContainer extends Component {
   }
 
   onScroll = () => {
-    // this is done as a hack for the scroll position after refresh
-    // on refresh the scroll position doesn't restore properly, need to take a look
-    // if (this.firstRenderResetScroll) {
-    //   this.firstRenderResetScroll = false;
-    //   window.scrollTo(0, 0);
-    //   return;
-    // }
     const bottomMarginPx = 60;
     const offsetBottom =
       window.innerHeight + window.pageYOffset - bottomMarginPx;
