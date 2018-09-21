@@ -21,26 +21,39 @@ class QuestionTags extends PureComponent {
   };
   inputRef = React.createRef();
 
-  onSelectFromWindow = selectedTags => {
+  hideAllTagsWindow = () => {
     this.setState(prevState => {
-      return { ...prevState, selectedTags };
+      return { ...prevState, showAllTags: false };
     });
+  };
 
-    const reducer = (accumulator, currentTag) =>
-      `${accumulator} ${currentTag},`;
+  onSelectFromWindow = selectedTags => {
+    this.setState(
+      prevState => {
+        return { ...prevState, selectedTags };
+      },
+      () => {
+        this.notifyParents();
+      }
+    );
 
-    const inputValue = selectedTags.reduce(reducer, '');
-
-    this.inputRef.current.value = inputValue;
+    this.inputRef.current.value = `${selectedTags.join(',')},`;
+    this.inputRef.current.focus();
+    this.hideAllTagsWindow();
   };
 
   onSelectFromDropdown = selectedTag => {
     const { selectedTags } = this.state;
     selectedTags.push(selectedTag);
     this.inputRef.current.value = `${selectedTags.join(',')},`;
-    this.setState(prevState => {
-      return { ...prevState, selectedTags, matchingTags: [] };
-    });
+    this.setState(
+      prevState => {
+        return { ...prevState, selectedTags, matchingTags: [] };
+      },
+      () => {
+        this.notifyParents();
+      }
+    );
     this.inputRef.current.focus();
   };
 
@@ -208,13 +221,11 @@ class QuestionTags extends PureComponent {
         {({ loading, error, data: { questionsTags: tags } }) => {
           this.allTags = tags;
 
-          if (showAllTags) {
-            return (
-              <TagsWindow tags={tags} onSelect={this.onSelectFromWindow} />
-            );
-          }
           return (
             <Fragment>
+              {showAllTags && (
+                <TagsWindow tags={tags} onSelect={this.onSelectFromWindow} />
+              )}
               <Anchor onClick={this.toggleAllTags(true)}>Tags</Anchor>
               <input
                 ref={this.inputRef}
