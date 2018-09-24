@@ -27,14 +27,7 @@ class UnansweredQuestion extends Component {
     const { onAddAnswer, question } = this.props;
 
     if (!this.answerValue && !question.defaultAnswer) {
-      toast.error('🦄 Answer not provided', {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      toast.error('🦄 Answer not provided');
       return;
     }
 

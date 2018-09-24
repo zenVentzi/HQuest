@@ -1,5 +1,12 @@
 - study the GitHunt example
 
-- add, doesNotApply
+- Display question’s tags on hover
+- doesNotApply
+- delay loading
 - reorder
 - edit, edithistory, remove
+
+- Change default tostr options
+
+react-router-page-transition
+react-reveal!!!!

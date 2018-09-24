@@ -30,6 +30,7 @@ const getAnswerComments = async (answerId, context) => {
 
   if (!comments) return [];
   // TODO: This can be optimized with Dataloader
+  // FIXME hahaha
   const commentsPromises = comments.map(async com => {
     const commentAuthor = await User.findById(com.userId).lean();
     return mapGqlComment(context, commentAuthor, com);

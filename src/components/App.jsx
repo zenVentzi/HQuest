@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 import { ThemeProvider } from 'styled-components';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, Zoom } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 import ApolloClient from './ApolloClient';
@@ -16,21 +17,6 @@ import NotFoundView from './notFoundView';
 import appTheme from './appTheme';
 import baseStyles from './base-styles';
 
-const TestQuestions = () => {
-  const questions = [];
-
-  for (let i = 0; i < 200; i++) {
-    questions.push(
-      <div key={i}>
-        Question
-        {i}
-      </div>
-    );
-  }
-
-  return questions;
-};
-
 const App = () => {
   baseStyles();
   return (
@@ -38,7 +24,12 @@ const App = () => {
       <ThemeProvider theme={appTheme}>
         <BrowserRouter>
           <div>
-            <ToastContainer />
+            <ToastContainer
+              hideProgressBar
+              position="top-center"
+              autoClose={1500}
+              transition={Zoom}
+            />
             {/* <TestQuestions /> */}
             <Switch>
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />

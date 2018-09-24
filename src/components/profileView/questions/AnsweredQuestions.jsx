@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import AnsweredQuestion from './AnsweredQuestion';
 import AnsweredQuestionsGql from './AnsweredQuestionsGql';
@@ -9,16 +10,16 @@ const Empty = styled.div`
 `;
 
 const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
-  const onClickEdit = (editAnswer, answerId) => async answerValue => {
+  const onClickSave = (editAnswer, answerId) => async answerValue => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
-    // success toastr
+    toast.success('🦄 Answer edited!');
   };
   const onClickRemove = (removeAnswer, answerId) => async () => {
     const variables = { answerId };
     await removeAnswer({ variables });
+    toast.success('🦄 Answer removed!');
     refetch();
-    // success toastr
   };
 
   if (!questions.length) {
@@ -41,7 +42,7 @@ const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
               style={style}
               isPersonal={isPersonal}
               question={q}
-              onClickEdit={onClickEdit(editAnswer, q.answer.id)}
+              onClickSave={onClickSave(editAnswer, q.answer.id)}
               onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
             />
           </Fragment>
