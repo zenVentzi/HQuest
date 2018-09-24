@@ -83,6 +83,10 @@ async function createQuestion(_, args, context) {
   return questionController.createQuestion(args, context);
 }
 
+async function questionNotApply(_, args, context) {
+  return questionController.markNotApply(args, context);
+}
+
 async function editAnswer(_, args, context) {
   return answerController.edit(args, context);
 }
@@ -121,6 +125,7 @@ module.exports = {
   signUp,
   login,
   createQuestion,
+  questionNotApply,
   addAnswer,
   editAnswer,
   removeAnswer,

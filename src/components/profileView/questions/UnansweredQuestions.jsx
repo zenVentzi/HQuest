@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
-import { ADD_ANSWER } from 'Mutations';
+import UnansweredQuestionsGql from './UnansweredQuestionsGql';
 import UnansweredQuestion from './UnansweredQuestion';
 
 class UnansweredQuestions extends Component {
-  onAddAnswer = addAnswer => async ({ questionId, answerValue }) => {
+  onClickAdd = ({ addAnswer, questionId }) => async ({ answerValue }) => {
     const variables = {
       questionId,
       answerValue,
@@ -16,7 +15,14 @@ class UnansweredQuestions extends Component {
     this.props.refetch();
   };
 
-  onDoesNotApply = () => {};
+  onDoesNotApply = ({ questionNotApply, questionId }) => async () => {
+    const variables = {
+      questionId,
+    };
+    await questionNotApply({ variables });
+    toast.success('🦄 Does not apply? Problem solved!');
+    this.props.refetch();
+  };
 
   render() {
     const { style, questions } = this.props;
@@ -26,19 +32,25 @@ class UnansweredQuestions extends Component {
     }
 
     return (
-      <Mutation mutation={ADD_ANSWER}>
-        {addAnswer => {
+      <UnansweredQuestionsGql>
+        {(addAnswer, questionNotApply) => {
           return questions.map(q => (
             <UnansweredQuestion
               key={q.id}
               style={style}
               question={q}
-              onAddAnswer={this.onAddAnswer(addAnswer)}
-              onDoesNotApply={this.onDoesNotApply}
+              onClickAdd={this.onClickAdd({
+                addAnswer,
+                questionId: q.id,
+              })}
+              onDoesNotApply={this.onDoesNotApply({
+                questionNotApply,
+                questionId: q.id,
+              })}
             />
           ));
         }}
-      </Mutation>
+      </UnansweredQuestionsGql>
     );
   }
 }

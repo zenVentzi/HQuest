@@ -167,14 +167,27 @@ type Mutation {
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, password: String!): LoginResult!
   createQuestion(question: String!, type: QuestionType!, defaultAnswer: Int, possibleAnswers: [String!], tags: [String!]!): String
+  questionNotApply(questionId: ID!): Question!
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
   follow(userId: ID!, follow: Boolean!): Boolean
-  seedDb: String
 }
+
+""" 
+
+export const QUESTION_NOT_APPLY = gql`
+  mutation questionNotApply($questionId: ID!) {
+    questionNotApply(questionId: $questionId) {
+      ...QuestionFields
+    }
+  }
+  ${QuestionFields}
+`;
+
+ """
 
 type Subscription {
   bookAdded: Book!

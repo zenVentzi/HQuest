@@ -23,8 +23,8 @@ const EditorButtons = styled.div`
 `;
 
 class UnansweredQuestion extends Component {
-  onAdd = () => {
-    const { onAddAnswer, question } = this.props;
+  onClickAdd = () => {
+    const { onClickAdd, question } = this.props;
 
     if (!this.answerValue && !question.defaultAnswer) {
       toast.error('🦄 Answer not provided');
@@ -33,7 +33,7 @@ class UnansweredQuestion extends Component {
 
     /* else if < minimumAnswerLength .toast.. */
 
-    onAddAnswer({
+    onClickAdd({
       questionId: question.id,
       answerValue: this.answerValue || question.defaultAnswer,
     });
@@ -53,7 +53,7 @@ class UnansweredQuestion extends Component {
         />
         <EditorButtons>
           <div>
-            <TextBtn onClick={this.onAdd}>Add</TextBtn>
+            <TextBtn onClick={this.onClickAdd}>Add</TextBtn>
           </div>
           <TextBtn onClick={onDoesNotApply}>Does not apply</TextBtn>
         </EditorButtons>

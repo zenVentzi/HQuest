@@ -20,6 +20,24 @@ const createQuestion = async (
   });
 };
 
+const markNotApply = async ({ questionId }, context) => {
+  const {
+    models: { User, Question },
+    user,
+  } = context;
+
+  /* 1) store questionsNotApply list in user doc */
+
+  await User.findByIdAndUpdate(
+    user.id,
+    { $push: { questionsNotApply: ObjectId(questionId) } },
+    { new: true, upsert: true }
+  );
+
+  const question = await Question.findById(questionId).lean();
+  return mapGqlQuestion(question);
+};
+
 const getAllTags = async context => {
   const {
     models: { Question },
@@ -92,10 +110,19 @@ const getUserUnansweredQuestions = async (
   context
 ) => {
   const {
-    models: { Question },
+    models: { User, Question },
+    user,
   } = context;
 
-  const query = { _id: { $nin: answeredQuestionsIds } };
+  const { questionsNotApply: questionsNotApplyIds } = await User.findById(
+    user.id
+  ).lean();
+
+  const notInArray = answeredQuestionsIds.concat(questionsNotApplyIds);
+
+  const query = {
+    _id: { $nin: notInArray },
+  };
 
   if (tags.length) {
     query.tags = { $in: tags };
@@ -253,6 +280,7 @@ const getUserQuestionConnection = async (args, context) => {
 
 module.exports = {
   createQuestion,
+  markNotApply,
   getAllTags,
   getAnsweredQuestion,
   getUserQuestionConnection,
