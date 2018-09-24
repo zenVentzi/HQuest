@@ -1,50 +1,41 @@
 import React, { Component, Fragment } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import { ADD_ANSWER } from 'Mutations';
 import UnansweredQuestion from './UnansweredQuestion';
 
 class UnansweredQuestions extends Component {
-  state = { unansweredQuestions: [] };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // console.log(`derived`);
-    return { unansweredQuestions: nextProps.questions };
-  }
-
-  removeFromUnanswered = questionId => {
-    this.setState(prevState => {
-      return {
-        unansweredQuestions: prevState.unansweredQuestions.filter(
-          q => q.id !== questionId
-        ),
-      };
-    });
-  };
-
   onAddAnswer = addAnswer => async ({ questionId, answerValue }) => {
     const variables = {
       questionId,
       answerValue,
     };
-    const res = await addAnswer({ variables });
-    return res;
+    await addAnswer({ variables });
+    toast.success('🦄 Answer added!', {
+      position: 'top-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    this.props.refetch();
   };
 
   onDoesNotApply = () => {};
 
   render() {
-    const { style } = this.props;
-    const { unansweredQuestions } = this.state;
+    const { style, questions } = this.props;
 
-    if (!unansweredQuestions.length) {
+    if (!questions.length) {
       return <div style={style}> All questions are answered </div>;
     }
 
     return (
       <Mutation mutation={ADD_ANSWER}>
         {addAnswer => {
-          return unansweredQuestions.map(q => (
+          return questions.map(q => (
             <UnansweredQuestion
               key={q.id}
               style={style}
