@@ -19,6 +19,8 @@ class AnsweredQuestion extends Component {
     viewMode: true,
   };
 
+  answerValue = this.props.question.answer.value;
+
   onMouseEnter = () => {
     this.toggleHovered(true);
   };
@@ -35,15 +37,22 @@ class AnsweredQuestion extends Component {
     this.setState({ ...this.state, viewMode: !this.state.viewMode });
   };
 
-  onClickEdit = async answerValue => {
-    const { onClickEdit } = this.props;
-
-    await onClickEdit(answerValue);
+  onClickEdit = () => {
     this.toggleViewMode();
   };
+
+  onClickSave = async () => {
+    await this.props.onClickSave(this.answerValue);
+    // todo: only toggle if successful
+    this.toggleViewMode();
+  };
+
   onClickRemove = async () => {
-    const { onClickRemove } = this.props;
-    await onClickRemove();
+    await this.props.onClickRemove();
+  };
+
+  onChange = answerValue => {
+    this.answerValue = answerValue;
   };
 
   render() {
@@ -70,8 +79,8 @@ class AnsweredQuestion extends Component {
         ) : (
           // onSave, refetch
           <Fragment>
-            <QuestionEditor question={question} onSaved={this.toggleViewMode} />
-            <TextBtn onClick={this.onSave}>Save</TextBtn>
+            <QuestionEditor question={question} onChange={this.onChange} />
+            <TextBtn onClick={this.onClickSave}>Save</TextBtn>
           </Fragment>
         )}
       </StyledQuestion>

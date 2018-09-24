@@ -12,14 +12,7 @@ class UnansweredQuestions extends Component {
       answerValue,
     };
     await addAnswer({ variables });
-    toast.success('🦄 Answer added!', {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.success('🦄 Answer added!');
     this.props.refetch();
   };
 
