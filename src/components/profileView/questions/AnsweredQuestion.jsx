@@ -16,7 +16,7 @@ const StyledQuestion = styled.div`
 class AnsweredQuestion extends Component {
   state = {
     hovered: false,
-    viewMode: !!this.props.question.answer,
+    viewMode: true,
   };
 
   onMouseEnter = () => {
@@ -33,6 +33,17 @@ class AnsweredQuestion extends Component {
 
   toggleViewMode = () => {
     this.setState({ ...this.state, viewMode: !this.state.viewMode });
+  };
+
+  onClickEdit = async answerValue => {
+    const { onClickEdit } = this.props;
+
+    await onClickEdit(answerValue);
+    this.toggleViewMode();
+  };
+  onClickRemove = async () => {
+    const { onClickRemove } = this.props;
+    await onClickRemove();
   };
 
   render() {
@@ -53,7 +64,8 @@ class AnsweredQuestion extends Component {
             isPersonal={isPersonal}
             question={question}
             collapseComments={collapseComments}
-            onClickEdit={this.toggleViewMode}
+            onClickEdit={this.onClickEdit}
+            onClickRemove={this.onClickRemove}
           />
         ) : (
           // onSave, refetch

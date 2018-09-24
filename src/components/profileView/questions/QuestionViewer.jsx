@@ -35,6 +35,9 @@ class QuestionViewer extends Component {
         answerId: this.props.question.answer.id,
       },
     });
+    console.log(this.props.onRemoved);
+
+    this.props.onRemoved();
   };
 
   toggleReactions = () => {
@@ -51,60 +54,42 @@ class QuestionViewer extends Component {
   };
 
   render() {
+    const { showReactions, showComments } = this.state;
+    const {
+      hovered,
+      isPersonal = true,
+      onClickEdit,
+      onClickRemove,
+      question,
+    } = this.props;
+
+    const { numOfComments } = question.answer;
+    const commentBtnText =
+      numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
+    const answerId = question.answer.id;
+
     return (
-      <Mutation mutation={REMOVE_ANSWER}>
-        {removeAnswer => {
-          const { showReactions, showComments } = this.state;
-          const {
-            hovered,
-            isPersonal = true,
-            onClickEdit,
-            question,
-          } = this.props;
-
-          const { numOfComments } = question.answer;
-          const commentBtnText =
-            numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
-          const answerId = question.answer.id;
-
-          return (
-            <Fragment>
-              <Row>
-                <QuestionText> {question.question}</QuestionText>
-                {isPersonal && (
-                  <QuestionOptions
-                    hideIcon={!hovered}
-                    onClickEdit={onClickEdit}
-                    onClickRemove={this.onClickRemove(removeAnswer)}
-                  />
-                )}
-              </Row>
-              <Answer viewMode question={question} />
-              <Row>
-                <Span onClick={this.toggleReactions}>15 Reactions</Span>
-                <Span onClick={this.toggleComments}>{commentBtnText}</Span>
-              </Row>
-              {showComments && (
-                <Comments answerId={answerId} onClose={this.toggleComments} />
-              )}
-              {showReactions && <Reactions onClose={this.toggleReactions} />}
-              {/* showButtons */ false && (
-                <div>
-                  <Btn onClick={onClickEdit} visible={hovered}>
-                    Edit
-                  </Btn>
-                  <Btn
-                    onClick={this.onClickRemove(removeAnswer)}
-                    visible={hovered}
-                  >
-                    Remove
-                  </Btn>
-                </div>
-              )}
-            </Fragment>
-          );
-        }}
-      </Mutation>
+      <Fragment>
+        <Row>
+          <QuestionText> {question.question}</QuestionText>
+          {isPersonal && (
+            <QuestionOptions
+              hideIcon={!hovered}
+              onClickEdit={onClickEdit}
+              onClickRemove={onClickRemove}
+            />
+          )}
+        </Row>
+        <Answer viewMode question={question} />
+        <Row>
+          <Span onClick={this.toggleReactions}>15 Reactions</Span>
+          <Span onClick={this.toggleComments}>{commentBtnText}</Span>
+        </Row>
+        {showComments && (
+          <Comments answerId={answerId} onClose={this.toggleComments} />
+        )}
+        {showReactions && <Reactions onClose={this.toggleReactions} />}
+      </Fragment>
     );
   }
 }
