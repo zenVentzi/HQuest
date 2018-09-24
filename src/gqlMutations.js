@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { QuestionFields } from './gqlFragments';
 
 export const NOTIFS_MARK_SEEN = gql`
   mutation notifsMarkSeen {
@@ -62,4 +63,13 @@ export const ADD_ANSWER = gql`
       value
     }
   }
+`;
+
+export const QUESTION_NOT_APPLY = gql`
+  mutation questionNotApply($questionId: ID!) {
+    questionNotApply(questionId: $questionId) {
+      ...QuestionFields
+    }
+  }
+  ${QuestionFields}
 `;

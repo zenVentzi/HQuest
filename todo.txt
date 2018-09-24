@@ -1,12 +1,11 @@
+
+- doesNotApply
+- edithistory,
+- reorder
+- Display question’s tags on hover
+- delay loading
+- round toast
 - study the GitHunt example
 
-- Display question’s tags on hover
-- doesNotApply
-- delay loading
-- reorder
-- edit, edithistory, remove
-
-- Change default tostr options
-
 react-router-page-transition
-react-reveal!!!!
+react-reveal
