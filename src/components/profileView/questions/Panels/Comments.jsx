@@ -1,43 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Query, Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import { ADD_COMMENT } from 'Mutations';
+import { GET_COMMENTS } from 'Queries';
 import Comment from './Comment';
 import CommentsPanel from './CommentsPanel';
-
-const ADD_COMMENT = gql`
-  mutation addComment($answerId: ID!, $comment: String!) {
-    addComment(answerId: $answerId, comment: $comment) {
-      id
-      user {
-        id
-        fullName
-        intro
-        avatarSrc
-        me
-      }
-      comment
-    }
-  }
-`;
-
-const GET_COMMENTS = gql`
-  query comments($answerId: ID!) {
-    comments(answerId: $answerId) {
-      id
-      user {
-        id
-        fullName
-        intro
-        avatarSrc
-        me
-      }
-      comment
-    }
-  }
-`;
-
-export { ADD_COMMENT, GET_COMMENTS };
 
 const Input = styled.textarea`
   /* margin-top: 2em; */

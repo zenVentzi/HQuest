@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { QuestionFields } from './gqlFragments';
+import { QuestionFields, CommentFields } from 'Fragments';
 
 export const NOTIFS_MARK_SEEN = gql`
   mutation notifsMarkSeen {
@@ -73,3 +73,11 @@ export const QUESTION_NOT_APPLY = gql`
   }
   ${QuestionFields}
 `;
+
+// export const ADD_COMMENT = gql`
+//   mutation addComment($answerId: ID!, $comment: String!) {
+//     addComment(answerId: $answerId, comment: $comment) {
+//       ...CommentFields
+//   }
+//   ${CommentFields}
+// `;
