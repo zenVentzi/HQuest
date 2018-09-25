@@ -3,6 +3,7 @@ import {
   NotificationFields,
   QuestionFields,
   QuestionConnectionFields,
+  CommentFields,
 } from 'Fragments';
 
 export const GET_USER = gql`
@@ -125,4 +126,13 @@ export const GET_NOTIFICATIONS = gql`
     }
   }
   ${NotificationFields}
+`;
+
+export const GET_COMMENTS = gql`
+  query comments($answerId: ID!) {
+    comments(answerId: $answerId) {
+      ...CommentFields
+    }
+  }
+  ${CommentFields}
 `;

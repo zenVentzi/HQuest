@@ -1,11 +1,16 @@
-
-- doesNotApply
 - edithistory,
 - reorder
+- make QUestionViewer and editor AnswerViewer and editor
+- confirmation dialog
 - Display question’s tags on hover
 - delay loading
 - round toast
+- mobile first
+- rename FloatingWindow to Modal
+- use floater for modals
 - study the GitHunt example
 
 react-router-page-transition
 react-reveal
+react-floater
+popperjs

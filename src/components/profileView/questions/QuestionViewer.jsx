@@ -1,8 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
-import { REMOVE_ANSWER } from 'Mutations';
-import { Mutation } from 'react-apollo';
-import Btn from './StyledBtn';
+import Editions from './Editions';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
 import Reactions from './Panels/Reactions';
@@ -27,7 +25,11 @@ const Row = styled.div`
 `;
 
 class QuestionViewer extends Component {
-  state = { showComments: !this.props.collapseComments, showReactions: false };
+  state = {
+    showComments: !this.props.collapseComments,
+    showReactions: false,
+    showEditions: false,
+  };
 
   onClickRemove = mutate => async () => {
     await mutate({
@@ -35,9 +37,15 @@ class QuestionViewer extends Component {
         answerId: this.props.question.answer.id,
       },
     });
-    console.log(this.props.onRemoved);
 
     this.props.onRemoved();
+  };
+
+  toggleComments = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showComments: !prevState.showComments,
+    }));
   };
 
   toggleReactions = () => {
@@ -46,15 +54,14 @@ class QuestionViewer extends Component {
       showReactions: !prevState.showReactions,
     }));
   };
-  toggleComments = () => {
+  toggleEditions = () => {
     this.setState(prevState => ({
       ...prevState,
-      showComments: !prevState.showComments,
+      showEditions: !prevState.showEditions,
     }));
   };
-
   render() {
-    const { showReactions, showComments } = this.state;
+    const { showReactions, showComments, showEditions } = this.state;
     const {
       hovered,
       isPersonal = true,
@@ -67,6 +74,8 @@ class QuestionViewer extends Component {
     const commentBtnText =
       numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
     const answerId = question.answer.id;
+    const hasEditions =
+      question.answer.editions && question.answer.editions.length;
 
     return (
       <Fragment>
@@ -82,6 +91,9 @@ class QuestionViewer extends Component {
         </Row>
         <Answer viewMode question={question} />
         <Row>
+          {hasEditions && (
+            <Span onClick={this.toggleEditions}>edit history</Span>
+          )}
           <Span onClick={this.toggleReactions}>15 Reactions</Span>
           <Span onClick={this.toggleComments}>{commentBtnText}</Span>
         </Row>
@@ -89,6 +101,12 @@ class QuestionViewer extends Component {
           <Comments answerId={answerId} onClose={this.toggleComments} />
         )}
         {showReactions && <Reactions onClose={this.toggleReactions} />}
+        {showEditions && (
+          <Editions
+            editions={question.answer.editions}
+            onClose={this.toggleEditions}
+          />
+        )}
       </Fragment>
     );
   }

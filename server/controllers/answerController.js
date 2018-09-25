@@ -15,10 +15,22 @@ const edit = async ({ answerId, answerValue }, context) => {
     models: { Answer },
   } = context;
 
+  const oldAnswer = await Answer.findById(answerId).lean();
+
+  const edition = {
+    id: ObjectId(),
+    date: new Date().toISOString(),
+    before: oldAnswer.value,
+    after: answerValue,
+  };
+
   const newAnswer = await Answer.findByIdAndUpdate(
     answerId,
-    { $set: { value: answerValue } },
-    { new: true }
+    {
+      $set: { value: answerValue },
+      $push: { editions: edition },
+    },
+    { new: true, upsert: true }
   ).lean();
 
   return mapGqlAnswer(newAnswer);

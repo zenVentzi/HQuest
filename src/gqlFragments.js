@@ -7,6 +7,26 @@ export const AnswerFields = gql`
     questionId
     value
     numOfComments
+    editions {
+      id
+      date
+      before
+      after
+    }
+  }
+`;
+
+export const CommentFields = gql`
+  fragment CommentFields on Comment {
+    id
+    user {
+      id
+      fullName
+      intro
+      avatarSrc
+      me
+    }
+    comment
   }
 `;
 

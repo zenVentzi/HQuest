@@ -69,6 +69,7 @@ const mapGqlAnswer = answer => {
     questionId: answer.questionId.toString(),
     userId: answer.userId.toString(),
     numOfComments: answer.comments.length,
+    editions: answer.editions,
     value: answer.value,
   };
   return res;

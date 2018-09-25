@@ -92,6 +92,14 @@ type Answer {
   questionId: ID!
   value: String!
   numOfComments: Int!
+  editions: [AnswerEdition!]
+}
+
+type AnswerEdition {
+  id: ID!
+  date: DateTime
+  before: String!
+  after: String!
 }
 
 type Comment {
