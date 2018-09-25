@@ -75,8 +75,15 @@ const movePosition = async ({ answerId, position }, context) => {
     models: { Answer },
   } = context;
 
-  const update = { $set: { position } };
-  await Answer.findByIdAndUpdate(answerId, update);
+  const currentAnswer = await Answer.findById(answerId).lean();
+  await Answer.findOneAndUpdate(
+    { position },
+    { $set: { position: currentAnswer.position } }
+  );
+
+  await Answer.findByIdAndUpdate(answerId, {
+    $set: { position },
+  });
 
   return position;
 };
