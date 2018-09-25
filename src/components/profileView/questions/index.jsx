@@ -84,7 +84,7 @@ class QuestionsContainer extends Component {
       answered: showAnswered,
       userId: user.id,
       tags: selectedTags,
-      first: 2,
+      first: 20,
     };
 
     return (
