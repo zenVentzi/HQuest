@@ -86,6 +86,13 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
   return mapGqlQuestion(answeredQuestion);
 };
 
+const preserveOrder = ({ answeredQuestionsIds, questions }) => {
+  const res = answeredQuestionsIds.map(id =>
+    questions.find(q => q._id.equals(id))
+  );
+  return res;
+};
+
 const getUserAnsweredQuestions = async (
   { answers, answeredQuestionsIds, tags },
   context
@@ -101,8 +108,9 @@ const getUserAnsweredQuestions = async (
   }
 
   const questions = await Question.find(query).lean();
+  const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
 
-  return mapGqlQuestions(mergeAnswersWithQuestions(answers, questions));
+  return mapGqlQuestions(mergeAnswersWithQuestions(answers, orderedQs));
 };
 
 const getUserUnansweredQuestions = async (

@@ -21,20 +21,22 @@ const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
     toast.success('🦄 Answer removed!');
     refetch();
   };
+  const onMovePosition = ({ moveAnswerPosition, answerId }) => async ({
+    newPosition,
+  }) => {
+    const variables = { answerId, position: newPosition };
+    await moveAnswerPosition({ variables });
+    toast.success('🦄 Question moved!');
+    refetch();
+  };
 
   if (!questions.length) {
     return <Empty style={style}> No answered questions </Empty>;
   }
 
-  /* 
-  
-  1) 
-  
-  */
-
   return (
     <AnsweredQuestionsGql>
-      {(editAnswer, removeAnswer) => {
+      {(editAnswer, removeAnswer, moveAnswerPosition) => {
         return questions.map(q => (
           <Fragment key={q.id}>
             <AnsweredQuestion
@@ -44,6 +46,10 @@ const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
               question={q}
               onClickSave={onClickSave(editAnswer, q.answer.id)}
               onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
+              onMovePosition={onMovePosition({
+                moveAnswerPosition,
+                answerId: q.answer.id,
+              })}
             />
           </Fragment>
         ));

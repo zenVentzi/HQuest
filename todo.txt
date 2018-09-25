@@ -1,4 +1,5 @@
-- edithistory,
+Todo:
+- change onMovePosition to onClickMove in AnsweredQs
 - reorder
 - make QUestionViewer and editor AnswerViewer and editor
 - confirmation dialog
@@ -9,6 +10,9 @@
 - rename FloatingWindow to Modal
 - use floater for modals
 - study the GitHunt example
+
+Fix:
+- edit history need refresh after edit
 
 react-router-page-transition
 react-reveal

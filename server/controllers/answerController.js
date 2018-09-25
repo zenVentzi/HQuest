@@ -7,7 +7,11 @@ const getUserAnswers = async ({ userId }, context) => {
     models: { Answer },
   } = context;
 
-  return Answer.find({ userId: ObjectId(userId) }).lean();
+  const res = await Answer.find({ userId: ObjectId(userId) })
+    .sort({ position: 1 })
+    .lean();
+
+  return res;
 };
 
 const edit = async ({ answerId, answerValue }, context) => {
@@ -41,11 +45,14 @@ const add = async ({ questionId, answerValue }, context) => {
     models: { Answer },
   } = context;
 
+  const numOfAnswers = await Answer.count();
+
   const answer = {
     userId: ObjectId(context.user.id),
     questionId: ObjectId(questionId),
     comments: [],
     value: answerValue,
+    position: numOfAnswers + 1,
   };
 
   const newAnswer = await Answer.create(answer);
@@ -63,4 +70,15 @@ const remove = async ({ answerId }, context) => {
   return mapGqlAnswer(deletedAnswer);
 };
 
-module.exports = { add, edit, remove, getUserAnswers };
+const movePosition = async ({ answerId, position }, context) => {
+  const {
+    models: { Answer },
+  } = context;
+
+  const update = { $set: { position } };
+  await Answer.findByIdAndUpdate(answerId, update);
+
+  return position;
+};
+
+module.exports = { add, edit, remove, movePosition, getUserAnswers };

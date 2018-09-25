@@ -32,6 +32,11 @@ export const CREATE_QUESTION_MUTATION = gql`
     )
   }
 `;
+export const MOVE_ANSWER_POSITION = gql`
+  mutation moveAnswerPosition($position: Int!, $answerId: ID!) {
+    moveAnswerPosition(position: $position, answerId: $answerId)
+  }
+`;
 
 export const EDIT_ANSWER = gql`
   mutation editAnswer($answerId: ID!, $answerValue: String!) {

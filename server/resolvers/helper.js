@@ -71,6 +71,7 @@ const mapGqlAnswer = answer => {
     numOfComments: answer.comments.length,
     editions: answer.editions,
     value: answer.value,
+    position: answer.position,
   };
   return res;
 };
