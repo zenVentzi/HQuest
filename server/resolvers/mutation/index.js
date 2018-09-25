@@ -98,6 +98,9 @@ async function addAnswer(_, args, context) {
 async function removeAnswer(_, args, context) {
   return answerController.remove(args, context);
 }
+async function moveAnswerPosition(_, args, context) {
+  return answerController.movePosition(args, context);
+}
 
 async function uploadAvatar(_, { base64Img }, context) {
   const avatarSrc = await userController.uploadAvatar(base64Img, context);
@@ -129,6 +132,7 @@ module.exports = {
   addAnswer,
   editAnswer,
   removeAnswer,
+  moveAnswerPosition,
   uploadAvatar,
   follow,
 };

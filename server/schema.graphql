@@ -179,6 +179,7 @@ type Mutation {
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
+  moveAnswerPosition(answerId: ID!, position: Int!): Int
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
   follow(userId: ID!, follow: Boolean!): Boolean

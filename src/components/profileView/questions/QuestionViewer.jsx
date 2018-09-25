@@ -1,6 +1,7 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 import Editions from './Editions';
+import PositionEditor from './PositionEditor';
 import Answer from './Answer';
 import QuestionText from './QuestionText';
 import Reactions from './Panels/Reactions';
@@ -29,16 +30,13 @@ class QuestionViewer extends Component {
     showComments: !this.props.collapseComments,
     showReactions: false,
     showEditions: false,
+    showPositionEditor: false,
   };
 
-  onClickRemove = mutate => async () => {
-    await mutate({
-      variables: {
-        answerId: this.props.question.answer.id,
-      },
-    });
-
-    this.props.onRemoved();
+  onMovePosition = async ({ newPosition }) => {
+    await this.props.onMovePosition({ newPosition });
+    // check for success or failure
+    this.togglePositionEditor();
   };
 
   toggleComments = () => {
@@ -54,14 +52,28 @@ class QuestionViewer extends Component {
       showReactions: !prevState.showReactions,
     }));
   };
+
+  togglePositionEditor = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showPositionEditor: !prevState.showPositionEditor,
+    }));
+  };
+
   toggleEditions = () => {
     this.setState(prevState => ({
       ...prevState,
       showEditions: !prevState.showEditions,
     }));
   };
+
   render() {
-    const { showReactions, showComments, showEditions } = this.state;
+    const {
+      showReactions,
+      showComments,
+      showEditions,
+      showPositionEditor,
+    } = this.state;
     const {
       hovered,
       isPersonal = true,
@@ -77,7 +89,13 @@ class QuestionViewer extends Component {
     const hasEditions =
       question.answer.editions && question.answer.editions.length;
 
-    return (
+    return showPositionEditor ? (
+      <PositionEditor
+        position={question.answer.position}
+        onClickMove={this.onMovePosition}
+        onClickClose={this.togglePositionEditor}
+      />
+    ) : (
       <Fragment>
         <Row>
           <QuestionText> {question.question}</QuestionText>
@@ -86,6 +104,7 @@ class QuestionViewer extends Component {
               hideIcon={!hovered}
               onClickEdit={onClickEdit}
               onClickRemove={onClickRemove}
+              onClickMove={this.togglePositionEditor}
             />
           )}
         </Row>

@@ -39,7 +39,12 @@ class QuestionOptions extends Component {
 
   render() {
     const { showDropdown } = this.state;
-    const { hideIcon: hideIconProp, onClickEdit, onClickRemove } = this.props;
+    const {
+      hideIcon: hideIconProp,
+      onClickEdit,
+      onClickRemove,
+      onClickMove,
+    } = this.props;
 
     const options = [
       <TextBtn key="edit" onClick={onClickEdit}>
@@ -47,6 +52,9 @@ class QuestionOptions extends Component {
       </TextBtn>,
       <TextBtn key="Remove" onClick={onClickRemove}>
         Remove
+      </TextBtn>,
+      <TextBtn key="move" onClick={onClickMove}>
+        Move
       </TextBtn>,
     ];
 

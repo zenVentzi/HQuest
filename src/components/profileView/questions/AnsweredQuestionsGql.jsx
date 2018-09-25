@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Mutation } from 'react-apollo';
-import { EDIT_ANSWER, REMOVE_ANSWER } from 'Mutations';
+import { EDIT_ANSWER, REMOVE_ANSWER, MOVE_ANSWER_POSITION } from 'Mutations';
 
 class AnsweredQuestionsGql extends Component {
   render() {
@@ -12,7 +12,17 @@ class AnsweredQuestionsGql extends Component {
           return (
             <Mutation mutation={REMOVE_ANSWER}>
               {removeAnswer => {
-                return children(editAnswer, removeAnswer);
+                return (
+                  <Mutation mutation={MOVE_ANSWER_POSITION}>
+                    {moveAnswerPosition => {
+                      return children(
+                        editAnswer,
+                        removeAnswer,
+                        moveAnswerPosition
+                      );
+                    }}
+                  </Mutation>
+                );
               }}
             </Mutation>
           );
