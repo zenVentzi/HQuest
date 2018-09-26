@@ -51,8 +51,8 @@ class AnsweredQuestion extends Component {
     await this.props.onClickRemove();
   };
 
-  onMovePosition = async ({ newPosition }) => {
-    await this.props.onMovePosition({ newPosition });
+  onClickMove = async ({ newPosition }) => {
+    await this.props.onClickMove({ newPosition });
   };
 
   onChange = answerValue => {
@@ -86,7 +86,7 @@ class AnsweredQuestion extends Component {
             collapseComments={collapseComments}
             onClickEdit={this.onClickEdit}
             onClickRemove={this.onClickRemove}
-            onMovePosition={this.onMovePosition}
+            onClickMove={this.onClickMove}
           />
         ) : (
           // onSave, refetch
