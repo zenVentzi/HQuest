@@ -80,6 +80,7 @@ class QuestionViewer extends Component {
       onClickEdit,
       onClickRemove,
       question,
+      totalQuestionsCount,
     } = this.props;
 
     const { numOfComments } = question.answer;
@@ -92,6 +93,7 @@ class QuestionViewer extends Component {
     return showPositionEditor ? (
       <PositionEditor
         position={question.answer.position}
+        maxPosition={totalQuestionsCount}
         onClickMove={this.onMovePosition}
         onClickClose={this.togglePositionEditor}
       />

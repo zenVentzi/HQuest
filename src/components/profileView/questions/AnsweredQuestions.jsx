@@ -9,7 +9,13 @@ const Empty = styled.div`
   width: 100%;
 `;
 
-const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
+const AnsweredQuestions = ({
+  isPersonal,
+  questions,
+  totalCount,
+  refetch,
+  ...style
+}) => {
   const onClickSave = (editAnswer, answerId) => async answerValue => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
@@ -44,6 +50,7 @@ const AnsweredQuestions = ({ isPersonal, questions, refetch, ...style }) => {
               style={style}
               isPersonal={isPersonal}
               question={q}
+              totalQuestionsCount={totalCount}
               onClickSave={onClickSave(editAnswer, q.answer.id)}
               onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
               onMovePosition={onMovePosition({

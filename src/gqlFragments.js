@@ -13,6 +13,7 @@ export const AnswerFields = gql`
       before
       after
     }
+    position
   }
 `;
 
@@ -72,6 +73,7 @@ export const QuestionConnectionFields = gql`
     edges {
       ...QuestionEdgeFields
     }
+    totalCount
   }
   ${PageInfoFields}
   ${QuestionEdgeFields}
