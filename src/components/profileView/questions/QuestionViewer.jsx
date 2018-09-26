@@ -34,7 +34,7 @@ class QuestionViewer extends Component {
   };
 
   onMovePosition = async ({ newPosition }) => {
-    await this.props.onMovePosition({ newPosition });
+    await this.props.onClickMove({ newPosition });
     // check for success or failure
     this.togglePositionEditor();
   };

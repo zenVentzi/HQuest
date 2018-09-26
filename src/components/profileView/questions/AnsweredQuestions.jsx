@@ -27,7 +27,7 @@ const AnsweredQuestions = ({
     toast.success('🦄 Answer removed!');
     refetch();
   };
-  const onMovePosition = ({ moveAnswerPosition, answerId }) => async ({
+  const onClickMove = ({ moveAnswerPosition, answerId }) => async ({
     newPosition,
   }) => {
     const variables = { answerId, position: newPosition };
@@ -53,7 +53,7 @@ const AnsweredQuestions = ({
               totalQuestionsCount={totalCount}
               onClickSave={onClickSave(editAnswer, q.answer.id)}
               onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
-              onMovePosition={onMovePosition({
+              onClickMove={onClickMove({
                 moveAnswerPosition,
                 answerId: q.answer.id,
               })}
