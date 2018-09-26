@@ -84,6 +84,7 @@ type QuestionEdge implements Edge {
 type QuestionConnection implements Connection {
   pageInfo: PageInfo!
   edges: [QuestionEdge!]
+  totalCount: Int!
 }
 
 type Answer {
@@ -93,6 +94,7 @@ type Answer {
   value: String!
   numOfComments: Int!
   editions: [AnswerEdition!]
+  position: Int!
 }
 
 type AnswerEdition {

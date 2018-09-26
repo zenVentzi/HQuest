@@ -45,14 +45,14 @@ const add = async ({ questionId, answerValue }, context) => {
     models: { Answer },
   } = context;
 
-  const numOfAnswers = await Answer.count();
+  await Answer.updateMany({}, { $inc: { position: 1 } });
 
   const answer = {
     userId: ObjectId(context.user.id),
     questionId: ObjectId(questionId),
     comments: [],
     value: answerValue,
-    position: numOfAnswers + 1,
+    position: 1,
   };
 
   const newAnswer = await Answer.create(answer);
@@ -75,6 +75,8 @@ const movePosition = async ({ answerId, position }, context) => {
     models: { Answer },
   } = context;
 
+  const answersCount = await Answer.count();
+  // const reversedPosition = answersCount - position + 1;
   const currentAnswer = await Answer.findById(answerId).lean();
   await Answer.findOneAndUpdate(
     { position },

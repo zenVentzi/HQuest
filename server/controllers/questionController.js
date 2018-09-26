@@ -215,7 +215,11 @@ const getUserQuestionConnection = async (args, context) => {
   const currentPageEdges = getCurrentPageEdges(args, allEdges);
   const pageInfo = getPageInfo(allEdges, currentPageEdges);
 
-  const connection = { pageInfo, edges: currentPageEdges };
+  const connection = {
+    pageInfo,
+    edges: currentPageEdges,
+    totalCount: allEdges.length,
+  };
   return connection;
 };
 

@@ -61,7 +61,13 @@ class AnsweredQuestion extends Component {
 
   render() {
     const { hovered, viewMode } = this.state;
-    const { question, isPersonal, collapseComments, style } = this.props;
+    const {
+      question,
+      totalQuestionsCount,
+      isPersonal,
+      collapseComments,
+      style,
+    } = this.props;
 
     return (
       <StyledQuestion
@@ -76,6 +82,7 @@ class AnsweredQuestion extends Component {
             hovered={hovered}
             isPersonal={isPersonal}
             question={question}
+            totalQuestionsCount={totalQuestionsCount}
             collapseComments={collapseComments}
             onClickEdit={this.onClickEdit}
             onClickRemove={this.onClickRemove}

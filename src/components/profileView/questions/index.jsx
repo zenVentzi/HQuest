@@ -68,6 +68,7 @@ class QuestionsContainer extends Component {
     return showAnswered ? (
       <AnsweredQuestions
         isPersonal={user.me}
+        totalCount={questions.totalCount}
         questions={questionNodes}
         refetch={refetch}
       />
