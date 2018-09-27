@@ -1,7 +1,7 @@
 import React from 'react';
-import Scale from './Scale';
-import Options from './Options';
-import Text from './Text';
+import Scale from './Types/Scale';
+import Options from './Types/Options';
+import Text from './Types/Text';
 import { QuestionTypes } from '../../../../constants';
 
 const Answer = props => {

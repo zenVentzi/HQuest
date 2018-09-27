@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
 import { GET_QUESTIONS } from 'Queries';
 import AnsweredQuestions from './AnsweredQuestions';
-import QuestionTags from './QuestionTags';
+import QuestionTags from './Tags';
 import UnansweredQuestions from './UnansweredQuestions';
 
 class QuestionsContainer extends Component {

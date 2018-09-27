@@ -1,68 +1,92 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { iconBtn } from 'Reusable/css';
+import TextBtn from 'Reusable/TextBtn';
+import IconBtn from 'Reusable/IconBtn';
+import { CaretSquareDown } from 'styled-icons/fa-solid/CaretSquareDown';
+import DropdownWrapper from 'Reusable/DropdownWrapper';
+import DropdownList from 'Reusable/DropdownList';
 
-const Viwer = styled.div`
-  word-wrap: break-word;
-  max-width: 80%;
-  background: black;
-  color: white;
-  border-radius: 0.2em;
-  padding: 0.2em 4em;
+const CaretBtn = styled(CaretSquareDown)`
+  ${iconBtn};
+  margin-top: 0.5em;
 `;
 
-const Select = styled.select`
-  text-align: center;
-  max-width: 80%;
-  text-align-last: center;
-  background-color: black;
-  border-radius: 0.5em;
-  color: white;
-`;
-
-const DEFAULT_OPTION = 'default';
-
-class Options extends Component {
-  // state = { editedValue: null };
-
-  onChange = e => {
-    const selectedOption = e.target.value;
-
-    this.props.onChange(selectedOption);
+class AnswerOptions extends Component {
+  state = {
+    showDropdown: false,
   };
 
-  renderOptions = () => {
-    const result = [
-      <option key={DEFAULT_OPTION} value={DEFAULT_OPTION} disabled>
-        Select an option
-      </option>,
-    ];
+  onClickOutsideDropdown = e => {
+    const carretBtnClicked = this.isClickOnCaretBtn(e.target);
+    if (carretBtnClicked) return;
+    this.toggleDropdown();
+  };
 
-    this.props.options.forEach(opt =>
-      result.push(
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      )
-    );
+  isClickOnCaretBtn = target => {
+    const buttonWrapper = this.caretBtn.current;
+    const btnChildren = buttonWrapper.querySelectorAll('*');
 
-    return result;
+    return target === buttonWrapper || [...btnChildren].includes(target);
+  };
+
+  caretBtn = React.createRef();
+
+  toggleDropdown = () => {
+    const current = this.state.showDropdown;
+    this.setState({ showDropdown: !current });
+  };
+
+  onClickEdit = () => {
+    this.props.onClickEdit();
+    this.toggleDropdown();
+  };
+  onClickRemove = () => {
+    this.props.onCLickRemove();
+    this.toggleDropdown();
+  };
+  onClickMove = () => {
+    this.props.onClickMove();
+    this.toggleDropdown();
   };
 
   render() {
-    const { viewMode, option } = this.props;
+    const { showDropdown } = this.state;
+    const { hideIcon: hideIconProp } = this.props;
 
-    if (viewMode) {
-      return <Viwer>{option}</Viwer>;
-    }
+    const options = [
+      <TextBtn key="edit" onClick={this.onClickEdit}>
+        Edit
+      </TextBtn>,
+      <TextBtn key="remove" onClick={this.onClickRemove}>
+        Remove
+      </TextBtn>,
+      <TextBtn key="move" onClick={this.onClickMove}>
+        Move
+      </TextBtn>,
+    ];
 
-    const defaultOption = option || DEFAULT_OPTION;
+    const hideIcon = hideIconProp && !showDropdown;
 
     return (
-      <Select defaultValue={defaultOption} onChange={this.onChange}>
-        {this.renderOptions()}
-      </Select>
+      <DropdownWrapper>
+        <CaretBtn
+          innerRef={this.caretBtn}
+          onClick={this.toggleDropdown}
+          size="1em"
+          hide={hideIcon}
+        />
+        {showDropdown && (
+          <DropdownList
+            marginTop="1.8em"
+            pivot="right"
+            items={options}
+            onClickOutside={this.onClickOutsideDropdown}
+          />
+        )}
+      </DropdownWrapper>
     );
   }
 }
 
-export default Options;
+export default AnswerOptions;

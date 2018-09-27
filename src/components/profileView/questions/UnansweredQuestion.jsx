@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import TextBtn from 'Reusable/TextBtn';
-import QuestionEditor from './QuestionEditor';
+import AnswerEditor from './Answer/AnswerEditor';
+import Question from './Question';
 
 const StyledQuestion = styled.div`
   /* border: 3px solid black; */
@@ -23,40 +24,38 @@ const EditorButtons = styled.div`
 `;
 
 class UnansweredQuestion extends Component {
-  onClickAdd = () => {
-    const { onClickAdd, question } = this.props;
+  onClickSave = ({ answerValue }) => {
+    const { onClickSave, question } = this.props;
 
-    if (!this.answerValue && !question.defaultAnswer) {
+    if (!answerValue && !question.defaultAnswer) {
       toast.error('🦄 Answer not provided');
       return;
     }
 
     /* else if < minimumAnswerLength .toast.. */
 
-    onClickAdd({
-      questionId: question.id,
-      answerValue: this.answerValue || question.defaultAnswer,
+    onClickSave({
+      answerValue: answerValue || question.defaultAnswer,
     });
   };
 
+  onClickDoesNotApply = () => {
+    this.props.onClickDoesNotApply();
+  };
+
   render() {
-    const { question, style, onDoesNotApply } = this.props;
+    const { question, style } = this.props;
 
     return (
-      // on save, refetch
       <StyledQuestion style={style}>
-        <QuestionEditor
-          question={question}
-          onChange={answerValue => {
-            this.answerValue = answerValue;
-          }}
+        <Question question={question.question} />
+        <AnswerEditor
+          answerType={question.type}
+          answer={question.answer.value}
+          possibleAnswers={question.possibleAnswers}
+          onClickSave={this.onClickSave}
+          onClickDoesNotApply={this.onClickDoesNotApply}
         />
-        <EditorButtons>
-          <div>
-            <TextBtn onClick={this.onClickAdd}>Add</TextBtn>
-          </div>
-          <TextBtn onClick={onDoesNotApply}>Does not apply</TextBtn>
-        </EditorButtons>
       </StyledQuestion>
     );
   }

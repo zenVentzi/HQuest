@@ -5,7 +5,7 @@ import UnansweredQuestionsGql from './UnansweredQuestionsGql';
 import UnansweredQuestion from './UnansweredQuestion';
 
 class UnansweredQuestions extends Component {
-  onClickAdd = ({ addAnswer, questionId }) => async ({ answerValue }) => {
+  onClickSave = ({ addAnswer, questionId }) => async ({ answerValue }) => {
     const variables = {
       questionId,
       answerValue,
@@ -39,7 +39,7 @@ class UnansweredQuestions extends Component {
               key={q.id}
               style={style}
               question={q}
-              onClickAdd={this.onClickAdd({
+              onClickSave={this.onClickSave({
                 addAnswer,
                 questionId: q.id,
               })}

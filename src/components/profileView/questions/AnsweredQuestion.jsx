@@ -1,8 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
-import QuestionViewer from './QuestionViewer';
-import QuestionEditor from './QuestionEditor';
+import Question from './Question';
+import Comments from './Answer/Comments';
+import Reactions from './Answer/Reactions';
+import Editions from './Answer/Editions';
+import AnswerOptions from './Answer/Options';
+import AnswerEditor from './Answer/AnswerEditor';
+import AnswerViewer from './Answer/AnswerViewer';
+import PositionEditor from './Answer/PositionEditor';
 
 const StyledQuestion = styled.div`
   /* border: 3px solid black; */
@@ -13,13 +18,34 @@ const StyledQuestion = styled.div`
   align-items: center;
 `;
 
+const Row = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Span = styled.span`
+  cursor: pointer;
+  margin: 1em 0.6em;
+  font-size: 0.7em;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #555;
+  }
+`;
+
 class AnsweredQuestion extends Component {
   state = {
     hovered: false,
     viewMode: true,
+    showComments: !this.props.collapseComments,
+    showReactions: false,
+    showEditions: false,
+    showPositionEditor: false,
   };
 
-  answerValue = this.props.question.answer.value;
+  // answerValue = this.props.question.answer.value;
 
   onMouseEnter = () => {
     this.toggleHovered(true);
@@ -27,24 +53,6 @@ class AnsweredQuestion extends Component {
 
   onMouseLeave = () => {
     this.toggleHovered(false);
-  };
-
-  toggleHovered = value => {
-    this.setState({ ...this.state, hovered: value });
-  };
-
-  toggleViewMode = () => {
-    this.setState({ ...this.state, viewMode: !this.state.viewMode });
-  };
-
-  onClickEdit = () => {
-    this.toggleViewMode();
-  };
-
-  onClickSave = async () => {
-    await this.props.onClickSave(this.answerValue);
-    // todo: only toggle if successful
-    this.toggleViewMode();
   };
 
   onClickRemove = async () => {
@@ -59,8 +67,66 @@ class AnsweredQuestion extends Component {
     this.answerValue = answerValue;
   };
 
+  toggleHovered = value => {
+    this.setState({ ...this.state, hovered: value });
+  };
+
+  toggleViewMode = () => {
+    this.setState({ ...this.state, viewMode: !this.state.viewMode });
+  };
+
+  onClickEdit = () => {
+    this.toggleViewMode();
+  };
+
+  onClickSave = async ({ answerValue }) => {
+    await this.props.onClickSave({ answerValue });
+    // todo: only toggle if successful
+    this.toggleViewMode();
+  };
+
+  toggleComments = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showComments: !prevState.showComments,
+    }));
+  };
+
+  toggleReactions = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showReactions: !prevState.showReactions,
+    }));
+  };
+
+  toggleEditions = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showEditions: !prevState.showEditions,
+    }));
+  };
+
+  togglePositionEditor = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      showPositionEditor: !prevState.showPositionEditor,
+    }));
+  };
+
+  onMovePosition = async ({ newPosition }) => {
+    await this.props.onClickMove({ newPosition });
+    // check for success or failure
+    this.togglePositionEditor();
+  };
   render() {
-    const { hovered, viewMode } = this.state;
+    const {
+      hovered,
+      viewMode,
+      showReactions,
+      showComments,
+      showEditions,
+      showPositionEditor,
+    } = this.state;
     const {
       question,
       totalQuestionsCount,
@@ -68,6 +134,12 @@ class AnsweredQuestion extends Component {
       collapseComments,
       style,
     } = this.props;
+
+    const hasEditions =
+      question.answer.editions && question.answer.editions.length;
+    const { numOfComments } = question.answer;
+    const commentBtnText =
+      numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
 
     return (
       <StyledQuestion
@@ -77,24 +149,60 @@ class AnsweredQuestion extends Component {
         onBlur={this.onMouseLeave}
         style={style}
       >
+        <Row>
+          <Question question={question.question} />
+          {isPersonal && (
+            <AnswerOptions
+              hideIcon={!hovered} // rename to hide dropdown btn
+              onClickEdit={this.onClickEdit}
+              onClickRemove={this.onClickRemove}
+              onClickMove={this.togglePositionEditor}
+            />
+          )}
+        </Row>
         {viewMode ? (
-          <QuestionViewer
-            hovered={hovered}
-            isPersonal={isPersonal}
-            question={question}
-            totalQuestionsCount={totalQuestionsCount}
+          <AnswerViewer
+            questionType={question.type}
+            answer={question.answer}
+            possibleAnswers={question.possibleAnswers}
             collapseComments={collapseComments}
-            onClickEdit={this.onClickEdit}
-            onClickRemove={this.onClickRemove}
-            onClickMove={this.onClickMove}
           />
         ) : (
-          // onSave, refetch
-          <Fragment>
-            <QuestionEditor question={question} onChange={this.onChange} />
-            <TextBtn onClick={this.onClickSave}>Save</TextBtn>
-          </Fragment>
+          <AnswerEditor
+            questionType={question.type}
+            answer={question.answer}
+            possibleAnswers={question.possibleAnswers}
+            onClickSave={this.onClickSave}
+          />
         )}
+        {showComments && (
+          <Comments
+            answerId={question.answer.id}
+            onClose={this.toggleComments}
+          />
+        )}
+        {showReactions && <Reactions onClose={this.toggleReactions} />}
+        {showEditions && (
+          <Editions
+            editions={question.answer.editions}
+            onClose={this.toggleEditions}
+          />
+        )}
+        {showPositionEditor && (
+          <PositionEditor
+            position={question.answer.position}
+            maxPosition={totalQuestionsCount}
+            onClickMove={this.onMovePosition}
+            onClickClose={this.togglePositionEditor}
+          />
+        )}
+        <Row>
+          {hasEditions && (
+            <Span onClick={this.toggleEditions}>edit history</Span>
+          )}
+          <Span onClick={this.toggleReactions}>15 Reactions</Span>
+          <Span onClick={this.toggleComments}>{commentBtnText}</Span>
+        </Row>
       </StyledQuestion>
     );
   }
