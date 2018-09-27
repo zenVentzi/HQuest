@@ -16,7 +16,7 @@ const AnsweredQuestions = ({
   refetch,
   ...style
 }) => {
-  const onClickSave = (editAnswer, answerId) => async answerValue => {
+  const onClickSave = (editAnswer, answerId) => async ({ answerValue }) => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
     toast.success('🦄 Answer edited!');
