@@ -1,10 +1,6 @@
 Todo:
-- remove QuestionText comp
-- add answers validation
-- on remove answer, mark as removed, do not actually remove it
-- move possibleAnswers to the answer obj
-- make QUestionViewer and editor AnswerViewer and editor
 - improve question ui
+- add answers validation
 - confirmation dialog
 - Display question’s tags on hover
 - delay loading
