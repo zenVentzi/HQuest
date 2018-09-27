@@ -19,9 +19,19 @@ const Buttons = styled.div`
 `;
 
 class AnswerEditor extends Component {
-  state = {
-    answerValue: this.props.answer.value || this.props.defaultAnswer || '',
-  };
+  constructor(props) {
+    super(props);
+
+    let answerValue;
+
+    if (this.props.answer) {
+      answerValue = this.props.answer.value;
+    } else {
+      answerValue = this.props.defaultAnswer || '';
+    }
+
+    this.state = { answerValue };
+  }
 
   onChange = editedAnswer => {
     const newState = { ...this.state, answerValue: editedAnswer };
@@ -38,15 +48,8 @@ class AnswerEditor extends Component {
   };
 
   renderAnswer() {
-    const { questionType, possibleAnswers, answer, defaultAnswer } = this.props;
-
-    let answerValue;
-
-    if (answer) {
-      answerValue = answer.value;
-    } else {
-      answerValue = defaultAnswer || '';
-    }
+    const { questionType, possibleAnswers } = this.props;
+    const { answerValue } = this.state;
 
     let result;
 

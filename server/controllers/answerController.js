@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 const bcrypt = require('bcrypt');
+const { QuestionTypes } = require('../constants');
 const { mapGqlAnswer } = require('../resolvers/helper');
 
 const getUserAnswers = async ({ userId }, context) => {
@@ -17,21 +18,45 @@ const getUserAnswers = async ({ userId }, context) => {
   return res;
 };
 
+const createEdition = async ({ answerId, answerValue }, context) => {
+  const {
+    models: { Answer, Question },
+  } = context;
+
+  const oldAnswer = await Answer.findById(answerId).lean();
+  const { type: questionType, possibleAnswers } = await Question.findById(
+    oldAnswer.questionId
+  ).lean();
+
+  let before;
+  let after;
+
+  if (questionType === QuestionTypes.SCALE) {
+    const oldAnswerName = possibleAnswers[oldAnswer.value];
+    const updatedAnswerName = possibleAnswers[answerValue];
+    before = oldAnswerName;
+    after = updatedAnswerName;
+  } else {
+    before = oldAnswer.value;
+    after = answerValue;
+  }
+
+  return {
+    id: ObjectId(),
+    date: new Date().toISOString(),
+    before,
+    after,
+  };
+};
+
 const edit = async ({ answerId, answerValue }, context) => {
   const {
     models: { Answer },
   } = context;
 
-  const oldAnswer = await Answer.findById(answerId).lean();
+  const edition = await createEdition({ answerId, answerValue }, context);
 
-  const edition = {
-    id: ObjectId(),
-    date: new Date().toISOString(),
-    before: oldAnswer.value,
-    after: answerValue,
-  };
-
-  const newAnswer = await Answer.findByIdAndUpdate(
+  const updatedAnswer = await Answer.findByIdAndUpdate(
     answerId,
     {
       $set: { value: answerValue },
@@ -40,7 +65,7 @@ const edit = async ({ answerId, answerValue }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return mapGqlAnswer(newAnswer);
+  return mapGqlAnswer(updatedAnswer);
 };
 
 const add = async ({ questionId, answerValue }, context) => {
