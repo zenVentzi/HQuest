@@ -21,7 +21,7 @@ const Slider = styled.input`
   background: white;
   outline: none;
   transition: opacity 0.1s;
-  cursor: pointer;
+  cursor: ${props => (props.clickable ? 'pointer' : 'default')};
 
   &::-webkit-slider-thumb {
     appearance: none;
@@ -65,6 +65,7 @@ class Scale extends Component {
         <ValueName> {valueName} </ValueName>
         <Slider
           disabled={viewMode}
+          clickable={!viewMode}
           type="range"
           min={minValue}
           max={maxValue}

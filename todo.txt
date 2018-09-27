@@ -1,4 +1,5 @@
 Todo:
+- show "no notifications"
 - improve question ui
 - add answers validation
 - confirmation dialog
@@ -11,7 +12,13 @@ Todo:
 - study the GitHunt example
 
 Fix:
+- profile btn
+- comments height fit comments
+- notifs don't show personal comments
+- tag search
 - edit history need refresh after edit
+- close btn on edit history show stay on scroll
+- AnswerOptions not visible on small window
 
 react-router-page-transition
 react-reveal

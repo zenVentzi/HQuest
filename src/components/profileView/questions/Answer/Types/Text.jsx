@@ -14,11 +14,14 @@ const TextArea = styled.textarea`
 const Viewer = styled.div`
   background: black;
   color: white;
-  width: 80%;
+  width: 100%;
   padding: 0.2em 1em;
   border-radius: 0.2em;
   word-wrap: break-word;
+  text-align: center;
 `;
+
+const MAX_LENGTH = 80;
 
 const Text = props => {
   const { viewMode, answer, onChange } = props;
@@ -26,7 +29,11 @@ const Text = props => {
   return viewMode ? (
     <Viewer>{answer}</Viewer>
   ) : (
-    <TextArea defaultValue={answer} onChange={e => onChange(e.target.value)} />
+    <TextArea
+      defaultValue={answer}
+      maxLength={MAX_LENGTH}
+      onChange={e => onChange(e.target.value)}
+    />
   );
 };
 

@@ -9,7 +9,6 @@ import DropdownList from 'Reusable/DropdownList';
 
 const CaretBtn = styled(CaretSquareDown)`
   ${iconBtn};
-  margin-top: 0.5em;
 `;
 
 class AnswerOptions extends Component {

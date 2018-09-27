@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const StyledAnchor = styled.a`
   cursor: pointer;
+  text-align: center;
   font-size: 0.7em;
   text-decoration: underline;
 

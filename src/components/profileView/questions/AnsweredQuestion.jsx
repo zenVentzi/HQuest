@@ -14,18 +14,21 @@ const StyledQuestion = styled.div`
   width: 100%;
   /* height: 100px; */
   display: flex;
+  margin-bottom: 2em;
   flex-direction: column;
   align-items: center;
 `;
 
 const Row = styled.div`
   display: flex;
+  width: 100%;
+  visibility: ${props => (props.hide ? 'hidden' : 'visible')};
   justify-content: center;
 `;
 
 const Span = styled.span`
   cursor: pointer;
-  margin: 1em 0.6em;
+  margin-right: 0.6em;
   font-size: 0.7em;
   text-decoration: underline;
 
@@ -204,7 +207,7 @@ class AnsweredQuestion extends Component {
             onClickClose={this.togglePositionEditor}
           />
         )}
-        <Row>
+        <Row hide={!hovered}>
           {hasEditions && (
             <Span onClick={this.toggleEditions}>edit history</Span>
           )}
