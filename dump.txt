@@ -1,20 +1,18 @@
-fetchMore({
-                    variables: {
-                      after: questions.pageInfo.endCursor,
-                    },
-                    updateQuery: (prev, { fetchMoreResult }) => {
-                      if (!fetchMoreResult) return prev;
-                      const res = {
-                        ...prev,
-                        ...fetchMoreResult,
-                      };
-                      res.questions.pageInfo.startCursor =
-                        prev.questions.pageInfo.startCursor;
-                      res.questions.edges = [
-                        ...prev.questions.edges,
-                        ...fetchMoreResult.questions.edges,
-                      ];
-
-                      return res;
-                    },
-                  });
+{viewMode ? (
+          <QuestionViewer
+            hovered={hovered}
+            isPersonal={isPersonal}
+            question={question}
+            totalQuestionsCount={totalQuestionsCount}
+            collapseComments={collapseComments}
+            onClickEdit={this.onClickEdit}
+            onClickRemove={this.onClickRemove}
+            onClickMove={this.onClickMove}
+          />
+        ) : (
+          // onSave, refetch
+          <Fragment>
+            <QuestionEditor question={question} onChange={this.onChange} />
+            <TextBtn onClick={this.onClickSave}>Save</TextBtn>
+          </Fragment>
+        )}

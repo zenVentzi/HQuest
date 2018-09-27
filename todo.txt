@@ -1,7 +1,10 @@
 Todo:
-- change onMovePosition to onClickMove in AnsweredQs
-- reorder
+- remove QuestionText comp
+- rename totalQuestionsCOunt to totalAnswersCOunt
+- on remove answer, mark as removed, do not actually remove it
+- move possibleAnswers to the answer obj
 - make QUestionViewer and editor AnswerViewer and editor
+- improve question ui
 - confirmation dialog
 - Display question’s tags on hover
 - delay loading
