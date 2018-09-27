@@ -7,7 +7,10 @@ const getUserAnswers = async ({ userId }, context) => {
     models: { Answer },
   } = context;
 
-  const res = await Answer.find({ userId: ObjectId(userId) })
+  const res = await Answer.find({
+    userId: ObjectId(userId),
+    $or: [{ isDeleted: { $exists: false } }, { isDeleted: false }],
+  })
     .sort({ position: 1 })
     .lean();
 
@@ -43,21 +46,38 @@ const edit = async ({ answerId, answerValue }, context) => {
 const add = async ({ questionId, answerValue }, context) => {
   const {
     models: { Answer },
+    user,
   } = context;
 
   await Answer.updateMany({}, { $inc: { position: 1 } });
+  let result;
 
-  const answer = {
-    userId: ObjectId(context.user.id),
+  const deletedAnswer = await Answer.findOne({
     questionId: ObjectId(questionId),
-    comments: [],
-    value: answerValue,
-    position: 1,
-  };
+    userId: ObjectId(user.id),
+  }).lean();
 
-  const newAnswer = await Answer.create(answer);
+  if (deletedAnswer) {
+    await edit(
+      { answerId: deletedAnswer._id.toString(), answerValue },
+      context
+    );
+    result = await Answer.findByIdAndUpdate(deletedAnswer._id, {
+      $set: { isDeleted: false, position: 1 },
+    }).lean();
+  } else {
+    const newAnswer = {
+      userId: ObjectId(user.id),
+      questionId: ObjectId(questionId),
+      comments: [],
+      value: answerValue,
+      position: 1,
+    };
 
-  return mapGqlAnswer(newAnswer);
+    result = await Answer.create(newAnswer);
+  }
+
+  return mapGqlAnswer(result);
 };
 
 const remove = async ({ answerId }, context) => {
@@ -65,7 +85,18 @@ const remove = async ({ answerId }, context) => {
     models: { Answer },
   } = context;
 
-  const deletedAnswer = await Answer.findByIdAndDelete(answerId).lean();
+  const deletedAnswer = await Answer.findByIdAndUpdate(
+    answerId,
+    {
+      $set: { isDeleted: true },
+    },
+    { new: true, upsert: true }
+  ).lean();
+
+  await Answer.updateMany(
+    { position: { gt: deletedAnswer.position } },
+    { $inc: { position: -1 } }
+  );
 
   return mapGqlAnswer(deletedAnswer);
 };

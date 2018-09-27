@@ -42,7 +42,7 @@ class AnswerOptions extends Component {
     this.toggleDropdown();
   };
   onClickRemove = () => {
-    this.props.onCLickRemove();
+    this.props.onClickRemove();
     this.toggleDropdown();
   };
   onClickMove = () => {

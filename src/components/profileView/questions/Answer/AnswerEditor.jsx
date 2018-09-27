@@ -38,7 +38,15 @@ class AnswerEditor extends Component {
   };
 
   renderAnswer() {
-    const { questionType, possibleAnswers, answer } = this.props;
+    const { questionType, possibleAnswers, answer, defaultAnswer } = this.props;
+
+    let answerValue;
+
+    if (answer) {
+      answerValue = answer.value;
+    } else {
+      answerValue = defaultAnswer || '';
+    }
 
     let result;
 
@@ -47,7 +55,7 @@ class AnswerEditor extends Component {
         result = (
           <Text
             viewMode={false}
-            answer={answer.value}
+            answer={answerValue}
             onChange={this.onChange}
           />
         );
@@ -57,7 +65,7 @@ class AnswerEditor extends Component {
           <Scale
             viewMode={false}
             values={possibleAnswers}
-            value={answer.value}
+            value={answerValue}
             onChange={this.onChange}
           />
         );
@@ -67,7 +75,7 @@ class AnswerEditor extends Component {
           <Options
             viewMode={false}
             options={possibleAnswers}
-            option={answer.value}
+            option={answerValue}
             onChange={this.onChange}
           />
         );
@@ -80,7 +88,7 @@ class AnswerEditor extends Component {
   }
 
   render() {
-    const { isNew } = this.props;
+    const { isNew } = !this.props.answer;
 
     return (
       <Fragment>
