@@ -20,7 +20,7 @@ const Buttons = styled.div`
 
 class AnswerEditor extends Component {
   state = {
-    answerValue: this.props.answerValue,
+    answerValue: this.props.answer.value || this.props.defaultAnswer || '',
   };
 
   onChange = editedAnswer => {

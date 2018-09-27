@@ -80,6 +80,14 @@ class AnsweredQuestion extends Component {
   };
 
   onClickSave = async ({ answerValue }) => {
+    const isTheSame = this.props.question.answer.value === answerValue;
+
+    if (isTheSame) {
+      this.toggleViewMode();
+      // print "Nothing changed"
+      return;
+    }
+
     await this.props.onClickSave({ answerValue });
     // todo: only toggle if successful
     this.toggleViewMode();
