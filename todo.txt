@@ -1,6 +1,6 @@
 Todo:
 - remove QuestionText comp
-- rename totalQuestionsCOunt to totalAnswersCOunt
+- add answers validation
 - on remove answer, mark as removed, do not actually remove it
 - move possibleAnswers to the answer obj
 - make QUestionViewer and editor AnswerViewer and editor
