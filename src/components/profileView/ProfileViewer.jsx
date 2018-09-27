@@ -44,6 +44,13 @@ class ProfileViewer extends Component {
       avatarSize: '150px',
     };
 
+    // return (
+    //   <div>
+    //     <div style={{ visibility: 'hidden', color: 'red' }}>bla</div>
+    //     <div>bla</div>
+    //   </div>
+    // );
+
     return (
       <ThemeProvider theme={overrideTheme(theme)}>
         <Fragment>

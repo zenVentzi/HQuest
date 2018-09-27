@@ -79,10 +79,11 @@ export const QUESTION_NOT_APPLY = gql`
   ${QuestionFields}
 `;
 
-// export const ADD_COMMENT = gql`
-//   mutation addComment($answerId: ID!, $comment: String!) {
-//     addComment(answerId: $answerId, comment: $comment) {
-//       ...CommentFields
-//   }
-//   ${CommentFields}
-// `;
+export const ADD_COMMENT = gql`
+  mutation addComment($answerId: ID!, $comment: String!) {
+    addComment(answerId: $answerId, comment: $comment) {
+      ...CommentFields
+    }
+  }
+  ${CommentFields}
+`;

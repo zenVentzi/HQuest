@@ -11,6 +11,13 @@ const InvalidText = styled.div`
   color: red;
 `;
 
+const StyledTags = styled.div`
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
 class QuestionTags extends PureComponent {
   static propTypes = {};
   state = {
@@ -222,7 +229,7 @@ class QuestionTags extends PureComponent {
           this.allTags = tags;
 
           return (
-            <Fragment>
+            <StyledTags>
               {showAllTags && (
                 <TagsWindow tags={tags} onSelect={this.onSelectFromWindow} />
               )}
@@ -241,7 +248,7 @@ class QuestionTags extends PureComponent {
                   onSelect={this.onSelectFromDropdown}
                 />
               )}
-            </Fragment>
+            </StyledTags>
           );
         }}
       </Query>

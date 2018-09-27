@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Text = styled.div`
-  width: 80%;
+  width: 100%;
   text-align: center;
   word-wrap: break-word;
-  line-height: 1.5em;
+  line-height: 1em;
   border-radius: 0.2em;
-  padding: 0.2em 1em;
+  padding-left: 1em;
+  margin-bottom: 0.5em;
 `;
 
 class Question extends Component {
