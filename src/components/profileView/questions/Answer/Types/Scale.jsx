@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
+import Floater from 'Reusable/Floater';
+import ScaleInfo from './ScaleInfo';
 
 const Wrapper = styled.div`
   width: 80%;
@@ -39,39 +41,47 @@ const ValueName = styled.p`
   margin-bottom: 0.3em;
 `;
 
-const DEFAULT_VALUE = 3;
+// const DEFAULT_VALUE = 3;
 
 class Scale extends Component {
-  state = { editedValue: null };
+  // state = { editedValue: null };
 
   onChange = e => {
     const editedValue = e.target.value;
-    this.setState({ editedValue });
+    // this.setState({ editedValue });
     this.props.onChange(editedValue);
+  };
+
+  renderValueName = valueName => {
+    console.log(valueName);
+    return <ValueName> {valueName} </ValueName>;
   };
 
   render() {
     const { viewMode, value, values } = this.props;
-    const defaultValue = value || DEFAULT_VALUE;
     const minValue = 0;
     const maxValue = values.length - 1;
-
-    const currentValue = this.state.editedValue || defaultValue;
-
-    const valueName = values[currentValue];
+    const valueName = values[value];
 
     return (
       <Wrapper>
-        <ValueName> {valueName} </ValueName>
-        <Slider
-          disabled={viewMode}
-          clickable={!viewMode}
-          type="range"
-          min={minValue}
-          max={maxValue}
-          defaultValue={defaultValue}
-          onChange={this.onChange}
-        />
+        <ValueName>{valueName}</ValueName>
+        <Floater
+          content={viewMode ? <ScaleInfo possibleAnswers={values} /> : null}
+        >
+          <div>
+            {/* div is used because mouse events work differently on disabled inputs */}
+            <Slider
+              disabled={viewMode}
+              clickable={!viewMode}
+              type="range"
+              min={minValue}
+              max={maxValue}
+              defaultValue={value}
+              onChange={this.onChange}
+            />
+          </div>
+        </Floater>
       </Wrapper>
     );
   }
