@@ -30,3 +30,30 @@ if (module.hot) {
 baseStyles();
 
 ReactDOM.render(<App />, document.getElementById('app'));
+
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+// import baseStyles from './components/base-styles';
+
+// function App() {
+//   return (
+//     <div>
+//       <h1>Hello CodeSandbox</h1>
+//       <input
+//         type="range"
+//         onMouseEnter={() => {
+//           console.log(`mouseenter`);
+//         }}
+//         onMouseLeave={() => {
+//           console.log(`mouseleave`);
+//         }}
+//       />
+//       <h2>Start editing to see some magic happen!</h2>
+//     </div>
+//   );
+// }
+
+// baseStyles();
+
+// const rootElement = document.getElementById('app');
+// ReactDOM.render(<App />, rootElement);

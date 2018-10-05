@@ -1,6 +1,22 @@
 import { injectGlobal } from 'styled-components';
 import reset from 'styled-reset';
 
+/* 
+ input {
+    padding: 0.2em 0.9em;
+    border: 2px solid white;
+    border-radius: 0.2em;
+    background: black;
+    color: white;
+  }
+
+  input:hover {
+    background-color: white;
+    color: black;
+  }
+
+*/
+
 const baseStyles = () => injectGlobal`
   ${reset}
   
@@ -40,11 +56,6 @@ const baseStyles = () => injectGlobal`
   }
 
   input {
-    padding: 0.2em 0.9em;
-    border: 2px solid white;
-    border-radius: 0.2em;
-    background: black;
-    color: white;
   }
 
   input:hover {
