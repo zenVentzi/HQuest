@@ -27,7 +27,32 @@ const signUp = async ({ firstName, surName, email, password }, context) => {
   return mapGqlUser(context, userDoc.toObject());
 };
 
-const login = async ({ email, password }, context) => {
+const registerUser = async ({ email, name }, context) => {
+  const {
+    models: { User },
+  } = context;
+
+  const [firstName, surName] = name.split(' ');
+
+  const newUser = {
+    firstName,
+    surName,
+    email,
+    intro: 'Hey, I am an intro',
+    avatarSrc: '',
+    socialMediaLinks: {
+      facebookLink: '',
+      twitterLink: '',
+      instagramLink: '',
+      linkedInLink: '',
+    },
+  };
+
+  const userDoc = await User.create(newUser);
+  return mapGqlUser(context, userDoc.toObject());
+};
+
+const login = async ({ email, name }, context) => {
   const {
     models: { User },
   } = context;
@@ -37,14 +62,7 @@ const login = async ({ email, password }, context) => {
   }).lean();
 
   if (!user) {
-    throw new Error('No user with that email');
-  }
-
-  const passwordHash = user.password;
-  const valid = await bcrypt.compare(password, passwordHash);
-
-  if (!valid) {
-    throw new Error('Incorrect password');
+    return registerUser({ email, name }, context);
   }
 
   return mapGqlUser(context, user);

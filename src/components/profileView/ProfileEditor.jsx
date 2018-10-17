@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { EDIT_USER } from 'Mutations';
 import { GET_USER } from 'Queries';
+import { toast } from 'react-toastify';
+import TextBtn from 'Reusable/TextBtn';
 
 const Input = styled.input`
   margin-bottom: 0.5em;
@@ -69,19 +71,47 @@ const ProfileEditor = ({
       ],
     });
     history.goBack();
+    toast.success('🦄 Answer edited!');
+    // onSaved();
+    // TODO redirect to either help page or profile depending on whether the user is new. Define if user is new by whether they have any answered questions
   };
 
   return (
     <Mutation mutation={EDIT_USER}>
       {editUser => (
         <Fragment>
-          <Input innerRef={fullNameInput} defaultValue={fullName} />
-          <Input innerRef={introInput} defaultValue={intro} />
-          <Input innerRef={facebookInput} defaultValue={facebookLink} />
-          <Input innerRef={twitterInput} defaultValue={twitterLink} />
-          <Input innerRef={instagramInput} defaultValue={instagramLink} />
-          <Input innerRef={linkedInInput} defaultValue={linkedInLink} />
-          <button onClick={onSave(editUser)}>Save</button>
+          <h1>Profile editor</h1>
+          <Input
+            placeholder="Name..."
+            innerRef={fullNameInput}
+            defaultValue={fullName}
+          />
+          <Input
+            placeholder="Profile intro..."
+            innerRef={introInput}
+            defaultValue={intro}
+          />
+          <Input
+            placeholder="FB profile..."
+            innerRef={facebookInput}
+            defaultValue={facebookLink}
+          />
+          <Input
+            placeholder="Twitter profile..."
+            innerRef={twitterInput}
+            defaultValue={twitterLink}
+          />
+          <Input
+            placeholder="Instagram profile..."
+            innerRef={instagramInput}
+            defaultValue={instagramLink}
+          />
+          <Input
+            placeholder="LinkedIn profile..."
+            innerRef={linkedInInput}
+            defaultValue={linkedInLink}
+          />
+          <TextBtn onClick={onSave(editUser)}>Save</TextBtn>
         </Fragment>
       )}
     </Mutation>

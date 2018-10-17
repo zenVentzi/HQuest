@@ -1,6 +1,14 @@
 import gql from 'graphql-tag';
 import { QuestionFields, CommentFields } from 'Fragments';
 
+export const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: String!, $name: String!) {
+    login(email: $email, name: $name) {
+      authToken
+      userId
+    }
+  }
+`;
 export const NOTIFS_MARK_SEEN = gql`
   mutation notifsMarkSeen {
     notifsMarkSeen

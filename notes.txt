@@ -4,10 +4,4 @@ withApollo
 
 Snippets: rcc, rce, rfe, 
 
-Problem: answered returns undefined.
-Solutions:
-1) Check if it is undefined, then only updat the unanswered
-2) If undefined, make it an empty array, then write that empty array with write query.
-3) Create 2 different functions. updateAnswered and updateUnanswered. There is going to be repetition there. But the alternative is to do if null checks in the currently existing method
-
 @connection directive apollo
