@@ -17,8 +17,9 @@ import NotFoundView from './notFoundView';
 import appTheme from './appTheme';
 import baseStyles from './base-styles';
 
+baseStyles();
+
 const App = () => {
-  baseStyles();
   return (
     <ApolloProvider client={ApolloClient}>
       <ThemeProvider theme={appTheme}>

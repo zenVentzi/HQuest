@@ -1,15 +1,19 @@
 import React from 'react';
-import { loggedUserId } from 'Utils';
+import { withRouter } from 'react-router-dom';
+import { getLoggedUserId } from 'Utils';
 import TextBtn from 'Reusable/TextBtn';
 import Dropdown from 'Reusable/Dropdown';
 import { Menu as MenuIcon } from 'styled-icons/material/Menu';
+import { AUTH_TOKEN, USER_ID } from 'Constants';
 
-const Menu = () => {
+const Menu = ({ history }) => {
   const onLogOut = () => {
-    console.log('Menu.jsx onLogoUt');
+    localStorage.removeItem(AUTH_TOKEN);
+    localStorage.removeItem(USER_ID);
+    history.push('/');
   };
 
-  const id = loggedUserId();
+  const id = getLoggedUserId();
   const editLink = `/userprofile/${id}/edit`;
 
   const items = [
@@ -19,7 +23,7 @@ const Menu = () => {
     <TextBtn key="admin" link="/admin">
       Admin
     </TextBtn>,
-    <TextBtn key="logout" onClick={onLogOut} link="/login">
+    <TextBtn key="logout" onClick={onLogOut}>
       Log out
     </TextBtn>,
   ];
@@ -27,4 +31,4 @@ const Menu = () => {
   return <Dropdown pivot="right" iconForBtn={MenuIcon} items={items} />;
 };
 
-export default Menu;
+export default withRouter(Menu);

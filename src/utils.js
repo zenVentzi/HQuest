@@ -3,19 +3,15 @@ import { AUTH_TOKEN, USER_ID } from './constants';
 
 const history = createBrowserHistory();
 
-function loggedUserToken() {
+function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN);
 }
 
-function isAuthenticated() {
-  return loggedUserToken() !== null;
-}
-
-function loggedUserId() {
-  return localStorage.getItem(USER_ID);
-}
-
-const isPersonal = userId => loggedUserId === userId;
+const getLoggedUserId = () => {
+  const userId = localStorage.getItem(USER_ID);
+  // console.log('TCL: getLoggedUserId -> userId', userId);
+  return userId;
+};
 
 const overrideTheme = neww => current => {
   const res = { ...current, ...neww };
@@ -34,10 +30,8 @@ const inverseTheme = theme => {
 
 export {
   history,
-  isAuthenticated,
-  loggedUserId,
-  loggedUserToken,
-  isPersonal,
+  getAuthToken,
+  getLoggedUserId,
   overrideTheme,
   inverseColor,
   inverseTheme,

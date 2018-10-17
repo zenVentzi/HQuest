@@ -1,11 +1,11 @@
 import React from 'react';
 import IconBtn from 'Reusable/IconBtn';
 import { UserCircle } from 'styled-icons/fa-solid/UserCircle';
+import { getLoggedUserId } from 'Utils';
 import NavItem from './NavItem';
-import { loggedUserId } from '../../utils';
 
 const Profile = () => {
-  const link = `/userProfile/${loggedUserId()}`;
+  const link = `/userProfile/${getLoggedUserId()}`;
 
   return (
     <NavItem>

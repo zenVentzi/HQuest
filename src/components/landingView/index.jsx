@@ -22,7 +22,7 @@ class LandingView extends Component {
           title="title"
           width="420"
           height="345"
-          src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1"
+          src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=0"
         />
         <div>
           <span>Log in with: </span>

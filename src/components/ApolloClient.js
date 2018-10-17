@@ -11,7 +11,7 @@ import { onError } from 'apollo-link-error';
 import { getMainDefinition } from 'apollo-utilities';
 import introspectionQueryResultData from '../fragmentTypes.json';
 
-import { loggedUserToken } from '../utils';
+import { getAuthToken } from '../utils';
 
 const getHttpURI = isTunnel => {
   return isTunnel
@@ -24,7 +24,7 @@ const uploadLink = createUploadLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = loggedUserToken();
+  const token = getAuthToken();
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -57,7 +57,7 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: {
-      authToken: loggedUserToken(),
+      authToken: getAuthToken(),
     },
   },
 });

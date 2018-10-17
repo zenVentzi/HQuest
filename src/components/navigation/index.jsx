@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Component, Fragment } from 'react';
+import { getLoggedUserId } from 'Utils';
 import NavContainer from './NavContainer';
 import NavLeft from './NavLeft';
 import NavRight from './NavRight';
@@ -10,18 +11,23 @@ import HomeBtn from './HomeBtn';
 
 // TODO check if user is logged in
 
-const Navbar = () => (
-  <NavContainer>
-    <NavLeft>
-      <Search />
-    </NavLeft>
-    <NavRight>
-      <HomeBtn />
-      <Profile />
-      <Notifications />
-      <Menu />
-    </NavRight>
-  </NavContainer>
-);
+const Navbar = () => {
+  const isUserLogged = !!getLoggedUserId();
+  return (
+    <NavContainer>
+      <NavLeft>{isUserLogged && <Search />}</NavLeft>
+      <NavRight>
+        {isUserLogged && (
+          <Fragment>
+            <HomeBtn />
+            <Profile />
+            <Notifications />
+            <Menu />
+          </Fragment>
+        )}
+      </NavRight>
+    </NavContainer>
+  );
+};
 
 export default Navbar;
