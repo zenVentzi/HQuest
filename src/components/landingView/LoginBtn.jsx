@@ -5,7 +5,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import { LOGIN_MUTATION } from 'Mutations';
 import { Mutation } from 'react-apollo';
 import styled from 'styled-components';
-import { AUTH_TOKEN, USER_ID } from '../../constants';
+import { AUTH_TOKEN, USER_ID } from 'Constants';
 
 const LoginBtn = ({ onLoggedIn }) => {
   const responseFacebook = mutation => async response => {

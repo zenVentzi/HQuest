@@ -3,12 +3,12 @@ import { Query, Mutation } from 'react-apollo';
 import { GET_NOTIFICATIONS } from 'Queries';
 import { NOTIFS_MARK_SEEN } from 'Mutations';
 import { NEW_NOTIFICATION } from 'Subscriptions';
-import { loggedUserId } from 'Utils';
+import { getLoggedUserId } from 'Utils';
 
 const run = subscribeToMore => {
   subscribeToMore({
     document: NEW_NOTIFICATION,
-    variables: { userId: loggedUserId() },
+    variables: { userId: getLoggedUserId() },
     updateQuery: (prev, { subscriptionData }) => {
       if (!subscriptionData.data) return prev; // start here, check when data is received
       const { newNotification } = subscriptionData.data;
