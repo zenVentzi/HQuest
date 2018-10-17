@@ -1,8 +1,8 @@
 import React from 'react';
 import { UserCircle } from 'styled-icons/fa-solid/UserCircle';
 
-import Btn from '../reusable/Btn';
-import Icon from '../reusable/Icon';
+import Btn from 'Reusable/Btn';
+import Icon from 'Reusable/Icon';
 
 const ProfileBtn = props => {
   return (

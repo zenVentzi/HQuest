@@ -175,7 +175,7 @@ type Mutation {
   notifsMarkSeen: Boolean
   addComment(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
-  login(email: String!, password: String!): LoginResult!
+  login(email: String!, name: String!): LoginResult!
   createQuestion(question: String!, type: QuestionType!, defaultAnswer: Int, possibleAnswers: [String!], tags: [String!]!): String
   questionNotApply(questionId: ID!): Question!
   editAnswer(answerId: ID!, answerValue: String!): Answer!

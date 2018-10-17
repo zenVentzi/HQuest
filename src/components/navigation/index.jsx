@@ -8,6 +8,8 @@ import Notifications from './Notifications';
 import Profile from './Profile';
 import HomeBtn from './HomeBtn';
 
+// TODO check if user is logged in
+
 const Navbar = () => (
   <NavContainer>
     <NavLeft>

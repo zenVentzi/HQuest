@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import shortid from 'shortid';
 import { Route, Switch } from 'react-router-dom';
 import { GET_USER } from 'Queries';
-import Navbar from '../navigation';
 import StyledViewRaw from '../reusable/StyledView';
 import ProfileViewer from './ProfileViewer';
 import ProfileEditor from './ProfileEditor';
@@ -15,22 +14,22 @@ const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
 
-const TestQuestions = () => {
-  const questions = [];
+// const TestQuestions = () => {
+//   const questions = [];
 
-  for (let i = 0; i < 100; i++) {
-    questions.push(
-      <div key={i}>
-        Question
-        {i}
-      </div>
-    );
-  }
+//   for (let i = 0; i < 100; i++) {
+//     questions.push(
+//       <div key={i}>
+//         Question
+//         {i}
+//       </div>
+//     );
+//   }
 
-  return questions;
-};
+//   return questions;
+// };
 
-const ProfileView = ({ match }) => {
+const Profile = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
 
@@ -38,7 +37,7 @@ const ProfileView = ({ match }) => {
   //   <Query query={GET_USER} variables={vars} errorPolicy="all">
   //     {({ loading, error, data: { user } }) => {
   //       if (loading) {
-  //         console.log('TCL: ProfileView -> loading', loading);
+  //         console.log('TCL: Profile -> loading', loading);
 
   //         return <div>loading</div>;
   //       }
@@ -64,7 +63,6 @@ const ProfileView = ({ match }) => {
 
         return (
           <Fragment>
-            <Navbar />
             <StyledView>
               {/* <TestQuestions /> */}
               <Switch>
@@ -92,4 +90,4 @@ const ProfileView = ({ match }) => {
   );
 };
 
-export default ProfileView;
+export default Profile;

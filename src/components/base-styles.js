@@ -56,6 +56,11 @@ const baseStyles = () => injectGlobal`
   }
 
   input {
+    padding: 0.2em 0.9em;
+    border: 2px solid white;
+    border-radius: 0.2em;
+    background: black;
+    color: white;
   }
 
   input:hover {

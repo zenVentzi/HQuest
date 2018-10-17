@@ -48,7 +48,7 @@ class Floater extends Component {
         contentPosition: { x: e.pageX, y: e.pageY },
       };
     });
-    // console.log(`mouseenterchild`);
+    console.log(`mouseenterchild`);
   };
 
   onMouseLeaveChild = e => {
@@ -59,7 +59,7 @@ class Floater extends Component {
       };
     });
 
-    // console.log(`mouseleavechild`);
+    console.log(`mouseleavechild`);
   };
 
   onMouseEnterContent = () => {

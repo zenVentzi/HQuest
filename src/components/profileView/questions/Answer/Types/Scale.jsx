@@ -66,22 +66,28 @@ class Scale extends Component {
     return (
       <Wrapper>
         <ValueName>{valueName}</ValueName>
-        <Floater
+        {/* <Floater
           content={viewMode ? <ScaleInfo possibleAnswers={values} /> : null}
+        > */}
+        <div
+          // FIXME when Slider's appearance: none, not working properly
+          onMouseLeave={() => {
+            // console.log('onmouseleave');
+          }}
         >
-          <div>
-            {/* div is used because mouse events work differently on disabled inputs */}
-            <Slider
-              disabled={viewMode}
-              clickable={!viewMode}
-              type="range"
-              min={minValue}
-              max={maxValue}
-              defaultValue={value}
-              onChange={this.onChange}
-            />
-          </div>
-        </Floater>
+          {/* div is used because mouse events work differently on disabled inputs */}
+          <Slider
+            disabled={viewMode}
+            clickable={!viewMode}
+            type="range"
+            min={minValue}
+            max={maxValue}
+            defaultValue={value}
+            onChange={this.onChange}
+          />
+          {/* <input disabled type="range" /> */}
+        </div>
+        {/* </Floater> */}
       </Wrapper>
     );
   }

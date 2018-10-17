@@ -3,16 +3,16 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 import { ThemeProvider } from 'styled-components';
 import { ToastContainer, Zoom } from 'react-toastify';
-
 import 'react-toastify/dist/ReactToastify.css';
 
 import ApolloClient from './ApolloClient';
 import ProtectedRoute from './reusable/ProtectedRoute';
+import Navbar from './navigation';
 import AdminView from './adminView';
 import SearchView from './searchView';
 import ProfileView from './profileView';
-import LoginView from './loginView';
-import SignUpView from './signUpView';
+import HelpView from './helpView';
+import LandingView from './landingView';
 import NotFoundView from './notFoundView';
 import appTheme from './appTheme';
 import baseStyles from './base-styles';
@@ -30,13 +30,13 @@ const App = () => {
               autoClose={1500}
               transition={Zoom}
             />
-            {/* <TestQuestions /> */}
+            <Navbar />
             <Switch>
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
               <ProtectedRoute path="/admin" component={AdminView} />
               <ProtectedRoute path="/search" component={SearchView} />
-              <Route path="/login" component={LoginView} />
-              <Route path="/signup" component={SignUpView} />
+              <Route path="/help" component={HelpView} />
+              <Route path="/" exact component={LandingView} />
               <Route component={NotFoundView} />
             </Switch>
           </div>
