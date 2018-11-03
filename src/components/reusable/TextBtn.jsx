@@ -2,7 +2,11 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import Link from 'Reusable/UndecoratedLink';
 
-const common = css`
+// const StyledLink = styled(Link)`
+//   ${common};
+// `;
+
+const StyledBtn = styled.div`
   display: inline-block;
   background: black;
   color: white;
@@ -17,37 +21,14 @@ const common = css`
   }
 `;
 
-const StyledLink = styled(Link)`
-  ${common};
-`;
-
-const StyledBtn = styled.div`
-  ${common};
-`;
-
 StyledBtn.defaultProps = {};
 
-const Btn = React.forwardRef(
-  ({ children, link, className, ...mouseEvents }, ref) => {
-    return link ? (
-      <StyledLink
-        className={className}
-        innerRef={ref}
-        onClick={mouseEvents.onClick}
-        to={link}
-      >
-        {children}
-      </StyledLink>
-    ) : (
-      <StyledBtn
-        className={className}
-        innerRef={ref}
-        onClick={mouseEvents.onClick}
-      >
-        {children}
-      </StyledBtn>
-    );
-  }
-);
+const Btn = React.forwardRef(({ children, className, ...mouseEvents }, ref) => {
+  return (
+    <StyledBtn className={className} ref={ref} onClick={mouseEvents.onClick}>
+      {children}
+    </StyledBtn>
+  );
+});
 
 export default Btn;

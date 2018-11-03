@@ -6,6 +6,12 @@ import Dropdown from 'Reusable/Dropdown';
 import { Menu as MenuIcon } from 'styled-icons/material/Menu';
 import { AUTH_TOKEN, USER_ID } from 'Constants';
 
+/* 
+TODO create Link btn either here or in Reusable
+or make it textBtn with onAction like Log out and use history
+
+*/
+
 const Menu = ({ history }) => {
   const onLogOut = () => {
     localStorage.removeItem(AUTH_TOKEN);

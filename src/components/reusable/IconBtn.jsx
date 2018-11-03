@@ -1,27 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import StyledIcon from 'Reusable/StyledIcon';
-import { iconBtn } from 'Reusable/css';
+import { clickableIcon } from 'Reusable/css';
 
 const StyledBtn = styled.div`
-  ${iconBtn};
-  display: inline-block;
+  ${clickableIcon};
 `;
 
 StyledBtn.defaultProps = {};
 
 const Btn = React.forwardRef(({ icon, size, onClick, hide }, ref) => {
-  const content = (
-    <StyledIcon
-      innerRef={ref}
-      onClick={onClick}
-      size={size}
-      icon={icon}
-      hide={hide}
-    />
+  return (
+    <StyledBtn ref={ref} onClick={onClick}>
+      <StyledIcon size={size} icon={icon} hide={hide} />
+    </StyledBtn>
   );
-
-  return <StyledBtn>{content}</StyledBtn>;
 });
 
 export default Btn;

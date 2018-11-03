@@ -82,7 +82,7 @@ class Comments extends Component {
               return (
                 <CommentsPanel onClose={onClose}>
                   <Input
-                    innerRef={ref => {
+                    ref={ref => {
                       this.input = ref;
                     }}
                     placeholder="Add a comment..."

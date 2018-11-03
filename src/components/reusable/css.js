@@ -1,6 +1,7 @@
 import { css } from 'styled-components';
 
-export const iconBtn = css`
+export const clickableIcon = css`
+  display: inline-block;
   background: black;
   border-radius: 0.3em;
   cursor: pointer;

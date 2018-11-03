@@ -7,7 +7,7 @@ import Search from './Search';
 import Menu from './Menu';
 import Notifications from './Notifications';
 import Profile from './Profile';
-import HomeBtn from './HomeBtn';
+import NewsfeedBtn from './NewsfeedBtn';
 
 // TODO check if user is logged in
 
@@ -19,7 +19,7 @@ const Navbar = () => {
       <NavRight>
         {isUserLogged && (
           <Fragment>
-            <HomeBtn />
+            <NewsfeedBtn />
             <Profile />
             <Notifications />
             <Menu />
