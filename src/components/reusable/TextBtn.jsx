@@ -1,24 +1,9 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import Link from 'Reusable/UndecoratedLink';
-
-// const StyledLink = styled(Link)`
-//   ${common};
-// `;
+import styled from 'styled-components';
+import { clickableText } from 'Reusable/css';
 
 const StyledBtn = styled.div`
-  display: inline-block;
-  background: black;
-  color: white;
-  border: 2px solid white;
-  border-radius: 0.3em;
-  padding: 0.3em 0.8em;
-  cursor: pointer;
-
-  &:hover {
-    background: white;
-    color: black;
-  }
+  ${clickableText};
 `;
 
 StyledBtn.defaultProps = {};

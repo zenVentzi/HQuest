@@ -2,6 +2,22 @@ import { inverseTheme } from 'Utils';
 import reset from 'styled-reset';
 import { createGlobalStyle } from 'styled-components';
 
+/* 
+ input {
+    padding: 0.2em 0.9em;
+    border: 2px solid white;
+    border-radius: 0.2em;
+    background: black;
+    color: white;
+  }
+
+  input:hover {
+    background-color: white;
+    color: black;
+  }
+
+*/
+
 export const GlobalStyle = createGlobalStyle`
   ${reset}
   
