@@ -11,10 +11,10 @@ Todo:
 - study the GitHunt example
 
 Fix:
-- profile btn
+- 
 - tag input and dropdown change width while writing
 - comments height fit comments
-- notifs don't show personal comments
+- notifs not to show personal comments
 - tag search
 - edit history need refresh after edit
 - close btn on edit history show stay on scroll
