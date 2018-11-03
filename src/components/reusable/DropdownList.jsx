@@ -30,11 +30,28 @@ class DropdownList extends Component {
     this.props.onClickOutside(e);
   };
 
+  getModifiedItems = () => {
+    const { items, onItemClicked } = this.props;
+    const modifiedItems = items.map(item => {
+      return React.cloneElement(item, {
+        onClick: () => {
+          if (item.props.onClick) {
+            item.props.onClick();
+          }
+          onItemClicked();
+        },
+      });
+    });
+    return modifiedItems;
+  };
+
   render() {
-    const { items, pivot, marginTop = '2.3em' } = this.props;
+    const { pivot, marginTop = '2.3em' } = this.props;
+    const modifiedItems = this.getModifiedItems();
+
     return (
       <StyledDropdown marginTop={marginTop} pivot={pivot}>
-        <Fragment>{items}</Fragment>
+        <Fragment>{modifiedItems}</Fragment>
       </StyledDropdown>
     );
   }

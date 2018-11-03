@@ -26,6 +26,10 @@ class Dropdown extends Component {
     this.toggleDropdown();
   };
 
+  onDropdownItemClicked = () => {
+    this.toggleDropdown();
+  };
+
   isDropdownBtnClicked = event => {
     return (
       event.target === this.btnRef.current ||
@@ -70,6 +74,7 @@ class Dropdown extends Component {
           <DropdownList
             items={items}
             pivot={pivot}
+            onItemClicked={this.onDropdownItemClicked}
             onClickOutside={this.onClickOutside}
           />
         )}
