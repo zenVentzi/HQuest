@@ -48,8 +48,5 @@ exscattrs	export const ${1} = styled.${2}.attrs({ ${3}: ${4} })${5}
 scp	${props => props.${1}}; / Use props inside styled-component
 scpt	${({ theme }) => theme.${1}}; / Use props.theme inside styled-component
 
-inr	innerRef={x => this.${1} = x} / shorthand
-innerRef	innerRef={x => this.${1} = x} / longhand
-injectGlobal	injectGlobal / Create injectGlobal var
 ThemeProvider	<ThemeProvider theme={${1}}> ${2} </ThemeProvider>
 sct	const theme = { ${1}: '${2}' } / Create styled-component theme object

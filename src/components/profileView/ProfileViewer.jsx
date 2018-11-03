@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { getLoggedUserId, overrideTheme } from 'Utils';
 import Avatar from '../reusable/Avatar';
 import Username from './Username';
 import Intro from './Intro';
@@ -12,7 +13,6 @@ import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
 import ToggleQuestions from './ToggleQuestions';
-import { loggedUserId, overrideTheme } from '../../utils';
 
 class ProfileViewer extends Component {
   state = { answered: true, showFollowers: false, showFollowing: false };
@@ -39,7 +39,7 @@ class ProfileViewer extends Component {
   render() {
     const { user } = this.props;
     const { showFollowers, showFollowing } = this.state;
-    const isFollowed = user.followers.includes(loggedUserId());
+    const isFollowed = user.followers.includes(getLoggedUserId());
     const theme = {
       avatarSize: '150px',
     };

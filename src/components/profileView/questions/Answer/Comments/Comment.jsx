@@ -68,7 +68,7 @@ class Comment extends Component {
           <User user={user} />
           {showOptionsBtn && (
             <OptionsBtn
-              innerRef={elem => {
+              ref={elem => {
                 this.optionsBtn = elem;
               }}
               onClick={this.toggleOptionsDropdown}

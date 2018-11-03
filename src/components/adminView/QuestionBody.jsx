@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import ScaleBody from './ScaleBody';
 import TextBody from './TextBody';
 import OptionsBody from './OptionsBody';
-import WouldYouSingleBody from './WouldYouSingleBody';
 import { QuestionTypes } from './constants';
 
 const CreateBtn = styled.button`
@@ -53,9 +52,6 @@ class QuestionBody extends Component {
         break;
       case OPTIONS:
         Body = OptionsBody;
-        break;
-      case WOULD_YOU_SINGLE:
-        Body = WouldYouSingleBody;
         break;
       default:
         return null;

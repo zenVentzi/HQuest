@@ -14,17 +14,15 @@ import ProfileView from './profileView';
 import HelpView from './helpView';
 import LandingView from './landingView';
 import NotFoundView from './notFoundView';
-import appTheme from './appTheme';
-import baseStyles from './base-styles';
-
-baseStyles();
+import { theme, GlobalStyle } from './appTheme';
 
 const App = () => {
   return (
     <ApolloProvider client={ApolloClient}>
-      <ThemeProvider theme={appTheme}>
+      <ThemeProvider theme={theme}>
         <BrowserRouter>
           <div>
+            <GlobalStyle />
             <ToastContainer
               hideProgressBar
               position="top-center"

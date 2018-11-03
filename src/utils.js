@@ -1,7 +1,4 @@
-import createBrowserHistory from 'history/createBrowserHistory';
 import { AUTH_TOKEN, USER_ID } from './constants';
-
-const history = createBrowserHistory();
 
 function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN);
@@ -29,7 +26,6 @@ const inverseTheme = theme => {
 };
 
 export {
-  history,
   getAuthToken,
   getLoggedUserId,
   overrideTheme,

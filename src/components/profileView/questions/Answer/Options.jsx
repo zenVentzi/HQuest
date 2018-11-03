@@ -70,7 +70,7 @@ class AnswerOptions extends Component {
     return (
       <DropdownWrapper>
         <CaretBtn
-          innerRef={this.caretBtn}
+          ref={this.caretBtn}
           onClick={this.toggleDropdown}
           size="1em"
           hide={hideIcon}

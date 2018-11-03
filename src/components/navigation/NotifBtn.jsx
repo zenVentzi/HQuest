@@ -1,13 +1,13 @@
 import React from 'react';
 import { Notifications } from 'styled-icons/material/Notifications';
 import styled from 'styled-components';
-import { iconBtn } from 'Reusable/css';
+import { clickableIcon } from 'Reusable/css';
 
 const Btn = styled.div`
   display: inline-block;
   position: relative;
   padding: 2px 5px;
-  ${iconBtn};
+  ${clickableIcon};
 `;
 
 const Badge = styled.span`
@@ -24,7 +24,7 @@ const Badge = styled.span`
 `;
 
 const NotifBtn = React.forwardRef(({ totalUnseen, onClick }, ref) => (
-  <Btn innerRef={ref} onClick={onClick}>
+  <Btn ref={ref} onClick={onClick}>
     <Notifications size="2em" />
     {totalUnseen > 0 && <Badge>{totalUnseen}</Badge>}
   </Btn>

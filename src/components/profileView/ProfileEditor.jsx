@@ -1,15 +1,13 @@
 import { Mutation } from 'react-apollo';
 import React, { Fragment } from 'react';
+import { Formik, Form, ErrorMessage } from 'formik';
+import Field from 'Reusable/Field';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { EDIT_USER } from 'Mutations';
 import { GET_USER } from 'Queries';
 import { toast } from 'react-toastify';
 import TextBtn from 'Reusable/TextBtn';
-
-const Input = styled.input`
-  margin-bottom: 0.5em;
-`;
 
 const ProfileEditor = ({
   user: {
@@ -34,85 +32,113 @@ const ProfileEditor = ({
       </div>
     );
   }
-  const fullNameInput = React.createRef();
-  const introInput = React.createRef();
-  const facebookInput = React.createRef();
-  const twitterInput = React.createRef();
-  const instagramInput = React.createRef();
-  const linkedInInput = React.createRef();
-
-  const onSave = editUser => async () => {
-    const newFullName = fullNameInput.current.value;
-    const newIntro = introInput.current.value;
-    const newFacebookLink = facebookInput.current.value;
-    const newTwitterLink = twitterInput.current.value;
-    const newInstagramLink = instagramInput.current.value;
-    const newLinkedInLink = linkedInInput.current.value;
-    const variables = {
-      input: {
-        fullName: newFullName,
-        intro: newIntro,
-        socialMediaLinks: {
-          facebookLink: newFacebookLink,
-          twitterLink: newTwitterLink,
-          instagramLink: newInstagramLink,
-          linkedInLink: newLinkedInLink,
-        },
-      },
-    };
-
-    await editUser({
-      variables,
-      refetchQueries: [
-        {
-          query: GET_USER,
-          variables: { id },
-        },
-      ],
-    });
-    history.goBack();
-    toast.success('🦄 Answer edited!');
-    // onSaved();
-    // TODO redirect to either help page or profile depending on whether the user is new. Define if user is new by whether they have any answered questions
-  };
 
   return (
     <Mutation mutation={EDIT_USER}>
       {editUser => (
-        <Fragment>
-          <h1>Profile editor</h1>
-          <Input
-            placeholder="Name..."
-            innerRef={fullNameInput}
-            defaultValue={fullName}
-          />
-          <Input
-            placeholder="Profile intro..."
-            innerRef={introInput}
-            defaultValue={intro}
-          />
-          <Input
-            placeholder="FB profile..."
-            innerRef={facebookInput}
-            defaultValue={facebookLink}
-          />
-          <Input
-            placeholder="Twitter profile..."
-            innerRef={twitterInput}
-            defaultValue={twitterLink}
-          />
-          <Input
-            placeholder="Instagram profile..."
-            innerRef={instagramInput}
-            defaultValue={instagramLink}
-          />
-          <Input
-            placeholder="LinkedIn profile..."
-            innerRef={linkedInInput}
-            defaultValue={linkedInLink}
-          />
-          <TextBtn onClick={onSave(editUser)}>Save</TextBtn>
-        </Fragment>
+        <Formik
+          initialValues={{
+            fullName,
+            intro,
+            facebookLink,
+            twitterLink,
+            instagramLink,
+            linkedInLink,
+          }}
+          validate={values => {
+            const errors = {};
+            // if (!values.email) {
+            //   errors.email = 'Required';
+            // } else if (
+            //   !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            // ) {
+            //   errors.email = 'Invalid email address';
+            // }
+            return errors;
+          }}
+          onSubmit={async (values, { setSubmitting }) => {
+            // setTimeout(() => {
+            //   alert(JSON.stringify(values, null, 2));
+            //   setSubmitting(false);
+            // }, 400);
+
+            /* */
+
+            const variables = {
+              input: {
+                fullName: values.fullName,
+                intro: values.intro,
+                socialMediaLinks: {
+                  facebookLink: values.facebookLink,
+                  twitterLink: values.twitterLink,
+                  instagramLink: values.instagramLink,
+                  linkedInLink: values.linkedInLink,
+                },
+              },
+            };
+
+            await editUser({
+              variables,
+              refetchQueries: [
+                {
+                  query: GET_USER,
+                  variables: { id },
+                },
+              ],
+            });
+            setSubmitting(false);
+            history.goBack();
+            toast.success('🦄 Answer edited!');
+            // onSaved();
+            // TODO redirect to either help page or profile depending on whether the user is new. Define if user is new by whether they have any answered questions
+          }}
+        >
+          {({ touched, handleSubmit, isSubmitting }) => (
+            <Form>
+              <div>
+                <Field
+                  touched={touched.fullName}
+                  type="text"
+                  name="fullName"
+                  placeholder="Full name..."
+                />
+                <Field
+                  touched={touched.intro}
+                  type="text"
+                  name="intro"
+                  placeholder="Intro..."
+                />
+                <Field
+                  touched={touched.facebookLink}
+                  type="text"
+                  name="facebookLink"
+                  placeholder="Facebook link..."
+                />
+                <Field
+                  touched={touched.twitterLink}
+                  type="text"
+                  name="twitterLink"
+                  placeholder="Twitter link..."
+                />
+                <Field
+                  touched={touched.instagramLink}
+                  type="text"
+                  name="instagramLink"
+                  placeholder="Instagram link..."
+                />
+                <Field
+                  touched={touched.linkedInLink}
+                  type="text"
+                  name="linkedInLink"
+                  placeholder="LinkedIn link..."
+                />
+                <TextBtn onClick={handleSubmit} disabled={isSubmitting}>
+                  Submit
+                </TextBtn>
+              </div>
+            </Form>
+          )}
+        </Formik>
       )}
     </Mutation>
   );
