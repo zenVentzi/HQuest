@@ -19,3 +19,17 @@ export const clickableIcon = css`
     }
   }
 `;
+export const clickableText = css`
+  display: inline-block;
+  background: black;
+  color: white;
+  border: 2px solid white;
+  border-radius: 0.3em;
+  padding: 0.3em 0.8em;
+  cursor: pointer;
+
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;

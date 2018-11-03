@@ -1,39 +1,32 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { getLoggedUserId } from 'Utils';
-import TextBtn from 'Reusable/TextBtn';
+import TextLink from 'Reusable/TextLink';
 import Dropdown from 'Reusable/Dropdown';
 import { Menu as MenuIcon } from 'styled-icons/material/Menu';
 import { AUTH_TOKEN, USER_ID } from 'Constants';
-
-/* 
-TODO create Link btn either here or in Reusable
-or make it textBtn with onAction like Log out and use history
-
-*/
 
 const Menu = ({ history }) => {
   const onLogOut = () => {
     localStorage.removeItem(AUTH_TOKEN);
     localStorage.removeItem(USER_ID);
-    history.push('/');
   };
 
   const id = getLoggedUserId();
   const editLink = `/userprofile/${id}/edit`;
 
   const items = [
-    <TextBtn key="edit" link={editLink}>
+    <TextLink key="edit" to={editLink}>
       Edit
-    </TextBtn>,
-    <TextBtn key="admin" link="/admin">
+    </TextLink>,
+    <TextLink key="admin" to="/admin">
       Admin
-    </TextBtn>,
-    <TextBtn key="logout" onClick={onLogOut}>
+    </TextLink>,
+    <TextLink key="logout" onClick={onLogOut} to="/">
       Log out
-    </TextBtn>,
+    </TextLink>,
   ];
-  //  textForBtn="btn"
+
   return <Dropdown pivot="right" iconForBtn={MenuIcon} items={items} />;
 };
 
