@@ -164,7 +164,6 @@ class AnsweredQuestion extends Component {
           <Question question={question.question} />
           <AnswerOptions
             visible={isPersonal && hovered}
-            hideIcon={!hovered} // rename to hide dropdown btn
             onClickEdit={this.onClickEdit}
             onClickRemove={this.onClickRemove}
             onClickMove={this.togglePositionEditor}
