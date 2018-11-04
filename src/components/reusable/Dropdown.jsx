@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import DropdownList from 'Reusable/DropdownList';
-import TextBtn from 'Reusable/TextBtn';
-import IconBtn from 'Reusable/IconBtn';
 
 const StyledDropdown = styled.div`
   display: inline-block;
@@ -11,14 +9,17 @@ const StyledDropdown = styled.div`
 `;
 
 class Dropdown extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    showDropdown: false,
+  };
 
-    this.btnRef = React.createRef();
+  btnRef = React.createRef();
 
-    this.state = {
-      showDropdown: false,
-    };
+  componentDidMount() {
+    const buttonHeight = this.btnRef.current.clientHeight;
+    /* eslint-disable  */
+    this.setState(prevState => ({ ...prevState, buttonHeight }));
+    /* eslint-enable  */
   }
 
   onClickOutside = e => {
@@ -42,10 +43,10 @@ class Dropdown extends Component {
     this.setState({ showDropdown: !current });
   };
 
-  renderBtn = () => {
-    const { textForBtn, iconForBtn, dropBtn } = this.props;
+  renderDropdownBtn = () => {
+    const { dropBtn } = this.props;
 
-    const btn = React.cloneElement(dropBtn, {
+    return React.cloneElement(dropBtn, {
       ref: this.btnRef,
       onClick: () => {
         if (dropBtn.props.onClick) {
@@ -55,42 +56,25 @@ class Dropdown extends Component {
         this.toggleDropdown();
       },
     });
-
-    return btn;
-
-    // if (textForBtn) {
-    //   return (
-    //     <TextBtn ref={this.btnRef} onClick={this.toggleDropdown}>
-    //       {textForBtn}
-    //     </TextBtn>
-    //   );
-    // } else if (iconForBtn) {
-    //   return (
-    //     <IconBtn
-    //       ref={this.btnRef}
-    //       icon={iconForBtn}
-    //       onClick={this.toggleDropdown}
-    //     />
-    //   );
-    // }
-    // throw new Error('Dropdown button must be either text or icon.');
   };
 
   render() {
-    const { showDropdown } = this.state;
+    const { showDropdown, buttonHeight } = this.state;
     const { items, pivot } = this.props;
 
     return (
       <StyledDropdown>
-        {this.renderBtn()}
-        {showDropdown && (
-          <DropdownList
-            items={items}
-            pivot={pivot}
-            onItemClicked={this.onDropdownItemClicked}
-            onClickOutside={this.onClickOutside}
-          />
-        )}
+        {this.renderDropdownBtn()}
+        {showDropdown &&
+          buttonHeight && (
+            <DropdownList
+              items={items}
+              pivot={pivot}
+              marginTop={buttonHeight}
+              onItemClicked={this.onDropdownItemClicked}
+              onClickOutside={this.onClickOutside}
+            />
+          )}
       </StyledDropdown>
     );
   }

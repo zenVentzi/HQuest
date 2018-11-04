@@ -56,7 +56,7 @@ class Comments extends Component {
     });
   };
 
-  getReversedComments = comments => {
+  renderReversedComments = comments => {
     const res = [];
     const copy = comments.slice();
 
@@ -69,7 +69,7 @@ class Comments extends Component {
 
   renderComments = comments => {
     if (!comments.length) return <div> No comments yet </div>;
-    return this.getReversedComments(comments);
+    return this.renderReversedComments(comments);
   };
 
   render() {
