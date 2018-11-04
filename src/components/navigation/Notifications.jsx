@@ -12,6 +12,13 @@ class Notifications extends Component {
     showDropdown: false,
   };
 
+  subscribed = false;
+  notifBtn = React.createRef();
+
+  onClickNotification = () => {
+    this.toggleDropdown();
+  };
+
   onClickOutsideDropdown = e => {
     const isNotifBtn = this.isTargetNotifBtn(e.target);
     if (isNotifBtn) return;
@@ -23,16 +30,13 @@ class Notifications extends Component {
     await markSeen();
   };
 
-  subscribed = false;
-
   isTargetNotifBtn = target => {
+    // TODO simplify
     const buttonWrapper = this.notifBtn.current;
     const btnChildren = buttonWrapper.querySelectorAll('*');
 
     return target === buttonWrapper || [...btnChildren].includes(target);
   };
-
-  notifBtn = React.createRef();
 
   toggleDropdown = () => {
     const current = this.state.showDropdown;
@@ -50,6 +54,7 @@ class Notifications extends Component {
             error,
             notifications,
             onClickOutside: this.onClickOutsideDropdown,
+            onClickNotification: this.onClickNotification,
           };
           const totalUnseen = numOfUnseen(notifications);
 

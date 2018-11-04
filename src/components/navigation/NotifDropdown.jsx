@@ -6,6 +6,7 @@ import Notif from './Notif';
 const Dropdown = styled.div`
   max-height: 20em;
   overflow-y: auto;
+  border: 1px solid black;
   border-radius: 0.2em;
   position: absolute;
   text-align: center;
@@ -17,20 +18,22 @@ const Dropdown = styled.div`
   z-index: 1;
 `;
 
+// TODO try to make this component use the Dropdown from Reusable
+
 class NotifDropdown extends Component {
   handleClickOutside = e => {
     this.props.onClickOutside(e);
   };
 
   render() {
-    const { loading, error, notifications } = this.props;
+    const { loading, error, notifications, onClickNotification } = this.props;
     if (loading) return <div> loading questions.. </div>;
     if (error) return <div> {`Error ${error}`}</div>;
 
     return (
       <Dropdown>
         {notifications.map(n => (
-          <Notif key={n.id} notif={n} />
+          <Notif key={n.id} notif={n} onClick={onClickNotification} />
         ))}
       </Dropdown>
     );
