@@ -10,10 +10,14 @@ const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
   align-self: center;
 `;
 
-const Text = styled.p`
+const getAvatarWidth = size => `${2.5 * size}em`;
+
+const Body = styled.p`
   /* width: 80%; */
+  word-break: break-all;
+  white-space: normal;
   font-family: 'Times New Roman', Times, serif;
-  padding-left: 2.6em;
+  padding-left: ${props => getAvatarWidth(props.size)};
   font-size: 0.9em;
 `;
 
@@ -28,6 +32,7 @@ const Header = styled.div`
   width: 100%;
 `;
 class Comment extends Component {
+  static defaultProps = { size: 1.5 };
   state = { showOptionsDropdown: false, commentHovered: false };
 
   onClickOutsideOptions = e => {
@@ -54,6 +59,7 @@ class Comment extends Component {
   render() {
     const {
       comment: { user, comment },
+      size,
     } = this.props;
 
     const { showOptionsDropdown, commentHovered } = this.state;
@@ -65,7 +71,7 @@ class Comment extends Component {
         onMouseLeave={this.onMouseLeave}
       >
         <Header>
-          <User user={user} />
+          <User user={user} size={size} />
           {showOptionsBtn && (
             <OptionsBtn
               ref={elem => {
@@ -78,7 +84,7 @@ class Comment extends Component {
             <CommentOptions onClickOutside={this.onClickOutsideOptions} />
           )}
         </Header>
-        <Text>{comment}</Text>
+        <Body size={size}>{comment}</Body>
       </StyledComment>
     );
   }

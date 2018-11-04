@@ -76,7 +76,7 @@ class User extends Component {
   render() {
     const {
       user: { id, fullName, intro, avatarSrc, me },
-      size = 1,
+      size,
     } = this.props;
 
     if (this.state.redirect) {
