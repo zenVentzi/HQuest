@@ -56,16 +56,20 @@ class Comments extends Component {
     });
   };
 
-  renderComments = comments => {
-    if (!comments.length) return <div> No comments yet </div>;
+  getReversedComments = comments => {
     const res = [];
     const copy = comments.slice();
-    // console.log(copy);
+
     while (copy.length) {
       const com = copy.pop();
       res.push(<Comment key={com.id} comment={com} />);
     }
     return res;
+  };
+
+  renderComments = comments => {
+    if (!comments.length) return <div> No comments yet </div>;
+    return this.getReversedComments(comments);
   };
 
   render() {
