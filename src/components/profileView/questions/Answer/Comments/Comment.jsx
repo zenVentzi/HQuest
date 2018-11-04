@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { CaretSquareDown } from 'styled-icons/fa-regular/CaretSquareDown';
 import User from 'Reusable/UserRow';
 import CommentOptions from './CommentOptions';
 
-const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
-  cursor: pointer;
-  margin-left: auto;
-  align-self: center;
-`;
+// const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
+//   cursor: pointer;
+//   margin-left: auto;
+//   align-self: center;
+// `;
 
 const getAvatarWidth = size => `${2.5 * size}em`;
 
@@ -33,7 +32,7 @@ const Header = styled.div`
 `;
 class Comment extends Component {
   static defaultProps = { size: 1.5 };
-  state = { showOptionsDropdown: false, commentHovered: false };
+  state = { commentHovered: false };
 
   onClickOutsideOptions = e => {
     const isOptionsBtn =
@@ -62,8 +61,7 @@ class Comment extends Component {
       size,
     } = this.props;
 
-    const { showOptionsDropdown, commentHovered } = this.state;
-    const showOptionsBtn = commentHovered || showOptionsDropdown;
+    const { commentHovered } = this.state;
 
     return (
       <StyledComment
@@ -72,17 +70,11 @@ class Comment extends Component {
       >
         <Header>
           <User user={user} size={size} />
-          {showOptionsBtn && (
-            <OptionsBtn
-              ref={elem => {
-                this.optionsBtn = elem;
-              }}
-              onClick={this.toggleOptionsDropdown}
-            />
-          )}
-          {showOptionsDropdown && (
-            <CommentOptions onClickOutside={this.onClickOutsideOptions} />
-          )}
+          <CommentOptions
+            visible={user.me && commentHovered}
+            onClickEdit={this.onClickEdit}
+            onClickRemove={this.onClickRemove}
+          />
         </Header>
         <Body size={size}>{comment}</Body>
       </StyledComment>

@@ -1,58 +1,22 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { clickableIcon } from 'Reusable/css';
 import TextBtn from 'Reusable/TextBtn';
 import IconBtn from 'Reusable/IconBtn';
-import { CaretSquareDown } from 'styled-icons/fa-solid/CaretSquareDown';
 import Dropdown from 'Reusable/Dropdown';
-import DropdownWrapper from 'Reusable/DropdownWrapper';
-import DropdownList from 'Reusable/DropdownList';
 import { CaretDown } from 'styled-icons/fa-solid';
 
-const CaretBtn = styled(CaretSquareDown)`
-  ${clickableIcon};
-`;
-
 class AnswerOptions extends Component {
-  state = {
-    showDropdown: false,
-  };
-
-  onClickOutsideDropdown = e => {
-    const carretBtnClicked = this.isClickOnCaretBtn(e.target);
-    if (carretBtnClicked) return;
-    this.toggleDropdown();
-  };
-
-  isClickOnCaretBtn = target => {
-    const buttonWrapper = this.caretBtn.current;
-    const btnChildren = buttonWrapper.querySelectorAll('*');
-
-    return target === buttonWrapper || [...btnChildren].includes(target);
-  };
-
-  caretBtn = React.createRef();
-
-  toggleDropdown = () => {
-    const current = this.state.showDropdown;
-    this.setState({ showDropdown: !current });
-  };
-
   onClickEdit = () => {
     this.props.onClickEdit();
-    // this.toggleDropdown();
   };
   onClickRemove = () => {
     this.props.onClickRemove();
-    // this.toggleDropdown();
   };
   onClickMove = () => {
     this.props.onClickMove();
-    // this.toggleDropdown();
   };
 
   render() {
-    const { showDropdown } = this.state;
     const { visible } = this.props;
 
     const options = [
@@ -67,8 +31,6 @@ class AnswerOptions extends Component {
       </TextBtn>,
     ];
 
-    // const hideIcon = hideIconProp && !showDropdown;
-
     return (
       <Dropdown
         pivot="right"
@@ -76,25 +38,6 @@ class AnswerOptions extends Component {
         items={options}
       />
     );
-
-    // return (
-    //   <DropdownWrapper>
-    //     <CaretBtn
-    //       ref={this.caretBtn}
-    //       onClick={this.toggleDropdown}
-    //       size="1em"
-    //       hide={hideIcon}
-    //     />
-    //     {showDropdown && (
-    //       <DropdownList
-    //         marginTop="1.8em"
-    //         pivot="right"
-    //         items={options}
-    //         onClickOutside={this.onClickOutsideDropdown}
-    //       />
-    //     )}
-    //   </DropdownWrapper>
-    // );
   }
 }
 
