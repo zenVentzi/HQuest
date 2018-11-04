@@ -43,24 +43,37 @@ class Dropdown extends Component {
   };
 
   renderBtn = () => {
-    const { textForBtn, iconForBtn } = this.props;
+    const { textForBtn, iconForBtn, dropBtn } = this.props;
 
-    if (textForBtn) {
-      return (
-        <TextBtn ref={this.btnRef} onClick={this.toggleDropdown}>
-          {textForBtn}
-        </TextBtn>
-      );
-    } else if (iconForBtn) {
-      return (
-        <IconBtn
-          ref={this.btnRef}
-          icon={iconForBtn}
-          onClick={this.toggleDropdown}
-        />
-      );
-    }
-    throw new Error('Dropdown button must be either text or icon.');
+    const btn = React.cloneElement(dropBtn, {
+      ref: this.btnRef,
+      onClick: () => {
+        if (dropBtn.props.onClick) {
+          dropBtn.props.onClick();
+        }
+
+        this.toggleDropdown();
+      },
+    });
+
+    return btn;
+
+    // if (textForBtn) {
+    //   return (
+    //     <TextBtn ref={this.btnRef} onClick={this.toggleDropdown}>
+    //       {textForBtn}
+    //     </TextBtn>
+    //   );
+    // } else if (iconForBtn) {
+    //   return (
+    //     <IconBtn
+    //       ref={this.btnRef}
+    //       icon={iconForBtn}
+    //       onClick={this.toggleDropdown}
+    //     />
+    //   );
+    // }
+    // throw new Error('Dropdown button must be either text or icon.');
   };
 
   render() {
