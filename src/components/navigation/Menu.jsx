@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { getLoggedUserId } from 'Utils';
 import TextLink from 'Reusable/TextLink';
 import Dropdown from 'Reusable/Dropdown';
+import IconBtn from 'Reusable/IconBtn';
 import { Menu as MenuIcon } from 'styled-icons/material/Menu';
 import { AUTH_TOKEN, USER_ID } from 'Constants';
 
@@ -27,7 +28,13 @@ const Menu = ({ history }) => {
     </TextLink>,
   ];
 
-  return <Dropdown pivot="right" iconForBtn={MenuIcon} items={items} />;
+  return (
+    <Dropdown
+      pivot="right"
+      dropBtn={<IconBtn icon={MenuIcon} />}
+      items={items}
+    />
+  );
 };
 
 export default withRouter(Menu);

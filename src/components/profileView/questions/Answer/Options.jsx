@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { iconBtn } from 'Reusable/css';
+import { clickableIcon } from 'Reusable/css';
 import TextBtn from 'Reusable/TextBtn';
 import IconBtn from 'Reusable/IconBtn';
 import { CaretSquareDown } from 'styled-icons/fa-solid/CaretSquareDown';
+import Dropdown from 'Reusable/Dropdown';
 import DropdownWrapper from 'Reusable/DropdownWrapper';
 import DropdownList from 'Reusable/DropdownList';
+import { CaretDown } from 'styled-icons/fa-solid';
 
 const CaretBtn = styled(CaretSquareDown)`
-  ${iconBtn};
+  ${clickableIcon};
 `;
 
 class AnswerOptions extends Component {
@@ -38,20 +40,20 @@ class AnswerOptions extends Component {
 
   onClickEdit = () => {
     this.props.onClickEdit();
-    this.toggleDropdown();
+    // this.toggleDropdown();
   };
   onClickRemove = () => {
     this.props.onClickRemove();
-    this.toggleDropdown();
+    // this.toggleDropdown();
   };
   onClickMove = () => {
     this.props.onClickMove();
-    this.toggleDropdown();
+    // this.toggleDropdown();
   };
 
   render() {
     const { showDropdown } = this.state;
-    const { hideIcon: hideIconProp } = this.props;
+    const { visible } = this.props;
 
     const options = [
       <TextBtn key="edit" onClick={this.onClickEdit}>
@@ -65,26 +67,34 @@ class AnswerOptions extends Component {
       </TextBtn>,
     ];
 
-    const hideIcon = hideIconProp && !showDropdown;
+    // const hideIcon = hideIconProp && !showDropdown;
 
     return (
-      <DropdownWrapper>
-        <CaretBtn
-          ref={this.caretBtn}
-          onClick={this.toggleDropdown}
-          size="1em"
-          hide={hideIcon}
-        />
-        {showDropdown && (
-          <DropdownList
-            marginTop="1.8em"
-            pivot="right"
-            items={options}
-            onClickOutside={this.onClickOutsideDropdown}
-          />
-        )}
-      </DropdownWrapper>
+      <Dropdown
+        pivot="right"
+        dropBtn={<IconBtn icon={CaretDown} size="1em" visible={visible} />}
+        items={options}
+      />
     );
+
+    // return (
+    //   <DropdownWrapper>
+    //     <CaretBtn
+    //       ref={this.caretBtn}
+    //       onClick={this.toggleDropdown}
+    //       size="1em"
+    //       hide={hideIcon}
+    //     />
+    //     {showDropdown && (
+    //       <DropdownList
+    //         marginTop="1.8em"
+    //         pivot="right"
+    //         items={options}
+    //         onClickOutside={this.onClickOutsideDropdown}
+    //       />
+    //     )}
+    //   </DropdownWrapper>
+    // );
   }
 }
 

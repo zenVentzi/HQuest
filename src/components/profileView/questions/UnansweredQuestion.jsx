@@ -5,9 +5,10 @@ import AnswerEditor from './Answer/AnswerEditor';
 import Question from './Question';
 
 const StyledQuestion = styled.div`
-  /* border: 3px solid black; */
   width: 100%;
-  /* height: 100px; */
+  border-bottom: 2px solid white;
+  padding-bottom: 1em;
+  margin-bottom: 2em;
   display: flex;
   flex-direction: column;
   align-items: center;

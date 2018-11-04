@@ -10,10 +10,10 @@ import AnswerViewer from './Answer/AnswerViewer';
 import PositionEditor from './Answer/PositionEditor';
 
 const StyledQuestion = styled.div`
-  /* border: 3px solid black; */
   width: 100%;
-  /* height: 100px; */
   display: flex;
+  border-bottom: 2px solid white;
+  padding-bottom: 1em;
   margin-bottom: 2em;
   flex-direction: column;
   align-items: center;
@@ -162,14 +162,13 @@ class AnsweredQuestion extends Component {
       >
         <Row>
           <Question question={question.question} />
-          {isPersonal && (
-            <AnswerOptions
-              hideIcon={!hovered} // rename to hide dropdown btn
-              onClickEdit={this.onClickEdit}
-              onClickRemove={this.onClickRemove}
-              onClickMove={this.togglePositionEditor}
-            />
-          )}
+          <AnswerOptions
+            visible={isPersonal && hovered}
+            hideIcon={!hovered} // rename to hide dropdown btn
+            onClickEdit={this.onClickEdit}
+            onClickRemove={this.onClickRemove}
+            onClickMove={this.togglePositionEditor}
+          />
         </Row>
         {viewMode ? (
           <AnswerViewer

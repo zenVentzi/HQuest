@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const StyledPanel = styled.div`
   width: 100%;
-  height: 20em;
+  max-height: 20em;
   padding: 0.5em;
   display: flex;
   flex: 1;
