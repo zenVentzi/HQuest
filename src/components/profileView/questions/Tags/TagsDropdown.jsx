@@ -3,11 +3,16 @@ import styled from 'styled-components';
 import TextBtn from 'Reusable/TextBtn';
 
 const StyledDropdown = styled.div`
-  width: 80%;
-  border: 0.1em solid white;
-  justify-content: center;
-  padding: 1em;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: absolute;
+  top: 2.8em;
+  width: 60%;
+  background: white;
+  border-radius: 0.2em;
+  border: 0.1em solid black;
+  padding: 0.2em;
 `;
 
 const TagsDropdown = ({ tags, onSelect: onSelectProp }) => {
