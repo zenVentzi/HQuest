@@ -31,8 +31,7 @@ const StyledUser = styled.div`
   width: 100%;
   align-items: center;
   justify-content: flex-start;
-  z-index: 1;
-  border-radius: 0.2em;
+  ${'' /* z-index: 1; */} border-radius: 0.2em;
   /* border: 1px solid white; */
   background: ${props => props.theme.backgroundColor};
 

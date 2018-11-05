@@ -11,7 +11,6 @@ Todo:
 - study the GitHunt example
 
 Fix:
-- AnswerOptions stay below comments
 - comments user too big
 - tag input and dropdown change width while writing
 - comments height fit comments
