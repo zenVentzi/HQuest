@@ -184,12 +184,6 @@ class AnsweredQuestion extends Component {
             onClickSave={this.onClickSave}
           />
         )}
-        {showComments && (
-          <Comments
-            answerId={question.answer.id}
-            onClose={this.toggleComments}
-          />
-        )}
         {showReactions && <Reactions onClose={this.toggleReactions} />}
         {showEditions && (
           <Editions
@@ -212,6 +206,12 @@ class AnsweredQuestion extends Component {
           <Span onClick={this.toggleReactions}>15 Reactions</Span>
           <Span onClick={this.toggleComments}>{commentBtnText}</Span>
         </Row>
+        {showComments && (
+          <Comments
+            answerId={question.answer.id}
+            onClose={this.toggleComments}
+          />
+        )}
       </StyledQuestion>
     );
   }
