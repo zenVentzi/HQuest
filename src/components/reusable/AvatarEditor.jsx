@@ -12,13 +12,16 @@ const UPLOAD_AVATAR = gql`
 `;
 
 const Wrapper = styled.div`
-  position: fixed;
-  z-index: 1;
-  top: 30px;
-  padding: 3px 3px 3px 3px;
+  ${'' /* position: fixed; */} z-index: 1;
+  ${'' /* top: 30px; */} padding: 3px 3px 3px 3px;
   background-color: white;
   border: 1px solid black;
   border-radius: 8px;
+  text-align: center;
+`;
+
+const Hint = styled.div`
+  color: black;
 `;
 
 class AvatarEditor extends Component {
@@ -61,7 +64,7 @@ class AvatarEditor extends Component {
                 borderRadius={150}
                 color={[1, 1, 1, 1]}
               />
-              <div>Drag to adjust</div>
+              <Hint>Drag to adjust</Hint>
               <div>
                 <TextBtn onClick={this.onClickSave(uploadAvatar)}>Save</TextBtn>
                 <TextBtn onClick={this.onClickCancel}>Cancel</TextBtn>

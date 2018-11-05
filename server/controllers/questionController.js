@@ -87,9 +87,9 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
 };
 
 const preserveOrder = ({ answeredQuestionsIds, questions }) => {
-  const res = answeredQuestionsIds.map(id =>
-    questions.find(q => q._id.equals(id))
-  );
+  const res = answeredQuestionsIds
+    .map(id => questions.find(q => q._id.equals(id)))
+    .filter(q => q); // filters undefined or null values
   return res;
 };
 
@@ -108,6 +108,7 @@ const getUserAnsweredQuestions = async (
   }
 
   const questions = await Question.find(query).lean();
+  // this is done because the $in query returns in different order
   const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
 
   return mapGqlQuestions(mergeAnswersWithQuestions(answers, orderedQs));

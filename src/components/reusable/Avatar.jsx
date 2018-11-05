@@ -95,37 +95,38 @@ class Avatar extends Component {
 
     return (
       <Fragment>
-        <Wrapper
-          className={className}
-          invertColors={invertColors}
-          editable={editable}
-          onMouseOver={this.onMouseOver}
-          onFocus={this.onMouseOver}
-          onMouseOut={this.onMouseOut}
-          onBlur={this.onMouseOut}
-          onClick={this.onClick}
-        >
-          <Img src={src} />
-          {editable &&
-            this.state.hovered && <UpdateOverlay>Upload</UpdateOverlay>}
-        </Wrapper>
-        {this.state.inputImg && (
+        {this.state.inputImg ? (
           <Editor
             image={this.state.inputImg}
             onCloseEditor={this.onCloseEditor}
           />
+        ) : (
+          <Wrapper
+            className={className}
+            invertColors={invertColors}
+            editable={editable}
+            onMouseOver={this.onMouseOver}
+            onFocus={this.onMouseOver}
+            onMouseOut={this.onMouseOut}
+            onBlur={this.onMouseOut}
+            onClick={this.onClick}
+          >
+            <Img src={src} />
+            {editable &&
+              this.state.hovered && <UpdateOverlay>Upload</UpdateOverlay>}
+            <input
+              id="myInput"
+              key={fileInputKey}
+              type="file"
+              accept="image/*"
+              ref={ref => {
+                this.upload = ref;
+              }}
+              style={{ display: 'none' }}
+              onChange={this.onChangeFile}
+            />
+          </Wrapper>
         )}
-        <input
-          id="myInput"
-          key={fileInputKey}
-          type="file"
-          accept="image/*"
-          ref={ref => {
-            this.upload = ref;
-          }}
-          style={{ display: 'none' }}
-          onChange={this.onChangeFile}
-        />
       </Fragment>
     );
   }

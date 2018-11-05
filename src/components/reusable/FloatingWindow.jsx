@@ -28,9 +28,7 @@ const StyledWindow = styled.div`
   z-index: 1;
 `;
 
-const CloseBtn = styled(WindowClose).attrs({
-  size: '1.4em',
-})`
+const CloseBtn = styled(WindowClose)`
   cursor: pointer;
   position: sticky;
   background: black;
@@ -46,6 +44,7 @@ const Window = ({ onClose, children }) => (
   <BackgroundShade onClick={onClose}>
     <StyledWindow>
       <CloseBtn
+        size="1.4em"
         onClick={e => {
           e.stopPropagation();
           onClose();
