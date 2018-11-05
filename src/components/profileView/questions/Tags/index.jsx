@@ -11,11 +11,18 @@ const InvalidText = styled.div`
   color: red;
 `;
 
+const Input = styled.input`
+  width: 60%;
+`;
+
 const StyledTags = styled.div`
-  margin-bottom: 1em;
+  position: relative;
+  ${'' /* bcuz we need the dropdown to be relative to this */} margin-bottom: 1em;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 
 class QuestionTags extends PureComponent {
@@ -234,7 +241,7 @@ class QuestionTags extends PureComponent {
                 <TagsWindow tags={tags} onSelect={this.onSelectFromWindow} />
               )}
               <Anchor onClick={this.toggleAllTags(true)}>Tags</Anchor>
-              <input
+              <Input
                 ref={this.inputRef}
                 onClick={this.onClickInput}
                 onChange={this.onChangeInput}
