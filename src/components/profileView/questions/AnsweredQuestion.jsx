@@ -100,6 +100,8 @@ class AnsweredQuestion extends Component {
     this.setState(prevState => ({
       ...prevState,
       showComments: !prevState.showComments,
+      showReactions: false,
+      showEditions: false,
     }));
   };
 
@@ -107,6 +109,8 @@ class AnsweredQuestion extends Component {
     this.setState(prevState => ({
       ...prevState,
       showReactions: !prevState.showReactions,
+      showComments: false,
+      showEditions: false,
     }));
   };
 
@@ -114,6 +118,8 @@ class AnsweredQuestion extends Component {
     this.setState(prevState => ({
       ...prevState,
       showEditions: !prevState.showEditions,
+      showComments: false,
+      showReactions: false,
     }));
   };
 
@@ -184,13 +190,6 @@ class AnsweredQuestion extends Component {
             onClickSave={this.onClickSave}
           />
         )}
-        {showReactions && <Reactions onClose={this.toggleReactions} />}
-        {showEditions && (
-          <Editions
-            editions={question.answer.editions}
-            onClose={this.toggleEditions}
-          />
-        )}
         {showPositionEditor && (
           <PositionEditor
             position={question.answer.position}
@@ -206,6 +205,13 @@ class AnsweredQuestion extends Component {
           <Span onClick={this.toggleReactions}>15 Reactions</Span>
           <Span onClick={this.toggleComments}>{commentBtnText}</Span>
         </Row>
+        {showReactions && <Reactions onClose={this.toggleReactions} />}
+        {showEditions && (
+          <Editions
+            editions={question.answer.editions}
+            onClose={this.toggleEditions}
+          />
+        )}
         {showComments && (
           <Comments
             answerId={question.answer.id}
