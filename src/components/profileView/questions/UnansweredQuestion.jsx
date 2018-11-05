@@ -7,9 +7,8 @@ import Question from './Question';
 const StyledQuestion = styled.div`
   width: 100%;
   border-bottom: 2px solid white;
-  padding-bottom: 1em;
-  margin-bottom: 2em;
   display: flex;
+  margin-bottom: 1em;
   flex-direction: column;
   align-items: center;
 `;

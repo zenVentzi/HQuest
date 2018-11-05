@@ -30,6 +30,7 @@ const Text = props => {
     <Viewer>{answer}</Viewer>
   ) : (
     <TextArea
+      placeholder="Answer..."
       defaultValue={answer}
       maxLength={MAX_LENGTH}
       onChange={e => onChange(e.target.value)}
