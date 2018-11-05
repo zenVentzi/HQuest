@@ -4,7 +4,7 @@ import { Query, Mutation } from 'react-apollo';
 import { ADD_COMMENT } from 'Mutations';
 import { GET_COMMENTS } from 'Queries';
 import Comment from './Comment';
-import CommentsPanel from './CommentsPanel';
+import Panel from '../Panel';
 
 const Input = styled.textarea`
   /* margin-top: 2em; */
@@ -84,7 +84,7 @@ class Comments extends Component {
               if (error) return <div> {error.message} </div>;
 
               return (
-                <CommentsPanel onClose={onClose}>
+                <Panel onClose={onClose}>
                   <Input
                     ref={ref => {
                       this.input = ref;
@@ -95,7 +95,7 @@ class Comments extends Component {
                     onClick={this.onInputClick}
                   />
                   {this.renderComments(comments)}
-                </CommentsPanel>
+                </Panel>
               );
             }}
           </Mutation>

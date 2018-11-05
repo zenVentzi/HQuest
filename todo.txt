@@ -11,14 +11,10 @@ Todo:
 - study the GitHunt example
 
 Fix:
-- comments user too big
-- tag input and dropdown change width while writing
-- comments height fit comments
+- User avatar black space
 - notifs not to show personal comments
-- tag search
 - edit history need refresh after edit
 - close btn on edit history show stay on scroll
-- AnswerOptions not visible on small window
 
 react-router-page-transition
 react-reveal

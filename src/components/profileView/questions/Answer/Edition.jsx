@@ -4,12 +4,11 @@ import styled from 'styled-components';
 
 const StyledEdition = styled.div`
   width: 80%;
-  color: black;
-  margin-bottom: 0.8em;
+  ${'' /* color: black; */} margin-bottom: 0.8em;
 `;
 
 const Text = styled.div`
-  color: black;
+  ${'' /* color: black; */};
 `;
 
 // can be made stateless
@@ -29,7 +28,7 @@ class Edition extends Component {
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       >
-        <Text>edit {editedTimeAgo} ago</Text>
+        <Text>Edit {editedTimeAgo} ago</Text>
         <Text>
           Before: <br /> {before}
         </Text>
