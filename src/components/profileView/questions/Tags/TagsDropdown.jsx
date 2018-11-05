@@ -7,8 +7,8 @@ const StyledDropdown = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   position: absolute;
-  top: 2.8em;
-  width: 60%;
+  top: 2.3em;
+  width: 57%;
   background: white;
   border-radius: 0.2em;
   border: 0.1em solid black;
