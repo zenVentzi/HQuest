@@ -12,7 +12,7 @@ const TagsHeader = styled.div`
   justify-content: center;
   align-items: flex-end;
   width: 100%;
-  margin-bottom: 0.2em;
+  padding-left: 1.8em;
 `;
 
 const InvalidText = styled.div`
@@ -256,7 +256,7 @@ class QuestionTags extends PureComponent {
               <TagsHeader>
                 <Input
                   ref={this.inputRef}
-                  placeholder="Search tags..."
+                  placeholder="Search by tag..."
                   onClick={this.onClickInput}
                   onChange={this.onChangeInput}
                   onKeyDown={this.onKeyDownInput}
