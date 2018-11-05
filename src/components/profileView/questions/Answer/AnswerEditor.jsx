@@ -13,6 +13,7 @@ const Buttons = styled.div`
   display: flex;
   width: 80%;
   justify-content: center;
+  margin-bottom: 1em;
   & + {
     margin-right: 1em;
   }

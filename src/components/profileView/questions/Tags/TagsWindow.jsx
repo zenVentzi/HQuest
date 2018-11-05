@@ -23,7 +23,7 @@ export default class TagsWindow extends Component {
     return this.state.selectedTags.includes(tag);
   };
 
-  onClickTag = tag => () => {
+  onClickTag = tag => {
     const isSelected = this.state.selectedTags.includes(tag);
 
     let selectedTags;
@@ -33,21 +33,24 @@ export default class TagsWindow extends Component {
     } else {
       selectedTags = [...this.state.selectedTags, tag];
     }
-
     this.setState({ selectedTags });
   };
 
   render() {
-    const { tags, onSelect } = this.props;
+    const { tags, onSelect, onClose } = this.props;
     const { selectedTags } = this.state;
 
     return (
-      <FloatingWindow>
+      <FloatingWindow onClose={onClose}>
+        <div style={{ color: 'black' }}>All tags:</div>
         <div>
           {tags.map(t => (
             <TagBtn
               key={t}
-              onClick={this.onClickTag(t)}
+              onClick={e => {
+                e.stopPropagation();
+                this.onClickTag(t);
+              }}
               selected={this.isSelected(t)}
             >
               {t}

@@ -7,17 +7,26 @@ import Anchor from 'Reusable/Anchor';
 import TagsWindow from './TagsWindow';
 import TagsDropdown from './TagsDropdown';
 
+const TagsHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  margin-bottom: 0.2em;
+`;
+
 const InvalidText = styled.div`
   color: red;
 `;
 
 const Input = styled.input`
   width: 60%;
+  margin-right: 1em;
 `;
 
-const StyledTags = styled.div`
+const TagsWrapper = styled.div`
   position: relative;
-  ${'' /* bcuz we need the dropdown to be relative to this */} margin-bottom: 1em;
+  margin-bottom: 1em;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -79,7 +88,7 @@ class QuestionTags extends PureComponent {
 
   clearInvalidTag = () => {
     this.setState(prevState => {
-      return { ...prevState, invalidTag: null };
+      return { ...prevState, invalidTagMsg: null };
     });
   };
 
@@ -236,18 +245,25 @@ class QuestionTags extends PureComponent {
           this.allTags = tags;
 
           return (
-            <StyledTags>
+            <TagsWrapper>
               {showAllTags && (
-                <TagsWindow tags={tags} onSelect={this.onSelectFromWindow} />
+                <TagsWindow
+                  tags={tags}
+                  onSelect={this.onSelectFromWindow}
+                  onClose={this.hideAllTagsWindow}
+                />
               )}
-              <Anchor onClick={this.toggleAllTags(true)}>Tags</Anchor>
-              <Input
-                ref={this.inputRef}
-                onClick={this.onClickInput}
-                onChange={this.onChangeInput}
-                onKeyDown={this.onKeyDownInput}
-                type="text"
-              />
+              <TagsHeader>
+                <Input
+                  ref={this.inputRef}
+                  placeholder="Search tags..."
+                  onClick={this.onClickInput}
+                  onChange={this.onChangeInput}
+                  onKeyDown={this.onKeyDownInput}
+                  type="text"
+                />
+                <Anchor onClick={this.toggleAllTags(true)}>all</Anchor>
+              </TagsHeader>
               {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
               {matchingTags.length > 0 && (
                 <TagsDropdown
@@ -255,7 +271,7 @@ class QuestionTags extends PureComponent {
                   onSelect={this.onSelectFromDropdown}
                 />
               )}
-            </StyledTags>
+            </TagsWrapper>
           );
         }}
       </Query>

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import IconBtn from 'Reusable/IconBtn';
 import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
 
 const BackgroundShade = styled.div`
@@ -28,29 +29,30 @@ const StyledWindow = styled.div`
   z-index: 1;
 `;
 
-const CloseBtn = styled(WindowClose)`
+const TopRightCorner = styled.span`
   cursor: pointer;
   position: sticky;
-  background: black;
   align-self: flex-end;
   flex-shrink: 0;
   margin-top: -0.5em;
   margin-right: -0.5em;
   margin-bottom: 1em;
-  /* margin: 1em; */
 `;
 
 const Window = ({ onClose, children }) => (
   <BackgroundShade onClick={onClose}>
     <StyledWindow>
-      <CloseBtn
-        size="1.4em"
-        onClick={e => {
-          e.stopPropagation();
-          onClose();
-        }}
-      />
-      {/* <Btn>ts</Btn> */}
+      {/* <CloseBtn size="1.4em" /> */}
+      <TopRightCorner>
+        <IconBtn
+          icon={WindowClose}
+          size="1.4em"
+          onClick={e => {
+            e.stopPropagation();
+            onClose();
+          }}
+        />
+      </TopRightCorner>
       {children}
     </StyledWindow>
   </BackgroundShade>
