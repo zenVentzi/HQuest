@@ -41,14 +41,12 @@ const Span = styled.span`
 class AnsweredQuestion extends Component {
   state = {
     hovered: false,
-    viewMode: true,
     showComments: !this.props.collapseComments,
     showReactions: false,
     showEditions: false,
+    showAnswerEditor: false,
     showPositionEditor: false,
   };
-
-  // answerValue = this.props.question.answer.value;
 
   onMouseEnter = () => {
     this.toggleHovered(true);
@@ -62,38 +60,53 @@ class AnsweredQuestion extends Component {
     await this.props.onClickRemove();
   };
 
-  onClickMove = async ({ newPosition }) => {
-    await this.props.onClickMove({ newPosition });
-  };
-
-  onChange = answerValue => {
-    this.answerValue = answerValue;
-  };
-
   toggleHovered = value => {
     this.setState({ ...this.state, hovered: value });
   };
 
-  toggleViewMode = () => {
-    this.setState({ ...this.state, viewMode: !this.state.viewMode });
+  openAnswerEditor = () => {
+    this.setState({
+      ...this.state,
+      showAnswerEditor: true,
+      showPositionEditor: false,
+    });
   };
 
-  onClickEdit = () => {
-    this.toggleViewMode();
+  closeAnswerEditor = () => {
+    this.setState({
+      ...this.state,
+      showAnswerEditor: false,
+    });
   };
 
-  onClickSave = async ({ answerValue }) => {
+  openPositionEditor = () => {
+    this.setState({
+      ...this.state,
+      showPositionEditor: true,
+      showAnswerEditor: false,
+    });
+  };
+
+  closePositionEditor = () => {
+    this.setState({
+      ...this.state,
+      showPositionEditor: false,
+    });
+  };
+
+  onSaveAnswer = async ({ answerValue }) => {
     const isTheSame = this.props.question.answer.value === answerValue;
 
     if (isTheSame) {
-      this.toggleViewMode();
+      this.closeAnswerEditor();
+
       // print "Nothing changed"
       return;
     }
 
     await this.props.onClickSave({ answerValue });
     // todo: only toggle if successful
-    this.toggleViewMode();
+    this.closeAnswerEditor();
   };
 
   toggleComments = () => {
@@ -123,26 +136,20 @@ class AnsweredQuestion extends Component {
     }));
   };
 
-  togglePositionEditor = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      showPositionEditor: !prevState.showPositionEditor,
-    }));
-  };
-
   onMovePosition = async ({ newPosition }) => {
     await this.props.onClickMove({ newPosition });
     // check for success or failure
-    this.togglePositionEditor();
+    this.closePositionEditor();
   };
+
   render() {
     const {
       hovered,
-      viewMode,
       showReactions,
       showComments,
       showEditions,
       showPositionEditor,
+      showAnswerEditor,
     } = this.state;
     const {
       question,
@@ -151,6 +158,8 @@ class AnsweredQuestion extends Component {
       collapseComments,
       style,
     } = this.props;
+
+    // console.log(showPositionEditor);
 
     const hasEditions =
       question.answer.editions && question.answer.editions.length;
@@ -170,24 +179,24 @@ class AnsweredQuestion extends Component {
           <Question question={question.question} />
           <AnswerOptions
             visible={isPersonal && hovered}
-            onClickEdit={this.onClickEdit}
+            onClickEdit={this.openAnswerEditor}
             onClickRemove={this.onClickRemove}
-            onClickMove={this.togglePositionEditor}
+            onClickMove={this.openPositionEditor}
           />
         </Row>
-        {viewMode ? (
+        {showAnswerEditor ? (
+          <AnswerEditor
+            questionType={question.type}
+            answer={question.answer}
+            possibleAnswers={question.possibleAnswers}
+            onClickSave={this.onSaveAnswer}
+          />
+        ) : (
           <AnswerViewer
             questionType={question.type}
             answer={question.answer}
             possibleAnswers={question.possibleAnswers}
             collapseComments={collapseComments}
-          />
-        ) : (
-          <AnswerEditor
-            questionType={question.type}
-            answer={question.answer}
-            possibleAnswers={question.possibleAnswers}
-            onClickSave={this.onClickSave}
           />
         )}
         {showPositionEditor && (
