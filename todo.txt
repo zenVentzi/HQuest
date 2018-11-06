@@ -11,10 +11,11 @@ Todo:
 - study the GitHunt example
 
 Fix:
+- Comment must be at least 7 characters
+- Change number of comments after adding a comment
+- Show editions after edit
 - User avatar black space
 - notifs not to show personal comments
-- edit history need refresh after edit
-- close btn on edit history show stay on scroll
 
 react-router-page-transition
 react-reveal

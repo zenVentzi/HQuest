@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Query, Mutation } from 'react-apollo';
 import { ADD_COMMENT } from 'Mutations';
 import { GET_COMMENTS } from 'Queries';
+import { toast } from 'react-toastify';
 import Comment from './Comment';
 import Panel from '../Panel';
 
-const Input = styled.textarea`
+const TextArea = styled.textarea`
   /* margin-top: 2em; */
   width: 80%;
   min-height: min-content;
@@ -15,32 +17,45 @@ const Input = styled.textarea`
   margin-bottom: 1em;
 `;
 
+const ErrorText = styled.div`
+  color: red;
+  margin-bottom: 1em;
+`;
+
 class Comments extends Component {
-  state = { enteredComment: undefined };
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  // onKeyPress = addComment => async e => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     const { answerId } = this.props;
+  //     const { enteredComment } = this.state;
 
-  onKeyPress = addComment => async e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      const { answerId } = this.props;
-      const { enteredComment } = this.state;
-      await addComment({ variables: { answerId, comment: enteredComment } });
-      // this.setState({ enteredComment: undefined });
-      this.input.value = '';
-      this.forceUpdate();
-    }
-  };
+  //     if (!enteredComment || enteredComment.length < 7) {
+  //       toast.error(`Comment must be at least 7 characters`);
+  //       return;
+  //     }
 
-  onInputClick = e => {
-    e.stopPropagation();
-  };
+  //     await addComment({ variables: { answerId, comment: enteredComment } });
 
-  onChange = e => {
-    this.setState({ enteredComment: e.target.value });
-  };
+  //     this.input.value = '';
+  //     this.setState({ enteredComment: '' });
+  //     this.forceUpdate();
+  //   }
+  // };
+
+  // onInputClick = e => {
+  //   e.stopPropagation();
+  // };
+
+  // onChange = e => {
+  //   // console.log(e.target.value);
+  //   this.setState({ enteredComment: e.target.value }, () => {
+  //     console.log(this.state);
+  //   });
+  // };
 
   updateCache = (cache, { data: { addComment } }) => {
     const vars = { answerId: this.props.answerId };
@@ -56,20 +71,21 @@ class Comments extends Component {
     });
   };
 
-  renderReversedComments = comments => {
-    const res = [];
-    const copy = comments.slice();
-
-    while (copy.length) {
-      const com = copy.pop();
-      res.push(<Comment key={com.id} comment={com} />);
-    }
-    return res;
-  };
-
   renderComments = comments => {
     if (!comments.length) return <div> No comments yet </div>;
-    return this.renderReversedComments(comments);
+
+    const renderReversedComments = () => {
+      const res = [];
+      const copy = comments.slice();
+
+      while (copy.length) {
+        const com = copy.pop();
+        res.push(<Comment key={com.id} comment={com} />);
+      }
+      return res;
+    };
+
+    return renderReversedComments();
   };
 
   render() {
@@ -85,15 +101,56 @@ class Comments extends Component {
 
               return (
                 <Panel onClose={onClose}>
-                  <Input
-                    ref={ref => {
-                      this.input = ref;
+                  <Formik
+                    initialValues={{ comment: '' }}
+                    validateOnBlur={false}
+                    validate={values => {
+                      const errors = {};
+                      if (values.comment && values.comment.length < 7)
+                        errors.comment =
+                          'Comment must be at least 7 characters';
+
+                      return errors;
                     }}
-                    placeholder="Add a comment..."
-                    onKeyPress={this.onKeyPress(addComment)}
-                    onChange={this.onChange}
-                    onClick={this.onInputClick}
-                  />
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                      await addComment({
+                        variables: { answerId, comment: values.comment },
+                      });
+
+                      setSubmitting(false);
+                      resetForm({});
+                    }}
+                  >
+                    {({
+                      touched,
+                      values,
+                      errors,
+                      handleChange,
+                      submitForm,
+                      handleBlur,
+                      isSubmitting,
+                    }) => (
+                      <Form style={{ width: '100%', textAlign: 'center' }}>
+                        <TextArea
+                          name="comment"
+                          placeholder="Add a comment..."
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.comment || ''}
+                          onKeyPress={e => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              if (!isSubmitting) submitForm();
+                            }
+                          }}
+                        />
+                        <ErrorMessage
+                          name="comment"
+                          render={msg => <ErrorText>{msg}</ErrorText>}
+                        />
+                      </Form>
+                    )}
+                  </Formik>
                   {this.renderComments(comments)}
                 </Panel>
               );
