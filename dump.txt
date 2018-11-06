@@ -1,18 +1,9 @@
-{viewMode ? (
-          <QuestionViewer
-            hovered={hovered}
-            isPersonal={isPersonal}
-            question={question}
-            totalQuestionsCount={totalQuestionsCount}
-            collapseComments={collapseComments}
-            onClickEdit={this.onClickEdit}
-            onClickRemove={this.onClickRemove}
-            onClickMove={this.onClickMove}
-          />
-        ) : (
-          // onSave, refetch
-          <Fragment>
-            <QuestionEditor question={question} onChange={this.onChange} />
-            <TextBtn onClick={this.onClickSave}>Save</TextBtn>
-          </Fragment>
-        )}
+{/* <Input
+                    ref={ref => {
+                      this.input = ref;
+                    }}
+                    value={this.state.enteredComment}
+                    onKeyPress={this.onKeyPress(addComment)}
+                    onChange={this.onChange}
+                    onClick={this.onInputClick}
+                  /> */}
