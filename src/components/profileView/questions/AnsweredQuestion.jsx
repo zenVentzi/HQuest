@@ -26,7 +26,7 @@ const Row = styled.div`
   justify-content: center;
 `;
 
-const Span = styled.span`
+const SmallBtn = styled.span`
   cursor: pointer;
   margin-right: 0.6em;
   font-size: 0.7em;
@@ -46,6 +46,10 @@ class AnsweredQuestion extends Component {
     showEditions: false,
     showAnswerEditor: false,
     showPositionEditor: false,
+    numOfComments: this.props.question.answer.numOfComments,
+    numOfEditions: this.props.question.answer.editions
+      ? this.props.question.answer.editions.length
+      : 0,
   };
 
   onMouseEnter = () => {
@@ -53,6 +57,7 @@ class AnsweredQuestion extends Component {
   };
 
   onMouseLeave = () => {
+    // console.log(`mouseleave`);
     this.toggleHovered(false);
   };
 
@@ -99,10 +104,12 @@ class AnsweredQuestion extends Component {
 
     if (isTheSame) {
       this.closeAnswerEditor();
-
-      // print "Nothing changed"
       return;
+      // print "Nothing changed"
     }
+
+    const numOfEditions = this.state.numOfEditions + 1;
+    this.setState({ ...this.state, numOfEditions });
 
     await this.props.onClickSave({ answerValue });
     // todo: only toggle if successful
@@ -142,6 +149,11 @@ class AnsweredQuestion extends Component {
     this.closePositionEditor();
   };
 
+  onAddComment = () => {
+    const numOfComments = this.state.numOfComments + 1;
+    this.setState({ ...this.state, numOfComments });
+  };
+
   render() {
     const {
       hovered,
@@ -150,6 +162,8 @@ class AnsweredQuestion extends Component {
       showEditions,
       showPositionEditor,
       showAnswerEditor,
+      numOfComments,
+      numOfEditions,
     } = this.state;
     const {
       question,
@@ -159,11 +173,8 @@ class AnsweredQuestion extends Component {
       style,
     } = this.props;
 
-    // console.log(showPositionEditor);
-
-    const hasEditions =
-      question.answer.editions && question.answer.editions.length;
-    const { numOfComments } = question.answer;
+    const editionsBtnText =
+      numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
     const commentBtnText =
       numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
 
@@ -172,7 +183,7 @@ class AnsweredQuestion extends Component {
         onMouseEnter={this.onMouseEnter}
         onFocus={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
-        onBlur={this.onMouseLeave}
+        // onBlur={this.onMouseLeave}
         style={style}
       >
         <Row>
@@ -208,11 +219,11 @@ class AnsweredQuestion extends Component {
           />
         )}
         <Row hide={!hovered}>
-          {hasEditions && (
-            <Span onClick={this.toggleEditions}>edit history</Span>
+          {!!numOfEditions && (
+            <SmallBtn onClick={this.toggleEditions}>{editionsBtnText}</SmallBtn>
           )}
-          <Span onClick={this.toggleReactions}>15 Reactions</Span>
-          <Span onClick={this.toggleComments}>{commentBtnText}</Span>
+          <SmallBtn onClick={this.toggleReactions}>15 Reactions</SmallBtn>
+          <SmallBtn onClick={this.toggleComments}>{commentBtnText}</SmallBtn>
         </Row>
         {showReactions && <Reactions onClose={this.toggleReactions} />}
         {showEditions && (
@@ -224,6 +235,7 @@ class AnsweredQuestion extends Component {
         {showComments && (
           <Comments
             answerId={question.answer.id}
+            onAdd={this.onAddComment}
             onClose={this.toggleComments}
           />
         )}

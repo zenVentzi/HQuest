@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import Img from 'react-image';
 import styled from 'styled-components';
 import Editor from './AvatarEditor';
 
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Img = styled.img`
+const StyledImg = styled(Img)`
   max-width: 100%;
   max-height: 100%;
   border-radius: 50%;
@@ -111,7 +112,7 @@ class Avatar extends Component {
             onBlur={this.onMouseOut}
             onClick={this.onClick}
           >
-            <Img src={src} />
+            <StyledImg src={src} />
             {editable &&
               this.state.hovered && <UpdateOverlay>Upload</UpdateOverlay>}
             <input

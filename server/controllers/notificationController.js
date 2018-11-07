@@ -93,6 +93,13 @@ const getNotifications = async context => {
     models: { User },
   } = context;
 
+  /* 
+  do I renew the avatarSrc after change or keep it empty? Renew.
+  Renew or just keep a static one? I.e. give the url even if there
+  is no pic available?
+
+  */
+
   const userDoc = await User.findById(context.user.id);
   const notifs = userDoc.toObject().notifications || [];
   const res = mapGqlNotifications(notifs);
