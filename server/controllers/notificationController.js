@@ -103,7 +103,7 @@ const getNotifications = async context => {
   const userDoc = await User.findById(context.user.id);
   const notifs = userDoc.toObject().notifications || [];
   const res = mapGqlNotifications(notifs);
-  return res;
+  return res.reverse();
 };
 
 module.exports = {
