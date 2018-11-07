@@ -15,7 +15,7 @@ const run = subscribeToMore => {
 
       const updatedQuery = {
         ...prev,
-        notifications: [...prev.notifications, newNotification],
+        notifications: [newNotification, ...prev.notifications],
       };
 
       return updatedQuery;
