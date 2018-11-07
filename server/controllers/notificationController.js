@@ -34,6 +34,8 @@ const newComment = async (answerId, commentObj, context) => {
   const performerId = commentObj.user.id;
   const performer = await User.findById(performerId).lean();
 
+  if (performer._id.equals(receiverId)) return;
+
   const performerName = `${performer.firstName} ${performer.surName}`;
   const notif = {
     _id: ObjectId(),
@@ -92,13 +94,6 @@ const getNotifications = async context => {
   const {
     models: { User },
   } = context;
-
-  /* 
-  do I renew the avatarSrc after change or keep it empty? Renew.
-  Renew or just keep a static one? I.e. give the url even if there
-  is no pic available?
-
-  */
 
   const userDoc = await User.findById(context.user.id);
   const notifs = userDoc.toObject().notifications || [];
