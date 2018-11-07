@@ -33,13 +33,15 @@ const registerUser = async ({ email, name }, context) => {
   } = context;
 
   const [firstName, surName] = name.split(' ');
+  const id = ObjectId();
 
   const newUser = {
+    _id: id,
     firstName,
     surName,
     email,
     intro: 'Hey, I am an intro',
-    avatarSrc: '',
+    avatarSrc: `/public/images/avatar${id}.jpeg`,
     socialMediaLinks: {
       facebookLink: '',
       twitterLink: '',

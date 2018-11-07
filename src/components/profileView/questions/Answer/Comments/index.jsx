@@ -23,40 +23,6 @@ const ErrorText = styled.div`
 `;
 
 class Comments extends Component {
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
-
-  // onKeyPress = addComment => async e => {
-  //   if (e.key === 'Enter' && !e.shiftKey) {
-  //     e.preventDefault();
-  //     const { answerId } = this.props;
-  //     const { enteredComment } = this.state;
-
-  //     if (!enteredComment || enteredComment.length < 7) {
-  //       toast.error(`Comment must be at least 7 characters`);
-  //       return;
-  //     }
-
-  //     await addComment({ variables: { answerId, comment: enteredComment } });
-
-  //     this.input.value = '';
-  //     this.setState({ enteredComment: '' });
-  //     this.forceUpdate();
-  //   }
-  // };
-
-  // onInputClick = e => {
-  //   e.stopPropagation();
-  // };
-
-  // onChange = e => {
-  //   // console.log(e.target.value);
-  //   this.setState({ enteredComment: e.target.value }, () => {
-  //     console.log(this.state);
-  //   });
-  // };
-
   updateCache = (cache, { data: { addComment } }) => {
     const vars = { answerId: this.props.answerId };
     const { comments: cments } = cache.readQuery({
@@ -116,7 +82,7 @@ class Comments extends Component {
                       await addComment({
                         variables: { answerId, comment: values.comment },
                       });
-
+                      this.props.onAdd();
                       setSubmitting(false);
                       resetForm({});
                     }}
