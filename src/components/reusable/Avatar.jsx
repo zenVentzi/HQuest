@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   border: 2px solid ${props => props.theme.foregroundColor};
 
   &:hover {
-    cursor: ${props => (props.editable ? 'pointer' : 'auto')};
+    cursor: ${props => (props.editable ? 'pointer' : 'inherit')};
   }
 `;
 

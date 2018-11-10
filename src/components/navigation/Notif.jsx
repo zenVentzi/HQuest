@@ -95,10 +95,9 @@ class Notif extends Component {
   };
 
   render() {
+    const { theme } = this.state;
     const { notif, onClick } = this.props;
     const redirectLink = getLink(notif);
-
-    const { theme } = this.state;
 
     return (
       <ThemeProvider theme={overrideTheme(theme)}>

@@ -1,9 +1,0 @@
-{/* <Input
-                    ref={ref => {
-                      this.input = ref;
-                    }}
-                    value={this.state.enteredComment}
-                    onKeyPress={this.onKeyPress(addComment)}
-                    onChange={this.onChange}
-                    onClick={this.onInputClick}
-                  /> */}

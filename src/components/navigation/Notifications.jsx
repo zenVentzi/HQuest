@@ -4,7 +4,7 @@ import NotifDropdown from './NotifDropdown';
 import NavItem from './NavItem';
 import NotificationsGQL from './NotificationsGQL';
 
-const numOfUnseen = notifications =>
+const getNumOfSeen = notifications =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 class Notifications extends Component {
@@ -12,7 +12,6 @@ class Notifications extends Component {
     showDropdown: false,
   };
 
-  subscribed = false;
   notifBtn = React.createRef();
 
   onClickNotification = () => {
@@ -56,7 +55,7 @@ class Notifications extends Component {
             onClickOutside: this.onClickOutsideDropdown,
             onClickNotification: this.onClickNotification,
           };
-          const totalUnseen = numOfUnseen(notifications);
+          const totalUnseen = getNumOfSeen(notifications);
 
           return (
             <NavItem>
