@@ -1,20 +1,16 @@
 Todo:
+- implement likes
 - show "no notifications"
-- improve question ui
-- add answers validation
-- confirmation dialog
-- Display question’s tags on hover
-- delay loading
-- round toast
+- show loading animation
 - mobile first
 - rename FloatingWindow to Modal
 - study the GitHunt example
 
 Fix:
-- reverse the order of the notifs
-- False onMouseLeave triggered in AnsweredQuestion by clicking to edit the answer in and out
-- User avatar black space
-- notifs not to show personal comments
+- 401 Unauthorized
+- reduce answer text font size
+- on first edit, edition is null if no refresh
+- Modal to appear on top of all
 
 react-router-page-transition
 react-reveal

@@ -8,6 +8,10 @@ const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
 
+const Row = styled.div`
+  margin-bottom: 1em;
+`;
+
 class LandingView extends Component {
   onLoggedIn = () => {
     const { history } = this.props;
@@ -25,8 +29,22 @@ class LandingView extends Component {
           src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=0"
         />
         <div>
-          <span>Log in with: </span>
-          <LoginBtn onLoggedIn={this.onLoggedIn} />
+          <Row>Log in with: </Row>
+          <Row>
+            <LoginBtn onLoggedIn={this.onLoggedIn} />
+          </Row>
+          <Row>
+            <LoginBtn
+              testUser={{ name: 'Test John', email: 'testjohn@gmail.com' }}
+              onLoggedIn={this.onLoggedIn}
+            />
+          </Row>
+          <Row>
+            <LoginBtn
+              testUser={{ name: 'Test Sarah', email: 'testsarah@gmail.com' }}
+              onLoggedIn={this.onLoggedIn}
+            />
+          </Row>
         </div>
       </StyledView>
     );
