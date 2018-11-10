@@ -3,6 +3,11 @@ import onClickOutside from 'react-onclickoutside';
 import styled from 'styled-components';
 import Notif from './Notif';
 
+const Text = styled.div`
+  color: black;
+  margin: 1em;
+`;
+
 const Dropdown = styled.div`
   max-height: 20em;
   overflow-y: auto;
@@ -32,9 +37,13 @@ class NotifDropdown extends Component {
 
     return (
       <Dropdown>
-        {notifications.map(n => (
-          <Notif key={n.id} notif={n} onClick={onClickNotification} />
-        ))}
+        {notifications.length ? (
+          notifications.map(n => (
+            <Notif key={n.id} notif={n} onClick={onClickNotification} />
+          ))
+        ) : (
+          <Text>No notifications yet</Text>
+        )}
       </Dropdown>
     );
   }
