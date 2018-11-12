@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import ToggleBtn from '../reusable/ToggleBtn';
+import ToggleBtn from 'Reusable/ToggleBtn';
 
 const Wrapper = styled.div`
   margin-bottom: 1em;

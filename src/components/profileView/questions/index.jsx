@@ -4,9 +4,10 @@ import { GET_QUESTIONS } from 'Queries';
 import AnsweredQuestions from './AnsweredQuestions';
 import QuestionTags from './Tags';
 import UnansweredQuestions from './UnansweredQuestions';
+import ToggleQuestions from './ToggleQuestions';
 
 class QuestionsContainer extends Component {
-  state = { selectedTags: [] };
+  state = { showAnswered: true, selectedTags: [] };
   firstRenderResetScroll = true;
 
   componentDidMount() {
@@ -49,6 +50,11 @@ class QuestionsContainer extends Component {
     }
   };
 
+  onToggleQuestions = e => {
+    const isOn = e.target.checked;
+    this.setState({ showAnswered: !isOn });
+  };
+
   onSelectedTags = tags => {
     this.setState(prev => {
       return { ...prev, selectedTags: tags };
@@ -75,9 +81,8 @@ class QuestionsContainer extends Component {
   };
 
   render() {
-    // return <TestQuestions />;
-    const { user, showAnswered } = this.props;
-    const { selectedTags } = this.state;
+    const { user } = this.props;
+    const { selectedTags, showAnswered } = this.state;
     const queryVars = {
       answered: showAnswered,
       userId: user.id,
@@ -88,6 +93,7 @@ class QuestionsContainer extends Component {
     return (
       <Fragment>
         <QuestionTags onSelected={this.onSelectedTags} />
+        {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
         <Query
           query={GET_QUESTIONS}
           variables={queryVars}
