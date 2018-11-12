@@ -12,15 +12,10 @@ import Following from './Following';
 import Links from './Links';
 import QuestionsContainer from './questions';
 import Search from './Search';
-import ToggleQuestions from './ToggleQuestions';
+import ToggleQuestions from './questions/ToggleQuestions';
 
 class ProfileViewer extends Component {
-  state = { answered: true, showFollowers: false, showFollowing: false };
-
-  onToggleQuestions = e => {
-    const isOn = e.target.checked;
-    this.setState({ answered: !isOn });
-  };
+  state = { showFollowers: false, showFollowing: false };
 
   toggleFollowers = () => {
     this.setState(prevState => ({
@@ -69,8 +64,7 @@ class ProfileViewer extends Component {
           )}
           <Links />
           {/* <Search placeholder="Search questions.." onChange={() => {}} /> */}
-          {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
-          <QuestionsContainer user={user} showAnswered={this.state.answered} />
+          <QuestionsContainer user={user} />
         </Fragment>
       </ThemeProvider>
     );

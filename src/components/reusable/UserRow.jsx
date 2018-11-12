@@ -74,17 +74,13 @@ class UserRow extends Component {
 
   render() {
     const {
-      user: { id, fullName, intro, avatarSrc, me },
+      user: { id, fullName, intro, avatarSrc },
       size,
     } = this.props;
 
     if (this.state.redirect) {
-      if (me) {
-        window.location.reload();
-      } else {
-        const redirectTo = `/userProfile/${id}`;
-        return <Redirect push to={redirectTo} />;
-      }
+      const redirectTo = `/userProfile/${id}`;
+      return <Redirect push to={redirectTo} />;
     }
 
     const { theme } = this.state;
