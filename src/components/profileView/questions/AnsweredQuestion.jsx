@@ -288,7 +288,9 @@ class AnsweredQuestion extends Component {
             <SmallBtn onClick={this.toggleEditions}>{editionsBtnText}</SmallBtn>
           )}
         </Row>
-        {showLikes && <Likes onClose={this.toggleLikes} />}
+        {showLikes && (
+          <Likes onClose={this.toggleLikes} likes={question.answer.likes} />
+        )}
         {showEditions && (
           <Editions
             editions={question.answer.editions}

@@ -1,20 +1,15 @@
 import React from 'react';
-import { Smile } from 'styled-icons/fa-regular/Smile';
 import Panel from '../Panel';
+import Liker from './Liker';
 
-const Likes = ({ likes }) => {
+const Likes = ({ likes: { likers } }) => {
   return (
     <Panel>
-      {/* <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} />
-      <Reaction reactionIcon={Smile} /> */}
+      {likers && likers.length ? (
+        likers.map(liker => <Liker key={liker.user.id} liker={liker} />)
+      ) : (
+        <div>Be the first one to like that answer</div>
+      )}
     </Panel>
   );
 };

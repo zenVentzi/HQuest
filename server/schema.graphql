@@ -104,7 +104,7 @@ type Likes {
 }
 
 type Liker {
-  id: ID!
+  user: User!
   numOfLikes: Int!
 }
 

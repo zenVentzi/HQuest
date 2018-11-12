@@ -3,30 +3,6 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const { mapGqlUser, mapGqlUsers } = require('../resolvers/helper');
 
-const signUp = async ({ firstName, surName, email, password }, context) => {
-  const {
-    models: { User },
-  } = context;
-
-  const newUser = {
-    firstName,
-    surName,
-    email,
-    intro: 'Hey, I am an intro',
-    avatarSrc: '',
-    socialMediaLinks: {
-      facebookLink: '',
-      twitterLink: '',
-      instagramLink: '',
-      linkedInLink: '',
-    },
-    password: await bcrypt.hash(password, 10),
-  };
-
-  const userDoc = await User.create(newUser);
-  return mapGqlUser(context, userDoc.toObject());
-};
-
 const registerUser = async ({ email, name }, context) => {
   const {
     models: { User },
@@ -51,7 +27,7 @@ const registerUser = async ({ email, name }, context) => {
   };
 
   const userDoc = await User.create(newUser);
-  return mapGqlUser(context, userDoc.toObject());
+  return mapGqlUser({ user: userDoc.toObject(), loggedUserId: id.toString() });
 };
 
 const login = async ({ email, name }, context) => {
@@ -67,10 +43,10 @@ const login = async ({ email, name }, context) => {
     return registerUser({ email, name }, context);
   }
 
-  return mapGqlUser(context, user);
+  return mapGqlUser({ user, loggedUserId: user._id.toString() });
 };
 
-const followBase = async ({ userId, follow: addFollower }, context) => {
+const followBaseFunc = async ({ userId, follow: addFollower }, context) => {
   const {
     models: { User },
     user,
@@ -101,16 +77,17 @@ const followBase = async ({ userId, follow: addFollower }, context) => {
 };
 
 const follow = async (userId, context) => {
-  await followBase({ userId, follow: true }, context);
+  await followBaseFunc({ userId, follow: true }, context);
 };
 
 const unfollow = async (userId, context) => {
-  await followBase({ userId, follow: false }, context);
+  await followBaseFunc({ userId, follow: false }, context);
 };
 
 async function getFollowers(userId, context) {
   const {
     models: { User },
+    user,
   } = context;
 
   const { followers: followersIds } = await User.findById(userId).lean();
@@ -119,12 +96,13 @@ async function getFollowers(userId, context) {
       $in: followersIds,
     },
   }).lean();
-  return mapGqlUsers(context, followers);
+  return mapGqlUsers({ users: follow, loggedUserId: user.id });
 }
 
 async function getFollowing(userId, context) {
   const {
     models: { User },
+    user,
   } = context;
 
   const { following: followingIds } = await User.findById(userId).lean();
@@ -133,7 +111,7 @@ async function getFollowing(userId, context) {
       $in: followingIds,
     },
   }).lean();
-  return mapGqlUsers(context, following);
+  return mapGqlUsers({ users: following, loggedUserId: user.id });
 }
 
 const editUser = async (input, context) => {
@@ -150,12 +128,13 @@ const editUser = async (input, context) => {
     upsert: true,
   }).lean();
 
-  return mapGqlUser(context, updatedUser);
+  return mapGqlUser({ user: updatedUser, loggedUserId: user.id });
 };
 
 const getUser = async (userId, context) => {
   const {
     models: { User },
+    user: loggedUser,
   } = context;
   const user = await User.findById(userId).lean();
 
@@ -163,12 +142,13 @@ const getUser = async (userId, context) => {
     throw new Error(`User with id ${userId} was not found`);
   }
 
-  return mapGqlUser(context, user);
+  return mapGqlUser({ user, loggedUserId: loggedUser.id });
 };
 
 const getUsers = async (match, context) => {
   const {
     models: { User },
+    user,
   } = context;
 
   const matchWords = match.split(' ');
@@ -195,7 +175,7 @@ const getUsers = async (match, context) => {
     }).lean();
   }
 
-  return mapGqlUsers(context, matchedUsers);
+  return mapGqlUsers({ users: matchedUsers, loggedUserId: user.id });
 };
 
 const saveAvatarToFile = async (base64Img, userId) => {
@@ -221,7 +201,6 @@ const uploadAvatar = async (base64Img, context) => {
 };
 
 module.exports = {
-  signUp,
   login,
   editUser,
   follow,

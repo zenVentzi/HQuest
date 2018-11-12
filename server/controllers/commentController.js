@@ -18,22 +18,30 @@ const addCommentToAnswer = async ({ comment, answerId }, context) => {
   ).lean();
 
   const addedComment = comments[comments.length - 1];
-  return mapGqlComment(context, performer, addedComment);
+  return mapGqlComment({
+    commentAuthor: performer,
+    comment: addedComment,
+    loggedUserId: user.id,
+  });
 };
 
 const getAnswerComments = async (answerId, context) => {
   const {
     models: { Answer, User },
+    user,
   } = context;
 
   const { comments } = await Answer.findById(answerId).lean();
 
   if (!comments) return [];
-  // TODO: This can be optimized with Dataloader
-  // FIXME hahaha
+  // TODO: This can be optimized with Dataloader if needed
   const commentsPromises = comments.map(async com => {
     const commentAuthor = await User.findById(com.userId).lean();
-    return mapGqlComment(context, commentAuthor, com);
+    return mapGqlComment({
+      commentAuthor,
+      comment: com,
+      loggedUserId: user.id,
+    });
   });
 
   return Promise.all(commentsPromises);

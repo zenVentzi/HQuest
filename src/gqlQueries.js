@@ -4,58 +4,43 @@ import {
   QuestionFields,
   QuestionConnectionFields,
   CommentFields,
+  UserFields,
+  AnswerFields,
 } from 'Fragments';
 
 export const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {
-      id
-      fullName
-      avatarSrc
-      intro
-      socialMediaLinks {
-        facebookLink
-        twitterLink
-        instagramLink
-        linkedInLink
-      }
-      me
-      followers
-      following
+      ...UserFields
     }
   }
+  ${UserFields}
 `;
 
 export const GET_USERS = gql`
   query users($match: String) {
     users(match: $match) {
-      id
-      fullName
-      avatarSrc
-      intro
+      ...UserFields
     }
   }
+  ${UserFields}
 `;
 
 export const GET_FOLLOWERS = gql`
   query followers($userId: ID!) {
     followers(userId: $userId) {
-      id
-      fullName
-      avatarSrc
-      intro
+      ...UserFields
     }
   }
+  ${UserFields}
 `;
 export const GET_FOLLOWING = gql`
   query following($userId: ID!) {
     following(userId: $userId) {
-      id
-      fullName
-      avatarSrc
-      intro
+      ...UserFields
     }
   }
+  ${UserFields}
 `;
 
 export const GET_ANSWERED_QUESTION = gql`
@@ -63,13 +48,12 @@ export const GET_ANSWERED_QUESTION = gql`
     answeredQuestion(userId: $userId, questionId: $questionId) {
       ...QuestionFields
       answer {
-        id
-        value
-        numOfComments
+        ...AnswerFields
       }
     }
   }
   ${QuestionFields}
+  ${AnswerFields}
 `;
 
 export const GET_QUESTIONS = gql`
@@ -92,26 +76,6 @@ export const GET_QUESTIONS = gql`
   }
   ${QuestionConnectionFields}
 `;
-
-// export const GET_UNANSWERED_QUESTIONS = gql`
-//   query questions(
-//     $userId: ID!
-//     $tags: [String]
-//     $first: Int!
-//     $after: String!
-//   ) {
-//     questions(
-//       userId: $userId
-//       tags: $tags
-//       answered: false
-//       first: $first
-//       after: $after
-//     ) {
-//       ...QuestionFields
-//     }
-//   }
-//   ${QuestionFields}
-// `;
 
 export const GET_QUESTIONS_TAGS = gql`
   query questionsTags {
