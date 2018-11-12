@@ -16,6 +16,7 @@ const AnsweredQuestions = ({
   refetch,
   ...style
 }) => {
+  // TODO rename to onRemove etc.
   const onClickSave = (editAnswer, answerId) => async ({ answerValue }) => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
@@ -36,14 +37,34 @@ const AnsweredQuestions = ({
     refetch();
   };
 
+  const onClickLike = ({ likeAnswer, answerId }) => async ({ numOfLikes }) => {
+    const variables = { answerId, numOfLikes };
+    await likeAnswer({ variables });
+    // toast.success('Liked answer!');
+    refetch();
+  };
+
+  const onComment = ({ commentAnswer, answerId }) => async () => {
+    const variables = { answerId };
+    await commentAnswer({ variables });
+    toast.success('Comment added!');
+    refetch();
+  };
+
   if (!questions.length) {
     return <Empty style={style}> No answered questions </Empty>;
   }
 
   return (
     <AnsweredQuestionsGql>
-      {(editAnswer, removeAnswer, moveAnswerPosition) => {
-        return questions.map(q => (
+      {(
+        editAnswer,
+        removeAnswer,
+        moveAnswerPosition,
+        likeAnswer,
+        commentAnswer
+      ) => {
+        const res = questions.map(q => (
           <Fragment key={q.id}>
             <AnsweredQuestion
               collapseComments
@@ -57,9 +78,13 @@ const AnsweredQuestions = ({
                 moveAnswerPosition,
                 answerId: q.answer.id,
               })}
+              onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
+              onComment={onComment({ commentAnswer, answerId: q.answer.id })}
             />
           </Fragment>
         ));
+
+        return res;
       }}
     </AnsweredQuestionsGql>
   );

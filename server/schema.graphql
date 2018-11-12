@@ -93,8 +93,19 @@ type Answer {
   questionId: ID!
   value: String!
   numOfComments: Int!
+  likes: Likes
   editions: [AnswerEdition!]
   position: Int!
+}
+
+type Likes {
+  total: Int!
+  likers: [Liker!]
+}
+
+type Liker {
+  id: ID!
+  numOfLikes: Int!
 }
 
 type AnswerEdition {
@@ -181,6 +192,7 @@ type Mutation {
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
+  likeAnswer(answerId: ID!, numOfLikes: Int!): Answer!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!

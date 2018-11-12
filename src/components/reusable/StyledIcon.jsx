@@ -4,7 +4,7 @@ const StyledIcon = ({ icon: Icon, visible = true, size = '2em' }) => {
   const style = {
     verticalAlign: 'middle',
     pointerEvents: 'none',
-    visibility: visible ? 'visible' : 'hidden',
+    visibility: visible ? 'inherit' : 'hidden',
   };
 
   return <Icon size={size} style={style} />;

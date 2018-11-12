@@ -24,7 +24,7 @@ const Badge = styled.span`
 `;
 
 const NotifBtn = React.forwardRef(({ totalUnseen, onClick }, ref) => (
-  <Btn ref={ref} onClick={onClick}>
+  <Btn ref={ref} onClick={onClick} visible>
     <Notifications size="2em" />
     {totalUnseen > 0 && <Badge>{totalUnseen}</Badge>}
   </Btn>

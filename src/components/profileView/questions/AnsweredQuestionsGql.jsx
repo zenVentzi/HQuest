@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import { Mutation } from 'react-apollo';
-import { EDIT_ANSWER, REMOVE_ANSWER, MOVE_ANSWER_POSITION } from 'Mutations';
+import {
+  EDIT_ANSWER,
+  REMOVE_ANSWER,
+  MOVE_ANSWER_POSITION,
+  LIKE_ANSWER,
+  COMMENT_ANSWER,
+} from 'Mutations';
 
 class AnsweredQuestionsGql extends Component {
   render() {
@@ -15,10 +21,24 @@ class AnsweredQuestionsGql extends Component {
                 return (
                   <Mutation mutation={MOVE_ANSWER_POSITION}>
                     {moveAnswerPosition => {
-                      return children(
-                        editAnswer,
-                        removeAnswer,
-                        moveAnswerPosition
+                      return (
+                        <Mutation mutation={LIKE_ANSWER}>
+                          {likeAnswer => {
+                            return (
+                              <Mutation mutation={COMMENT_ANSWER}>
+                                {commentAnswer => {
+                                  return children(
+                                    editAnswer,
+                                    removeAnswer,
+                                    moveAnswerPosition,
+                                    likeAnswer,
+                                    commentAnswer
+                                  );
+                                }}
+                              </Mutation>
+                            );
+                          }}
+                        </Mutation>
                       );
                     }}
                   </Mutation>

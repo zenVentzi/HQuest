@@ -5,17 +5,15 @@ export const clickableIcon = css`
   background: black;
   border-radius: 0.3em;
   cursor: pointer;
-  visibility: ${props => (props.hide ? 'hidden' : 'visible')};
+  visibility: ${props => (props.visible ? 'inherit' : 'hidden')};
 
-  & * {
-    color: white;
-  }
+  color: ${props => (props.reverseColor ? 'black' : 'white')};
 
   &:hover {
-    background: white;
+    background: ${props => (props.reverseColor ? 'black' : 'white')};
 
     & * {
-      color: black;
+      color: ${props => (props.reverseColor ? 'white' : 'black')};
     }
   }
 `;

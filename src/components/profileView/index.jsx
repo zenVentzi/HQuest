@@ -29,7 +29,7 @@ const StyledView = styled(StyledViewRaw)`
 //   return questions;
 // };
 
-const Profile = ({ match }) => {
+const ProfileView = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
 
@@ -48,7 +48,12 @@ const Profile = ({ match }) => {
   // );
 
   return (
-    <Query query={GET_USER} variables={vars} errorPolicy="all">
+    <Query
+      query={GET_USER}
+      variables={vars}
+      fetchPolicy="network-only" // this could be changed to cache-and-network, the default, if not using HOT RELOAD
+      errorPolicy="all"
+    >
       {({ loading, error, data: { user } }) => {
         if (loading) return <div> loading user data.. </div>;
         if (error) {
@@ -90,4 +95,4 @@ const Profile = ({ match }) => {
   );
 };
 
-export default Profile;
+export default ProfileView;

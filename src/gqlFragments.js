@@ -7,6 +7,13 @@ export const AnswerFields = gql`
     questionId
     value
     numOfComments
+    likes {
+      total
+      likers {
+        id
+        numOfLikes
+      }
+    }
     editions {
       id
       date
