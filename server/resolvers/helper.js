@@ -1,10 +1,10 @@
 const { ObjectId } = require('mongoose').Types;
 
-function mapGqlUser(context, user) {
+function mapGqlUser({ user, loggedUserId }) {
   let me = false;
 
-  if (context.user) {
-    me = context.user.id === user._id.toString();
+  if (loggedUserId) {
+    me = loggedUserId === user._id.toString();
   }
 
   const res = {
@@ -22,8 +22,8 @@ function mapGqlUser(context, user) {
   return res;
 }
 
-const mapGqlUsers = (context, users) => {
-  return users.map(u => mapGqlUser(context, u));
+const mapGqlUsers = ({ users, loggedUserId }) => {
+  return users.map(user => mapGqlUser({ user, loggedUserId }));
 };
 
 const mapGqlNotification = notif => {
@@ -54,8 +54,8 @@ const mapGqlNotifications = notifs => {
   return notifs.map(mapGqlNotification);
 };
 
-function mapGqlComment(context, commentAuthor, comment) {
-  const usr = mapGqlUser(context, commentAuthor);
+function mapGqlComment({ commentAuthor, comment, loggedUserId }) {
+  const usr = mapGqlUser({ user: commentAuthor, loggedUserId });
   return {
     id: comment._id.toString(),
     user: usr,
@@ -63,13 +63,27 @@ function mapGqlComment(context, commentAuthor, comment) {
   };
 }
 
-const mapGqlAnswer = answer => {
+const mapGqlLikes = ({ likes, loggedUserId }) => {
+  if (!likes) return null;
+
+  const res = { total: likes.total, likers: [] };
+  likes.likers.forEach(dbLiker => {
+    const gqlLiker = {
+      user: mapGqlUser({ user: dbLiker.user, loggedUserId }),
+      numOfLikes: dbLiker.numOfLikes,
+    };
+    res.likers.push(gqlLiker);
+  });
+  return res;
+};
+
+const mapGqlAnswer = ({ answer, loggedUserId }) => {
   const res = {
     id: answer._id.toString(),
     questionId: answer.questionId.toString(),
     userId: answer.userId.toString(),
     numOfComments: answer.comments.length,
-    likes: answer.likes,
+    likes: mapGqlLikes({ likes: answer.likes, loggedUserId }),
     editions: answer.editions,
     value: answer.value,
     position: answer.position,
@@ -77,7 +91,7 @@ const mapGqlAnswer = answer => {
   return res;
 };
 
-const mapGqlQuestion = question => {
+const mapGqlQuestion = ({ question, loggedUserId }) => {
   const shapedQuestion = {
     id: question._id.toString(),
     question: question.question,
@@ -88,15 +102,18 @@ const mapGqlQuestion = question => {
   };
 
   if (question.answer) {
-    shapedQuestion.answer = mapGqlAnswer(question.answer);
+    shapedQuestion.answer = mapGqlAnswer({
+      answer: question.answer,
+      loggedUserId,
+    });
   }
 
   return shapedQuestion;
 };
 
-const mapGqlQuestions = questions => {
-  return questions.map(q => {
-    return mapGqlQuestion(q);
+const mapGqlQuestions = ({ questions, loggedUserId }) => {
+  return questions.map(question => {
+    return mapGqlQuestion({ question, loggedUserId });
   });
 };
 

@@ -52,6 +52,7 @@ const createEdition = async ({ answerId, answerValue }, context) => {
 const edit = async ({ answerId, answerValue }, context) => {
   const {
     models: { Answer },
+    user,
   } = context;
 
   const edition = await createEdition({ answerId, answerValue }, context);
@@ -65,7 +66,7 @@ const edit = async ({ answerId, answerValue }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return mapGqlAnswer(updatedAnswer);
+  return mapGqlAnswer({ answer: updatedAnswer, loggedUserId: user.id });
 };
 
 const add = async ({ questionId, answerValue }, context) => {
@@ -102,12 +103,13 @@ const add = async ({ questionId, answerValue }, context) => {
     result = await Answer.create(newAnswer);
   }
 
-  return mapGqlAnswer(result);
+  return mapGqlAnswer({ answer: result, loggedUserId: user.id });
 };
 
 const remove = async ({ answerId }, context) => {
   const {
     models: { Answer },
+    user,
   } = context;
 
   const deletedAnswer = await Answer.findByIdAndUpdate(
@@ -123,7 +125,7 @@ const remove = async ({ answerId }, context) => {
     { $inc: { position: -1 } }
   );
 
-  return mapGqlAnswer(deletedAnswer);
+  return mapGqlAnswer({ answer: deletedAnswer, loggedUserId: user.id });
 };
 
 /* 
@@ -148,7 +150,7 @@ do I directly update the db or first download->modify->upload modified?
 
 const like = async ({ answerId, numOfLikes }, context) => {
   const {
-    models: { Answer },
+    models: { Answer, User },
     user,
   } = context;
   /* 
@@ -157,19 +159,20 @@ const like = async ({ answerId, numOfLikes }, context) => {
 */
 
   const { likes } = await Answer.findById(answerId).lean();
+  const dbUserLiker = await User.findById(user.id).lean();
   let updatedLikes = { total: 0, likers: [] };
 
   if (!likes) {
     updatedLikes = {
       total: numOfLikes,
-      likers: [{ id: ObjectId(user.id), numOfLikes }],
+      likers: [{ user: dbUserLiker, numOfLikes }],
     };
   } else {
     updatedLikes.likers = likes.likers.filter(
-      liker => liker.id.toString() !== user.id
+      liker => !liker.user._id.equals(dbUserLiker._id)
     );
 
-    updatedLikes.likers.push({ id: ObjectId(user.id), numOfLikes });
+    updatedLikes.likers.push({ user: dbUserLiker, numOfLikes });
     updatedLikes.total = updatedLikes.likers.reduce((total, liker) => {
       const res = total + liker.numOfLikes;
       return res;
@@ -184,7 +187,7 @@ const like = async ({ answerId, numOfLikes }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return mapGqlAnswer(likedAnswer);
+  return mapGqlAnswer({ answer: likedAnswer, loggedUserId: user.id });
 };
 
 const movePosition = async ({ answerId, position }, context) => {

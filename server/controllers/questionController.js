@@ -35,7 +35,7 @@ const markNotApply = async ({ questionId }, context) => {
   );
 
   const question = await Question.findById(questionId).lean();
-  return mapGqlQuestion(question);
+  return mapGqlQuestion({ question, loggedUserId: user.id });
 };
 
 const getAllTags = async context => {
@@ -73,6 +73,7 @@ const mergeAnswersWithQuestions = (allUserAnswers, paginatedQuestions) => {
 const getAnsweredQuestion = async (userId, questionId, context) => {
   const {
     models: { Answer, Question },
+    user,
   } = context;
 
   const answerQuery = {
@@ -83,7 +84,7 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
   const answer = await Answer.findOne(answerQuery).lean();
   const question = await Question.findById(questionId).lean();
   const answeredQuestion = mergeAnswerWithQuestion(answer, question);
-  return mapGqlQuestion(answeredQuestion);
+  return mapGqlQuestion({ question: answeredQuestion, loggedUserId: user.id });
 };
 
 const preserveOrder = ({ answeredQuestionsIds, questions }) => {
@@ -99,6 +100,7 @@ const getUserAnsweredQuestions = async (
 ) => {
   const {
     models: { Question },
+    user,
   } = context;
 
   const query = { _id: { $in: answeredQuestionsIds } };
@@ -110,8 +112,8 @@ const getUserAnsweredQuestions = async (
   const questions = await Question.find(query).lean();
   // this is done because the $in query returns in different order
   const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
-
-  return mapGqlQuestions(mergeAnswersWithQuestions(answers, orderedQs));
+  const mergedQuestions = mergeAnswersWithQuestions(answers, orderedQs);
+  return mapGqlQuestions({ questions: mergedQuestions, loggedUserId: user.id });
 };
 
 const getUserUnansweredQuestions = async (
@@ -139,7 +141,7 @@ const getUserUnansweredQuestions = async (
 
   const questions = await Question.find(query).lean();
 
-  return mapGqlQuestions(questions);
+  return mapGqlQuestions({ questions, loggedUserId: user.id });
 };
 
 const getAnsweredQuestionsIds = answers => answers.map(a => a.questionId);

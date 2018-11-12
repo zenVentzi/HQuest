@@ -1,5 +1,23 @@
 import gql from 'graphql-tag';
 
+export const UserFields = gql`
+  fragment UserFields on User {
+    id
+    fullName
+    avatarSrc
+    intro
+    socialMediaLinks {
+      facebookLink
+      twitterLink
+      instagramLink
+      linkedInLink
+    }
+    me
+    followers
+    following
+  }
+`;
+
 export const AnswerFields = gql`
   fragment AnswerFields on Answer {
     id
@@ -10,7 +28,9 @@ export const AnswerFields = gql`
     likes {
       total
       likers {
-        id
+        user {
+          ...UserFields
+        }
         numOfLikes
       }
     }
@@ -22,20 +42,18 @@ export const AnswerFields = gql`
     }
     position
   }
+  ${UserFields}
 `;
 
 export const CommentFields = gql`
   fragment CommentFields on Comment {
     id
     user {
-      id
-      fullName
-      intro
-      avatarSrc
-      me
+      ...UserFields
     }
     comment
   }
+  ${UserFields}
 `;
 
 export const QuestionFields = gql`

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import User from 'Reusable/UserRow';
 
-const StyledLike = styled.div`
+const StyledLiker = styled.div`
   width: 80%;
   display: flex;
   min-height: min-content;
@@ -11,13 +11,15 @@ const StyledLike = styled.div`
   /* margin-bottom: 0.8em; */
 `;
 
-const Like = ({ like }) => {
+/* do I store the whole user info inside the liker object? */
+
+const Liker = ({ liker }) => {
   return (
-    <StyledLike>
-      <User size={1.5} user={like.user} />
+    <StyledLiker>
+      <User size={1.5} user={liker.user} />
       {/* {ReactionIcon && <ReactionIcon size="2em" />} */}
-    </StyledLike>
+    </StyledLiker>
   );
 };
 
-export default Like;
+export default Liker;
