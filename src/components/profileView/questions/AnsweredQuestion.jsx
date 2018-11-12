@@ -1,8 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
+import { getLoggedUserId } from 'Utils';
+import LikeBtn from './Answer/LikeBtn';
 import Question from './Question';
 import Comments from './Answer/Comments';
-import Reactions from './Answer/Reactions';
+import Likes from './Answer/Likes';
 import Editions from './Answer/Editions';
 import AnswerOptions from './Answer/Options';
 import AnswerEditor from './Answer/AnswerEditor';
@@ -28,6 +31,7 @@ const Row = styled.div`
 
 const SmallBtn = styled.span`
   cursor: pointer;
+  user-select: none;
   margin-right: 0.6em;
   font-size: 0.7em;
   text-decoration: underline;
@@ -39,18 +43,40 @@ const SmallBtn = styled.span`
 `;
 
 class AnsweredQuestion extends Component {
-  state = {
-    hovered: false,
-    showComments: !this.props.collapseComments,
-    showReactions: false,
-    showEditions: false,
-    showAnswerEditor: false,
-    showPositionEditor: false,
-    numOfComments: this.props.question.answer.numOfComments,
-    numOfEditions: this.props.question.answer.editions
-      ? this.props.question.answer.editions.length
-      : 0,
-  };
+  constructor(props) {
+    super(props);
+
+    const { answer } = this.props.question;
+    let totalLikes = 0;
+    let currentUserLikes = 0;
+
+    if (answer.likes) {
+      totalLikes = answer.likes.total;
+      const currentUserLikesObj = answer.likes.likers.find(
+        liker => liker.id === getLoggedUserId()
+      );
+
+      if (currentUserLikesObj) {
+        currentUserLikes = currentUserLikesObj.numOfLikes;
+      }
+    }
+
+    const { numOfComments } = answer;
+    const numOfEditions = answer.editions ? answer.editions.length : 0;
+
+    this.state = {
+      hovered: false,
+      showComments: !this.props.collapseComments,
+      showLikes: false,
+      showEditions: false,
+      showAnswerEditor: false,
+      showPositionEditor: false,
+      totalLikes,
+      currentUserLikes,
+      numOfComments,
+      numOfEditions,
+    };
+  }
 
   onMouseEnter = () => {
     this.toggleHovered(true);
@@ -120,15 +146,15 @@ class AnsweredQuestion extends Component {
     this.setState(prevState => ({
       ...prevState,
       showComments: !prevState.showComments,
-      showReactions: false,
+      showLikes: false,
       showEditions: false,
     }));
   };
 
-  toggleReactions = () => {
+  toggleLikes = () => {
     this.setState(prevState => ({
       ...prevState,
-      showReactions: !prevState.showReactions,
+      showLikes: !prevState.showLikes,
       showComments: false,
       showEditions: false,
     }));
@@ -139,7 +165,7 @@ class AnsweredQuestion extends Component {
       ...prevState,
       showEditions: !prevState.showEditions,
       showComments: false,
-      showReactions: false,
+      showLikes: false,
     }));
   };
 
@@ -154,14 +180,46 @@ class AnsweredQuestion extends Component {
     this.setState({ ...this.state, numOfComments });
   };
 
+  wait = async ({ milliseconds }) => {
+    return new Promise(resolve => {
+      this.timeoutIndex = setTimeout(resolve, milliseconds);
+    });
+    // return new Promise(resolve => setTimeout(resolve, milliseconds));
+  };
+
+  cancelPrevWait = () => {
+    if (this.timeoutIndex) {
+      clearTimeout(this.timeoutIndex);
+      this.timeoutIndex = null;
+    }
+  };
+
+  onClickLike = async () => {
+    const currentUserLikes = this.state.currentUserLikes + 1;
+    const totalLikes = this.state.totalLikes + 1;
+
+    if (currentUserLikes > 20) {
+      toast.error('20 likes is the limit');
+      return;
+    }
+
+    this.setState({ ...this.state, currentUserLikes, totalLikes });
+
+    // this.cancelPrevWait();
+    // await this.wait({ milliseconds: 500 });
+    // console.log(this.likeMutationTimeout);
+    await this.props.onClickLike({ numOfLikes: currentUserLikes });
+  };
+
   render() {
     const {
       hovered,
-      showReactions,
+      showLikes,
       showComments,
       showEditions,
       showPositionEditor,
       showAnswerEditor,
+      totalLikes,
       numOfComments,
       numOfEditions,
     } = this.state;
@@ -173,10 +231,11 @@ class AnsweredQuestion extends Component {
       style,
     } = this.props;
 
-    const editionsBtnText =
-      numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
+    const likeBtnText = totalLikes === 1 ? '1 Like' : `${totalLikes} Likes`;
     const commentBtnText =
       numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
+    const editionsBtnText =
+      numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
 
     return (
       <StyledQuestion
@@ -219,13 +278,17 @@ class AnsweredQuestion extends Component {
           />
         )}
         <Row hide={!hovered}>
+          <LikeBtn
+            onClick={this.onClickLike}
+            isLiked={question.answer.isLiked}
+          />
+          <SmallBtn onClick={this.toggleLikes}>{likeBtnText}</SmallBtn>
+          <SmallBtn onClick={this.toggleComments}>{commentBtnText}</SmallBtn>
           {!!numOfEditions && (
             <SmallBtn onClick={this.toggleEditions}>{editionsBtnText}</SmallBtn>
           )}
-          <SmallBtn onClick={this.toggleReactions}>15 Reactions</SmallBtn>
-          <SmallBtn onClick={this.toggleComments}>{commentBtnText}</SmallBtn>
         </Row>
-        {showReactions && <Reactions onClose={this.toggleReactions} />}
+        {showLikes && <Likes onClose={this.toggleLikes} />}
         {showEditions && (
           <Editions
             editions={question.answer.editions}

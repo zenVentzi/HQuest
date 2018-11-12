@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { QuestionFields, CommentFields } from 'Fragments';
+import { QuestionFields, CommentFields, AnswerFields } from 'Fragments';
 
 export const LOGIN_MUTATION = gql`
   mutation LoginMutation($email: String!, $name: String!) {
@@ -60,22 +60,37 @@ export const EDIT_ANSWER = gql`
 export const REMOVE_ANSWER = gql`
   mutation removeAnswer($answerId: ID!) {
     removeAnswer(answerId: $answerId) {
-      userId
-      questionId
+      ...AnswerFields
     }
   }
+  ${AnswerFields}
+`;
+export const LIKE_ANSWER = gql`
+  mutation likeAnswer($answerId: ID!, $numOfLikes: Int!) {
+    likeAnswer(answerId: $answerId, numOfLikes: $numOfLikes) {
+      ...AnswerFields
+    }
+  }
+  ${AnswerFields}
+`;
+
+// TODO return either Answer or Comment
+export const COMMENT_ANSWER = gql`
+  mutation commentAnswer($answerId: ID!, $comment: String!) {
+    commentAnswer(answerId: $answerId, comment: $comment) {
+      ...AnswerFields
+    }
+  }
+  ${AnswerFields}
 `;
 
 export const ADD_ANSWER = gql`
   mutation addAnswer($questionId: ID!, $answerValue: String!) {
     addAnswer(questionId: $questionId, answerValue: $answerValue) {
-      id
-      userId
-      questionId
-      numOfComments
-      value
+      ...AnswerFields
     }
   }
+  ${AnswerFields}
 `;
 
 export const QUESTION_NOT_APPLY = gql`

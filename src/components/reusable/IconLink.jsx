@@ -10,10 +10,12 @@ const StyledLink = styled(UndecoratedLink)`
 
 // TODO remove ref if not needed
 
-const IconLink = React.forwardRef(({ icon, size, hide, to }, ref) => {
+const IconLink = React.forwardRef(({ icon, size, visible = true, to }, ref) => {
   return (
-    <StyledLink to={to} ref={ref}>
-      <StyledIcon icon={icon} size={size} hide={hide} />
+    /* the visible hack reason - 
+    https://github.com/styled-components/styled-components/issues/1198 */
+    <StyledLink to={to} visible={visible ? 1 : 0} ref={ref} role="button">
+      <StyledIcon icon={icon} size={size} visible={visible} />
     </StyledLink>
   );
 });

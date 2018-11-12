@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import Comment from './Comment';
 import Panel from '../Panel';
 
-const TextArea = styled.textarea`
+const CommentInput = styled.textarea`
   /* margin-top: 2em; */
   width: 80%;
   min-height: min-content;
@@ -97,7 +97,7 @@ class Comments extends Component {
                       isSubmitting,
                     }) => (
                       <Form style={{ width: '100%', textAlign: 'center' }}>
-                        <TextArea
+                        <CommentInput
                           name="comment"
                           placeholder="Add a comment..."
                           onChange={handleChange}

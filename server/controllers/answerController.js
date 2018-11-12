@@ -126,6 +126,67 @@ const remove = async ({ answerId }, context) => {
   return mapGqlAnswer(deletedAnswer);
 };
 
+/* 
+
+do I mutate on every click? or do I set e.g. 3 sec timeout after
+the last click and then make the mutation? Long-term the 3 sec solution
+is more rebust but if it's more complicated to implement, it's not
+worth currently. Explain the process.
+
+User clicks like just once. After 2 sec we send a mutation and refetch.
+User keeps on clicking until 20 clicks and then stops. We send a mutation.
+
+onClick we display the user's total likes. When user stops clicking,
+we display the total likes of the answer.
+
+How do we sum the likes in the db?
+
+
+do I directly update the db or first download->modify->upload modified?
+
+*/
+
+const like = async ({ answerId, numOfLikes }, context) => {
+  const {
+    models: { Answer },
+    user,
+  } = context;
+  /* 
+
+  likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
+*/
+
+  const { likes } = await Answer.findById(answerId).lean();
+  let updatedLikes = { total: 0, likers: [] };
+
+  if (!likes) {
+    updatedLikes = {
+      total: numOfLikes,
+      likers: [{ id: ObjectId(user.id), numOfLikes }],
+    };
+  } else {
+    updatedLikes.likers = likes.likers.filter(
+      liker => liker.id.toString() !== user.id
+    );
+
+    updatedLikes.likers.push({ id: ObjectId(user.id), numOfLikes });
+    updatedLikes.total = updatedLikes.likers.reduce((total, liker) => {
+      const res = total + liker.numOfLikes;
+      return res;
+    }, 0);
+  }
+
+  const likedAnswer = await Answer.findByIdAndUpdate(
+    answerId,
+    {
+      $set: { likes: updatedLikes },
+    },
+    { new: true, upsert: true }
+  ).lean();
+
+  return mapGqlAnswer(likedAnswer);
+};
+
 const movePosition = async ({ answerId, position }, context) => {
   const {
     models: { Answer },
@@ -146,4 +207,4 @@ const movePosition = async ({ answerId, position }, context) => {
   return position;
 };
 
-module.exports = { add, edit, remove, movePosition, getUserAnswers };
+module.exports = { add, edit, remove, like, movePosition, getUserAnswers };

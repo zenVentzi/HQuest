@@ -47,9 +47,6 @@ class QuestionsContainer extends Component {
         },
       });
     }
-
-    // if (isCloseToBottom && this.hasNextPage) {
-    //   debugger;
   };
 
   onSelectedTags = tags => {
@@ -81,7 +78,7 @@ class QuestionsContainer extends Component {
     // return <TestQuestions />;
     const { user, showAnswered } = this.props;
     const { selectedTags } = this.state;
-    const vars = {
+    const queryVars = {
       answered: showAnswered,
       userId: user.id,
       tags: selectedTags,
@@ -93,8 +90,9 @@ class QuestionsContainer extends Component {
         <QuestionTags onSelected={this.onSelectedTags} />
         <Query
           query={GET_QUESTIONS}
-          variables={vars}
-          fetchPolicy="cache-and-network"
+          variables={queryVars}
+          fetchPolicy="network-only" // play with when not using HOT RELOAD
+          // fetchPolicy="cache-and-network"
           notifyOnNetworkStatusChange
         >
           {({
@@ -125,7 +123,9 @@ class QuestionsContainer extends Component {
               <Fragment>
                 {!this.isFetchingInitial &&
                   this.renderQuestions(questions, refetch)}
-                {this.isFetching && <div>loading questions..</div>}
+                {(this.isFetchingInitial || this.isFetchingMore) && (
+                  <div>loading questions..</div>
+                )}
               </Fragment>
             );
           }}

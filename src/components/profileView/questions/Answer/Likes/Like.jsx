@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import User from 'Reusable/UserRow';
 
-const StyledReaction = styled.div`
+const StyledLike = styled.div`
   width: 80%;
   display: flex;
   min-height: min-content;
@@ -11,13 +11,13 @@ const StyledReaction = styled.div`
   /* margin-bottom: 0.8em; */
 `;
 
-const Reaction = ({ reactionIcon: ReactionIcon }) => {
+const Like = ({ like }) => {
   return (
-    <StyledReaction>
-      <User size={1.5} />
-      {ReactionIcon && <ReactionIcon size="2em" />}
-    </StyledReaction>
+    <StyledLike>
+      <User size={1.5} user={like.user} />
+      {/* {ReactionIcon && <ReactionIcon size="2em" />} */}
+    </StyledLike>
   );
 };
 
-export default Reaction;
+export default Like;

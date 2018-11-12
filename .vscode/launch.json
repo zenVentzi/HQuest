@@ -14,7 +14,7 @@
       "type": "node",
       "request": "launch",
       "name": "test",
-      "program": "${workspaceFolder}/mongoosetest.js"
+      "program": "${workspaceFolder}/test.js"
     },
     {
       "type": "node",

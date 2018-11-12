@@ -40,7 +40,7 @@ const StyledUser = styled.div`
   }
 `;
 
-class User extends Component {
+class UserRow extends Component {
   static defaultProps = { size: 2 };
 
   constructor(props) {
@@ -111,4 +111,4 @@ class User extends Component {
   }
 }
 
-export default User;
+export default UserRow;

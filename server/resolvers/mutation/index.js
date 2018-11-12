@@ -98,6 +98,9 @@ async function addAnswer(_, args, context) {
 async function removeAnswer(_, args, context) {
   return answerController.remove(args, context);
 }
+async function likeAnswer(_, args, context) {
+  return answerController.like(args, context);
+}
 async function moveAnswerPosition(_, args, context) {
   return answerController.movePosition(args, context);
 }
@@ -132,6 +135,7 @@ module.exports = {
   addAnswer,
   editAnswer,
   removeAnswer,
+  likeAnswer,
   moveAnswerPosition,
   uploadAvatar,
   follow,
