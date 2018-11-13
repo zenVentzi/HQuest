@@ -21,6 +21,7 @@ const AnsweredQuestions = ({
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
     toast.success('🦄 Answer edited!');
+    refetch();
   };
   const onClickRemove = (removeAnswer, answerId) => async () => {
     const variables = { answerId };

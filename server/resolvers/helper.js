@@ -84,7 +84,7 @@ const mapGqlAnswer = ({ answer, loggedUserId }) => {
     userId: answer.userId.toString(),
     numOfComments: answer.comments.length,
     likes: mapGqlLikes({ likes: answer.likes, loggedUserId }),
-    editions: answer.editions,
+    editions: answer.editions.reverse(),
     value: answer.value,
     position: answer.position,
   };
