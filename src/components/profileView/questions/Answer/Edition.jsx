@@ -7,8 +7,13 @@ const StyledEdition = styled.div`
   ${'' /* color: black; */} margin-bottom: 0.8em;
 `;
 
-const Text = styled.div`
-  ${'' /* color: black; */};
+const Text = styled.div``;
+
+const AnswerText = styled.span`
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-style: italic;
+  text-decoration: none;
 `;
 
 // can be made stateless
@@ -30,10 +35,10 @@ class Edition extends Component {
       >
         <Text>Edit {editedTimeAgo} ago</Text>
         <Text>
-          Before: <br /> {before}
+          Before: <AnswerText>{before}</AnswerText>
         </Text>
         <Text>
-          After: <br /> {after}
+          After: <AnswerText>{after}</AnswerText>
         </Text>
       </StyledEdition>
     );

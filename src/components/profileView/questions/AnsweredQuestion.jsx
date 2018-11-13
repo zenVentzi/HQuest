@@ -134,6 +134,8 @@ class AnsweredQuestion extends Component {
       // print "Nothing changed"
     }
 
+    /* do I update the state here myself? or use derivedStateFromProps? I'll update it from here for now */
+
     const numOfEditions = this.state.numOfEditions + 1;
     this.setState({ ...this.state, numOfEditions });
 

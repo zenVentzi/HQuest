@@ -19,6 +19,7 @@ import { theme, GlobalStyle } from './appTheme';
 const App = () => {
   // console.log(`testt`);
   // return <div>test</div>;
+
   return (
     <ApolloProvider client={ApolloClient}>
       <ThemeProvider theme={theme}>
