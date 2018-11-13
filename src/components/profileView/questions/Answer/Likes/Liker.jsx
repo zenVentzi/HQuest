@@ -18,6 +18,7 @@ const Liker = ({ liker }) => {
     <StyledLiker>
       <User size={1.5} user={liker.user} />
       {/* {ReactionIcon && <ReactionIcon size="2em" />} */}
+      <div>x{liker.numOfLikes}</div>
     </StyledLiker>
   );
 };

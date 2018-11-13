@@ -64,7 +64,8 @@ class QuestionsContainer extends Component {
   renderQuestions = (questions, refetch) => {
     if (!questions) return null;
 
-    const { user, showAnswered } = this.props;
+    const { user } = this.props;
+    const { showAnswered } = this.state;
 
     const questionNodes = questions.edges.map(e => e.node);
 
