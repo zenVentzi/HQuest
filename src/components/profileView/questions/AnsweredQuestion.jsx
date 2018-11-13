@@ -53,7 +53,7 @@ class AnsweredQuestion extends Component {
     if (answer.likes) {
       totalLikes = answer.likes.total;
       const currentUserLikesObj = answer.likes.likers.find(
-        liker => liker.id === getLoggedUserId()
+        liker => liker.user.id === getLoggedUserId()
       );
 
       if (currentUserLikesObj) {

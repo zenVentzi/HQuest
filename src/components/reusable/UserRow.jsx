@@ -80,7 +80,17 @@ class UserRow extends Component {
 
     if (this.state.redirect) {
       const redirectTo = `/userProfile/${id}`;
-      return <Redirect push to={redirectTo} />;
+
+      if (redirectTo === window.location.pathname) {
+        // window.scroll(0, 0); doesn't work bcuz can't change state here
+        window.location.reload();
+        // think how you can reload the user component easily without passing down all the props down
+        /* problem currently is that when we pass the same variables to the Query comp, it doesn't refetch. And
+        in getUserQuery case the userId can be the same in case of refresh. One hacky way is to do this.refetch = refetch in render.
+        then in componentDidUpdate to do a refetch */
+      } else {
+        return <Redirect push to={redirectTo} />;
+      }
     }
 
     const { theme } = this.state;
