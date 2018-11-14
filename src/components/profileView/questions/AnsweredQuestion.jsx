@@ -16,7 +16,6 @@ const StyledQuestion = styled.div`
   width: 100%;
   display: flex;
   border-bottom: 2px solid white;
-  padding-bottom: 1em;
   margin-bottom: 2em;
   flex-direction: column;
   align-items: center;
@@ -63,7 +62,7 @@ class AnsweredQuestion extends Component {
 
     const { numOfComments } = answer;
     const numOfEditions = answer.editions ? answer.editions.length : 0;
-
+    // TODO rename collapse comments(it should be the opposite)
     this.state = {
       hovered: false,
       showComments: !this.props.collapseComments,
@@ -276,7 +275,7 @@ class AnsweredQuestion extends Component {
             position={question.answer.position}
             maxPosition={totalQuestionsCount}
             onClickMove={this.onMovePosition}
-            onClickClose={this.togglePositionEditor}
+            onClickClose={this.closePositionEditor}
           />
         )}
         <Row hide={!hovered}>

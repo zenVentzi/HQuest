@@ -34,7 +34,7 @@ class AnswerOptions extends Component {
     return (
       <Dropdown
         pivot="right"
-        dropBtn={<IconBtn icon={CaretDown} size="1em" visible={visible} />}
+        dropBtn={<IconBtn icon={CaretDown} size="1em" visible={!!visible} />}
         items={options}
       />
     );

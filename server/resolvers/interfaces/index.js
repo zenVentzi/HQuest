@@ -49,6 +49,15 @@ const interfaces = {
       return 'NewFollower';
     },
   },
+  News: {
+    __resolveType(obj, context, info) {
+      if (obj.type === 'NEW_ANSWER') {
+        return 'NewAnswerNews';
+      }
+
+      return 'NewFollower';
+    },
+  },
 };
 
 module.exports = interfaces;

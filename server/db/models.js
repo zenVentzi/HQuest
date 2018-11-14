@@ -9,6 +9,7 @@ const getModels = () => {
     User: mongoose.model('User', defaultSchema),
     Question: mongoose.model('Question', defaultSchema),
     Answer: mongoose.model('Answer', defaultSchema),
+    Newsfeed: mongoose.model('Newsfeed', defaultSchema),
   };
 };
 

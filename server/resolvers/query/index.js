@@ -7,15 +7,20 @@ const {
   questionController,
   answerController,
   notificationController,
+  newsfeedController,
 } = require('../../controllers');
 
 async function books(root, __, context) {
   return null;
 }
 
-async function notifications(_, __, context) {
+const notifications = async (_, __, context) => {
   return notificationController.getNotifications(context);
-}
+};
+
+const newsfeed = async (_, __, context) => {
+  return newsfeedController.getNewsfeed({ context });
+};
 
 async function comments(_, { answerId }, context) {
   return commentController.getAnswerComments(answerId, context);
@@ -61,6 +66,7 @@ module.exports = {
   books,
   comments,
   notifications,
+  newsfeed,
   users,
   followers,
   following,

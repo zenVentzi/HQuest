@@ -14,38 +14,9 @@ const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
 
-// const TestQuestions = () => {
-//   const questions = [];
-
-//   for (let i = 0; i < 100; i++) {
-//     questions.push(
-//       <div key={i}>
-//         Question
-//         {i}
-//       </div>
-//     );
-//   }
-
-//   return questions;
-// };
-
 const ProfileView = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
-
-  // return (
-  //   <Query query={GET_USER} variables={vars} errorPolicy="all">
-  //     {({ loading, error, data: { user } }) => {
-  //       if (loading) {
-  //         console.log('TCL: Profile -> loading', loading);
-
-  //         return <div>loading</div>;
-  //       }
-  //       // eslint-disable-next-line
-  //       return <TestQuestions />;
-  //     }}
-  //   </Query>
-  // );
 
   return (
     <Query

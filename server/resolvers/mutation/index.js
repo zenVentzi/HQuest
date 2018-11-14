@@ -6,6 +6,7 @@ const {
   questionController,
   answerController,
   notificationController,
+  newsfeedController,
   commentController,
 } = require('../../controllers');
 const { isAuthenticatedResolver } = require('../accessResolvers');
@@ -36,18 +37,6 @@ const addBook = isAuthenticatedResolver.createResolver(
     return book;
   }
 );
-
-async function signUp(_, args, context) {
-  const user = await userController.signUp(args, context);
-
-  return jsonwebtoken.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '1y',
-    }
-  );
-}
 
 async function login(_, args, context) {
   const user = await userController.login(args, context);
@@ -92,7 +81,23 @@ async function editAnswer(_, args, context) {
 }
 
 async function addAnswer(_, args, context) {
-  return answerController.add(args, context);
+  const answer = await answerController.add(args, context);
+
+  const answeredQuestion = await questionController.getAnsweredQuestion(
+    context.user.id,
+    args.questionId,
+    context
+  );
+
+  const performer = await userController.getUser(context.user.id, context);
+
+  await newsfeedController.onNewAnswer({
+    answeredQuestion,
+    performer,
+    context,
+  });
+
+  return answer;
 }
 
 async function removeAnswer(_, args, context) {
@@ -128,7 +133,6 @@ module.exports = {
   notifsMarkSeen,
   addComment,
   editUser,
-  signUp,
   login,
   createQuestion,
   questionNotApply,
