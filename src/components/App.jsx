@@ -12,6 +12,7 @@ import AdminView from './adminView';
 import SearchView from './searchView';
 import ProfileView from './profileView';
 import HelpView from './helpView';
+import NewsfeedView from './newsfeedView';
 import LandingView from './landingView';
 import NotFoundView from './notFoundView';
 import { theme, GlobalStyle } from './appTheme';
@@ -38,6 +39,7 @@ const App = () => {
               <ProtectedRoute path="/admin" component={AdminView} />
               <ProtectedRoute path="/search" component={SearchView} />
               <Route path="/help" component={HelpView} />
+              <Route path="/newsfeed" component={NewsfeedView} />
               <Route path="/" exact component={LandingView} />
               <Route component={NotFoundView} />
             </Switch>

@@ -8,6 +8,25 @@ import {
   AnswerFields,
 } from 'Fragments';
 
+export const GET_NEWSFEED = gql`
+  query newsfeed {
+    newsfeed {
+      type
+      createdOn
+      ... on NewAnswerNews {
+        performer {
+          ...UserFields
+        }
+        question {
+          ...QuestionFields
+        }
+      }
+    }
+  }
+  ${UserFields}
+  ${QuestionFields}
+`;
+
 export const GET_USER = gql`
   query user($id: ID!) {
     user(id: $id) {

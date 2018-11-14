@@ -37,6 +37,12 @@ interface Notification {
   createdOn: DateTime!
 }
 
+interface News {
+  type: NewsType!
+  performer: User!
+  createdOn: DateTime!
+}
+
 type SocialMediaLinks {
   facebookLink: String
   twitterLink: String
@@ -121,6 +127,49 @@ type Comment {
   comment: String!
 }
 
+enum NewsType {
+  NEW_ANSWER
+  NEW_COMMENT
+}
+
+type NewAnswerNews implements News {
+  type: NewsType!
+  performer: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+type NewCommentNews implements News {
+  type: NewsType!
+  performer: User!
+  receiver: User!
+  question: Question!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+type NewQuestionEditionNews implements News {
+  type: NewsType!
+  performer: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+type NewFollowerNews implements News {
+  type: NewsType!
+  performer: User!
+  receiver: User!
+  createdOn: DateTime!
+}
+
+type NewLikeNews implements News {
+  type: NewsType!
+  performer: User!
+  receiver: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
 enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
@@ -163,6 +212,7 @@ type Query {
   questionsTags: [String!]!
   followers(userId: ID!): [User!]!
   following(userId: ID!): [User!]!
+  newsfeed: [News!]
   questions(answered: Boolean!, userId: ID!, tags: [String], first: Int!, after: String): QuestionConnection!
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }

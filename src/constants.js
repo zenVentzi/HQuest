@@ -5,8 +5,14 @@ const QuestionTypes = {
   SCALE: `SCALE`,
   TEXT: `TEXT`,
   OPTIONS: `OPTIONS`,
-  WOULD_YOU_SINGLE: `WOULD_YOU_SINGLE`,
-  WOULD_YOU_DOUBLE: `WOULD_YOU_DOUBLE`,
 };
 
-module.exports = { AUTH_TOKEN, USER_ID, QuestionTypes };
+const NewsType = {
+  NEW_COMMENT: 'NEW_COMMENT',
+  NEW_ANSWER: 'NEW_ANSWER',
+  NEW_LIKE: 'NEW_LIKE',
+  NEW_FOLLOWER: 'NEW_FOLLOWER',
+  NEW_EDITION: 'NEW_EDITION',
+};
+
+module.exports = { AUTH_TOKEN, USER_ID, QuestionTypes, NewsType };

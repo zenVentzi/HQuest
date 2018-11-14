@@ -2,7 +2,13 @@ import React from 'react';
 import Panel from '../Panel';
 import Liker from './Liker';
 
-const Likes = ({ likes: { likers } }) => {
+const Likes = ({ likes }) => {
+  let likers;
+  if (likes) {
+    // eslint-disable-next-line prefer-destructuring
+    likers = likes.likers;
+  }
+
   return (
     <Panel>
       {likers && likers.length ? (
