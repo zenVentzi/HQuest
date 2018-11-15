@@ -77,7 +77,24 @@ async function questionNotApply(_, args, context) {
 }
 
 async function editAnswer(_, args, context) {
-  return answerController.edit(args, context);
+  const answer = await answerController.edit(args, context);
+
+  // think how to reduce the code replication(editAnswer, addAnswer)
+  const answeredQuestion = await questionController.getAnsweredQuestion(
+    context.user.id,
+    answer.questionId,
+    context
+  );
+
+  const performer = await userController.getUser(context.user.id, context);
+
+  await newsfeedController.onEditAnswer({
+    answeredQuestion,
+    performer,
+    context,
+  });
+
+  return answer;
 }
 
 async function addAnswer(_, args, context) {

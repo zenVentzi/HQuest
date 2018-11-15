@@ -15,7 +15,7 @@ const NewsfeedView = () => (
     <Query
       query={GET_NEWSFEED}
       // variables={vars}
-      fetchPolicy="network-only"
+      fetchPolicy="no-cache"
       errorPolicy="all"
     >
       {({ loading, error, data: { newsfeed } }) => {

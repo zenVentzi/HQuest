@@ -51,11 +51,14 @@ const interfaces = {
   },
   News: {
     __resolveType(obj, context, info) {
-      if (obj.type === 'NEW_ANSWER') {
-        return 'NewAnswerNews';
+      console.log(obj.type);
+      console.log(obj);
+
+      if (obj.type === 'NEW_ANSWER' || obj.type === 'NEW_ANSWER_EDITION') {
+        return 'AnswerNews';
       }
 
-      return 'NewFollower';
+      throw new Error(`${obj.type} is incorrect`);
     },
   },
 };

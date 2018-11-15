@@ -2,7 +2,10 @@ import React from 'react';
 import distanceInWords from 'date-fns/distance_in_words';
 import styled from 'styled-components';
 import User from 'Reusable/UserRow';
+import { NewsType } from 'Constants';
 import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
+
+const { NEW_ANSWER_EDITION, NEW_ANSWER } = NewsType;
 
 const NewAnswerWrapper = styled.div`
   width: 100%;
@@ -36,15 +39,28 @@ const getTime = createdOn => {
   return `${res} ago`;
 };
 
-const NewAnswer = ({ news: { performer, question, createdOn } }) => {
-  // console.log(createdOn);
+const NewAnswerEdition = ({
+  news: { type, performer, question, createdOn },
+}) => {
+  let text;
+
+  switch (type) {
+    case NEW_ANSWER:
+      text = `Added new answer ${getTime(createdOn)}:`;
+      break;
+    case NEW_ANSWER_EDITION:
+      text = `Edited answer ${getTime(createdOn)}:`;
+      break;
+    default:
+      break;
+  }
   return (
     <NewAnswerWrapper>
       <Header>
         <HeaderTop>
           <User user={performer} size={1.5} />
         </HeaderTop>
-        <HeaderBottom> Added new answer {getTime(createdOn)}:</HeaderBottom>
+        <HeaderBottom>{text}</HeaderBottom>
       </Header>
       <Body>
         <AnsweredQuestion collapseComments question={question} />
@@ -53,4 +69,4 @@ const NewAnswer = ({ news: { performer, question, createdOn } }) => {
   );
 };
 
-export default NewAnswer;
+export default NewAnswerEdition;
