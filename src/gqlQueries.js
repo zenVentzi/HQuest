@@ -13,7 +13,7 @@ export const GET_NEWSFEED = gql`
     newsfeed {
       type
       createdOn
-      ... on NewAnswerNews {
+      ... on AnswerNews {
         performer {
           ...UserFields
         }

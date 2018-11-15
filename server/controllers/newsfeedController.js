@@ -2,12 +2,17 @@ const { ObjectId } = require('mongoose').Types;
 // const {} = require('../resolvers/helper');
 
 const NEW_ANSWER = 'NEW_ANSWER';
+const NEW_ANSWER_EDITION = 'NEW_ANSWER_EDITION';
 const NEW_COMMENT = 'NEW_COMMENT';
-const NEW_EDITION = 'NEW_EDITION';
 const NEW_FOLLOWER = 'NEW_FOLLOWER';
 const NEW_LIKE = 'NEW_LIKE';
 
-const onNewAnswer = async ({ answeredQuestion, performer, context }) => {
+const onAnswerChange = async ({
+  type,
+  answeredQuestion,
+  performer,
+  context,
+}) => {
   const {
     models: { Newsfeed },
   } = context;
@@ -16,12 +21,29 @@ const onNewAnswer = async ({ answeredQuestion, performer, context }) => {
   delete copy.me;
 
   const news = {
-    type: NEW_ANSWER,
+    type,
     performer: copy,
     question: answeredQuestion,
   };
 
   await Newsfeed.create(news);
+};
+const onNewAnswer = async ({ answeredQuestion, performer, context }) => {
+  await onAnswerChange({
+    type: NEW_ANSWER,
+    answeredQuestion,
+    performer,
+    context,
+  });
+};
+
+const onEditAnswer = async ({ answeredQuestion, performer, context }) => {
+  await onAnswerChange({
+    type: NEW_ANSWER_EDITION,
+    answeredQuestion,
+    performer,
+    context,
+  });
 };
 
 const getNewsfeed = async ({ context }) => {
@@ -55,5 +77,6 @@ const getNewsfeed = async ({ context }) => {
 
 module.exports = {
   onNewAnswer,
+  onEditAnswer,
   getNewsfeed,
 };
