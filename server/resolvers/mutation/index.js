@@ -64,6 +64,12 @@ async function addComment(_, { answerId, comment }, context) {
     { answerId, comment },
     context
   );
+
+  await newsfeedController.onNewComment({
+    answerId,
+    commentId: commentObj.id,
+    context,
+  });
   await notificationController.newComment(answerId, commentObj, context);
   return commentObj;
 }

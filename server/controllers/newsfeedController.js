@@ -1,11 +1,42 @@
 const { ObjectId } = require('mongoose').Types;
-// const {} = require('../resolvers/helper');
+// not using index.js bcuz newsfeecController causes cycle dependencies
+const answerController = require('./answerController');
+const questionController = require('./questionController');
+const userController = require('./userController');
 
 const NEW_ANSWER = 'NEW_ANSWER';
 const NEW_ANSWER_EDITION = 'NEW_ANSWER_EDITION';
 const NEW_COMMENT = 'NEW_COMMENT';
 const NEW_FOLLOWER = 'NEW_FOLLOWER';
 const NEW_LIKE = 'NEW_LIKE';
+
+const onNewComment = async ({ answerId, commentId, context }) => {
+  const {
+    models: { Newsfeed },
+  } = context;
+
+  const answer = await answerController.getAnswerById({ answerId, context });
+
+  const answeredQuestion = await questionController.getAnsweredQuestion(
+    context.user.id,
+    answer.questionId,
+    context
+  );
+
+  const performer = await userController.getUser(context.user.id, context);
+
+  const performerCopy = { ...performer };
+  delete performerCopy.me;
+
+  const news = {
+    type: NEW_COMMENT,
+    performer: performerCopy,
+    question: answeredQuestion,
+    commentId,
+  };
+
+  await Newsfeed.create(news);
+};
 
 const onAnswerChange = async ({
   type,
@@ -78,5 +109,6 @@ const getNewsfeed = async ({ context }) => {
 module.exports = {
   onNewAnswer,
   onEditAnswer,
+  onNewComment,
   getNewsfeed,
 };

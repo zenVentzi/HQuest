@@ -18,6 +18,14 @@ const getUserAnswers = async ({ userId }, context) => {
   return res;
 };
 
+const getAnswerById = async ({ answerId, context }) => {
+  const {
+    models: { Answer },
+  } = context;
+
+  return Answer.findById(answerId).lean();
+};
+
 const createEdition = async ({ answerId, answerValue }, context) => {
   const {
     models: { Answer, Question },
@@ -190,4 +198,12 @@ const movePosition = async ({ answerId, position }, context) => {
   return position;
 };
 
-module.exports = { add, edit, remove, like, movePosition, getUserAnswers };
+module.exports = {
+  add,
+  edit,
+  remove,
+  like,
+  movePosition,
+  getUserAnswers,
+  getAnswerById,
+};
