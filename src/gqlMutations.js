@@ -78,10 +78,10 @@ export const LIKE_ANSWER = gql`
 export const COMMENT_ANSWER = gql`
   mutation commentAnswer($answerId: ID!, $comment: String!) {
     commentAnswer(answerId: $answerId, comment: $comment) {
-      ...AnswerFields
+      ...CommentFields
     }
   }
-  ${AnswerFields}
+  ${CommentFields}
 `;
 
 export const ADD_ANSWER = gql`
@@ -100,13 +100,4 @@ export const QUESTION_NOT_APPLY = gql`
     }
   }
   ${QuestionFields}
-`;
-
-export const ADD_COMMENT = gql`
-  mutation addComment($answerId: ID!, $comment: String!) {
-    addComment(answerId: $answerId, comment: $comment) {
-      ...CommentFields
-    }
-  }
-  ${CommentFields}
 `;

@@ -59,6 +59,7 @@ class Comment extends Component {
     const {
       comment: { user, comment },
       size,
+      innerRef,
     } = this.props;
 
     const { commentHovered } = this.state;
@@ -67,6 +68,7 @@ class Comment extends Component {
       <StyledComment
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
+        ref={innerRef}
       >
         <Header>
           <User user={user} size={size} />
@@ -82,4 +84,6 @@ class Comment extends Component {
   }
 }
 
-export default Comment;
+export default React.forwardRef((props, ref) => (
+  <Comment innerRef={ref} {...props} />
+));

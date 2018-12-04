@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
+const answerController = require('./answerController');
 const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
 const createQuestion = async (
@@ -76,12 +77,11 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
     user,
   } = context;
 
-  const answerQuery = {
-    userId: ObjectId(userId),
-    questionId: ObjectId(questionId),
-  };
-
-  const answer = await Answer.findOne(answerQuery).lean();
+  const answer = await answerController.getUserAnswer({
+    userId,
+    questionId,
+    context,
+  });
   const question = await Question.findById(questionId).lean();
   const answeredQuestion = mergeAnswerWithQuestion(answer, question);
   return mapGqlQuestion({ question: answeredQuestion, loggedUserId: user.id });
@@ -99,7 +99,7 @@ const getUserAnsweredQuestions = async (
   context
 ) => {
   const {
-    models: { Question },
+    models: { Question, User },
     user,
   } = context;
 
@@ -113,7 +113,10 @@ const getUserAnsweredQuestions = async (
   // this is done because the $in query returns in different order
   const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
   const mergedQuestions = mergeAnswersWithQuestions(answers, orderedQs);
-  return mapGqlQuestions({ questions: mergedQuestions, loggedUserId: user.id });
+  return mapGqlQuestions({
+    questions: mergedQuestions,
+    loggedUserId: user.id,
+  });
 };
 
 const getUserUnansweredQuestions = async (

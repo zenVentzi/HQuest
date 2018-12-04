@@ -10,6 +10,7 @@ const {
   commentController,
 } = require('../../controllers');
 const { isAuthenticatedResolver } = require('../accessResolvers');
+const { mapGqlAnswer } = require('../../resolvers/helper');
 
 const addBook = isAuthenticatedResolver.createResolver(
   async (root, args, context) => {
@@ -59,7 +60,7 @@ const editUser = async (_, { input }, context) => {
   return userController.editUser(input, context);
 };
 
-async function addComment(_, { answerId, comment }, context) {
+async function commentAnswer(_, { answerId, comment }, context) {
   const commentObj = await commentController.addCommentToAnswer(
     { answerId, comment },
     context
@@ -127,7 +128,8 @@ async function removeAnswer(_, args, context) {
   return answerController.remove(args, context);
 }
 async function likeAnswer(_, args, context) {
-  return answerController.like(args, context);
+  const likedAnswer = await answerController.like(args, context);
+  return mapGqlAnswer({ answer: likedAnswer, loggedUserId: context.user.id });
 }
 async function moveAnswerPosition(_, args, context) {
   return answerController.movePosition(args, context);
@@ -154,7 +156,7 @@ async function notifsMarkSeen(_, __, context) {
 module.exports = {
   addBook,
   notifsMarkSeen,
-  addComment,
+  commentAnswer,
   editUser,
   login,
   createQuestion,

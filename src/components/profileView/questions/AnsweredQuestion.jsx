@@ -60,16 +60,52 @@ class AnsweredQuestion extends Component {
       }
     }
 
-    const { numOfComments } = answer;
+    const numOfComments = answer.comments ? answer.comments.length : 0;
     const numOfEditions = answer.editions ? answer.editions.length : 0;
-    // TODO rename collapse comments(it should be the opposite)
+
     this.state = {
       hovered: false,
-      showComments: !this.props.collapseComments,
+      showComments: this.props.showComments,
       showLikes: false,
       showEditions: false,
       showAnswerEditor: false,
       showPositionEditor: false,
+      totalLikes,
+      currentUserLikes,
+      numOfComments,
+      numOfEditions,
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // do things with nextProps.someProp and prevState.cachedSomeProp
+    const { answer } = nextProps.question;
+    let totalLikes = 0;
+    let currentUserLikes = 0;
+    console.log(`derived`);
+
+    if (answer.likes) {
+      totalLikes = answer.likes.total;
+      const currentUserLikesObj = answer.likes.likers.find(
+        liker => liker.user.id === getLoggedUserId()
+      );
+
+      if (currentUserLikesObj) {
+        currentUserLikes = currentUserLikesObj.numOfLikes;
+      }
+    }
+
+    // const { numOfComments } = answer;
+    const numOfComments = answer.comments ? answer.comments.length : 0;
+    const numOfEditions = answer.editions ? answer.editions.length : 0;
+
+    return {
+      hovered: prevState.hovered,
+      showComments: prevState.showComments,
+      showLikes: prevState.showLikes,
+      showEditions: prevState.showEditions,
+      showAnswerEditor: prevState.showAnswerEditor,
+      showPositionEditor: prevState.showPositionEditor,
       totalLikes,
       currentUserLikes,
       numOfComments,
@@ -176,9 +212,10 @@ class AnsweredQuestion extends Component {
     this.closePositionEditor();
   };
 
-  onAddComment = () => {
-    const numOfComments = this.state.numOfComments + 1;
-    this.setState({ ...this.state, numOfComments });
+  onAddComment = async ({ commentValue }) => {
+    await this.props.onAddComment({ commentValue });
+    // const numOfComments = this.state.numOfComments + 1;
+    // this.setState({ ...this.state, numOfComments });
   };
 
   wait = async ({ milliseconds }) => {
@@ -226,11 +263,13 @@ class AnsweredQuestion extends Component {
     } = this.state;
     const {
       question,
+      scrollToComment,
       totalQuestionsCount,
       isPersonal,
-      collapseComments,
       style,
     } = this.props;
+
+    const { comments } = question.answer;
 
     const likeBtnText = totalLikes === 1 ? '1 Like' : `${totalLikes} Likes`;
     const commentBtnText =
@@ -267,7 +306,6 @@ class AnsweredQuestion extends Component {
             questionType={question.type}
             answer={question.answer}
             possibleAnswers={question.possibleAnswers}
-            collapseComments={collapseComments}
           />
         )}
         {showPositionEditor && (
@@ -298,10 +336,11 @@ class AnsweredQuestion extends Component {
             onClose={this.toggleEditions}
           />
         )}
-        {showComments && (
+        {(showComments || scrollToComment) && (
           <Comments
-            answerId={question.answer.id}
-            onAdd={this.onAddComment}
+            comments={comments}
+            scrollToComment={scrollToComment}
+            onAddComment={this.onAddComment}
             onClose={this.toggleComments}
           />
         )}

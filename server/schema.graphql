@@ -98,7 +98,7 @@ type Answer {
   userId: ID!
   questionId: ID!
   value: String!
-  numOfComments: Int!
+  comments: [Comment!]
   likes: Likes
   editions: [AnswerEdition!]
   position: Int!
@@ -140,10 +140,10 @@ type AnswerNews implements News {
   createdOn: DateTime!
 }
 
-type NewCommentNews implements News {
+type CommentNews implements News {
   type: NewsType!
   performer: User!
-  receiver: User!
+  answerOwner: User!
   question: Question!
   commentId: ID!
   createdOn: DateTime!
@@ -229,7 +229,7 @@ type Mutation {
   addBook(title: String!, author: String!): Book!
   editUser(input: EditUserInput): User!
   notifsMarkSeen: Boolean
-  addComment(answerId: ID!, comment: String!): Comment!
+  commentAnswer(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, name: String!): LoginResult!
   createQuestion(question: String!, type: QuestionType!, defaultAnswer: Int, possibleAnswers: [String!], tags: [String!]!): String

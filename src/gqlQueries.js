@@ -21,6 +21,18 @@ export const GET_NEWSFEED = gql`
           ...QuestionFields
         }
       }
+      ... on CommentNews {
+        performer {
+          ...UserFields
+        }
+        answerOwner {
+          ...UserFields
+        }
+        question {
+          ...QuestionFields
+        }
+        commentId
+      }
     }
   }
   ${UserFields}

@@ -54,14 +54,70 @@ const mapGqlNotifications = notifs => {
   return notifs.map(mapGqlNotification);
 };
 
-function mapGqlComment({ commentAuthor, comment, loggedUserId }) {
-  const usr = mapGqlUser({ user: commentAuthor, loggedUserId });
+function mapGqlComment({ comment, loggedUserId }) {
+  const usr = mapGqlUser({ user: comment.user, loggedUserId });
   return {
     id: comment._id.toString(),
     user: usr,
     comment: comment.comment,
   };
 }
+
+/* if I modify */
+const mapGqlComments = ({ comments, loggedUserId }) => {
+  if (!comments) return null;
+
+  /* how do we get each and every comment userDbObj ?
+  
+  we can't fetch here. THe objects must come from above
+  
+  I must fetch all the commentAuthors from the controller that calls the helper methods OR store the whole user object not just the userId in the commentObj. This is definitely a bad practice but way easier to read 
+  
+  approach1: 
+  
+  1) fetch all UserObjects in the controller
+  2) pass them as commentAuthors object
+
+  what I don't like about this approach is that there are unrelated parameters in the function. 
+
+  approach2:
+  1) fetch all UserObjects in the controller
+  2) attach them to the comments objects
+
+  still a lot of magic
+
+  approach3:NOT
+
+  1) pass context to helper methods and allow them to fetch data themselves. Not doing that because helper = mapper. We don't fetch any data from mapper functions.
+
+  approach4:NOT
+
+  Instead of using one general mapQuestions method, use multiple methods such as mapAnswer and so on
+
+  approach5:
+
+  Apply the comment transformation only once in the answer controller. Meaning that for every answers fetch, we also need to fetch all the users for the comments.
+
+  What bothers me is that so far every object that comes inside the mapper is identical as the db object. This makes an exception that will keep code readers guessing a lot when reading about wheter it's the only place or not.
+
+  approach6:
+
+  Pass down an anonymous function for the transformation
+
+  In this case, for every answer we need to open new fetch request to the db. If we have 20 answers to fetch, we need to open 20 fetch requests. Is that really that bad? We'll find out.
+
+  To fix that, I need to get all the user ids that need to be fetched, from all the answers and then map them manually once fetched.
+  */
+
+  const res = comments.map(com =>
+    mapGqlComment({
+      comment: com,
+      loggedUserId,
+    })
+  );
+
+  return res;
+};
 
 const mapGqlLikes = ({ likes, loggedUserId }) => {
   if (!likes) return null;
@@ -83,6 +139,7 @@ const mapGqlAnswer = ({ answer, loggedUserId }) => {
     questionId: answer.questionId.toString(),
     userId: answer.userId.toString(),
     numOfComments: answer.comments.length,
+    comments: mapGqlComments({ comments: answer.comments, loggedUserId }),
     likes: mapGqlLikes({ likes: answer.likes, loggedUserId }),
     editions: answer.editions ? answer.editions.reverse() : null,
     value: answer.value,
