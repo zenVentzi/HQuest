@@ -23,11 +23,7 @@ const QuestionPin = ({
         }
 
         return (
-          <AnsweredQuestion
-            collapseComments={false}
-            editable={editable}
-            question={q}
-          />
+          <AnsweredQuestion showComments editable={editable} question={q} />
         );
       }}
     </Query>

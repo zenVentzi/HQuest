@@ -45,8 +45,10 @@ const AnsweredQuestions = ({
     refetch();
   };
 
-  const onComment = ({ commentAnswer, answerId }) => async () => {
-    const variables = { answerId };
+  const onAddComment = ({ commentAnswer, answerId }) => async ({
+    commentValue,
+  }) => {
+    const variables = { answerId, comment: commentValue };
     await commentAnswer({ variables });
     toast.success('Comment added!');
     refetch();
@@ -80,7 +82,10 @@ const AnsweredQuestions = ({
                 answerId: q.answer.id,
               })}
               onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
-              onComment={onComment({ commentAnswer, answerId: q.answer.id })}
+              onAddComment={onAddComment({
+                commentAnswer,
+                answerId: q.answer.id,
+              })}
             />
           </Fragment>
         ));

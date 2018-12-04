@@ -1,0 +1,35 @@
+constructor(props) {
+    super(props);
+
+    const { answer } = this.props.question;
+    let totalLikes = 0;
+    let currentUserLikes = 0;
+
+    if (answer.likes) {
+      totalLikes = answer.likes.total;
+      const currentUserLikesObj = answer.likes.likers.find(
+        liker => liker.user.id === getLoggedUserId()
+      );
+
+      if (currentUserLikesObj) {
+        currentUserLikes = currentUserLikesObj.numOfLikes;
+      }
+    }
+
+    // const { numOfComments } = answer;
+    const numOfComments = answer.comments ? answer.comments.length : 0;
+    const numOfEditions = answer.editions ? answer.editions.length : 0;
+
+    this.state = {
+      hovered: false,
+      showComments: this.props.showComments,
+      showLikes: false,
+      showEditions: false,
+      showAnswerEditor: false,
+      showPositionEditor: false,
+      totalLikes,
+      currentUserLikes,
+      numOfComments,
+      numOfEditions,
+    };
+  }

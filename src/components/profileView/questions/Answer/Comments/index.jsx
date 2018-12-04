@@ -23,6 +23,24 @@ const ErrorText = styled.div`
 `;
 
 class Comments extends Component {
+  // componentDidMount() {
+  //   console.log(`mount`);
+  // }
+  // state = { scrolledToComment: false };
+
+  componentDidMount(prevProps, prevState) {
+    if (this.highlightedComment) {
+      this.panel.scrollTop = this.highlightedComment.offsetTop;
+
+      // eslint-disable-next-line react/no-did-mount-set-state
+      // this.setState((state, props) => {
+      //   return { ...state, scrolledToComment: true };
+      // });
+    }
+  }
+
+  scrollToComment = () => {};
+
   updateCache = (cache, { data: { addComment } }) => {
     const vars = { answerId: this.props.answerId };
     const { comments: cments } = cache.readQuery({
@@ -37,7 +55,7 @@ class Comments extends Component {
     });
   };
 
-  renderComments = comments => {
+  renderComments = ({ comments, scrollToComment }) => {
     if (!comments.length) return <div> No comments yet </div>;
 
     const renderReversedComments = () => {
@@ -46,7 +64,17 @@ class Comments extends Component {
 
       while (copy.length) {
         const com = copy.pop();
-        res.push(<Comment key={com.id} comment={com} />);
+        const commentProps = { key: com.id, comment: com };
+
+        if (scrollToComment && scrollToComment === com.id) {
+          // if (com.id === '5bf2843bddf03613e870ad00') {
+          commentProps.ref = ref => {
+            this.highlightedComment = ref;
+          };
+          // commentProps.highlight = true;
+        }
+
+        res.push(<Comment {...commentProps} />);
       }
       return res;
     };
@@ -55,75 +83,70 @@ class Comments extends Component {
   };
 
   render() {
-    const { answerId, onClose } = this.props;
+    const { comments, scrollToComment, onClose } = this.props;
 
     return (
-      <Query query={GET_COMMENTS} variables={{ answerId }}>
-        {({ loading, error, data: { comments } }) => (
-          <Mutation mutation={ADD_COMMENT} update={this.updateCache}>
-            {addComment => {
-              if (loading) return <div> Loading comments..</div>; // this should be below Input component
-              if (error) return <div> {error.message} </div>;
+      <Panel
+        ref={ref => {
+          this.panel = ref;
+        }}
+        onClose={onClose}
+        // onScroll={e => {
+        //   console.log(`onscroll ${e.target.scrollTop}`);
+        // }}
+      >
+        <Formik
+          initialValues={{ comment: '' }}
+          validateOnBlur={false}
+          validate={values => {
+            const errors = {};
+            if (values.comment && values.comment.length < 7)
+              errors.comment = 'Comment must be at least 7 characters';
 
-              return (
-                <Panel onClose={onClose}>
-                  <Formik
-                    initialValues={{ comment: '' }}
-                    validateOnBlur={false}
-                    validate={values => {
-                      const errors = {};
-                      if (values.comment && values.comment.length < 7)
-                        errors.comment =
-                          'Comment must be at least 7 characters';
-
-                      return errors;
-                    }}
-                    onSubmit={async (values, { setSubmitting, resetForm }) => {
-                      await addComment({
-                        variables: { answerId, comment: values.comment },
-                      });
-                      this.props.onAdd();
-                      setSubmitting(false);
-                      resetForm({});
-                    }}
-                  >
-                    {({
-                      touched,
-                      values,
-                      errors,
-                      handleChange,
-                      submitForm,
-                      handleBlur,
-                      isSubmitting,
-                    }) => (
-                      <Form style={{ width: '100%', textAlign: 'center' }}>
-                        <CommentInput
-                          name="comment"
-                          placeholder="Add a comment..."
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.comment || ''}
-                          onKeyPress={e => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              if (!isSubmitting) submitForm();
-                            }
-                          }}
-                        />
-                        <ErrorMessage
-                          name="comment"
-                          render={msg => <ErrorText>{msg}</ErrorText>}
-                        />
-                      </Form>
-                    )}
-                  </Formik>
-                  {this.renderComments(comments)}
-                </Panel>
-              );
-            }}
-          </Mutation>
-        )}
-      </Query>
+            return errors;
+          }}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            // await addComment({
+            //   variables: { answerId, comment: values.comment },
+            // });
+            await this.props.onAddComment({ commentValue: values.comment });
+            setSubmitting(false);
+            resetForm({});
+          }}
+        >
+          {({
+            touched,
+            values,
+            errors,
+            handleChange,
+            submitForm,
+            handleBlur,
+            isSubmitting,
+          }) => (
+            <Form style={{ width: '100%', textAlign: 'center' }}>
+              <CommentInput
+                name="comment"
+                placeholder="Add a comment..."
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.comment || ''}
+                disabled={isSubmitting}
+                onKeyPress={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!isSubmitting) submitForm();
+                  }
+                }}
+              />
+              <ErrorMessage
+                name="comment"
+                render={msg => <ErrorText>{msg}</ErrorText>}
+              />
+            </Form>
+          )}
+        </Formik>
+        {this.renderComments({ comments, scrollToComment })}
+      </Panel>
     );
   }
 }

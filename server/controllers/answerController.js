@@ -3,19 +3,100 @@ const bcrypt = require('bcrypt');
 const { QuestionTypes } = require('../constants');
 const { mapGqlAnswer } = require('../resolvers/helper');
 
+const getComentators = async ({ userAnswers, context }) => {
+  const {
+    models: { User },
+  } = context;
+
+  const commentatorsIds = userAnswers.reduce(
+    (userIdsFromAllAnswers, answer) => {
+      const { comments: answerComments } = answer;
+      // const userIds = [];
+      answerComments.forEach(com => {
+        if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
+          userIdsFromAllAnswers.push(com.userId.toString());
+        }
+      });
+
+      return userIdsFromAllAnswers;
+    },
+    []
+  );
+
+  const commentatorsObjs = await User.find({
+    _id: { $in: commentatorsIds },
+  }).lean();
+
+  return commentatorsObjs;
+};
+
+const swapUserIdForUserObj = ({ commentators, userAnswers }) => {
+  const res = userAnswers.map(answ => {
+    const answerWithUpdatedComments = { ...answ };
+    delete answerWithUpdatedComments.comments;
+
+    answerWithUpdatedComments.comments = answ.comments.map(comment => {
+      const commentWithUserObj = { ...comment };
+      delete commentWithUserObj.userId;
+      commentWithUserObj.user = commentators.find(comObj =>
+        comObj._id.equals(comment.userId)
+      );
+      return commentWithUserObj;
+    });
+
+    return answerWithUpdatedComments;
+  });
+
+  return res;
+};
+
+const addUserObjToComments = async ({ userAnswers, context }) => {
+  const commentators = await getComentators({ userAnswers, context });
+
+  const answersWithUpdatedComments = swapUserIdForUserObj({
+    commentators,
+    userAnswers,
+  });
+
+  return answersWithUpdatedComments;
+};
+
 const getUserAnswers = async ({ userId }, context) => {
   const {
     models: { Answer },
   } = context;
 
-  const res = await Answer.find({
+  const userAnswers = await Answer.find({
     userId: ObjectId(userId),
     $or: [{ isDeleted: { $exists: false } }, { isDeleted: false }],
   })
     .sort({ position: 1 })
     .lean();
 
+  const res = await addUserObjToComments({ userAnswers, context });
+
   return res;
+};
+
+const getUserAnswer = async ({ userId, questionId, context }) => {
+  const {
+    models: { Answer },
+  } = context;
+
+  const answer = await Answer.findOne({
+    userId: ObjectId(userId),
+    questionId: ObjectId(questionId),
+  }).lean();
+
+  const res = await addUserObjToComments({ userAnswers: [answer], context })[0];
+
+  return res;
+
+  /* problem is that if I don't return mapped result, it becomes incosistent with the other functions. But I need an unmapped result in this case
+  
+  solution1: pass parameter shouldMap that defaults to true and mark it as false. If false just return rawDbObject.
+  
+  solution2: don't return mapped objects from controllers. Map the results in the query & mutation files */
 };
 
 const getAnswerById = async ({ answerId, context }) => {
@@ -156,6 +237,7 @@ const like = async ({ answerId, numOfLikes }, context) => {
       likers: [{ user: dbUserLiker, numOfLikes }],
     };
   } else {
+    // clear prev num of likes before adding the new ones
     updatedLikes.likers = likes.likers.filter(
       liker => !liker.user._id.equals(dbUserLiker._id)
     );
@@ -175,7 +257,12 @@ const like = async ({ answerId, numOfLikes }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return mapGqlAnswer({ answer: likedAnswer, loggedUserId: user.id });
+  const [answerWithUpdatedComments] = await addUserObjToComments({
+    userAnswers: [likedAnswer],
+    context,
+  });
+
+  return answerWithUpdatedComments;
 };
 
 const movePosition = async ({ answerId, position }, context) => {
@@ -204,6 +291,7 @@ module.exports = {
   remove,
   like,
   movePosition,
+  getUserAnswer,
   getUserAnswers,
   getAnswerById,
 };

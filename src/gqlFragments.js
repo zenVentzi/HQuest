@@ -18,13 +18,26 @@ export const UserFields = gql`
   }
 `;
 
+export const CommentFields = gql`
+  fragment CommentFields on Comment {
+    id
+    user {
+      ...UserFields
+    }
+    comment
+  }
+  ${UserFields}
+`;
+
 export const AnswerFields = gql`
   fragment AnswerFields on Answer {
     id
     userId
     questionId
     value
-    numOfComments
+    comments {
+      ...CommentFields
+    }
     likes {
       total
       likers {
@@ -43,17 +56,7 @@ export const AnswerFields = gql`
     position
   }
   ${UserFields}
-`;
-
-export const CommentFields = gql`
-  fragment CommentFields on Comment {
-    id
-    user {
-      ...UserFields
-    }
-    comment
-  }
-  ${UserFields}
+  ${CommentFields}
 `;
 
 export const QuestionFields = gql`

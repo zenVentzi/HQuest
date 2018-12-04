@@ -17,8 +17,10 @@ const onNewComment = async ({ answerId, commentId, context }) => {
 
   const answer = await answerController.getAnswerById({ answerId, context });
 
+  const answerOwner = await userController.getUser(answer.userId, context);
+
   const answeredQuestion = await questionController.getAnsweredQuestion(
-    context.user.id,
+    answer.userId,
     answer.questionId,
     context
   );
@@ -31,6 +33,7 @@ const onNewComment = async ({ answerId, commentId, context }) => {
   const news = {
     type: NEW_COMMENT,
     performer: performerCopy,
+    answerOwner,
     question: answeredQuestion,
     commentId,
   };
