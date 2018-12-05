@@ -7,6 +7,18 @@ function mapGqlUser({ user, loggedUserId }) {
     me = loggedUserId === user._id.toString();
   }
 
+  let followers = [];
+  let following = [];
+
+  if (user.followers) {
+    followers = user.followers.map(followerId => followerId.toString());
+  }
+  if (user.following) {
+    following = user.following.map(followingUserId =>
+      followingUserId.toString()
+    );
+  }
+
   const res = {
     id: user._id.toString(),
     email: user.email,
@@ -15,8 +27,8 @@ function mapGqlUser({ user, loggedUserId }) {
     socialMediaLinks: user.socialMediaLinks,
     avatarSrc: user.avatarSrc || '',
     me,
-    followers: user.followers || [],
-    following: user.following || [],
+    followers,
+    following,
   };
 
   return res;

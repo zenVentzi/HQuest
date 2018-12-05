@@ -83,12 +83,16 @@ const getUserAnswer = async ({ userId, questionId, context }) => {
     models: { Answer },
   } = context;
 
+  const userIdObj = typeof userId === 'string' ? ObjectId(userId) : userId;
+  const questionIdObj =
+    typeof questionId === 'string' ? ObjectId(questionId) : questionId;
+
   const answer = await Answer.findOne({
-    userId: ObjectId(userId),
-    questionId: ObjectId(questionId),
+    userId: userIdObj,
+    questionId: questionIdObj,
   }).lean();
 
-  const res = await addUserObjToComments({ userAnswers: [answer], context })[0];
+  const [res] = await addUserObjToComments({ userAnswers: [answer], context });
 
   return res;
 
@@ -104,7 +108,19 @@ const getAnswerById = async ({ answerId, context }) => {
     models: { Answer },
   } = context;
 
-  return Answer.findById(answerId).lean();
+  const answer = await Answer.findById(answerId).lean();
+  const [res] = await addUserObjToComments({ userAnswers: [answer], context });
+  return res;
+};
+
+const getAnswersById = async ({ answerIds, context }) => {
+  const {
+    models: { Answer },
+  } = context;
+
+  const answers = await Answer.find({ _id: { $in: answerIds } }).lean();
+  const res = await addUserObjToComments({ userAnswers: answers, context });
+  return res;
 };
 
 const createEdition = async ({ answerId, answerValue }, context) => {
@@ -292,6 +308,7 @@ module.exports = {
   like,
   movePosition,
   getUserAnswer,
+  getAnswersById,
   getUserAnswers,
   getAnswerById,
 };

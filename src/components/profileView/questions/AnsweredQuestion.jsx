@@ -82,7 +82,6 @@ class AnsweredQuestion extends Component {
     const { answer } = nextProps.question;
     let totalLikes = 0;
     let currentUserLikes = 0;
-    console.log(`derived`);
 
     if (answer.likes) {
       totalLikes = answer.likes.total;

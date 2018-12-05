@@ -87,39 +87,36 @@ const getAnsweredQuestion = async (userId, questionId, context) => {
   return mapGqlQuestion({ question: answeredQuestion, loggedUserId: user.id });
 };
 
-const preserveOrder = ({ answeredQuestionsIds, questions }) => {
-  const res = answeredQuestionsIds
+const preserveOrder = ({ questionsIds, questions }) => {
+  const res = questionsIds
     .map(id => questions.find(q => q._id.equals(id)))
     .filter(q => q); // filters undefined or null values
   return res;
 };
 
-const getUserAnsweredQuestions = async (
-  { answers, answeredQuestionsIds, tags },
+const getAnsweredQuestions = async (
+  { answers, questionsIds, tags },
   context
 ) => {
   const {
-    models: { Question, User },
+    models: { Question },
     user,
   } = context;
 
-  const query = { _id: { $in: answeredQuestionsIds } };
+  const query = { _id: { $in: questionsIds } };
 
-  if (tags.length) {
+  if (tags && tags.length) {
     query.tags = { $in: tags };
   }
 
   const questions = await Question.find(query).lean();
   // this is done because the $in query returns in different order
-  const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
+  const orderedQs = preserveOrder({ questionsIds, questions });
   const mergedQuestions = mergeAnswersWithQuestions(answers, orderedQs);
-  return mapGqlQuestions({
-    questions: mergedQuestions,
-    loggedUserId: user.id,
-  });
+  return mergedQuestions;
 };
 
-const getUserUnansweredQuestions = async (
+const getUnansweredQuestions = async (
   { answeredQuestionsIds, tags },
   context
 ) => {
@@ -138,16 +135,32 @@ const getUserUnansweredQuestions = async (
     _id: { $nin: notInArray },
   };
 
-  if (tags.length) {
+  if (tags && tags.length) {
     query.tags = { $in: tags };
   }
 
-  const questions = await Question.find(query).lean();
-
-  return mapGqlQuestions({ questions, loggedUserId: user.id });
+  return Question.find(query).lean();
 };
 
-const getAnsweredQuestionsIds = answers => answers.map(a => a.questionId);
+const getQuestionsIds = answers => answers.map(a => a.questionId);
+
+const getNewsFeedQuestions = async ({ newsFeed, context }) => {
+  const answerIds = newsFeed.map(news => news.answerId);
+
+  const answers = await answerController.getAnswersById({
+    answerIds,
+    context,
+  });
+
+  const questionsIds = await getQuestionsIds(answers);
+
+  const newsFeedQuestions = await getAnsweredQuestions(
+    { answers, questionsIds },
+    context
+  );
+
+  return newsFeedQuestions;
+};
 
 const getAllEdges = nodes => {
   return nodes.map(node => {
@@ -202,22 +215,32 @@ const getPageInfo = (allEdges, currentPageEdges) => {
 };
 
 const getUserQuestionConnection = async (args, context) => {
-  const answeredQuestionsIds = await getAnsweredQuestionsIds(args.answers);
-  let questions;
+  const questionsIds = await getQuestionsIds(args.answers);
+  let gqlQuestions;
 
   if (args.answered) {
-    questions = await getUserAnsweredQuestions(
-      { ...args, answeredQuestionsIds },
+    const questions = await getAnsweredQuestions(
+      { ...args, questionsIds },
       context
     );
+
+    gqlQuestions = mapGqlQuestions({
+      questions,
+      loggedUserId: context.user.id,
+    });
   } else {
-    questions = await getUserUnansweredQuestions(
-      { ...args, answeredQuestionsIds },
+    const questions = await getUnansweredQuestions(
+      { ...args, questionsIds },
       context
     );
+
+    gqlQuestions = mapGqlQuestions({
+      questions,
+      loggedUserId: context.user.id,
+    });
   }
 
-  const allEdges = getAllEdges(questions);
+  const allEdges = getAllEdges(gqlQuestions);
   const currentPageEdges = getCurrentPageEdges(args, allEdges);
   const pageInfo = getPageInfo(allEdges, currentPageEdges);
 
@@ -233,6 +256,7 @@ module.exports = {
   createQuestion,
   markNotApply,
   getAllTags,
+  getNewsFeedQuestions,
   getAnsweredQuestion,
   getUserQuestionConnection,
 };

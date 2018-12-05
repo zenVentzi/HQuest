@@ -30,8 +30,6 @@ const NewsfeedView = () => (
           );
         }
 
-        console.log(newsfeed);
-
         if (!newsfeed || !newsfeed.length) {
           return <div>No activity from your following.</div>;
         }
