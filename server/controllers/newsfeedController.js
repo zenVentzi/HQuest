@@ -31,7 +31,7 @@ const onNewComment = async ({ answerId, commentId, context }) => {
   await Newsfeed.create(news);
 };
 
-const onAnswerChange = async ({ type, answeredQuestion, context }) => {
+const onAnswerChange = async ({ type, answer, context }) => {
   const {
     models: { Newsfeed },
     user,
@@ -40,25 +40,25 @@ const onAnswerChange = async ({ type, answeredQuestion, context }) => {
   const news = {
     type,
     performerId: user.id,
-    question: answeredQuestion,
+    questionId: answer.questionId.toString(),
+    answerId: answer._id.toString(),
   };
 
   await Newsfeed.create(news);
 };
-const onNewAnswer = async ({ answeredQuestion, performer, context }) => {
+
+const onNewAnswer = async ({ answer, context }) => {
   await onAnswerChange({
     type: NEW_ANSWER,
-    answeredQuestion,
-    performer,
+    answer,
     context,
   });
 };
 
-const onEditAnswer = async ({ answeredQuestion, performer, context }) => {
+const onEditAnswer = async ({ answer, context }) => {
   await onAnswerChange({
     type: NEW_ANSWER_EDITION,
-    answeredQuestion,
-    performer,
+    answer,
     context,
   });
 };
@@ -141,7 +141,7 @@ const getNewsfeed = async ({ context }) => {
     delete gqlNews.performerId;
     return gqlNews;
   });
-  return gqlNewsfeed;
+  return gqlNewsfeed.reverse();
 };
 
 module.exports = {
