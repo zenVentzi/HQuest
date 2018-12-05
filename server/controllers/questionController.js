@@ -116,10 +116,7 @@ const getAnsweredQuestions = async (
   return mergedQuestions;
 };
 
-const getUnansweredQuestions = async (
-  { answeredQuestionsIds, tags },
-  context
-) => {
+const getUnansweredQuestions = async ({ questionsIds, tags }, context) => {
   const {
     models: { User, Question },
     user,
@@ -129,7 +126,7 @@ const getUnansweredQuestions = async (
     user.id
   ).lean();
 
-  const notInArray = answeredQuestionsIds.concat(questionsNotApplyIds);
+  const notInArray = questionsIds.concat(questionsNotApplyIds);
 
   const query = {
     _id: { $nin: notInArray },

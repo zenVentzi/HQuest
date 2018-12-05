@@ -86,42 +86,23 @@ async function questionNotApply(_, args, context) {
 async function editAnswer(_, args, context) {
   const answer = await answerController.edit(args, context);
 
-  // think how to reduce the code replication(editAnswer, addAnswer)
-  const answeredQuestion = await questionController.getAnsweredQuestion(
-    context.user.id,
-    answer.questionId,
-    context
-  );
-
-  const performer = await userController.getUser(context.user.id, context);
-
   await newsfeedController.onEditAnswer({
-    answeredQuestion,
-    performer,
+    answer,
     context,
   });
 
-  return answer;
+  return mapGqlAnswer({ answer, loggedUserId: context.user.id });
 }
 
 async function addAnswer(_, args, context) {
   const answer = await answerController.add(args, context);
 
-  const answeredQuestion = await questionController.getAnsweredQuestion(
-    context.user.id,
-    args.questionId,
-    context
-  );
-
-  const performer = await userController.getUser(context.user.id, context);
-
   await newsfeedController.onNewAnswer({
-    answeredQuestion,
-    performer,
+    answer,
     context,
   });
 
-  return answer;
+  return mapGqlAnswer({ answer, loggedUserId: context.user.id });
 }
 
 async function removeAnswer(_, args, context) {

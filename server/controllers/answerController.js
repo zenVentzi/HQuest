@@ -157,7 +157,6 @@ const createEdition = async ({ answerId, answerValue }, context) => {
 const edit = async ({ answerId, answerValue }, context) => {
   const {
     models: { Answer },
-    user,
   } = context;
 
   const edition = await createEdition({ answerId, answerValue }, context);
@@ -171,7 +170,7 @@ const edit = async ({ answerId, answerValue }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return mapGqlAnswer({ answer: updatedAnswer, loggedUserId: user.id });
+  return updatedAnswer;
 };
 
 const add = async ({ questionId, answerValue }, context) => {
@@ -208,7 +207,7 @@ const add = async ({ questionId, answerValue }, context) => {
     result = await Answer.create(newAnswer);
   }
 
-  return mapGqlAnswer({ answer: result, loggedUserId: user.id });
+  return result;
 };
 
 const remove = async ({ answerId }, context) => {
