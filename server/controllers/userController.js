@@ -145,6 +145,16 @@ const getUser = async (userId, context) => {
   return mapGqlUser({ user, loggedUserId: loggedUser.id });
 };
 
+const getUsersWithIds = async ({ ids, context }) => {
+  const {
+    models: { User },
+  } = context;
+
+  const users = await User.find({ _id: { $in: ids } }).lean();
+
+  return users;
+};
+
 const getUsers = async (match, context) => {
   const {
     models: { User },
@@ -209,5 +219,6 @@ module.exports = {
   getFollowing,
   getUser,
   getUsers,
+  getUsersWithIds,
   uploadAvatar,
 };

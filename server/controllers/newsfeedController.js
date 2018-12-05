@@ -3,6 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const answerController = require('./answerController');
 const questionController = require('./questionController');
 const userController = require('./userController');
+const { mapGqlUsers, mapGqlQuestions } = require('../resolvers/helper');
 
 const NEW_ANSWER = 'NEW_ANSWER';
 const NEW_ANSWER_EDITION = 'NEW_ANSWER_EDITION';
@@ -13,50 +14,32 @@ const NEW_LIKE = 'NEW_LIKE';
 const onNewComment = async ({ answerId, commentId, context }) => {
   const {
     models: { Newsfeed },
+    user,
   } = context;
 
   const answer = await answerController.getAnswerById({ answerId, context });
 
-  const answerOwner = await userController.getUser(answer.userId, context);
-
-  const answeredQuestion = await questionController.getAnsweredQuestion(
-    answer.userId,
-    answer.questionId,
-    context
-  );
-
-  const performer = await userController.getUser(context.user.id, context);
-
-  const performerCopy = { ...performer };
-  delete performerCopy.me;
-
   const news = {
     type: NEW_COMMENT,
-    performer: performerCopy,
-    answerOwner,
-    question: answeredQuestion,
+    performerId: user.id,
+    answerOwnerId: answer.userId.toString(),
+    answerId,
+    questionId: answer.questionId.toString(),
     commentId,
   };
 
   await Newsfeed.create(news);
 };
 
-const onAnswerChange = async ({
-  type,
-  answeredQuestion,
-  performer,
-  context,
-}) => {
+const onAnswerChange = async ({ type, answeredQuestion, context }) => {
   const {
     models: { Newsfeed },
+    user,
   } = context;
-
-  const copy = { ...performer };
-  delete copy.me;
 
   const news = {
     type,
-    performer: copy,
+    performerId: user.id,
     question: answeredQuestion,
   };
 
@@ -80,6 +63,34 @@ const onEditAnswer = async ({ answeredQuestion, performer, context }) => {
   });
 };
 
+const getNewsFeedUsers = async ({ newsFeed, context }) => {
+  const neewsFeedUserIds = [];
+
+  newsFeed.forEach(news => {
+    if (!neewsFeedUserIds.includes(news.performerId)) {
+      neewsFeedUserIds.push(news.performerId);
+    }
+    if (!neewsFeedUserIds.includes(news.answerOwnerId)) {
+      neewsFeedUserIds.push(news.answerOwnerId);
+    }
+  });
+
+  const newsFeedUsers = await userController.getUsersWithIds({
+    ids: neewsFeedUserIds,
+    context,
+  });
+
+  return mapGqlUsers({ users: newsFeedUsers, loggedUserId: context.user.id });
+};
+
+const getNewsFeedQuestions = async ({ newsFeed, context }) => {
+  const questions = await questionController.getNewsFeedQuestions({
+    newsFeed,
+    context,
+  });
+  return mapGqlQuestions({ questions, loggedUserId: context.user.id });
+};
+
 const getNewsfeed = async ({ context }) => {
   const {
     models: { Newsfeed, User },
@@ -95,18 +106,42 @@ const getNewsfeed = async ({ context }) => {
     });
   }
 
-  const newsFeed = await Newsfeed.find({
-    'performer.id': { $in: followingIds },
+  const dbNewsFeed = await Newsfeed.find({
+    performerId: { $in: followingIds },
   }).lean();
 
-  const res = newsFeed.map(news => {
-    const edited = { ...news };
-    edited.createdOn = news._id.getTimestamp();
-    delete edited._id;
-    edited.performer.me = false;
-    return edited;
+  const newsfeedUsers = await getNewsFeedUsers({
+    newsFeed: dbNewsFeed,
+    context,
   });
-  return res;
+
+  const newsFeedQuestions = await getNewsFeedQuestions({
+    newsFeed: dbNewsFeed,
+    context,
+  });
+
+  // this to be extracted to the mapper file(resolvers/helper)
+  const gqlNewsfeed = dbNewsFeed.map(news => {
+    const gqlNews = { ...news };
+    gqlNews.createdOn = news._id.getTimestamp();
+    gqlNews.performer = newsfeedUsers.find(usr => news.performerId === usr.id);
+    const newsQuestion = newsFeedQuestions.find(q => news.questionId === q.id);
+
+    if (newsQuestion) {
+      gqlNews.question = newsQuestion;
+      gqlNews.answerOwner = newsfeedUsers.find(
+        usr => news.answerOwnerId === usr.id
+      );
+      delete gqlNews.answerOwnerId;
+      delete gqlNews.questionId;
+    }
+
+    delete gqlNews._id;
+    delete gqlNews.answerId;
+    delete gqlNews.performerId;
+    return gqlNews;
+  });
+  return gqlNewsfeed;
 };
 
 module.exports = {
