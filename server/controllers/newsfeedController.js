@@ -45,6 +45,21 @@ const onLikeAnswer = async ({ answerId, context }) => {
   }
 };
 
+const onFollowUser = async ({ followedUserId, context }) => {
+  const {
+    models: { Newsfeed },
+    user,
+  } = context;
+
+  const news = {
+    type: NEW_FOLLOWER,
+    performerId: user.id,
+    followedUserId,
+  };
+
+  await Newsfeed.create(news);
+};
+
 const onNewComment = async ({ answerId, commentId, context }) => {
   const {
     models: { Newsfeed },
@@ -156,5 +171,6 @@ module.exports = {
   onEditAnswer,
   onNewComment,
   onLikeAnswer,
+  onFollowUser,
   getNewsfeed,
 };

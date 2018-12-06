@@ -147,7 +147,12 @@ const getUnansweredQuestions = async ({ questionsIds, tags }, context) => {
 const getQuestionsIds = answers => answers.map(a => a.questionId);
 
 const getNewsFeedQuestions = async ({ newsFeed, context }) => {
-  const answerIds = newsFeed.map(news => news.answerId);
+  const answerIds = [];
+  newsFeed.forEach(news => {
+    if (news.answerId) {
+      answerIds.push(news.answerId);
+    }
+  });
 
   const answers = await answerController.getAnswersById({
     answerIds,
