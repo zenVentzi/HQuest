@@ -13,4 +13,89 @@ It's simpler not to. What is the cost, timewise, of implementing the numofLikes 
 Strive for multiple likes. If too time consuming, go for single like news 
 
 
-User liked x20 User1's answer  */
+User liked x20 User1's answer
+  */
+
+/* 
+
+props: { performer, receiver, question, commentId}
+
+*/
+
+import React, { Fragment } from 'react';
+import distanceInWords from 'date-fns/distance_in_words';
+import styled from 'styled-components';
+import User from 'Reusable/UserRow';
+import { getLoggedUserId } from 'Utils';
+import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
+
+// this file is duplication of NewComment. To be fixed.
+const NewLikeWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 1em;
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1em;
+  border-bottom: 2px solid white;
+`;
+
+const HeaderText = styled.div`
+  /* flex-grow: 1; */
+  font-size: 0.8em;
+`;
+const Body = styled.div``;
+
+const getTime = createdOn => {
+  const startDate = new Date(createdOn).getTime();
+  const dateTimeNow = new Date().getTime();
+
+  const res = distanceInWords(startDate, dateTimeNow, {
+    includeSeconds: true,
+  });
+
+  return `${res} ago`;
+};
+
+const NewLike = ({ news: { performer, answerOwner, question, createdOn } }) => {
+  let topText;
+  let bottomText;
+  // improve the 2 names below
+  const isPerformerOwnAnswer = answerOwner.id === performer.id;
+  const isLoggedUserAnwer = answerOwner.id === getLoggedUserId();
+
+  if (isPerformerOwnAnswer) {
+    topText = `Liked their answer ${getTime(createdOn)} `;
+    bottomText = null;
+  } else if (isLoggedUserAnwer) {
+    topText = `Liked your answer ${getTime(createdOn)} `;
+    bottomText = null;
+  } else {
+    topText = `Liked`;
+    bottomText = `answer ${getTime(createdOn)}`;
+  }
+
+  return (
+    <NewLikeWrapper>
+      <Header>
+        <User user={performer} size={1.5} />
+        <HeaderText>{topText}</HeaderText>
+        {!isPerformerOwnAnswer &&
+          !isLoggedUserAnwer && (
+            <Fragment>
+              <User user={answerOwner} size={1.5} />
+              <HeaderText>{bottomText}</HeaderText>
+            </Fragment>
+          )}
+      </Header>
+      <Body>
+        <AnsweredQuestion question={question} />
+      </Body>
+    </NewLikeWrapper>
+  );
+};
+
+export default NewLike;

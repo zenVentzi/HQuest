@@ -186,6 +186,40 @@ const mapGqlQuestions = ({ questions, loggedUserId }) => {
   });
 };
 
+const mapGqlNewsFeed = ({
+  newsFeed,
+  newsFeedUsers,
+  newsFeedQuestions,
+  loggedUserId,
+}) => {
+  const gqlUsers = mapGqlUsers({ users: newsFeedUsers, loggedUserId });
+  const gqlQuestions = mapGqlQuestions({
+    questions: newsFeedQuestions,
+    loggedUserId,
+  });
+
+  const res = newsFeed.map(news => {
+    const gqlNews = { ...news };
+    gqlNews.createdOn = news._id.getTimestamp();
+    gqlNews.performer = gqlUsers.find(usr => news.performerId === usr.id);
+    const newsQuestion = gqlQuestions.find(q => news.answerId === q.answer.id);
+
+    if (newsQuestion) {
+      gqlNews.question = newsQuestion;
+      gqlNews.answerOwner = gqlUsers.find(usr => news.answerOwnerId === usr.id);
+      delete gqlNews.answerOwnerId;
+      delete gqlNews.questionId;
+    }
+
+    delete gqlNews._id;
+    delete gqlNews.answerId;
+    delete gqlNews.performerId;
+    return gqlNews;
+  });
+
+  return res;
+};
+
 module.exports = {
   mapGqlComment,
   mapGqlAnswer,
@@ -193,6 +227,7 @@ module.exports = {
   mapGqlUsers,
   mapGqlNotification,
   mapGqlNotifications,
-  mapGqlQuestions,
   mapGqlQuestion,
+  mapGqlQuestions,
+  mapGqlNewsFeed,
 };

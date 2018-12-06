@@ -59,13 +59,19 @@ const mergeAnswerWithQuestion = (answer, question) => {
   return { ...question, answer };
 };
 
-const mergeAnswersWithQuestions = (allUserAnswers, paginatedQuestions) => {
+const mergeAnswersWithQuestions = (answers, questions) => {
   const result = [];
+  const mergedAnswers = [];
 
-  paginatedQuestions.forEach(question => {
-    const answer = allUserAnswers.find(a => a.questionId.equals(question._id));
-    const merged = mergeAnswerWithQuestion(answer, question);
-    result.push(merged);
+  questions.forEach(question => {
+    const answer = answers.find(
+      a =>
+        a.questionId.equals(question._id) &&
+        !mergedAnswers.some(ma => ma._id.equals(a._id))
+    );
+    const mergedQA = mergeAnswerWithQuestion(answer, question);
+    mergedAnswers.push(answer);
+    result.push(mergedQA);
   });
 
   return result;
@@ -100,7 +106,6 @@ const getAnsweredQuestions = async (
 ) => {
   const {
     models: { Question },
-    user,
   } = context;
 
   const query = { _id: { $in: questionsIds } };
@@ -110,7 +115,7 @@ const getAnsweredQuestions = async (
   }
 
   const questions = await Question.find(query).lean();
-  // this is done because the $in query returns in different order
+  // ordering is done because the $in query returns in random order
   const orderedQs = preserveOrder({ questionsIds, questions });
   const mergedQuestions = mergeAnswersWithQuestions(answers, orderedQs);
   return mergedQuestions;
