@@ -51,13 +51,20 @@ const interfaces = {
   },
   News: {
     __resolveType(obj, context, info) {
-      if (obj.type === 'NEW_ANSWER' || obj.type === 'NEW_ANSWER_EDITION') {
-        return 'AnswerNews';
-      } else if (obj.type === 'NEW_COMMENT') {
-        return 'CommentNews';
-      }
+      switch (obj.type) {
+        case 'NEW_ANSWER':
+        case 'NEW_ANSWER_EDITION':
+          return 'AnswerNews';
+        case 'NEW_COMMENT':
+          return 'CommentNews';
+        case 'NEW_LIKE':
+          return 'NewLikeNews';
+        case 'NEW_FOLLOWER':
+          return 'NewFollowerNews';
 
-      throw new Error(`${obj.type} is incorrect`);
+        default:
+          throw new Error(`${obj.type} is incorrect`);
+      }
     },
   },
 };

@@ -1,15 +1,49 @@
 const { ObjectId } = require('mongoose').Types;
-// not using index.js bcuz newsfeecController causes cycle dependencies
+// not using index.js bcuz it causes cycle dependencies
 const answerController = require('./answerController');
 const questionController = require('./questionController');
 const userController = require('./userController');
-const { mapGqlUsers, mapGqlQuestions } = require('../resolvers/helper');
+const { mapGqlUsers, mapGqlNewsFeed } = require('../resolvers/helper');
 
 const NEW_ANSWER = 'NEW_ANSWER';
 const NEW_ANSWER_EDITION = 'NEW_ANSWER_EDITION';
 const NEW_COMMENT = 'NEW_COMMENT';
 const NEW_FOLLOWER = 'NEW_FOLLOWER';
 const NEW_LIKE = 'NEW_LIKE';
+
+const checkIfAnswerLikedBefore = async ({ news, context }) => {
+  const {
+    models: { Newsfeed },
+  } = context;
+
+  const existingNews = await Newsfeed.findOne({
+    type: news.type,
+    performerId: news.performerId,
+    answerId: news.answerId,
+  }).lean();
+
+  return !!existingNews;
+};
+
+const onLikeAnswer = async ({ answerId, context }) => {
+  const {
+    models: { Newsfeed },
+    user,
+  } = context;
+
+  const answer = await answerController.getAnswerById({ answerId, context });
+
+  const news = {
+    type: NEW_LIKE,
+    performerId: user.id,
+    answerOwnerId: answer.userId.toString(),
+    answerId,
+  };
+
+  if (!(await checkIfAnswerLikedBefore({ news, context }))) {
+    await Newsfeed.create(news);
+  }
+};
 
 const onNewComment = async ({ answerId, commentId, context }) => {
   const {
@@ -24,7 +58,6 @@ const onNewComment = async ({ answerId, commentId, context }) => {
     performerId: user.id,
     answerOwnerId: answer.userId.toString(),
     answerId,
-    questionId: answer.questionId.toString(),
     commentId,
   };
 
@@ -40,7 +73,6 @@ const onAnswerChange = async ({ type, answer, context }) => {
   const news = {
     type,
     performerId: user.id,
-    questionId: answer.questionId.toString(),
     answerId: answer._id.toString(),
   };
 
@@ -79,16 +111,7 @@ const getNewsFeedUsers = async ({ newsFeed, context }) => {
     ids: neewsFeedUserIds,
     context,
   });
-
-  return mapGqlUsers({ users: newsFeedUsers, loggedUserId: context.user.id });
-};
-
-const getNewsFeedQuestions = async ({ newsFeed, context }) => {
-  const questions = await questionController.getNewsFeedQuestions({
-    newsFeed,
-    context,
-  });
-  return mapGqlQuestions({ questions, loggedUserId: context.user.id });
+  return newsFeedUsers;
 };
 
 const getNewsfeed = async ({ context }) => {
@@ -106,40 +129,24 @@ const getNewsfeed = async ({ context }) => {
     });
   }
 
-  const dbNewsFeed = await Newsfeed.find({
+  const newsFeed = await Newsfeed.find({
     performerId: { $in: followingIds },
   }).lean();
 
-  const newsfeedUsers = await getNewsFeedUsers({
-    newsFeed: dbNewsFeed,
+  const newsFeedUsers = await getNewsFeedUsers({
+    newsFeed,
     context,
   });
 
-  const newsFeedQuestions = await getNewsFeedQuestions({
-    newsFeed: dbNewsFeed,
+  const newsFeedQuestions = await questionController.getNewsFeedQuestions({
+    newsFeed,
     context,
   });
 
-  // this to be extracted to the mapper file(resolvers/helper)
-  const gqlNewsfeed = dbNewsFeed.map(news => {
-    const gqlNews = { ...news };
-    gqlNews.createdOn = news._id.getTimestamp();
-    gqlNews.performer = newsfeedUsers.find(usr => news.performerId === usr.id);
-    const newsQuestion = newsFeedQuestions.find(q => news.questionId === q.id);
-
-    if (newsQuestion) {
-      gqlNews.question = newsQuestion;
-      gqlNews.answerOwner = newsfeedUsers.find(
-        usr => news.answerOwnerId === usr.id
-      );
-      delete gqlNews.answerOwnerId;
-      delete gqlNews.questionId;
-    }
-
-    delete gqlNews._id;
-    delete gqlNews.answerId;
-    delete gqlNews.performerId;
-    return gqlNews;
+  const gqlNewsfeed = mapGqlNewsFeed({
+    newsFeed,
+    newsFeedUsers,
+    newsFeedQuestions,
   });
   return gqlNewsfeed.reverse();
 };
@@ -148,5 +155,6 @@ module.exports = {
   onNewAnswer,
   onEditAnswer,
   onNewComment,
+  onLikeAnswer,
   getNewsfeed,
 };

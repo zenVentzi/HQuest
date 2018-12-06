@@ -131,6 +131,8 @@ enum NewsType {
   NEW_ANSWER
   NEW_ANSWER_EDITION
   NEW_COMMENT
+  NEW_LIKE
+  NEW_FOLLOWER
 }
 
 type AnswerNews implements News {
@@ -153,14 +155,14 @@ type CommentNews implements News {
 type NewFollowerNews implements News {
   type: NewsType!
   performer: User!
-  receiver: User!
+  followedUser: User!
   createdOn: DateTime!
 }
 
 type NewLikeNews implements News {
   type: NewsType!
   performer: User!
-  receiver: User!
+  answerOwner: User!
   question: Question!
   createdOn: DateTime!
 }

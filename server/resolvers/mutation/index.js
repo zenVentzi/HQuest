@@ -110,6 +110,10 @@ async function removeAnswer(_, args, context) {
 }
 async function likeAnswer(_, args, context) {
   const likedAnswer = await answerController.like(args, context);
+  await newsfeedController.onLikeAnswer({
+    answerId: likedAnswer._id.toString(),
+    context,
+  });
   return mapGqlAnswer({ answer: likedAnswer, loggedUserId: context.user.id });
 }
 async function moveAnswerPosition(_, args, context) {

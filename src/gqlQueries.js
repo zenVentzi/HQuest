@@ -33,6 +33,17 @@ export const GET_NEWSFEED = gql`
         }
         commentId
       }
+      ... on NewLikeNews {
+        performer {
+          ...UserFields
+        }
+        answerOwner {
+          ...UserFields
+        }
+        question {
+          ...QuestionFields
+        }
+      }
     }
   }
   ${UserFields}

@@ -34,6 +34,7 @@ const News = ({ news }) => {
     default:
       break;
   }
+
   return <NewsComponent news={news} />;
 };
 
