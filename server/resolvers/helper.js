@@ -202,17 +202,29 @@ const mapGqlNewsFeed = ({
     const gqlNews = { ...news };
     gqlNews.createdOn = news._id.getTimestamp();
     gqlNews.performer = gqlUsers.find(usr => news.performerId === usr.id);
-    const newsQuestion = gqlQuestions.find(q => news.answerId === q.answer.id);
 
-    if (newsQuestion) {
-      gqlNews.question = newsQuestion;
-      gqlNews.answerOwner = gqlUsers.find(usr => news.answerOwnerId === usr.id);
-      delete gqlNews.answerOwnerId;
-      delete gqlNews.questionId;
+    if (news.followedUserId) {
+      gqlNews.followedUser = gqlUsers.find(
+        usr => news.followedUserId === usr.id
+      );
+      delete gqlNews.followedUserId;
+    } else if (news.answerId) {
+      const newsQuestion = gqlQuestions.find(
+        q => news.answerId === q.answer.id
+      );
+
+      if (newsQuestion) {
+        gqlNews.question = newsQuestion;
+        gqlNews.answerOwner = gqlUsers.find(
+          usr => news.answerOwnerId === usr.id
+        );
+        delete gqlNews.answerOwnerId;
+        delete gqlNews.questionId;
+      }
+      delete gqlNews.answerId;
     }
 
     delete gqlNews._id;
-    delete gqlNews.answerId;
     delete gqlNews.performerId;
     return gqlNews;
   });

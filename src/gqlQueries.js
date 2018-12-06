@@ -44,6 +44,14 @@ export const GET_NEWSFEED = gql`
           ...QuestionFields
         }
       }
+      ... on NewFollowerNews {
+        performer {
+          ...UserFields
+        }
+        followedUser {
+          ...UserFields
+        }
+      }
     }
   }
   ${UserFields}
