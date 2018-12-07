@@ -161,23 +161,20 @@ const mapGqlAnswer = ({ answer, loggedUserId }) => {
 };
 
 const mapGqlQuestion = ({ question, loggedUserId }) => {
-  const shapedQuestion = {
+  const gqlQuestion = {
     id: question._id.toString(),
-    question: question.question,
-    type: question.type,
-    defaultAnswer: question.defaultAnswer,
-    possibleAnswers: question.possibleAnswers,
+    value: question.value,
     tags: question.tags,
   };
 
   if (question.answer) {
-    shapedQuestion.answer = mapGqlAnswer({
+    gqlQuestion.answer = mapGqlAnswer({
       answer: question.answer,
       loggedUserId,
     });
   }
 
-  return shapedQuestion;
+  return gqlQuestion;
 };
 
 const mapGqlQuestions = ({ questions, loggedUserId }) => {

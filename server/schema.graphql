@@ -62,23 +62,11 @@ type User {
   followers: [ID!]
 }
 
-enum QuestionType {
-  SCALE
-  TEXT
-  OPTIONS
-  WOULD_YOU_SINGLE
-  WOULD_YOU_DOUBLE
-}
-
 # question should be made an interface
 type Question implements Node {
   id: ID!
-  type: QuestionType!
-  possibleAnswers: [String!]
-  #TODO consistency, change the type from int to string
-  defaultAnswer: Int
   tags: [String!]
-  question: String!
+  value: String!
   answer: Answer
 }
 
@@ -227,6 +215,11 @@ input EditUserInput {
   socialMediaLinks: SocialMediaLinksInput!
 }
 
+input InputQuestion {
+  value: String!
+  tags: [String!]!
+}
+
 type Mutation {
   addBook(title: String!, author: String!): Book!
   editUser(input: EditUserInput): User!
@@ -234,7 +227,7 @@ type Mutation {
   commentAnswer(answerId: ID!, comment: String!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, name: String!): LoginResult!
-  createQuestion(question: String!, type: QuestionType!, defaultAnswer: Int, possibleAnswers: [String!], tags: [String!]!): String
+  addQuestions(questions: [InputQuestion!]): Boolean
   questionNotApply(questionId: ID!): Question!
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!

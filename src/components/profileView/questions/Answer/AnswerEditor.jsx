@@ -2,40 +2,36 @@ import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import TextBtn from 'Reusable/TextBtn';
 
-import Scale from './Types/Scale';
-import Options from './Types/Options';
-import Text from './Types/Text';
-import { QuestionTypes } from '../../../../constants';
-
-const { TEXT, SCALE, OPTIONS } = QuestionTypes;
+const TextArea = styled.textarea`
+  display: block;
+  margin: 1em auto;
+  text-align: center;
+  /* margin-left: auto; */
+  margin-bottom: 1em;
+  overflow: hidden;
+  width: 80%;
+`;
 
 const Buttons = styled.div`
   display: flex;
   width: 80%;
   justify-content: center;
   margin-bottom: 1em;
-  & + {
-    margin-right: 1em;
-  }
 `;
+
+const LeftBtn = styled(TextBtn)`
+  margin-right: 1em;
+`;
+const RightBtn = styled(TextBtn)``;
 
 class AnswerEditor extends Component {
   constructor(props) {
     super(props);
-
-    let answerValue;
-
-    if (this.props.answer) {
-      answerValue = this.props.answer.value;
-    } else {
-      answerValue = this.props.defaultAnswer || '';
-    }
-
-    this.state = { answerValue };
+    this.state = { answerValue: this.props.answer || '' };
   }
 
-  onChange = editedAnswer => {
-    const newState = { ...this.state, answerValue: editedAnswer };
+  onChange = e => {
+    const newState = { ...this.state, answerValue: e.target.value };
     this.setState(newState);
   };
 
@@ -44,63 +40,28 @@ class AnswerEditor extends Component {
     this.props.onClickSave({ answerValue });
   };
 
-  onClickDoesNotApply = () => {
+  onDoesNotApply = () => {
     this.props.onClickDoesNotApply();
   };
 
-  renderAnswer() {
-    const { questionType, possibleAnswers } = this.props;
-    const { answerValue } = this.state;
-
-    let result;
-
-    switch (questionType) {
-      case TEXT:
-        result = (
-          <Text
-            viewMode={false}
-            answer={answerValue}
-            onChange={this.onChange}
-          />
-        );
-        break;
-      case SCALE:
-        result = (
-          <Scale
-            viewMode={false}
-            values={possibleAnswers}
-            value={answerValue}
-            onChange={this.onChange}
-          />
-        );
-        break;
-      case OPTIONS:
-        result = (
-          <Options
-            viewMode={false}
-            options={possibleAnswers}
-            option={answerValue}
-            onChange={this.onChange}
-          />
-        );
-        break;
-      default:
-        break;
-    }
-
-    return result;
-  }
-
   render() {
-    const { isNew } = !this.props.answer;
+    const { answerValue } = this.state;
+    const isNew = !this.props.answer;
 
     return (
       <Fragment>
-        {this.renderAnswer()}
+        <TextArea
+          placeholder="Answer..."
+          defaultValue={answerValue}
+          // maxLength={MAX_LENGTH}
+          onChange={this.onChange}
+        />
         <Buttons>
-          <TextBtn onClick={this.onClickSave}>Save</TextBtn>
+          <LeftBtn onClick={this.onClickSave}>Save</LeftBtn>
           {isNew && (
-            <TextBtn onClick={this.onDoesNotApply}>Does not apply</TextBtn>
+            <RightBtn onClick={this.onClickDoesNotApply}>
+              Does not apply
+            </RightBtn>
           )}
         </Buttons>
       </Fragment>

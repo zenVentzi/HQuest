@@ -23,21 +23,9 @@ export const EDIT_USER = gql`
   }
 `;
 
-export const CREATE_QUESTION_MUTATION = gql`
-  mutation CreateQuestionMutation(
-    $question: String!
-    $type: QuestionType!
-    $defaultAnswer: Int
-    $possibleAnswers: [String!]
-    $tags: [String!]!
-  ) {
-    createQuestion(
-      question: $question
-      type: $type
-      defaultAnswer: $defaultAnswer
-      possibleAnswers: $possibleAnswers
-      tags: $tags
-    )
+export const ADD_QUESTIONS = gql`
+  mutation AddQuestionsMutation($questions: [InputQuestion!]) {
+    addQuestions(questions: $questions)
   }
 `;
 export const MOVE_ANSWER_POSITION = gql`

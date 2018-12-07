@@ -1,6 +1,4 @@
 Todo:
-- implement likes
-- show "no notifications"
 - show loading animation
 - mobile first
 - rename FloatingWindow to Modal
