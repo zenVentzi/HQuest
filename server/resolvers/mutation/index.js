@@ -75,8 +75,8 @@ async function commentAnswer(_, { answerId, comment }, context) {
   return commentObj;
 }
 
-async function createQuestion(_, args, context) {
-  return questionController.createQuestion(args, context);
+async function addQuestions(_, { questions }, context) {
+  return questionController.addQuestions({ questions, context });
 }
 
 async function questionNotApply(_, args, context) {
@@ -145,7 +145,7 @@ module.exports = {
   commentAnswer,
   editUser,
   login,
-  createQuestion,
+  addQuestions,
   questionNotApply,
   addAnswer,
   editAnswer,

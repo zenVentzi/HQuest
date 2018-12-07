@@ -1,50 +1,15 @@
 import React from 'react';
-import Scale from './Types/Scale';
-import Options from './Types/Options';
-import Text from './Types/Text';
-import { QuestionTypes } from '../../../../constants';
+import Text from './Text
 
 const Answer = props => {
-  const { TEXT, SCALE, OPTIONS /* WOULD_YOU_SINGLE */ } = QuestionTypes;
   const {
     viewMode,
     onChange,
-    question: { type, possibleAnswers, answer },
+    question: { answer },
   } = props;
 
-  let result;
   const answerValue = answer ? answer.value : undefined;
-
-  switch (type) {
-    case TEXT:
-      result = (
-        <Text viewMode={viewMode} answer={answerValue} onChange={onChange} />
-      );
-      break;
-    case SCALE:
-      result = ( // TODO add onChange
-        <Scale
-          viewMode={viewMode}
-          values={possibleAnswers}
-          value={answerValue}
-          onChange={onChange}
-        />
-      );
-      break;
-    case OPTIONS:
-      result = (
-        <Options
-          viewMode={viewMode}
-          options={possibleAnswers}
-          option={answerValue}
-          onChange={onChange}
-        />
-      );
-      break;
-    default:
-      break;
-  }
-  return result;
+  return <Text viewMode={viewMode} answer={answerValue} onChange={onChange} />;
 };
 
 export default Answer;

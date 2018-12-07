@@ -285,7 +285,7 @@ class AnsweredQuestion extends Component {
         style={style}
       >
         <Row>
-          <Question question={question.question} />
+          <Question question={question.value} />
           <AnswerOptions
             visible={isPersonal && hovered}
             onClickEdit={this.openAnswerEditor}

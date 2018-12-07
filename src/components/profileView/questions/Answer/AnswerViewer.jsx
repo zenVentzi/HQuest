@@ -1,39 +1,22 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 
-import Scale from './Types/Scale';
-import Options from './Types/Options';
-import Text from './Types/Text';
-import { QuestionTypes } from '../../../../constants';
-
-const { TEXT, SCALE, OPTIONS } = QuestionTypes;
+const Viewer = styled.div`
+  background: black;
+  color: white;
+  width: 100%;
+  padding: 0.2em 1em;
+  border-radius: 0.2em;
+  word-wrap: break-word;
+  text-align: center;
+`;
 
 // could be made stateless
 class AnswerViewer extends Component {
   render() {
-    const { questionType, possibleAnswers, answer } = this.props;
+    const { answer } = this.props;
 
-    let answerType;
-
-    switch (questionType) {
-      case TEXT:
-        answerType = <Text viewMode answer={answer.value} />;
-        break;
-      case SCALE:
-        answerType = (
-          <Scale viewMode values={possibleAnswers} value={answer.value} />
-        );
-        break;
-      case OPTIONS:
-        answerType = (
-          <Options viewMode options={possibleAnswers} option={answer.value} />
-        );
-        break;
-      default:
-        break;
-    }
-
-    return answerType;
+    return <Viewer>{answer.value}</Viewer>;
   }
 }
 

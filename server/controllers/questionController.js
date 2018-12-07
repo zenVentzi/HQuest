@@ -2,23 +2,14 @@ const { ObjectId } = require('mongoose').Types;
 const answerController = require('./answerController');
 const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
-const createQuestion = async (
-  { question, type, defaultAnswer, possibleAnswers, tags },
-  context
-) => {
+const addQuestions = async ({ questions, context }) => {
   const {
     models: { Question },
   } = context;
 
   /* store the tags in separate collection? */
 
-  await Question.create({
-    question,
-    type,
-    defaultAnswer,
-    possibleAnswers,
-    tags,
-  });
+  await Question.create(questions);
 };
 
 const markNotApply = async ({ questionId }, context) => {
@@ -260,7 +251,7 @@ const getUserQuestionConnection = async (args, context) => {
 };
 
 module.exports = {
-  createQuestion,
+  addQuestions,
   markNotApply,
   getAllTags,
   getNewsFeedQuestions,

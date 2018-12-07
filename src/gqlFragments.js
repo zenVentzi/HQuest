@@ -62,10 +62,7 @@ export const AnswerFields = gql`
 export const QuestionFields = gql`
   fragment QuestionFields on Question {
     id
-    question
-    type
-    defaultAnswer
-    possibleAnswers
+    value
     tags
     answer {
       ...AnswerFields

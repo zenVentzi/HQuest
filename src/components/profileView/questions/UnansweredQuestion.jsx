@@ -38,11 +38,8 @@ class UnansweredQuestion extends Component {
 
     return (
       <StyledQuestion style={style}>
-        <Question question={question.question} />
+        <Question question={question.value} />
         <AnswerEditor
-          questionType={question.type}
-          defaultAnswer={question.defaultAnswer}
-          possibleAnswers={question.possibleAnswers}
           onClickSave={this.onClickSave}
           onClickDoesNotApply={this.onClickDoesNotApply}
         />

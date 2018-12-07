@@ -1,21 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
+import { Formik, Form, ErrorMessage } from 'formik';
+import { Mutation } from 'react-apollo';
+import { ADD_QUESTIONS } from 'Mutations';
 // import StyledView from '../reusable/StyledView';
-import { QuestionTypes } from './constants';
-import QuestionBody from './QuestionBody';
-import Navbar from '../navigation';
+import TextBtn from 'Reusable/TextBtn';
 
-const TopText = styled.div`
+const TextArea = styled.textarea`
   margin-bottom: 1em;
+  overflow: hidden;
+  width: 95%;
 `;
 
-const Select = styled.select`
-  margin-bottom: 8em;
-  background-color: black;
-  border-radius: 0.5em;
-  color: white;
-`;
-
+// use the one from Reusable
 const StyledView = styled.div`
   display: flex;
   flex-direction: column;
@@ -27,54 +24,93 @@ const StyledView = styled.div`
   overflow: hidden;
 `;
 
-class AdminView extends Component {
-  state = { questionType: 'default', successMsg: null };
-
-  onOptionSelected = e => {
-    const val = e.target.value;
-    this.setState({ questionType: val, successMsg: null });
+const AdminView = () => {
+  const getTags = ({ tagsText }) => {
+    const init = tagsText.indexOf('(');
+    const fin = tagsText.indexOf(')');
+    const commaSeparated = tagsText.substring(init + 1, fin);
+    const tagsArr = commaSeparated.split(',');
+    return tagsArr;
   };
 
-  onQuestionAdded = () => {
-    const successMsg = `Question was successfully added!`;
-    this.setState(oldState => ({
-      ...oldState,
-      questionType: `default`,
-      successMsg,
-    }));
+  const getFormattedQuestions = ({ questionsText }) => {
+    const rawQuestions = questionsText.split(';NEW_QUESTION;');
+
+    // raw question = How do you...?;TAGS(tag1,tag2,..);;NEW_QUESTION;
+
+    const questions = rawQuestions.map(rawQuestion => {
+      let question;
+      try {
+        const value = rawQuestion.split(';')[0];
+        const tagsText = rawQuestion.split(';')[1];
+        const tags = getTags({ tagsText });
+        question = { value, tags };
+      } catch (error) {
+        throw new Error(`Incorrect format: ${rawQuestion}`);
+      }
+
+      return question;
+    });
+
+    return questions;
   };
 
-  render() {
-    const { questionType, successMsg } = this.state;
+  return (
+    <StyledView>
+      <Mutation mutation={ADD_QUESTIONS}>
+        {addQuestions => {
+          return (
+            <Formik
+              initialValues={{ questionsText: '' }}
+              validateOnBlur={false}
+              validate={values => {
+                const errors = {};
+                return errors;
+              }}
+              onSubmit={async (values, { setSubmitting, resetForm }) => {
+                const { questionsText } = values;
 
-    return (
-      <Fragment>
-        <Navbar />
-        <StyledView>
-          <TopText>Add new question:</TopText>
-          <Select value={questionType} onChange={this.onOptionSelected}>
-            <option value="default" disabled>
-              Type
-            </option>
-            <option value={QuestionTypes.SCALE}>Scale</option>
-            <option value={QuestionTypes.TEXT}>Text</option>
-            <option value={QuestionTypes.OPTIONS}>a)b)c)</option>
-            <option value={QuestionTypes.WOULD_YOU_SINGLE}>
-              Would-you-single
-            </option>
-          </Select>
-          {successMsg && <div>{successMsg}</div>}
-          <hr />
-          {questionType && (
-            <QuestionBody
-              questionType={questionType}
-              onAdded={this.onQuestionAdded}
-            />
-          )}
-        </StyledView>
-      </Fragment>
-    );
-  }
-}
+                const questions = getFormattedQuestions({
+                  questionsText,
+                });
+                const variables = { questions };
+                await addQuestions({ variables });
+
+                setSubmitting(false);
+                resetForm({});
+              }}
+            >
+              {({
+                touched,
+                values,
+                errors,
+                handleChange,
+                submitForm,
+                isSubmitting,
+              }) => (
+                <Form style={{ width: '100%', textAlign: 'center' }}>
+                  <TextArea
+                    name="questionsText"
+                    onChange={handleChange}
+                    value={values.questionsText || ''}
+                    disabled={isSubmitting}
+                    onKeyPress={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!isSubmitting) submitForm();
+                      }
+                    }}
+                    placeholder="Enter the questions string here"
+                  />
+                  <TextBtn onClick={submitForm}>Add</TextBtn>
+                </Form>
+              )}
+            </Formik>
+          );
+        }}
+      </Mutation>
+    </StyledView>
+  );
+};
 
 export default AdminView;
