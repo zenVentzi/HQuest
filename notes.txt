@@ -4,3 +4,4 @@ Snippets: rcc, rce, rfe,
 
 why not use inline-modals? We need modals for confirmation. Or do we?
 
+Problem: User can enter more than 1 new line in the textarea.

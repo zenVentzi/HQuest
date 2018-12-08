@@ -8,13 +8,15 @@ const StyledBtn = styled.div`
 
 StyledBtn.defaultProps = {};
 
-// TODO export directly the stlyed comp
-const Btn = React.forwardRef(({ children, className, ...mouseEvents }, ref) => {
-  return (
-    <StyledBtn className={className} ref={ref} onClick={mouseEvents.onClick}>
-      {children}
-    </StyledBtn>
-  );
-});
+export default StyledBtn;
 
-export default Btn;
+// TODO export directly the stlyed comp
+// const Btn = React.forwardRef(({ children, className, ...mouseEvents }, ref) => {
+//   return (
+//     <StyledBtn className={className} ref={ref} onClick={mouseEvents.onClick}>
+//       {children}
+//     </StyledBtn>
+//   );
+// });
+
+// export default Btn;
