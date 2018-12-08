@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react';
+import { Formik, Form, ErrorMessage } from 'formik';
+import Textarea from 'react-textarea-autosize';
 import styled from 'styled-components';
 import TextBtn from 'Reusable/TextBtn';
 
-const TextArea = styled.textarea`
+const TextArea = styled(Textarea)`
   display: block;
   margin: 1em auto;
   text-align: center;
@@ -14,7 +16,7 @@ const TextArea = styled.textarea`
 
 const Buttons = styled.div`
   display: flex;
-  width: 80%;
+  width: 100%;
   justify-content: center;
   margin-bottom: 1em;
 `;
@@ -25,46 +27,91 @@ const LeftBtn = styled(TextBtn)`
 const RightBtn = styled(TextBtn)``;
 
 class AnswerEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { answerValue: this.props.answer || '' };
-  }
+  checkLastCharsEqual = ({ text, last, equalChar }) => {
+    if (text.length < last) {
+      return false;
+    }
 
-  onChange = e => {
-    const newState = { ...this.state, answerValue: e.target.value };
-    this.setState(newState);
+    const lastChars = text.slice(-last).split('');
+    return lastChars.filter(ch => ch === equalChar).length === last;
   };
 
-  onClickSave = () => {
-    const { answerValue } = this.state;
-    this.props.onClickSave({ answerValue });
+  minimizeNewlines = ({ newValue, oldValue }) => {
+    // const oldValue = this.state.answerValue;
+
+    if (
+      this.checkLastCharsEqual({ text: newValue, last: 3, equalChar: '\n' })
+    ) {
+      return oldValue;
+    }
+
+    return newValue;
   };
+
+  onClickSave = () => {};
 
   onDoesNotApply = () => {
     this.props.onClickDoesNotApply();
   };
 
   render() {
-    const { answerValue } = this.state;
     const isNew = !this.props.answer;
 
     return (
-      <Fragment>
-        <TextArea
-          placeholder="Answer..."
-          defaultValue={answerValue}
-          // maxLength={MAX_LENGTH}
-          onChange={this.onChange}
-        />
-        <Buttons>
-          <LeftBtn onClick={this.onClickSave}>Save</LeftBtn>
-          {isNew && (
-            <RightBtn onClick={this.onClickDoesNotApply}>
-              Does not apply
-            </RightBtn>
-          )}
-        </Buttons>
-      </Fragment>
+      <Formik
+        initialValues={{ answer: this.props.answer }}
+        validateOnBlur={false}
+        validate={values => {
+          const errors = {};
+          if (values.answer && values.answer.length < 10)
+            errors.answer = 'Answer must be at least 10 characters';
+
+          return errors;
+        }}
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          const answerValue = values.answer.trim();
+          await this.props.onClickSave({ answerValue });
+          setSubmitting(false);
+          resetForm({});
+        }}
+      >
+        {({
+          touched,
+          values,
+          errors,
+          handleChange,
+          submitForm,
+          isSubmitting,
+        }) => (
+          <Form style={{ width: '100%', textAlign: 'center' }}>
+            <TextArea
+              name="answer"
+              placeholder="Answer..."
+              onChange={e => {
+                e.target.value = this.minimizeNewlines({
+                  newValue: e.target.value,
+                  oldValue: values.answer,
+                });
+                handleChange(e);
+              }}
+              value={values.answer || ''}
+              disabled={isSubmitting}
+            />
+            <ErrorMessage
+              name="answer"
+              // render={msg => <ErrorText>{msg}</ErrorText>}
+            />
+            <Buttons>
+              <LeftBtn onClick={submitForm}>Save</LeftBtn>
+              {isNew && (
+                <RightBtn onClick={this.onClickDoesNotApply}>
+                  Does not apply
+                </RightBtn>
+              )}
+            </Buttons>
+          </Form>
+        )}
+      </Formik>
     );
   }
 }

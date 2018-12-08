@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
+import Textarea from 'react-textarea-autosize';
 
 const Viewer = styled.div`
   background: black;
@@ -15,6 +16,7 @@ const Viewer = styled.div`
 class AnswerViewer extends Component {
   render() {
     const { answer } = this.props;
+    return <Textarea defaultValue={answer.value} disabled />;
 
     return <Viewer>{answer.value}</Viewer>;
   }

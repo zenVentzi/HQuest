@@ -7,7 +7,8 @@ const StyledView = styled.div`
   margin: 70px auto;
   /* align-items: center; */
   /* text-align: center; */
-  width: 500px;
+  /* width: 500px; */
+  width: 50%;
   overflow: hidden;
 `;
 
