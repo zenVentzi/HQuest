@@ -87,6 +87,7 @@ export const GlobalStyle = createGlobalStyle`
 
   ::-webkit-scrollbar {
     width: 0.8em;
+    display:none;
     background: white;
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
