@@ -10,10 +10,21 @@ const StyledDropdown = styled.div`
   top: 2.3em;
   width: 57%;
   background: white;
-  border-radius: 0.2em;
-  border: 0.1em solid black;
-  padding: 0.2em;
+  z-index: 1;
 `;
+// const StyledDropdown = styled.div`
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   position: absolute;
+//   top: 2.3em;
+//   width: 57%;
+//   background: white;
+//   border-radius: 0.2em;
+//   border: 0.1em solid black;
+//   padding: 0.2em;
+//   z-index: 1;
+// `;
 
 const TagsDropdown = ({ tags, onSelect: onSelectProp }) => {
   const onSelect = tag => () => {

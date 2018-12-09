@@ -12,6 +12,11 @@ const Row = styled.div`
   margin-bottom: 1em;
 `;
 
+const Intro = styled.div`
+  margin-top: 1em;
+  margin-bottom: 2em;
+`;
+
 class LandingView extends Component {
   onLoggedIn = () => {
     const { history } = this.props;
@@ -21,13 +26,21 @@ class LandingView extends Component {
   render() {
     return (
       <StyledView>
-        <h1>Welcome to HQuest!</h1>
-        <iframe
-          title="title"
-          width="420"
-          height="345"
-          src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=0"
-        />
+        <h1>Welcome to HQuest,</h1>
+        <Intro>
+          a minimalistic social network focused on answering, uncomfortable for
+          some, questions publicly. ComfortZone-GetOut, Honesty-Unapologetic,
+          Vulnerability-BigTime, Think-ALittleHarder-SlighlyDeeper.
+          <br />
+          <br /> Main features:
+          <br /> - Search for users by name
+          <br /> - Newsfeed with activity from the people you follow
+          <br />- Keep track of the evolution ofyour answers throughout time.
+          Every edit is saved in your edit history for that question
+          <br /> - Give and receive feedback from others by liking and
+          commenting on answers
+          <br />
+        </Intro>
         <div>
           <Row>Log in with: </Row>
           <Row>

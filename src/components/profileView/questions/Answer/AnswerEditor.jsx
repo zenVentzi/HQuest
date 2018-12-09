@@ -11,7 +11,11 @@ const TextArea = styled(Textarea)`
   /* margin-left: auto; */
   margin-bottom: 1em;
   overflow: hidden;
-  width: 80%;
+  width: 50%;
+
+  @media (max-width: 600px) {
+    width: 90%;
+  }
 `;
 
 const Buttons = styled.div`

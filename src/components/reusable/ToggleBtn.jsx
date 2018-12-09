@@ -40,7 +40,7 @@ const common = css`
   transform: translate(-50%, -50%);
   top: 50%;
   left: 47%;
-  font-size: 0.7em;
+  ${'' /* font-size: 0.7em; */};
 `;
 
 const On = styled.span`

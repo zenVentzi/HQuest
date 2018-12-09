@@ -5,15 +5,15 @@ const StyledView = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   margin: 4.4em auto;
+  overflow: visible;
   /* align-items: center; */
   /* text-align: center; */
-  /* width: 500px; */
   width: 70%;
 
   @media (max-width: 600px) {
-    width: 100%;
+    width: 90%;
+    margin: 6em auto;
   }
-  overflow: hidden;
 `;
 
 export default StyledView;

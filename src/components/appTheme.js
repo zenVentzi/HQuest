@@ -46,7 +46,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body, select, button, input, textarea {
-    font-family: "Arial Black", Gadget, sans-serif;
+    font-family: monospace;
   }
 
   hr {
@@ -87,7 +87,7 @@ export const GlobalStyle = createGlobalStyle`
 
   ::-webkit-scrollbar {
     width: 0.8em;
-    display:none;
+    ${'' /* display:none; */}
     background: white;
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;

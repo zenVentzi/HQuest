@@ -11,6 +11,10 @@ const Viewer = styled.div`
   border-radius: 0.2em;
   word-wrap: break-word;
   /* text-align: center; */
+
+  @media (max-width: 600px) {
+    width: 90%;
+  }
 `;
 
 // could be made stateless
@@ -25,7 +29,7 @@ class AnswerViewer extends Component {
       </span>
     ));
 
-    return <Viewer>{answerWithParagraphs}</Viewer>;
+    return <Viewer>- {answerWithParagraphs}</Viewer>;
   }
 }
 

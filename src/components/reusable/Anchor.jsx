@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const StyledAnchor = styled.a`
+  /* user-select: none; */
   cursor: pointer;
   text-align: center;
-  font-size: 0.7em;
   text-decoration: underline;
 
   &:hover {
