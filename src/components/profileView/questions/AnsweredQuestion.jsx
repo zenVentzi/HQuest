@@ -7,7 +7,7 @@ import Question from './Question';
 import Comments from './Answer/Comments';
 import Likes from './Answer/Likes';
 import Editions from './Answer/Editions';
-import AnswerOptions from './Answer/Options';
+import OptionsDropdown from './Answer/Options';
 import AnswerEditor from './Answer/AnswerEditor';
 import AnswerViewer from './Answer/AnswerViewer';
 import PositionEditor from './Answer/PositionEditor';
@@ -286,7 +286,7 @@ class AnsweredQuestion extends Component {
       >
         <Row>
           <Question question={question.value} />
-          <AnswerOptions
+          <OptionsDropdown
             visible={isPersonal && hovered}
             onClickEdit={this.openAnswerEditor}
             onClickRemove={this.onClickRemove}
@@ -315,6 +315,7 @@ class AnsweredQuestion extends Component {
             onClickClose={this.closePositionEditor}
           />
         )}
+        {/* all the below can be moved to AnswerViewer */}
         <Row hide={!hovered}>
           <LikeBtn
             onClick={this.onClickLike}

@@ -7,9 +7,15 @@ const NavContainer = styled.div`
   justify-content: space-between;
   top: 0;
   width: 100%;
-  padding: 0.2em 5em 0em 5em;
+  max-width: 100%;
+  /* padding: 0.2em 5em 0em 5em; */
   background: black;
   z-index: 1;
+
+  @media (max-width: 481px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 export default NavContainer;

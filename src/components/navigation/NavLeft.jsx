@@ -1,6 +1,12 @@
 // import React from 'react';
 import styled from 'styled-components';
 
-const NavLeft = styled.div``;
+const NavLeft = styled.div`
+  margin-left: 5em;
+
+  @media (max-width: 481px) {
+    margin-left: 0;
+  }
+`;
 
 export default NavLeft;

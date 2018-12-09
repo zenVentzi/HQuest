@@ -4,11 +4,15 @@ const StyledView = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  margin: 70px auto;
+  margin: 4.4em auto;
   /* align-items: center; */
   /* text-align: center; */
   /* width: 500px; */
-  width: 50%;
+  width: 70%;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
   overflow: hidden;
 `;
 
