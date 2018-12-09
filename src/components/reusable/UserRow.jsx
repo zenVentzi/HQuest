@@ -7,12 +7,12 @@ import Avatar from './Avatar';
 
 const StyledUserName = styled.div`
   color: ${props => props.theme.foregroundColor};
-  font-size: ${props => `${0.6 * props.size}em`};
+  font-size: ${props => `${1 * props.size}em`};
   /* margin-bottom: 1em; */
 `;
 
 const StyledIntro = styled.div`
-  font-size: ${props => `${0.4 * props.size}em`};
+  font-size: ${props => `${0.7 * props.size}em`};
   font-style: oblique;
   color: ${props => props.theme.foregroundColor};
 `;

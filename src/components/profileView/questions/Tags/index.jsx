@@ -20,8 +20,13 @@ const InvalidText = styled.div`
 `;
 
 const Input = styled.input`
-  width: 60%;
+  width: 40%;
   margin-right: 1em;
+
+  @media (max-width: 600px) {
+    width: 90%;
+    margin-right: 0.5em;
+  }
 `;
 
 const TagsWrapper = styled.div`

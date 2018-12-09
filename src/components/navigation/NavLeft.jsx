@@ -6,6 +6,7 @@ const NavLeft = styled.div`
 
   @media (max-width: 481px) {
     margin-left: 0;
+    margin-bottom: 0.3em;
   }
 `;
 

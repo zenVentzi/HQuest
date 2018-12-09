@@ -1,10 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
 import { GET_QUESTIONS } from 'Queries';
+import styled from 'styled-components';
 import AnsweredQuestions from './AnsweredQuestions';
 import QuestionTags from './Tags';
 import UnansweredQuestions from './UnansweredQuestions';
 import ToggleQuestions from './ToggleQuestions';
+
+const QuestionsWrapper = styled.div`
+  overflow: auto;
+`;
 
 class QuestionsContainer extends Component {
   state = { showAnswered: true, selectedTags: [] };
@@ -19,7 +24,7 @@ class QuestionsContainer extends Component {
   }
 
   onScroll = () => {
-    const bottomMarginPx = 60;
+    const bottomMarginPx = 0;
     const offsetBottom =
       window.innerHeight + window.pageYOffset - bottomMarginPx;
     const isCloseToBottom = offsetBottom >= document.body.scrollHeight;

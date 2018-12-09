@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import { getLoggedUserId } from 'Utils';
+import Anchor from 'Reusable/Anchor';
 import LikeBtn from './Answer/LikeBtn';
 import Question from './Question';
 import Comments from './Answer/Comments';
@@ -28,17 +29,8 @@ const Row = styled.div`
   justify-content: center;
 `;
 
-const SmallBtn = styled.span`
-  cursor: pointer;
-  user-select: none;
+const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
-  font-size: 0.7em;
-  text-decoration: underline;
-
-  &:hover {
-    text-decoration: none;
-    text-shadow: 1px 1px 1px #555;
-  }
 `;
 
 class AnsweredQuestion extends Component {

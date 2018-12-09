@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 const Text = styled.div`
   width: 100%;
+  font-weight: bold;
   text-align: center;
   word-wrap: break-word;
   line-height: 1em;
