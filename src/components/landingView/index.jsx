@@ -6,6 +6,7 @@ import LoginBtn from './LoginBtn';
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
+  text-align: left;
 `;
 
 const Row = styled.div`

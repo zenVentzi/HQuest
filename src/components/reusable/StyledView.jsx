@@ -6,8 +6,8 @@ const StyledView = styled.div`
   flex-wrap: wrap;
   margin: 4.4em auto;
   overflow: visible;
-  /* align-items: center; */
-  /* text-align: center; */
+  align-items: center;
+  text-align: center;
   width: 70%;
 
   @media (max-width: 600px) {

@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
-const { mapGqlComment } = require('../resolvers/helper');
+// const { mapGqlComment } = require('../resolvers/helper');
 
 const addCommentToAnswer = async ({ comment, answerId }, context) => {
   const {
@@ -18,33 +18,29 @@ const addCommentToAnswer = async ({ comment, answerId }, context) => {
   ).lean();
 
   const addedComment = comments[comments.length - 1];
-
-  addedComment.user = performer;
-  return mapGqlComment({
-    comment: addedComment,
-    loggedUserId: user.id,
-  });
+  return addedComment;
 };
 
-// TODO cleanup, it's not being used
-const getAnswerComments = async (answerId, context) => {
+async function editComment({ answerId, commentId, commentValue, context }) {
   const {
-    models: { Answer },
+    models: { User, Answer },
     user,
   } = context;
+  const performerId = user.id;
 
-  const { comments } = await Answer.findById(answerId).lean();
+  const performer = await User.findById(performerId).lean();
+  const { comments } = await Answer.findByIdAndUpdate(
+    answerId,
+    {
+      $push: { comments: { _id: ObjectId(), comment, userId: performer._id } },
+    },
+    { new: true, fields: 'comments -_id' }
+  ).lean();
 
-  if (!comments) return [];
+  const addedComment = comments[comments.length - 1];
+  return addedComment;
+}
 
-  const commentsPromises = comments.map(async com => {
-    return mapGqlComment({
-      comment: com,
-      loggedUserId: user.id,
-    });
-  });
+async function removeComment({ answerId, commentId, context }) {}
 
-  return Promise.all(commentsPromises);
-};
-
-module.exports = { addCommentToAnswer, getAnswerComments };
+module.exports = { addCommentToAnswer };

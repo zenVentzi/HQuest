@@ -21,17 +21,16 @@ const notify = async (receiverId, notif, userModel) => {
   pubsub.publish(NEW_NOTIFICATION, payload);
 };
 
-const newComment = async (answerId, commentObj, context) => {
+const newComment = async (answerId, dbComment, context) => {
   const {
     models: { User, Answer },
-    user,
   } = context;
 
   const { questionId, userId: receiverId } = await Answer.findById(
     answerId
   ).lean();
 
-  const performerId = commentObj.user.id;
+  const performerId = dbComment.user._id.toString();
   const performer = await User.findById(performerId).lean();
 
   if (performer._id.equals(receiverId)) return;
@@ -41,10 +40,10 @@ const newComment = async (answerId, commentObj, context) => {
     _id: ObjectId(),
     type: 'NEW_COMMENT',
     questionId,
-    commentId: commentObj.id,
+    commentId: dbComment._id.toString(),
     performerId,
     performerAvatarSrc: performer.avatarSrc,
-    text: `${performerName} commented: "${commentObj.comment} "`,
+    text: `${performerName} commented: "${dbComment.comment} "`,
     seen: false,
   };
 

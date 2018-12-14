@@ -7,10 +7,6 @@ import QuestionTags from './Tags';
 import UnansweredQuestions from './UnansweredQuestions';
 import ToggleQuestions from './ToggleQuestions';
 
-const QuestionsWrapper = styled.div`
-  overflow: auto;
-`;
-
 class QuestionsContainer extends Component {
   state = { showAnswered: true, selectedTags: [] };
   firstRenderResetScroll = true;
@@ -147,19 +143,19 @@ class QuestionsContainer extends Component {
   }
 }
 
-const TestQuestions = () => {
-  const questions = [];
+// const TestQuestions = () => {
+//   const questions = [];
 
-  for (let i = 0; i < 100; i++) {
-    questions.push(
-      <div key={i}>
-        Question
-        {i}
-      </div>
-    );
-  }
+//   for (let i = 0; i < 100; i++) {
+//     questions.push(
+//       <div key={i}>
+//         Question
+//         {i}
+//       </div>
+//     );
+//   }
 
-  return questions;
-};
+//   return questions;
+// };
 
 export default QuestionsContainer;

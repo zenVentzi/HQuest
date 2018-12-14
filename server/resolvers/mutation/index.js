@@ -10,8 +10,9 @@ const {
   commentController,
 } = require('../../controllers');
 const { isAuthenticatedResolver } = require('../accessResolvers');
-const { mapGqlAnswer } = require('../../resolvers/helper');
+const { mapGqlAnswer, mapGqlComment } = require('../../resolvers/helper');
 
+// *book is for testing purposes
 const addBook = isAuthenticatedResolver.createResolver(
   async (root, args, context) => {
     const {
@@ -56,22 +57,40 @@ async function login(_, args, context) {
   return result;
 }
 
-const editUser = async (_, { input }, context) => {
+async function editUser(_, { input }, context) {
   return userController.editUser(input, context);
-};
+}
 
 async function commentAnswer(_, { answerId, comment }, context) {
-  const commentObj = await commentController.addCommentToAnswer(
+  const dbComment = await commentController.addCommentToAnswer(
     { answerId, comment },
     context
   );
 
   await newsfeedController.onNewComment({
     answerId,
-    commentId: commentObj.id,
+    commentId: dbComment._id.toString(),
     context,
   });
-  await notificationController.newComment(answerId, commentObj, context);
+  await notificationController.newComment(answerId, dbComment, context);
+
+  return mapGqlComment({
+    dbComment,
+    loggedUserId: context.user.id,
+  });
+}
+
+async function editComment(_, args, context) {
+  const commentObj = await commentController.editComment({ ...args, context });
+
+  return commentObj;
+}
+async function removeComment(_, args, context) {
+  const commentObj = await commentController.removeComment({
+    ...args,
+    context,
+  });
+
   return commentObj;
 }
 
