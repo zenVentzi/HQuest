@@ -10,7 +10,7 @@ import Panel from '../Panel';
 
 const CommentInput = styled.textarea`
   /* margin-top: 2em; */
-  width: 80%;
+  width: 79%;
   min-height: min-content;
   background: white;
   color: black;
@@ -41,19 +41,19 @@ class Comments extends Component {
 
   scrollToComment = () => {};
 
-  updateCache = (cache, { data: { addComment } }) => {
-    const vars = { answerId: this.props.answerId };
-    const { comments: cments } = cache.readQuery({
-      query: GET_COMMENTS,
-      variables: vars,
-    });
+  // updateCache = (cache, { data: { addComment } }) => {
+  //   const vars = { answerId: this.props.answerId };
+  //   const { comments: cments } = cache.readQuery({
+  //     query: GET_COMMENTS,
+  //     variables: vars,
+  //   });
 
-    cache.writeQuery({
-      query: GET_COMMENTS,
-      variables: vars,
-      data: { comments: cments.concat([addComment]) },
-    });
-  };
+  //   cache.writeQuery({
+  //     query: GET_COMMENTS,
+  //     variables: vars,
+  //     data: { comments: cments.concat([addComment]) },
+  //   });
+  // };
 
   renderComments = ({ comments, scrollToComment }) => {
     if (!comments.length) return <div> No comments yet </div>;
@@ -67,11 +67,9 @@ class Comments extends Component {
         const commentProps = { key: com.id, comment: com };
 
         if (scrollToComment && scrollToComment === com.id) {
-          // if (com.id === '5bf2843bddf03613e870ad00') {
           commentProps.ref = ref => {
             this.highlightedComment = ref;
           };
-          // commentProps.highlight = true;
         }
 
         res.push(<Comment {...commentProps} />);

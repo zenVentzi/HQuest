@@ -141,12 +141,3 @@ export const GET_NOTIFICATIONS = gql`
   }
   ${NotificationFields}
 `;
-
-export const GET_COMMENTS = gql`
-  query comments($answerId: ID!) {
-    comments(answerId: $answerId) {
-      ...CommentFields
-    }
-  }
-  ${CommentFields}
-`;

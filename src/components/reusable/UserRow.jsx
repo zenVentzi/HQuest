@@ -7,6 +7,7 @@ import Avatar from './Avatar';
 
 const StyledUserName = styled.div`
   color: ${props => props.theme.foregroundColor};
+  text-align: left;
   font-size: ${props => `${1 * props.size}em`};
   /* margin-bottom: 1em; */
 `;

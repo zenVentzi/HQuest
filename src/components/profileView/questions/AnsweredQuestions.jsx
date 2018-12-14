@@ -53,6 +53,14 @@ const AnsweredQuestions = ({
     toast.success('Comment added!');
     refetch();
   };
+  const onEditComment = ({ commentAnswer, answerId }) => async ({
+    commentValue,
+  }) => {
+    const variables = { answerId, comment: commentValue };
+    await commentAnswer({ variables });
+    toast.success('Comment added!');
+    refetch();
+  };
 
   if (!questions.length) {
     return <Empty style={style}> No answered questions </Empty>;

@@ -4,6 +4,7 @@ import shortid from 'shortid';
 
 const Viewer = styled.div`
   background: black;
+  text-align: left;
   color: white;
   width: 60%;
   line-height: 1.2;

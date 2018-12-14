@@ -4,16 +4,8 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { GET_QUESTIONS_TAGS } from 'Queries';
 import Anchor from 'Reusable/Anchor';
-import TagsWindow from './TagsWindow';
-import TagsDropdown from './TagsDropdown';
-
-const TagsHeader = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  width: 100%;
-  padding-left: 1.8em;
-`;
+import AllTags from './AllTags';
+import MatchingTags from './MatchingTags';
 
 const InvalidText = styled.div`
   color: red;
@@ -29,14 +21,26 @@ const Input = styled.input`
   }
 `;
 
+const InputRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  padding-left: 1.8em;
+`;
+
 const TagsWrapper = styled.div`
   position: relative;
   margin-bottom: 1em;
-  width: 100%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  @media (max-width: 600px) {
+    width: 90%;
+  }
 `;
 
 class QuestionTags extends PureComponent {
@@ -55,7 +59,7 @@ class QuestionTags extends PureComponent {
     });
   };
 
-  onSelectFromWindow = selectedTags => {
+  onSelectFromAllTags = selectedTags => {
     this.setState(
       prevState => {
         return { ...prevState, selectedTags };
@@ -70,7 +74,7 @@ class QuestionTags extends PureComponent {
     this.hideAllTagsWindow();
   };
 
-  onSelectFromDropdown = selectedTag => {
+  onSelectFromMatchingTags = selectedTag => {
     const { selectedTags } = this.state;
     selectedTags.push(selectedTag);
     this.inputRef.current.value = `${selectedTags.join(',')},`;
@@ -252,13 +256,13 @@ class QuestionTags extends PureComponent {
           return (
             <TagsWrapper>
               {showAllTags && (
-                <TagsWindow
+                <AllTags
                   tags={tags}
-                  onSelect={this.onSelectFromWindow}
+                  onSelect={this.onSelectFromAllTags}
                   onClose={this.hideAllTagsWindow}
                 />
               )}
-              <TagsHeader>
+              <InputRow>
                 <Input
                   ref={this.inputRef}
                   placeholder="Search by tag..."
@@ -268,12 +272,12 @@ class QuestionTags extends PureComponent {
                   type="text"
                 />
                 <Anchor onClick={this.toggleAllTags(true)}>all</Anchor>
-              </TagsHeader>
+              </InputRow>
               {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
               {matchingTags.length > 0 && (
-                <TagsDropdown
+                <MatchingTags
                   tags={matchingTags}
-                  onSelect={this.onSelectFromDropdown}
+                  onSelect={this.onSelectFromMatchingTags}
                 />
               )}
             </TagsWrapper>

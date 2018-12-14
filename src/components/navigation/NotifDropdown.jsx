@@ -16,12 +16,16 @@ const Dropdown = styled.div`
   position: absolute;
   text-align: center;
   top: 2.2em;
-  right: -7.7em;
+  right: 0em;
   background-color: white;
   width: 20em;
   max-width: 100vw;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+
+  @media (max-width: 600px) {
+    right: -7.7em;
+  }
 `;
 
 // TODO try to make this component use the Dropdown from Reusable

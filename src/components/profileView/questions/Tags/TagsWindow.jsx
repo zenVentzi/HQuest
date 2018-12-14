@@ -1,9 +1,33 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
-import PropTypes from 'prop-types';
-import FloatingWindow from 'Reusable/FloatingWindow';
 import styled from 'styled-components';
 import TextBtn from 'Reusable/TextBtn';
+
+const StyledDropdown = styled.div`
+  position: absolute;
+  top: 2.3em;
+  width: 100%;
+  z-index: 1;
+`;
+
+const Top = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  justify-content: center;
+  top: 0em;
+  max-height: 10em;
+  width: 100%;
+  background: white;
+  border-radius: 0.2em;
+`;
+
+const Bottom = styled.div`
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  background: black;
+`;
 
 const TagBtn = styled(TextBtn)`
   border: 0px;
@@ -37,13 +61,12 @@ export default class TagsWindow extends Component {
   };
 
   render() {
-    const { tags, onSelect, onClose } = this.props;
+    const { tags, onSearch, onClose } = this.props;
     const { selectedTags } = this.state;
 
     return (
-      <FloatingWindow onClose={onClose}>
-        <div style={{ color: 'black' }}>All tags:</div>
-        <div>
+      <StyledDropdown>
+        <Top>
           {tags.map(t => (
             <TagBtn
               key={t}
@@ -56,15 +79,17 @@ export default class TagsWindow extends Component {
               {t}
             </TagBtn>
           ))}
-        </div>
-        <TextBtn
-          onClick={() => {
-            onSelect(selectedTags);
-          }}
-        >
-          Select
-        </TextBtn>
-      </FloatingWindow>
+        </Top>
+        <Bottom>
+          <TextBtn
+            onClick={() => {
+              onSearch(selectedTags);
+            }}
+          >
+            Search
+          </TextBtn>
+        </Bottom>
+      </StyledDropdown>
     );
   }
 }

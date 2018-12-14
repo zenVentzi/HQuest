@@ -9,15 +9,16 @@ import CommentOptions from './CommentOptions';
 //   align-self: center;
 // `;
 
-const getAvatarWidth = size => `${2.5 * size}em`;
+// improve these hardcodings
+const getAvatarWidth = size => `${2.6 * size}em`;
 
 const Body = styled.p`
   /* width: 80%; */
   word-break: break-all;
   white-space: normal;
-  font-family: 'Times New Roman', Times, serif;
   padding-left: ${props => getAvatarWidth(props.size)};
   font-size: 0.9em;
+  text-align: left;
 `;
 
 const StyledComment = styled.div`

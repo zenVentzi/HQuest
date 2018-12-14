@@ -22,10 +22,6 @@ const newsfeed = async (_, __, context) => {
   return newsfeedController.getNewsfeed({ context });
 };
 
-async function comments(_, { answerId }, context) {
-  return commentController.getAnswerComments(answerId, context);
-}
-
 async function followers(_, { userId }, context) {
   return userController.getFollowers(userId, context);
 }
@@ -64,7 +60,6 @@ async function user(_, { id }, context) {
 
 module.exports = {
   books,
-  comments,
   notifications,
   newsfeed,
   users,

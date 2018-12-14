@@ -189,7 +189,6 @@ type LoginResult {
 
 type Query {
   books: [Book!]!
-  comments(answerId: ID!): [Comment!]
   notifications: [Notification]!
   book(title: String): Book
   users(match: String): [User!]!
@@ -225,6 +224,8 @@ type Mutation {
   editUser(input: EditUserInput): User!
   notifsMarkSeen: Boolean
   commentAnswer(answerId: ID!, comment: String!): Comment!
+  editComment(commentId: ID!, commentValue: String!): Comment!
+  removeComment(commentId: ID!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, name: String!): LoginResult!
   addQuestions(questions: [InputQuestion!]): Boolean
