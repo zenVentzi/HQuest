@@ -72,6 +72,24 @@ export const COMMENT_ANSWER = gql`
   ${CommentFields}
 `;
 
+export const EDIT_COMMENT = gql`
+  mutation editComment($answerId: ID!, $commentId: ID!, $comment: String!) {
+    editComment(answerId: $answerId, commentId: $commentId, comment: $comment) {
+      ...CommentFields
+    }
+  }
+  ${CommentFields}
+`;
+
+export const REMOVE_COMMENT = gql`
+  mutation removeComment($answerId: ID!, $commentId: ID!) {
+    removeComment(answerId: $answerId, commentId: $commentId) {
+      ...CommentFields
+    }
+  }
+  ${CommentFields}
+`;
+
 export const ADD_ANSWER = gql`
   mutation addAnswer($questionId: ID!, $answerValue: String!) {
     addAnswer(questionId: $questionId, answerValue: $answerValue) {

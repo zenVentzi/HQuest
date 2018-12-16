@@ -94,8 +94,8 @@ class QuestionsContainer extends Component {
 
     return (
       <Fragment>
-        <QuestionTags onSelected={this.onSelectedTags} />
         {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
+        <QuestionTags onSelected={this.onSelectedTags} />
         <Query
           query={GET_QUESTIONS}
           variables={queryVars}

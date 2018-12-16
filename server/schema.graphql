@@ -112,7 +112,7 @@ type AnswerEdition {
 type Comment {
   id: ID!
   user: User!
-  comment: String!
+  value: String!
 }
 
 enum NewsType {
@@ -224,8 +224,8 @@ type Mutation {
   editUser(input: EditUserInput): User!
   notifsMarkSeen: Boolean
   commentAnswer(answerId: ID!, comment: String!): Comment!
-  editComment(commentId: ID!, commentValue: String!): Comment!
-  removeComment(commentId: ID!): Comment!
+  editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
+  removeComment(answerId: ID!, commentId: ID!): Comment!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, name: String!): LoginResult!
   addQuestions(questions: [InputQuestion!]): Boolean

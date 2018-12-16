@@ -69,41 +69,6 @@ class AnsweredQuestion extends Component {
     };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // do things with nextProps.someProp and prevState.cachedSomeProp
-    const { answer } = nextProps.question;
-    let totalLikes = 0;
-    let currentUserLikes = 0;
-
-    if (answer.likes) {
-      totalLikes = answer.likes.total;
-      const currentUserLikesObj = answer.likes.likers.find(
-        liker => liker.user.id === getLoggedUserId()
-      );
-
-      if (currentUserLikesObj) {
-        currentUserLikes = currentUserLikesObj.numOfLikes;
-      }
-    }
-
-    // const { numOfComments } = answer;
-    const numOfComments = answer.comments ? answer.comments.length : 0;
-    const numOfEditions = answer.editions ? answer.editions.length : 0;
-
-    return {
-      hovered: prevState.hovered,
-      showComments: prevState.showComments,
-      showLikes: prevState.showLikes,
-      showEditions: prevState.showEditions,
-      showAnswerEditor: prevState.showAnswerEditor,
-      showPositionEditor: prevState.showPositionEditor,
-      totalLikes,
-      currentUserLikes,
-      numOfComments,
-      numOfEditions,
-    };
-  }
-
   onMouseEnter = () => {
     this.toggleHovered(true);
   };
@@ -115,6 +80,12 @@ class AnsweredQuestion extends Component {
 
   onClickRemove = async () => {
     await this.props.onClickRemove();
+  };
+
+  onEditComment = () => {};
+
+  onRemoveComment = async ({ commentId }) => {
+    await this.props.onRemoveComment({ commentId });
   };
 
   toggleHovered = value => {
@@ -205,8 +176,8 @@ class AnsweredQuestion extends Component {
 
   onAddComment = async ({ commentValue }) => {
     await this.props.onAddComment({ commentValue });
-    // const numOfComments = this.state.numOfComments + 1;
-    // this.setState({ ...this.state, numOfComments });
+    const numOfComments = this.state.numOfComments + 1;
+    this.setState({ ...this.state, numOfComments });
   };
 
   wait = async ({ milliseconds }) => {
@@ -223,7 +194,7 @@ class AnsweredQuestion extends Component {
     }
   };
 
-  onClickLike = async () => {
+  onClickLike = () => {
     const currentUserLikes = this.state.currentUserLikes + 1;
     const totalLikes = this.state.totalLikes + 1;
 
@@ -231,13 +202,18 @@ class AnsweredQuestion extends Component {
       toast.error('20 likes is the limit');
       return;
     }
+    // console.log(totalLikes);
+
+    /* problem is that we wait to update the likes from the server to show the new number and then refetch and refresh the component.
+    
+    A solution is to show the current user likes in a separate window during clicking. It will show only the likes from state and not care about props. 1 second after click the cloud will disappear */
 
     this.setState({ ...this.state, currentUserLikes, totalLikes });
 
     // this.cancelPrevWait();
     // await this.wait({ milliseconds: 500 });
     // console.log(this.likeMutationTimeout);
-    await this.props.onClickLike({ numOfLikes: currentUserLikes });
+    // await this.props.onClickLike({ numOfLikes: currentUserLikes });
   };
 
   render() {
@@ -259,6 +235,8 @@ class AnsweredQuestion extends Component {
       isPersonal,
       style,
     } = this.props;
+
+    // console.log(this.state);
 
     const { comments } = question.answer;
 
@@ -333,7 +311,8 @@ class AnsweredQuestion extends Component {
             comments={comments}
             scrollToComment={scrollToComment}
             onAddComment={this.onAddComment}
-            onClose={this.toggleComments}
+            onEditComment={this.onEditComment}
+            onRemoveComment={this.onRemoveComment}
           />
         )}
       </StyledQuestion>

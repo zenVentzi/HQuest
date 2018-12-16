@@ -16,7 +16,7 @@ const AnsweredQuestions = ({
   refetch,
   ...style
 }) => {
-  // TODO rename to onRemove etc.
+  // TODO move all the methods below in AnsweredQuestioN component
   const onClickSave = (editAnswer, answerId) => async ({ answerValue }) => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
@@ -53,12 +53,22 @@ const AnsweredQuestions = ({
     toast.success('Comment added!');
     refetch();
   };
-  const onEditComment = ({ commentAnswer, answerId }) => async ({
+
+  const onEditComment = ({ editComment, answerId }) => async ({
     commentValue,
   }) => {
     const variables = { answerId, comment: commentValue };
-    await commentAnswer({ variables });
-    toast.success('Comment added!');
+    await editComment({ variables });
+    toast.success('Comment edited!');
+    refetch();
+  };
+
+  const onRemoveComment = ({ removeComment, answerId }) => async ({
+    commentId,
+  }) => {
+    const variables = { answerId, commentId };
+    await removeComment({ variables });
+    toast.success('Comment removed!');
     refetch();
   };
 
@@ -73,7 +83,9 @@ const AnsweredQuestions = ({
         removeAnswer,
         moveAnswerPosition,
         likeAnswer,
-        commentAnswer
+        commentAnswer,
+        editComment,
+        removeComment
       ) => {
         const res = questions.map(q => (
           <Fragment key={q.id}>
@@ -92,6 +104,14 @@ const AnsweredQuestions = ({
               onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
               onAddComment={onAddComment({
                 commentAnswer,
+                answerId: q.answer.id,
+              })}
+              onEditComment={onEditComment({
+                editComment,
+                answerId: q.answer.id,
+              })}
+              onRemoveComment={onRemoveComment({
+                removeComment,
                 answerId: q.answer.id,
               })}
             />

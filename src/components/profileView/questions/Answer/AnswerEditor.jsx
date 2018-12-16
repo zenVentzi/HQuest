@@ -25,6 +25,11 @@ const Buttons = styled.div`
   margin-bottom: 1em;
 `;
 
+const ErrorText = styled.div`
+  color: red;
+  margin-bottom: 0.5em;
+`;
+
 const LeftBtn = styled(TextBtn)`
   margin-right: 1em;
 `;
@@ -60,33 +65,30 @@ class AnswerEditor extends Component {
 
   render() {
     const isNew = !this.props.answer;
+    const initialValues = { answer: '' };
+    if (!isNew) {
+      initialValues.answer = this.props.answer.value;
+    }
 
     return (
       <Formik
-        initialValues={{ answer: this.props.answer }}
+        initialValues={initialValues}
         validateOnBlur={false}
         validate={values => {
           const errors = {};
-          if (values.answer && values.answer.length < 10)
+          if (values.answer.length < 10)
             errors.answer = 'Answer must be at least 10 characters';
 
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const answerValue = values.answer.trim();
-          await this.props.onClickSave({ answerValue });
+          resetForm(initialValues);
           setSubmitting(false);
-          resetForm({});
+          await this.props.onClickSave({ answerValue });
         }}
       >
-        {({
-          touched,
-          values,
-          errors,
-          handleChange,
-          submitForm,
-          isSubmitting,
-        }) => (
+        {({ values, handleChange, submitForm, isSubmitting }) => (
           <Form style={{ width: '100%', textAlign: 'center' }}>
             <TextArea
               name="answer"
@@ -103,7 +105,7 @@ class AnswerEditor extends Component {
             />
             <ErrorMessage
               name="answer"
-              // render={msg => <ErrorText>{msg}</ErrorText>}
+              render={msg => <ErrorText>{msg}</ErrorText>}
             />
             <Buttons>
               <LeftBtn onClick={submitForm}>Save</LeftBtn>

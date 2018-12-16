@@ -81,17 +81,21 @@ async function commentAnswer(_, { answerId, comment }, context) {
 }
 
 async function editComment(_, args, context) {
-  const commentObj = await commentController.editComment({ ...args, context });
+  const commentObj = await commentController.edit({ ...args, context });
 
   return commentObj;
 }
+
 async function removeComment(_, args, context) {
-  const commentObj = await commentController.removeComment({
+  const dbComment = await commentController.remove({
     ...args,
     context,
   });
 
-  return commentObj;
+  return mapGqlComment({
+    dbComment,
+    loggedUserId: context.user.id,
+  });
 }
 
 async function addQuestions(_, { questions }, context) {
@@ -162,6 +166,8 @@ module.exports = {
   addBook,
   notifsMarkSeen,
   commentAnswer,
+  editComment,
+  removeComment,
   editUser,
   login,
   addQuestions,

@@ -24,13 +24,14 @@ const notify = async (receiverId, notif, userModel) => {
 const newComment = async (answerId, dbComment, context) => {
   const {
     models: { User, Answer },
+    user,
   } = context;
 
   const { questionId, userId: receiverId } = await Answer.findById(
     answerId
   ).lean();
 
-  const performerId = dbComment.user._id.toString();
+  const performerId = user.id;
   const performer = await User.findById(performerId).lean();
 
   if (performer._id.equals(receiverId)) return;

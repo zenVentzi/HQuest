@@ -71,7 +71,7 @@ function mapGqlComment({ dbComment, loggedUserId }) {
   return {
     id: dbComment._id.toString(),
     user: usr,
-    comment: dbComment.comment,
+    value: dbComment.value,
   };
 }
 
@@ -107,7 +107,6 @@ const mapGqlAnswer = ({ answer, loggedUserId }) => {
     id: answer._id.toString(),
     questionId: answer.questionId.toString(),
     userId: answer.userId.toString(),
-    numOfComments: answer.comments.length,
     comments: mapGqlComments({ comments: answer.comments, loggedUserId }),
     likes: mapGqlLikes({ likes: answer.likes, loggedUserId }),
     editions: answer.editions ? answer.editions.reverse() : null,
