@@ -11,12 +11,14 @@ const getComentators = async ({ userAnswers, context }) => {
   const commentatorsIds = userAnswers.reduce(
     (userIdsFromAllAnswers, answer) => {
       const { comments: answerComments } = answer;
-      // const userIds = [];
-      answerComments.forEach(com => {
-        if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
-          userIdsFromAllAnswers.push(com.userId.toString());
-        }
-      });
+
+      if (answerComments) {
+        answerComments.forEach(com => {
+          if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
+            userIdsFromAllAnswers.push(com.userId.toString());
+          }
+        });
+      }
 
       return userIdsFromAllAnswers;
     },
@@ -32,6 +34,10 @@ const getComentators = async ({ userAnswers, context }) => {
 
 const swapUserIdForUserObj = ({ commentators, userAnswers }) => {
   const res = userAnswers.map(answ => {
+    if (!answ.comments) {
+      return answ;
+    }
+
     const answerWithUpdatedComments = { ...answ };
     delete answerWithUpdatedComments.comments;
 
@@ -125,26 +131,13 @@ const getAnswersById = async ({ answerIds, context }) => {
 
 const createEdition = async ({ answerId, answerValue }, context) => {
   const {
-    models: { Answer, Question },
+    models: { Answer },
   } = context;
 
   const oldAnswer = await Answer.findById(answerId).lean();
-  const { type: questionType, possibleAnswers } = await Question.findById(
-    oldAnswer.questionId
-  ).lean();
 
-  let before;
-  let after;
-
-  if (questionType === QuestionTypes.SCALE) {
-    const oldAnswerName = possibleAnswers[oldAnswer.value];
-    const updatedAnswerName = possibleAnswers[answerValue];
-    before = oldAnswerName;
-    after = updatedAnswerName;
-  } else {
-    before = oldAnswer.value;
-    after = answerValue;
-  }
+  const before = oldAnswer.value;
+  const after = answerValue;
 
   return {
     id: ObjectId(),

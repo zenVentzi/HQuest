@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ToggleBtn from 'Reusable/ToggleBtn';
 
 const Wrapper = styled.div`
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 `;
 
 const ToggleQuestions = props => (

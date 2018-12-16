@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// this needs to be made more specific
 const StyledPanel = styled.div`
   position: relative;
-  width: 100%;
+  width: 70%;
   max-height: 20em;
   padding: 0.5em;
   display: flex;
@@ -14,12 +15,10 @@ const StyledPanel = styled.div`
   background: black;
   border-radius: 0.2em;
   color: white;
-`;
 
-// class Panel extends React {
-//   render() {
-//     return ();
-//   }
-// }
+  @media (max-width: 600px) {
+    width: 90%;
+  }
+`;
 
 export default StyledPanel;

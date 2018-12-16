@@ -9,15 +9,9 @@ import CommentOptions from './CommentOptions';
 //   align-self: center;
 // `;
 
-// improve these hardcodings
-const getAvatarWidth = size => `${2.6 * size}em`;
-
 const Body = styled.p`
-  /* width: 80%; */
   word-break: break-all;
   white-space: normal;
-  padding-left: ${props => getAvatarWidth(props.size)};
-  font-size: 0.9em;
   text-align: left;
 `;
 
@@ -30,6 +24,7 @@ const Header = styled.div`
   display: flex;
   position: relative;
   width: 100%;
+  margin-bottom: 0.5em;
 `;
 class Comment extends Component {
   static defaultProps = { size: 1.5 };
@@ -50,6 +45,15 @@ class Comment extends Component {
     this.setState(prevState => ({ ...prevState, commentHovered: false }));
   };
 
+  // improve/fix the below 2
+  onRemove = async () => {
+    await this.props.onRemove({ commentId: this.props.comment.id });
+  };
+
+  onEdit = async () => {
+    await this.props.onEdit({ commentId: this.props.comment.id });
+  };
+
   toggleOptionsDropdown = () => {
     this.setState(prevState => ({
       showOptionsDropdown: !prevState.showOptionsDropdown,
@@ -58,7 +62,7 @@ class Comment extends Component {
 
   render() {
     const {
-      comment: { user, comment },
+      comment: { user, value },
       size,
       innerRef,
     } = this.props;
@@ -76,10 +80,10 @@ class Comment extends Component {
           <CommentOptions
             visible={user.me && commentHovered}
             onClickEdit={this.onClickEdit}
-            onClickRemove={this.onClickRemove}
+            onClickRemove={this.onRemove}
           />
         </Header>
-        <Body size={size}>{comment}</Body>
+        <Body size={size}>- {value}</Body>
       </StyledComment>
     );
   }

@@ -24,7 +24,7 @@ export const CommentFields = gql`
     user {
       ...UserFields
     }
-    comment
+    value
   }
   ${UserFields}
 `;

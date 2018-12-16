@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import Textarea from 'react-textarea-autosize';
 import { Query, Mutation } from 'react-apollo';
-import { ADD_COMMENT } from 'Mutations';
-import { GET_COMMENTS } from 'Queries';
 import { toast } from 'react-toastify';
 import Comment from './Comment';
 import Panel from '../Panel';
 
-const CommentInput = styled.textarea`
+const CommentInput = styled(Textarea)`
   /* margin-top: 2em; */
   width: 79%;
   min-height: min-content;
@@ -56,7 +55,8 @@ class Comments extends Component {
   // };
 
   renderComments = ({ comments, scrollToComment }) => {
-    if (!comments.length) return <div> No comments yet </div>;
+    if (!comments || !comments.length)
+      return <div> Be the first to add a comment </div>;
 
     const renderReversedComments = () => {
       const res = [];
@@ -64,7 +64,11 @@ class Comments extends Component {
 
       while (copy.length) {
         const com = copy.pop();
-        const commentProps = { key: com.id, comment: com };
+        const commentProps = {
+          key: com.id,
+          comment: com,
+          onRemove: this.props.onRemoveComment,
+        };
 
         if (scrollToComment && scrollToComment === com.id) {
           commentProps.ref = ref => {
@@ -81,46 +85,32 @@ class Comments extends Component {
   };
 
   render() {
-    const { comments, scrollToComment, onClose } = this.props;
+    const { comments, scrollToComment } = this.props;
+    const formInitialValues = { comment: '' };
 
     return (
       <Panel
         ref={ref => {
           this.panel = ref;
         }}
-        onClose={onClose}
-        // onScroll={e => {
-        //   console.log(`onscroll ${e.target.scrollTop}`);
-        // }}
       >
         <Formik
-          initialValues={{ comment: '' }}
+          initialValues={formInitialValues}
           validateOnBlur={false}
           validate={values => {
             const errors = {};
-            if (values.comment && values.comment.length < 7)
+            if (values.comment.length < 7)
               errors.comment = 'Comment must be at least 7 characters';
 
             return errors;
           }}
           onSubmit={async (values, { setSubmitting, resetForm }) => {
-            // await addComment({
-            //   variables: { answerId, comment: values.comment },
-            // });
             await this.props.onAddComment({ commentValue: values.comment });
             setSubmitting(false);
-            resetForm({});
+            resetForm(formInitialValues);
           }}
         >
-          {({
-            touched,
-            values,
-            errors,
-            handleChange,
-            submitForm,
-            handleBlur,
-            isSubmitting,
-          }) => (
+          {({ values, handleChange, submitForm, handleBlur, isSubmitting }) => (
             <Form style={{ width: '100%', textAlign: 'center' }}>
               <CommentInput
                 name="comment"

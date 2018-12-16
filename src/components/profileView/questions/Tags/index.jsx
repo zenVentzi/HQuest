@@ -60,6 +60,11 @@ class QuestionTags extends PureComponent {
   };
 
   onSelectFromAllTags = selectedTags => {
+    this.hideAllTagsWindow();
+    this.inputRef.current.focus();
+
+    if (!selectedTags || !selectedTags.length) return;
+
     this.setState(
       prevState => {
         return { ...prevState, selectedTags };
@@ -70,8 +75,6 @@ class QuestionTags extends PureComponent {
     );
 
     this.inputRef.current.value = `${selectedTags.join(',')},`;
-    this.inputRef.current.focus();
-    this.hideAllTagsWindow();
   };
 
   onSelectFromMatchingTags = selectedTag => {
