@@ -82,10 +82,14 @@ class AnsweredQuestion extends Component {
     await this.props.onClickRemove();
   };
 
-  onEditComment = () => {};
+  onEditComment = async data => {
+    await this.props.onEditComment(data);
+  };
 
   onRemoveComment = async ({ commentId }) => {
     await this.props.onRemoveComment({ commentId });
+    const numOfComments = this.state.numOfComments + 1;
+    this.setState({ ...this.state, numOfComments });
   };
 
   toggleHovered = value => {

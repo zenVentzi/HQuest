@@ -23,35 +23,34 @@ const addCommentToAnswer = async ({ comment, answerId }, context) => {
   return addedComment;
 };
 
-async function edit({ answerId, commentId, commentValue, context }) {
+async function editComment({ answerId, commentId, commentValue, context }) {
   const {
     models: { User, Answer },
     user,
   } = context;
-  const performerId = user.id;
 
-  const performer = await User.findById(performerId).lean();
-  // this is just a tempalte,won't work, fix it
-  const { comments } = await Answer.findByIdAndUpdate(
-    answerId,
-    {
-      $push: {
-        comments: {
-          _id: ObjectId(),
-          value: commentValue,
-          userId: performer._id,
-        },
-      },
-    },
-    { new: true, fields: 'comments -_id' }
-  ).lean();
+  const { comments: oldComments } = await Answer.findById(answerId).lean();
+  const newComments = [];
+  let editedComment;
 
-  const addedComment = comments[comments.length - 1];
-  addedComment.user = await User.findById(user.id);
-  return addedComment;
+  oldComments.forEach(oldC => {
+    const newComment = oldC;
+
+    if (oldC._id.toString() === commentId) {
+      newComment.value = commentValue;
+      editedComment = newComment;
+    }
+
+    newComments.push(newComment);
+  });
+
+  await Answer.findByIdAndUpdate(answerId, { $set: { comments: newComments } });
+
+  editedComment.user = await User.findById(user.id);
+  return editedComment;
 }
 
-async function remove({ answerId, commentId, context }) {
+async function removeComment({ answerId, commentId, context }) {
   const {
     models: { Answer, User },
     user,
@@ -68,4 +67,4 @@ async function remove({ answerId, commentId, context }) {
   return removedComment;
 }
 
-module.exports = { addCommentToAnswer, edit, remove };
+module.exports = { addCommentToAnswer, editComment, removeComment };
