@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, ErrorMessage } from 'formik';
 import Textarea from 'react-textarea-autosize';
 import { Query, Mutation } from 'react-apollo';
 import { toast } from 'react-toastify';
@@ -67,6 +67,7 @@ class Comments extends Component {
         const commentProps = {
           key: com.id,
           comment: com,
+          onEdit: this.props.onEditComment,
           onRemove: this.props.onRemoveComment,
         };
 

@@ -2,18 +2,14 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import User from 'Reusable/UserRow';
 import CommentOptions from './CommentOptions';
+import CommentViewer from './CommentViewer';
+import CommentEditor from './CommentEditor';
 
 // const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
 //   cursor: pointer;
 //   margin-left: auto;
 //   align-self: center;
 // `;
-
-const Body = styled.p`
-  word-break: break-all;
-  white-space: normal;
-  text-align: left;
-`;
 
 const StyledComment = styled.div`
   width: 80%;
@@ -28,7 +24,7 @@ const Header = styled.div`
 `;
 class Comment extends Component {
   static defaultProps = { size: 1.5 };
-  state = { commentHovered: false };
+  state = { commentHovered: false, viewMode: true };
 
   onClickOutsideOptions = e => {
     const isOptionsBtn =
@@ -45,13 +41,24 @@ class Comment extends Component {
     this.setState(prevState => ({ ...prevState, commentHovered: false }));
   };
 
-  // improve/fix the below 2
   onRemove = async () => {
     await this.props.onRemove({ commentId: this.props.comment.id });
   };
 
-  onEdit = async () => {
-    await this.props.onEdit({ commentId: this.props.comment.id });
+  onClickEdit = () => {
+    this.setState({ ...this.state, viewMode: false });
+  };
+
+  onCancelEdit = () => {
+    this.setState({ ...this.state, viewMode: true });
+  };
+
+  onEdit = async ({ newComment }) => {
+    await this.props.onEdit({
+      commentId: this.props.comment.id,
+      commentValue: newComment,
+    });
+    this.setState({ ...this.state, viewMode: true });
   };
 
   toggleOptionsDropdown = () => {
@@ -67,7 +74,7 @@ class Comment extends Component {
       innerRef,
     } = this.props;
 
-    const { commentHovered } = this.state;
+    const { commentHovered, viewMode } = this.state;
 
     return (
       <StyledComment
@@ -83,7 +90,15 @@ class Comment extends Component {
             onClickRemove={this.onRemove}
           />
         </Header>
-        <Body size={size}>- {value}</Body>
+        {viewMode ? (
+          <CommentViewer comment={value} />
+        ) : (
+          <CommentEditor
+            comment={value}
+            onEdit={this.onEdit}
+            onCancel={this.onCancelEdit}
+          />
+        )}
       </StyledComment>
     );
   }

@@ -16,7 +16,6 @@ const AnsweredQuestions = ({
   refetch,
   ...style
 }) => {
-  // TODO move all the methods below in AnsweredQuestioN component
   const onClickSave = (editAnswer, answerId) => async ({ answerValue }) => {
     const variables = { answerId, answerValue };
     await editAnswer({ variables });
@@ -41,7 +40,6 @@ const AnsweredQuestions = ({
   const onClickLike = ({ likeAnswer, answerId }) => async ({ numOfLikes }) => {
     const variables = { answerId, numOfLikes };
     await likeAnswer({ variables });
-    // toast.success('Liked answer!');
     refetch();
   };
 
@@ -55,9 +53,10 @@ const AnsweredQuestions = ({
   };
 
   const onEditComment = ({ editComment, answerId }) => async ({
+    commentId,
     commentValue,
   }) => {
-    const variables = { answerId, comment: commentValue };
+    const variables = { answerId, commentId, commentValue };
     await editComment({ variables });
     toast.success('Comment edited!');
     refetch();
@@ -88,34 +87,33 @@ const AnsweredQuestions = ({
         removeComment
       ) => {
         const res = questions.map(q => (
-          <Fragment key={q.id}>
-            <AnsweredQuestion
-              collapseComments
-              style={style}
-              isPersonal={isPersonal}
-              question={q}
-              totalQuestionsCount={totalCount}
-              onClickSave={onClickSave(editAnswer, q.answer.id)}
-              onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
-              onClickMove={onClickMove({
-                moveAnswerPosition,
-                answerId: q.answer.id,
-              })}
-              onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
-              onAddComment={onAddComment({
-                commentAnswer,
-                answerId: q.answer.id,
-              })}
-              onEditComment={onEditComment({
-                editComment,
-                answerId: q.answer.id,
-              })}
-              onRemoveComment={onRemoveComment({
-                removeComment,
-                answerId: q.answer.id,
-              })}
-            />
-          </Fragment>
+          <AnsweredQuestion
+            key={q.id}
+            collapseComments
+            style={style}
+            isPersonal={isPersonal}
+            question={q}
+            totalQuestionsCount={totalCount}
+            onClickSave={onClickSave(editAnswer, q.answer.id)}
+            onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
+            onClickMove={onClickMove({
+              moveAnswerPosition,
+              answerId: q.answer.id,
+            })}
+            onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
+            onAddComment={onAddComment({
+              commentAnswer,
+              answerId: q.answer.id,
+            })}
+            onEditComment={onEditComment({
+              editComment,
+              answerId: q.answer.id,
+            })}
+            onRemoveComment={onRemoveComment({
+              removeComment,
+              answerId: q.answer.id,
+            })}
+          />
         ));
 
         return res;

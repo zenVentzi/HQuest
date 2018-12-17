@@ -73,8 +73,16 @@ export const COMMENT_ANSWER = gql`
 `;
 
 export const EDIT_COMMENT = gql`
-  mutation editComment($answerId: ID!, $commentId: ID!, $comment: String!) {
-    editComment(answerId: $answerId, commentId: $commentId, comment: $comment) {
+  mutation editComment(
+    $answerId: ID!
+    $commentId: ID!
+    $commentValue: String!
+  ) {
+    editComment(
+      answerId: $answerId
+      commentId: $commentId
+      commentValue: $commentValue
+    ) {
       ...CommentFields
     }
   }
