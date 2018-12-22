@@ -3,27 +3,24 @@ const bcrypt = require('bcrypt');
 const { QuestionTypes } = require('../constants');
 const { mapGqlAnswer } = require('../resolvers/helper');
 
-const getComentators = async ({ userAnswers, context }) => {
+const getComentators = async ({ answers, context }) => {
   const {
     models: { User },
   } = context;
 
-  const commentatorsIds = userAnswers.reduce(
-    (userIdsFromAllAnswers, answer) => {
-      const { comments: answerComments } = answer;
+  const commentatorsIds = answers.reduce((userIdsFromAllAnswers, answer) => {
+    const { comments: answerComments } = answer;
 
-      if (answerComments) {
-        answerComments.forEach(com => {
-          if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
-            userIdsFromAllAnswers.push(com.userId.toString());
-          }
-        });
-      }
+    if (answerComments) {
+      answerComments.forEach(com => {
+        if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
+          userIdsFromAllAnswers.push(com.userId.toString());
+        }
+      });
+    }
 
-      return userIdsFromAllAnswers;
-    },
-    []
-  );
+    return userIdsFromAllAnswers;
+  }, []);
 
   const commentatorsObjs = await User.find({
     _id: { $in: commentatorsIds },
@@ -32,8 +29,8 @@ const getComentators = async ({ userAnswers, context }) => {
   return commentatorsObjs;
 };
 
-const swapUserIdForUserObj = ({ commentators, userAnswers }) => {
-  const res = userAnswers.map(answ => {
+const swapUserIdForUserObj = ({ commentators, answers }) => {
+  const res = answers.map(answ => {
     if (!answ.comments) {
       return answ;
     }
@@ -56,15 +53,15 @@ const swapUserIdForUserObj = ({ commentators, userAnswers }) => {
   return res;
 };
 
-const addUserObjToComments = async ({ userAnswers, context }) => {
-  const commentators = await getComentators({ userAnswers, context });
+const normalizeComments = async ({ answers, context }) => {
+  const commentators = await getComentators({ answers, context });
 
-  const answersWithUpdatedComments = swapUserIdForUserObj({
+  const answersWithNormalizedComments = swapUserIdForUserObj({
     commentators,
-    userAnswers,
+    answers,
   });
 
-  return answersWithUpdatedComments;
+  return answersWithNormalizedComments;
 };
 
 const getUserAnswers = async ({ userId }, context) => {
@@ -74,12 +71,12 @@ const getUserAnswers = async ({ userId }, context) => {
 
   const userAnswers = await Answer.find({
     userId: ObjectId(userId),
-    $or: [{ isDeleted: { $exists: false } }, { isDeleted: false }],
+    $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }],
   })
     .sort({ position: 1 })
     .lean();
 
-  const res = await addUserObjToComments({ userAnswers, context });
+  const res = await normalizeComments({ answers: userAnswers, context });
 
   return res;
 };
@@ -98,15 +95,9 @@ const getUserAnswer = async ({ userId, questionId, context }) => {
     questionId: questionIdObj,
   }).lean();
 
-  const [res] = await addUserObjToComments({ userAnswers: [answer], context });
+  const [res] = await normalizeComments({ answers: [answer], context });
 
   return res;
-
-  /* problem is that if I don't return mapped result, it becomes incosistent with the other functions. But I need an unmapped result in this case
-  
-  solution1: pass parameter shouldMap that defaults to true and mark it as false. If false just return rawDbObject.
-  
-  solution2: don't return mapped objects from controllers. Map the results in the query & mutation files */
 };
 
 const getAnswerById = async ({ answerId, context }) => {
@@ -115,7 +106,7 @@ const getAnswerById = async ({ answerId, context }) => {
   } = context;
 
   const answer = await Answer.findById(answerId).lean();
-  const [res] = await addUserObjToComments({ userAnswers: [answer], context });
+  const [res] = await normalizeComments({ answers: [answer], context });
   return res;
 };
 
@@ -125,7 +116,7 @@ const getAnswersById = async ({ answerIds, context }) => {
   } = context;
 
   const answers = await Answer.find({ _id: { $in: answerIds } }).lean();
-  const res = await addUserObjToComments({ userAnswers: answers, context });
+  const res = await normalizeComments({ answers, context });
   return res;
 };
 
@@ -163,7 +154,12 @@ const edit = async ({ answerId, answerValue }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  return updatedAnswer;
+  const [res] = await normalizeComments({
+    answers: [updatedAnswer],
+    context,
+  });
+
+  return res;
 };
 
 const add = async ({ questionId, answerValue }, context) => {
@@ -173,7 +169,7 @@ const add = async ({ questionId, answerValue }, context) => {
   } = context;
 
   await Answer.updateMany({}, { $inc: { position: 1 } });
-  let result;
+  let addedAnswer;
 
   const deletedAnswer = await Answer.findOne({
     questionId: ObjectId(questionId),
@@ -185,47 +181,55 @@ const add = async ({ questionId, answerValue }, context) => {
       { answerId: deletedAnswer._id.toString(), answerValue },
       context
     );
-    result = await Answer.findByIdAndUpdate(deletedAnswer._id, {
-      $set: { isDeleted: false, position: 1 },
+    addedAnswer = await Answer.findByIdAndUpdate(deletedAnswer._id, {
+      $set: { isRemoved: false, position: 1 },
     }).lean();
   } else {
     const newAnswer = {
       userId: ObjectId(user.id),
       questionId: ObjectId(questionId),
-      comments: [],
       value: answerValue,
       position: 1,
     };
 
-    result = await Answer.create(newAnswer);
+    addedAnswer = (await Answer.create(newAnswer)).toObject();
   }
 
-  return result;
+  const [res] = await normalizeComments({
+    answers: [addedAnswer],
+    context,
+  });
+
+  return res;
 };
 
 const remove = async ({ answerId }, context) => {
   const {
     models: { Answer },
-    user,
   } = context;
 
-  const deletedAnswer = await Answer.findByIdAndUpdate(
+  const removedAnswer = await Answer.findByIdAndUpdate(
     answerId,
     {
-      $set: { isDeleted: true },
+      $set: { isRemoved: true },
     },
     { new: true, upsert: true }
   ).lean();
 
   await Answer.updateMany(
-    { position: { gt: deletedAnswer.position } },
+    { position: { gt: removedAnswer.position } },
     { $inc: { position: -1 } }
   );
 
-  return mapGqlAnswer({ answer: deletedAnswer, loggedUserId: user.id });
+  const [res] = await normalizeComments({
+    answers: [removedAnswer],
+    context,
+  });
+
+  return res;
 };
 
-const like = async ({ answerId, numOfLikes }, context) => {
+const like = async ({ answerId, numOfLikes: userLikes }, context) => {
   const {
     models: { Answer, User },
     user,
@@ -241,8 +245,8 @@ const like = async ({ answerId, numOfLikes }, context) => {
 
   if (!likes) {
     updatedLikes = {
-      total: numOfLikes,
-      likers: [{ user: dbUserLiker, numOfLikes }],
+      total: userLikes,
+      likers: [{ user: dbUserLiker, numOfLikes: userLikes }],
     };
   } else {
     // clear prev num of likes before adding the new ones
@@ -250,7 +254,7 @@ const like = async ({ answerId, numOfLikes }, context) => {
       liker => !liker.user._id.equals(dbUserLiker._id)
     );
 
-    updatedLikes.likers.push({ user: dbUserLiker, numOfLikes });
+    updatedLikes.likers.push({ user: dbUserLiker, numOfLikes: userLikes });
     updatedLikes.total = updatedLikes.likers.reduce((total, liker) => {
       const res = total + liker.numOfLikes;
       return res;
@@ -265,12 +269,12 @@ const like = async ({ answerId, numOfLikes }, context) => {
     { new: true, upsert: true }
   ).lean();
 
-  const [answerWithUpdatedComments] = await addUserObjToComments({
-    userAnswers: [likedAnswer],
+  const [res] = await normalizeComments({
+    answers: [likedAnswer],
     context,
   });
 
-  return answerWithUpdatedComments;
+  return res;
 };
 
 const movePosition = async ({ answerId, position }, context) => {
@@ -278,8 +282,6 @@ const movePosition = async ({ answerId, position }, context) => {
     models: { Answer },
   } = context;
 
-  const answersCount = await Answer.count();
-  // const reversedPosition = answersCount - position + 1;
   const currentAnswer = await Answer.findById(answerId).lean();
   await Answer.findOneAndUpdate(
     { position },

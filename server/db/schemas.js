@@ -5,7 +5,7 @@ const { ObjectId } = mongoose.SchemaTypes;
 const getDefaultSchema = () => new mongoose.Schema({}, { strict: false });
 const getUserSchema = () =>
   new mongoose.Schema({
-    firstName: String,
+    firstName: { type: String, required: true },
     surName: String,
     email: String,
     password: String,

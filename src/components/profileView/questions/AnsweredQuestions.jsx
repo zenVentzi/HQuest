@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import AnsweredQuestion from './AnsweredQuestion';
-import AnsweredQuestionsGql from './AnsweredQuestionsGql';
 
 const Empty = styled.div`
   text-align: center;
@@ -16,110 +15,22 @@ const AnsweredQuestions = ({
   refetch,
   ...style
 }) => {
-  const onClickSave = (editAnswer, answerId) => async ({ answerValue }) => {
-    const variables = { answerId, answerValue };
-    await editAnswer({ variables });
-    toast.success('🦄 Answer edited!');
-    refetch();
-  };
-  const onClickRemove = (removeAnswer, answerId) => async () => {
-    const variables = { answerId };
-    await removeAnswer({ variables });
-    toast.success('🦄 Answer removed!');
-    refetch();
-  };
-  const onClickMove = ({ moveAnswerPosition, answerId }) => async ({
-    newPosition,
-  }) => {
-    const variables = { answerId, position: newPosition };
-    await moveAnswerPosition({ variables });
-    toast.success('🦄 Question moved!');
-    refetch();
-  };
-
-  const onClickLike = ({ likeAnswer, answerId }) => async ({ numOfLikes }) => {
-    const variables = { answerId, numOfLikes };
-    await likeAnswer({ variables });
-    refetch();
-  };
-
-  const onAddComment = ({ commentAnswer, answerId }) => async ({
-    commentValue,
-  }) => {
-    const variables = { answerId, comment: commentValue };
-    await commentAnswer({ variables });
-    toast.success('Comment added!');
-    refetch();
-  };
-
-  const onEditComment = ({ editComment, answerId }) => async ({
-    commentId,
-    commentValue,
-  }) => {
-    const variables = { answerId, commentId, commentValue };
-    await editComment({ variables });
-    toast.success('Comment edited!');
-    refetch();
-  };
-
-  const onRemoveComment = ({ removeComment, answerId }) => async ({
-    commentId,
-  }) => {
-    const variables = { answerId, commentId };
-    await removeComment({ variables });
-    toast.success('Comment removed!');
-    refetch();
-  };
-
   if (!questions.length) {
     return <Empty style={style}> No answered questions </Empty>;
   }
 
-  return (
-    <AnsweredQuestionsGql>
-      {(
-        editAnswer,
-        removeAnswer,
-        moveAnswerPosition,
-        likeAnswer,
-        commentAnswer,
-        editComment,
-        removeComment
-      ) => {
-        const res = questions.map(q => (
-          <AnsweredQuestion
-            key={q.id}
-            collapseComments
-            style={style}
-            isPersonal={isPersonal}
-            question={q}
-            totalQuestionsCount={totalCount}
-            onClickSave={onClickSave(editAnswer, q.answer.id)}
-            onClickRemove={onClickRemove(removeAnswer, q.answer.id)}
-            onClickMove={onClickMove({
-              moveAnswerPosition,
-              answerId: q.answer.id,
-            })}
-            onClickLike={onClickLike({ likeAnswer, answerId: q.answer.id })}
-            onAddComment={onAddComment({
-              commentAnswer,
-              answerId: q.answer.id,
-            })}
-            onEditComment={onEditComment({
-              editComment,
-              answerId: q.answer.id,
-            })}
-            onRemoveComment={onRemoveComment({
-              removeComment,
-              answerId: q.answer.id,
-            })}
-          />
-        ));
+  const res = questions.map(q => (
+    <AnsweredQuestion
+      key={q.id}
+      collapseComments
+      style={style}
+      isPersonal={isPersonal}
+      question={q}
+      totalQuestionsCount={totalCount}
+    />
+  ));
 
-        return res;
-      }}
-    </AnsweredQuestionsGql>
-  );
+  return res;
 };
 
 export default AnsweredQuestions;

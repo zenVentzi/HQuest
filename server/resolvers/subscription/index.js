@@ -23,7 +23,6 @@ const newNotification = {
   resolve: payload => payload.notif,
   subscribe: withFilter(
     () => {
-      console.dir(`subscribed!`);
       return pubsub.asyncIterator(NEW_NOTIFICATION);
     },
     (payload, variables) => {

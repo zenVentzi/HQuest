@@ -15,6 +15,7 @@ async function books(root, __, context) {
 }
 
 const notifications = async (_, __, context) => {
+  throw new Error('Test error');
   return notificationController.getNotifications(context);
 };
 
@@ -54,9 +55,9 @@ async function users(_, { match }, context) {
   return userController.getUsers(match, context);
 }
 
-async function user(_, { id }, context) {
+const user = isAuthenticatedResolver.createResolver((_, { id }, context) => {
   return userController.getUser(id, context);
-}
+});
 
 module.exports = {
   books,

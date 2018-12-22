@@ -5,6 +5,7 @@ import Textarea from 'react-textarea-autosize';
 import { Query, Mutation } from 'react-apollo';
 import { toast } from 'react-toastify';
 import Comment from './Comment';
+import CommentsGql from './CommentsGql';
 import Panel from '../Panel';
 
 const CommentInput = styled(Textarea)`
@@ -25,36 +26,56 @@ class Comments extends Component {
   // componentDidMount() {
   //   console.log(`mount`);
   // }
-  // state = { scrolledToComment: false };
+  state = { comments: this.props.comments };
 
   componentDidMount(prevProps, prevState) {
     if (this.highlightedComment) {
       this.panel.scrollTop = this.highlightedComment.offsetTop;
-
-      // eslint-disable-next-line react/no-did-mount-set-state
-      // this.setState((state, props) => {
-      //   return { ...state, scrolledToComment: true };
-      // });
     }
   }
 
-  scrollToComment = () => {};
+  validateForm = ({ commentAnswerMutation }) => async values => {
+    // const a = await commentAnswerMutation({ bla: 5 });
+    const errors = {};
+    if (values.comment.length < 7)
+      errors.comment = 'Comment must be at least 7 characters';
 
-  // updateCache = (cache, { data: { addComment } }) => {
-  //   const vars = { answerId: this.props.answerId };
-  //   const { comments: cments } = cache.readQuery({
-  //     query: GET_COMMENTS,
-  //     variables: vars,
-  //   });
+    return errors;
+  };
 
-  //   cache.writeQuery({
-  //     query: GET_COMMENTS,
-  //     variables: vars,
-  //     data: { comments: cments.concat([addComment]) },
-  //   });
-  // };
+  onSubmitForm = commentAnswerMutation => async (
+    values,
+    { setSubmitting, resetForm }
+  ) => {
+    // console.log(commentAnswerMutation);
+    const addedComment = await commentAnswerMutation({
+      commentValue: values.comment,
+    });
+    setSubmitting(false);
+    resetForm({ comment: '' });
+  };
 
-  renderComments = ({ comments, scrollToComment }) => {
+  onEditComment = editCommentMutation => async ({
+    commentId,
+    commentValue,
+  }) => {
+    const { answerId } = this.props;
+    const variables = { answerId, commentId, commentValue };
+    await editCommentMutation({ variables });
+    toast.success('Comment edited!');
+  };
+
+  onRemoveComment = removeCommentMutation => async ({ commentId }) => {
+    const { answerId } = this.props;
+    const variables = { answerId, commentId };
+    await removeCommentMutation({ variables });
+    toast.success('Comment removed!');
+  };
+
+  renderComments = ({ editCommentMutation, removeCommentMutation }) => {
+    const { scrollToComment } = this.props;
+    const { comments } = this.state;
+
     if (!comments || !comments.length)
       return <div> Be the first to add a comment </div>;
 
@@ -86,56 +107,59 @@ class Comments extends Component {
   };
 
   render() {
-    const { comments, scrollToComment } = this.props;
-    const formInitialValues = { comment: '' };
-
     return (
-      <Panel
-        ref={ref => {
-          this.panel = ref;
+      <CommentsGql>
+        {(commentAnswer, editComment, removeComment) => {
+          return (
+            <Panel
+              ref={ref => {
+                this.panel = ref;
+              }}
+            >
+              <Formik
+                initialValues={{ comment: '' }}
+                validateOnBlur={false}
+                validate={this.validateForm}
+                // validate={this.validateForm}
+                onSubmit={this.onSubmitForm(commentAnswer)}
+              >
+                {({
+                  values,
+                  handleChange,
+                  submitForm,
+                  handleBlur,
+                  isSubmitting,
+                }) => (
+                  <Form style={{ width: '100%', textAlign: 'center' }}>
+                    <CommentInput
+                      name="comment"
+                      placeholder="Add a comment..."
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.comment || ''}
+                      disabled={isSubmitting}
+                      onKeyPress={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (!isSubmitting) submitForm();
+                        }
+                      }}
+                    />
+                    <ErrorMessage
+                      name="comment"
+                      render={msg => <ErrorText>{msg}</ErrorText>}
+                    />
+                  </Form>
+                )}
+              </Formik>
+              {this.renderComments({
+                editCommentMutation: editComment,
+                removeCommentMutation: removeComment,
+              })}
+            </Panel>
+          );
         }}
-      >
-        <Formik
-          initialValues={formInitialValues}
-          validateOnBlur={false}
-          validate={values => {
-            const errors = {};
-            if (values.comment.length < 7)
-              errors.comment = 'Comment must be at least 7 characters';
-
-            return errors;
-          }}
-          onSubmit={async (values, { setSubmitting, resetForm }) => {
-            await this.props.onAddComment({ commentValue: values.comment });
-            setSubmitting(false);
-            resetForm(formInitialValues);
-          }}
-        >
-          {({ values, handleChange, submitForm, handleBlur, isSubmitting }) => (
-            <Form style={{ width: '100%', textAlign: 'center' }}>
-              <CommentInput
-                name="comment"
-                placeholder="Add a comment..."
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.comment || ''}
-                disabled={isSubmitting}
-                onKeyPress={e => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (!isSubmitting) submitForm();
-                  }
-                }}
-              />
-              <ErrorMessage
-                name="comment"
-                render={msg => <ErrorText>{msg}</ErrorText>}
-              />
-            </Form>
-          )}
-        </Formik>
-        {this.renderComments({ comments, scrollToComment })}
-      </Panel>
+      </CommentsGql>
     );
   }
 }

@@ -13,19 +13,12 @@ import introspectionQueryResultData from '../fragmentTypes.json';
 
 import { getAuthToken } from '../utils';
 
-const getHttpURI = isTunnel => {
-  return isTunnel
-    ? 'http://hquest.localtunnel.me/graphql'
-    : 'http://localhost:4000/graphql';
-};
-
 const uploadLink = createUploadLink({
-  uri: getHttpURI(false),
+  uri: 'http://localhost:4000/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
   const token = getAuthToken();
-  // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -46,14 +39,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-const getWsURI = isTunnel => {
-  return isTunnel
-    ? `ws://hquest.localtunnel.me/graphql`
-    : `ws://localhost:4000/graphql`;
-};
-
 const wsLink = new WebSocketLink({
-  uri: getWsURI(false),
+  uri: `ws://localhost:4000/graphql`,
   options: {
     reconnect: true,
     connectionParams: {
@@ -69,7 +56,10 @@ const link = split(
   // split based on operation type
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query);
-    return kind === 'OperationDefinition' && operation === 'subscription';
+    const shouldUseFirst =
+      kind === 'OperationDefinition' && operation === 'subscription';
+    return true;
+    return shouldUseFirst;
   },
   wsLink,
   httpLink

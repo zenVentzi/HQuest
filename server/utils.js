@@ -1,4 +1,5 @@
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 const { USERS_CONTENT } = require('./constants');
 
 const readDirAsync = async dir =>
@@ -27,4 +28,23 @@ const getAvatarSrcAsync = async userId => {
   return src;
 };
 
-module.exports = { getAvatarSrcAsync };
+async function getVerifiedUser(authToken) {
+  let token = authToken;
+  if (token.startsWith('Bearer ')) {
+    // Remove Bearer from string
+    token = token.slice(7, token.length).trimLeft();
+  }
+  const secret = process.env.JWT_SECRET;
+  return new Promise(resolve => {
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+        // reject(err);
+        resolve(null);
+      } else {
+        resolve(decoded);
+      }
+    });
+  });
+}
+
+module.exports = { getAvatarSrcAsync, getVerifiedUser };

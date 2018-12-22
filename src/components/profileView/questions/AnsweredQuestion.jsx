@@ -12,6 +12,7 @@ import OptionsDropdown from './Answer/Options';
 import AnswerEditor from './Answer/AnswerEditor';
 import AnswerViewer from './Answer/AnswerViewer';
 import PositionEditor from './Answer/PositionEditor';
+import AnsweredQuestionGql from './AnsweredQuestionGql';
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -39,7 +40,7 @@ class AnsweredQuestion extends Component {
 
     const { answer } = this.props.question;
     let totalLikes = 0;
-    let currentUserLikes = 0;
+    let userLikes = 0;
 
     if (answer.likes) {
       totalLikes = answer.likes.total;
@@ -48,7 +49,7 @@ class AnsweredQuestion extends Component {
       );
 
       if (currentUserLikesObj) {
-        currentUserLikes = currentUserLikesObj.numOfLikes;
+        userLikes = currentUserLikesObj.numOfLikes;
       }
     }
 
@@ -63,7 +64,7 @@ class AnsweredQuestion extends Component {
       showAnswerEditor: false,
       showPositionEditor: false,
       totalLikes,
-      currentUserLikes,
+      userLikes,
       numOfComments,
       numOfEditions,
     };
@@ -78,8 +79,12 @@ class AnsweredQuestion extends Component {
     this.toggleHovered(false);
   };
 
-  onClickRemove = async () => {
-    await this.props.onClickRemove();
+  onRemove = ({ mutation }) => async () => {
+    const answerId = this.props.question.answer.id;
+    const variables = { answerId };
+    await mutation({ variables });
+    toast.success('🦄 Answer removed!');
+    await this.props.onRemove();
   };
 
   onEditComment = async data => {
@@ -126,7 +131,7 @@ class AnsweredQuestion extends Component {
     });
   };
 
-  onSaveAnswer = async ({ answerValue }) => {
+  onSaveAnswer = ({ mutation }) => async ({ answerValue }) => {
     const isTheSame = this.props.question.answer.value === answerValue;
 
     if (isTheSame) {
@@ -135,13 +140,12 @@ class AnsweredQuestion extends Component {
       // print "Nothing changed"
     }
 
-    /* do I update the state here myself? or use derivedStateFromProps? I'll update it from here for now */
-
+    const answerId = this.props.question.answer.id;
+    const variables = { answerId, answerValue };
+    await mutation({ variables });
+    toast.success('🦄 Answer edited!');
     const numOfEditions = this.state.numOfEditions + 1;
     this.setState({ ...this.state, numOfEditions });
-
-    await this.props.onClickSave({ answerValue });
-    // todo: only toggle if successful
     this.closeAnswerEditor();
   };
 
@@ -172,9 +176,12 @@ class AnsweredQuestion extends Component {
     }));
   };
 
-  onMovePosition = async ({ newPosition }) => {
-    await this.props.onClickMove({ newPosition });
-    // check for success or failure
+  onMovePosition = ({ mutation }) => async ({ newPosition }) => {
+    const answerId = this.props.question.answer.id;
+    const variables = { answerId, position: newPosition };
+    await mutation({ variables });
+    // await this.props.onClickMove({ newPosition });
+    toast.success('🦄 Question moved!');
     this.closePositionEditor();
   };
 
@@ -198,26 +205,23 @@ class AnsweredQuestion extends Component {
     }
   };
 
-  onClickLike = () => {
-    const currentUserLikes = this.state.currentUserLikes + 1;
+  onClickLike = ({ mutation }) => async () => {
+    const userLikes = this.state.userLikes + 1;
     const totalLikes = this.state.totalLikes + 1;
 
-    if (currentUserLikes > 20) {
+    if (userLikes > 20) {
       toast.error('20 likes is the limit');
       return;
     }
-    // console.log(totalLikes);
 
-    /* problem is that we wait to update the likes from the server to show the new number and then refetch and refresh the component.
-    
-    A solution is to show the current user likes in a separate window during clicking. It will show only the likes from state and not care about props. 1 second after click the cloud will disappear */
+    this.setState({ ...this.state, userLikes, totalLikes });
 
-    this.setState({ ...this.state, currentUserLikes, totalLikes });
-
-    // this.cancelPrevWait();
-    // await this.wait({ milliseconds: 500 });
-    // console.log(this.likeMutationTimeout);
-    // await this.props.onClickLike({ numOfLikes: currentUserLikes });
+    this.cancelPrevWait();
+    await this.wait({ milliseconds: 500 });
+    /* because the user can click multiple times in a row */
+    const answerId = this.props.question.answer.id;
+    const variables = { answerId, userLikes };
+    await mutation({ variables });
   };
 
   render() {
@@ -251,75 +255,89 @@ class AnsweredQuestion extends Component {
       numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
 
     return (
-      <StyledQuestion
-        onMouseEnter={this.onMouseEnter}
-        onFocus={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        // onBlur={this.onMouseLeave}
-        style={style}
-      >
-        <Row>
-          <Question question={question.value} />
-          <OptionsDropdown
-            visible={isPersonal && hovered}
-            onClickEdit={this.openAnswerEditor}
-            onClickRemove={this.onClickRemove}
-            onClickMove={this.openPositionEditor}
-          />
-        </Row>
-        {showAnswerEditor ? (
-          <AnswerEditor
-            questionType={question.type}
-            answer={question.answer}
-            possibleAnswers={question.possibleAnswers}
-            onClickSave={this.onSaveAnswer}
-          />
-        ) : (
-          <AnswerViewer
-            questionType={question.type}
-            answer={question.answer}
-            possibleAnswers={question.possibleAnswers}
-          />
-        )}
-        {showPositionEditor && (
-          <PositionEditor
-            position={question.answer.position}
-            maxPosition={totalQuestionsCount}
-            onClickMove={this.onMovePosition}
-            onClickClose={this.closePositionEditor}
-          />
-        )}
-        {/* all the below can be moved to AnswerViewer */}
-        <Row hide={!hovered}>
-          <LikeBtn
-            onClick={this.onClickLike}
-            isLiked={question.answer.isLiked}
-          />
-          <SmallBtn onClick={this.toggleLikes}>{likeBtnText}</SmallBtn>
-          <SmallBtn onClick={this.toggleComments}>{commentBtnText}</SmallBtn>
-          {!!numOfEditions && (
-            <SmallBtn onClick={this.toggleEditions}>{editionsBtnText}</SmallBtn>
-          )}
-        </Row>
-        {showLikes && (
-          <Likes onClose={this.toggleLikes} likes={question.answer.likes} />
-        )}
-        {showEditions && (
-          <Editions
-            editions={question.answer.editions}
-            onClose={this.toggleEditions}
-          />
-        )}
-        {(showComments || scrollToComment) && (
-          <Comments
-            comments={comments}
-            scrollToComment={scrollToComment}
-            onAddComment={this.onAddComment}
-            onEditComment={this.onEditComment}
-            onRemoveComment={this.onRemoveComment}
-          />
-        )}
-      </StyledQuestion>
+      <AnsweredQuestionGql>
+        {(editAnswer, removeAnswer, moveAnswerPosition, likeAnswer) => {
+          return (
+            <StyledQuestion
+              onMouseEnter={this.onMouseEnter}
+              onFocus={this.onMouseEnter}
+              onMouseLeave={this.onMouseLeave}
+              // onBlur={this.onMouseLeave}
+              style={style}
+            >
+              <Row>
+                <Question question={question.value} />
+                <OptionsDropdown
+                  visible={isPersonal && hovered}
+                  onClickEdit={this.openAnswerEditor}
+                  onClickRemove={this.onRemove({ mutation: removeAnswer })}
+                  onClickMove={this.openPositionEditor}
+                />
+              </Row>
+              {showAnswerEditor ? (
+                <AnswerEditor
+                  questionType={question.type}
+                  answer={question.answer}
+                  possibleAnswers={question.possibleAnswers}
+                  onClickSave={this.onSaveAnswer({ mutation: editAnswer })}
+                />
+              ) : (
+                <AnswerViewer
+                  questionType={question.type}
+                  answer={question.answer}
+                  possibleAnswers={question.possibleAnswers}
+                />
+              )}
+              {showPositionEditor && (
+                <PositionEditor
+                  position={question.answer.position}
+                  maxPosition={totalQuestionsCount}
+                  onClickMove={this.onMovePosition({
+                    mutation: moveAnswerPosition,
+                  })}
+                  onClickClose={this.closePositionEditor}
+                />
+              )}
+              <Row hide={!hovered}>
+                <LikeBtn
+                  onClick={this.onClickLike({ mutation: likeAnswer })}
+                  isLiked={question.answer.isLiked}
+                />
+                <SmallBtn onClick={this.toggleLikes}>{likeBtnText}</SmallBtn>
+                <SmallBtn onClick={this.toggleComments}>
+                  {commentBtnText}
+                </SmallBtn>
+                {!!numOfEditions && (
+                  <SmallBtn onClick={this.toggleEditions}>
+                    {editionsBtnText}
+                  </SmallBtn>
+                )}
+              </Row>
+              {showLikes && (
+                <Likes
+                  onClose={this.toggleLikes}
+                  likes={question.answer.likes}
+                />
+              )}
+              {showEditions && (
+                <Editions
+                  editions={question.answer.editions}
+                  onClose={this.toggleEditions}
+                />
+              )}
+              {(showComments || scrollToComment) && (
+                <Comments
+                  comments={comments}
+                  scrollToComment={scrollToComment}
+                  onAddComment={this.onAddComment}
+                  onEditComment={this.onEditComment}
+                  onRemoveComment={this.onRemoveComment}
+                />
+              )}
+            </StyledQuestion>
+          );
+        }}
+      </AnsweredQuestionGql>
     );
   }
 }

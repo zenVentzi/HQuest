@@ -34,7 +34,7 @@ const App = () => {
               transition={Zoom}
             />
             <Navbar />
-            <Switch>
+            {/* <Switch>
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
               <ProtectedRoute path="/admin" component={AdminView} />
               <ProtectedRoute path="/search" component={SearchView} />
@@ -42,7 +42,7 @@ const App = () => {
               <Route path="/newsfeed" component={NewsfeedView} />
               <Route path="/" exact component={LandingView} />
               <Route component={NotFoundView} />
-            </Switch>
+            </Switch> */}
           </div>
         </BrowserRouter>
       </ThemeProvider>

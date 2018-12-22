@@ -37,6 +37,8 @@ const ProfileView = ({ match }) => {
           );
         }
 
+        return null;
+
         return (
           <Fragment>
             <StyledView>

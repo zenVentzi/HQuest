@@ -1,20 +1,28 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const jwt = require('express-jwt');
 const webpack = require('webpack');
+const { getVerifiedUser } = require('./utils');
 const webpackConfig = require('../webpack/config');
 
 const compiler = webpack(webpackConfig);
 
-const auth = jwt({
-  secret: process.env.JWT_SECRET,
-  credentialsRequired: false,
-});
+const auth = async (req, res, next) => {
+  const authToken = req.headers.authorization;
+  if (authToken) {
+    const user = await getVerifiedUser(authToken);
+    if (user) {
+      req.user = user;
+    }
+  }
+
+  next();
+};
 
 const app = express();
 
 app.use(bodyParser.json(), auth);
+// app.use(bodyParser.json(), auth);
 
 app.use('/public', express.static('public'));
 
