@@ -6,7 +6,6 @@ const notificationController = require('./notificationController');
 const newsfeedController = require('./newsfeedController');
 
 module.exports = {
-  test: 5,
   userController,
   questionController,
   answerController,

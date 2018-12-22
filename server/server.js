@@ -1,8 +1,8 @@
 const http = require('http');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const requireGraphQLFile = require('require-graphql-file');
+const { getVerifiedUser } = require('./utils');
 const app = require('./App');
 const { connect: mongooseConnect } = require('./db');
 
@@ -12,19 +12,6 @@ const typeDefs = requireGraphQLFile('./schema');
 
 const PORT = process.env.PORT || 4000;
 
-async function verifyToken(authToken) {
-  const secret = process.env.JWT_SECRET;
-  return new Promise((resolve, reject) => {
-    jwt.verify(authToken, secret, (err, decoded) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(decoded);
-      }
-    });
-  });
-}
-
 mongooseConnect(models => {
   const server = new ApolloServer({
     typeDefs,
@@ -32,9 +19,11 @@ mongooseConnect(models => {
     subscriptions: {
       onConnect: async (connectionParams, webSocket) => {
         if (connectionParams.authToken) {
-          const decoded = await verifyToken(connectionParams.authToken);
+          const verifiedUser = await getVerifiedUser(
+            connectionParams.authToken
+          );
 
-          return { user: decoded };
+          return { user: verifiedUser };
         }
 
         throw new Error('Missing auth token!');

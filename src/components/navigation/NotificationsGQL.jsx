@@ -5,22 +5,20 @@ import { NOTIFS_MARK_SEEN } from 'Mutations';
 import { NEW_NOTIFICATION } from 'Subscriptions';
 import { getLoggedUserId } from 'Utils';
 
-const run = subscribeToMore => {
-  subscribeToMore({
-    document: NEW_NOTIFICATION,
-    variables: { userId: getLoggedUserId() },
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) return prev; // start here, check when data is received
-      const { newNotification } = subscriptionData.data;
+const subOptions = {
+  document: NEW_NOTIFICATION,
+  variables: { userId: getLoggedUserId() },
+  updateQuery: (prev, { subscriptionData }) => {
+    if (!subscriptionData.data) return prev; // start here, check when data is received
+    const { newNotification } = subscriptionData.data;
 
-      const updatedQuery = {
-        ...prev,
-        notifications: [newNotification, ...prev.notifications],
-      };
+    const updatedQuery = {
+      ...prev,
+      notifications: [newNotification, ...prev.notifications],
+    };
 
-      return updatedQuery;
-    },
-  });
+    return updatedQuery;
+  },
 };
 
 const updateSeen = cache => {
@@ -37,10 +35,19 @@ let subscribed = false;
 
 const NotificationsGQL = ({ children }) => (
   <Query query={GET_NOTIFICATIONS}>
-    {({ loading, error, data: { notifications }, subscribeToMore }) => {
+    {({ loading, error, data, subscribeToMore }) => {
       if (!subscribed) {
-        run(subscribeToMore);
+        subscribeToMore(subOptions);
         subscribed = true;
+      }
+
+      return null;
+
+      let notifications = null;
+
+      if (data) {
+        // eslint-disable-next-line prefer-destructuring
+        notifications = data.notifications;
       }
 
       return (

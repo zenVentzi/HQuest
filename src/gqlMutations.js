@@ -54,8 +54,8 @@ export const REMOVE_ANSWER = gql`
   ${AnswerFields}
 `;
 export const LIKE_ANSWER = gql`
-  mutation likeAnswer($answerId: ID!, $numOfLikes: Int!) {
-    likeAnswer(answerId: $answerId, numOfLikes: $numOfLikes) {
+  mutation likeAnswer($answerId: ID!, $userLikes: Int!) {
+    likeAnswer(answerId: $answerId, userLikes: $userLikes) {
       ...AnswerFields
     }
   }

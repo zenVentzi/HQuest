@@ -46,7 +46,7 @@ async function login(_, args, context) {
     { id: user.id, email: user.email },
     process.env.JWT_SECRET,
     {
-      expiresIn: '1d',
+      expiresIn: '20',
     }
   );
   const result = {
@@ -132,7 +132,9 @@ async function addAnswer(_, args, context) {
 }
 
 async function removeAnswer(_, args, context) {
-  return answerController.remove(args, context);
+  const removedAnswer = await answerController.remove(args, context);
+
+  return mapGqlAnswer({ answer: removedAnswer, loggedUserId: context.user.id });
 }
 async function likeAnswer(_, args, context) {
   const likedAnswer = await answerController.like(args, context);

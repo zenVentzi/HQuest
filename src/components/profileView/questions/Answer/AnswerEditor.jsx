@@ -57,8 +57,6 @@ class AnswerEditor extends Component {
     return newValue;
   };
 
-  onClickSave = () => {};
-
   onDoesNotApply = () => {
     this.props.onClickDoesNotApply();
   };
@@ -83,9 +81,9 @@ class AnswerEditor extends Component {
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const answerValue = values.answer.trim();
-          resetForm(initialValues);
-          setSubmitting(false);
           await this.props.onClickSave({ answerValue });
+          // resetForm(initialValues);
+          // setSubmitting(false);
         }}
       >
         {({ values, handleChange, submitForm, isSubmitting }) => (
