@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
+const b = 4;
 const App = () => {
-  return (
-    <div>
-      <input />
-      <input />
-    </div>
-  );
+  const b1 = 5;
+  debugger;
+  return null;
 };
-
 export default App;

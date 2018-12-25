@@ -33,15 +33,23 @@ const updateSeen = cache => {
 
 let subscribed = false;
 
-const NotificationsGQL = ({ children }) => (
-  <Query query={GET_NOTIFICATIONS}>
-    {({ loading, error, data, subscribeToMore }) => {
-      if (!subscribed) {
+/* 
+
+if (!subscribed) {
         subscribeToMore(subOptions);
         subscribed = true;
       }
 
-      return null;
+*/
+
+const NotificationsGQL = ({ children }) => (
+  <Query query={GET_NOTIFICATIONS}>
+    {({ loading, error, data, subscribeToMore }) => {
+      // return null;
+      if (!subscribed) {
+        subscribeToMore(subOptions);
+        subscribed = true;
+      }
 
       let notifications = null;
 

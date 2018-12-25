@@ -28,7 +28,7 @@
     "apollo-upload-client": "^8.1.0",
     "apollo-utilities": "^1.0.19",
     "babel-polyfill": "^6.26.0",
-    "bcrypt": "^2.0.1",
+    "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "date-fns": "^1.29.0",

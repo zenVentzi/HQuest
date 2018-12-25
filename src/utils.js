@@ -15,6 +15,16 @@ const overrideTheme = neww => current => {
   return res;
 };
 
+const saveLoggedUserData = ({ userId, authToken }) => {
+  localStorage.setItem(USER_ID, userId);
+  localStorage.setItem(AUTH_TOKEN, authToken);
+};
+
+const deleteLoggedUserData = () => {
+  localStorage.removeItem(USER_ID);
+  localStorage.removeItem(AUTH_TOKEN);
+};
+
 const inverseColor = color => {
   return color === 'white' ? 'black' : 'white';
 };
@@ -31,4 +41,6 @@ export {
   overrideTheme,
   inverseColor,
   inverseTheme,
+  saveLoggedUserData,
+  deleteLoggedUserData,
 };

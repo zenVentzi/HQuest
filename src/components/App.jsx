@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import ApolloClient from './ApolloClient';
+import ApolloClient from '../ApolloClient';
 import ProtectedRoute from './reusable/ProtectedRoute';
 import Navbar from './navigation';
 import AdminView from './adminView';
@@ -20,7 +20,6 @@ import { theme, GlobalStyle } from './appTheme';
 const App = () => {
   // console.log(`testt`);
   // return <div>test</div>;
-
   return (
     <ApolloProvider client={ApolloClient}>
       <ThemeProvider theme={theme}>
@@ -34,15 +33,15 @@ const App = () => {
               transition={Zoom}
             />
             <Navbar />
-            {/* <Switch>
+            <Switch>
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
               <ProtectedRoute path="/admin" component={AdminView} />
               <ProtectedRoute path="/search" component={SearchView} />
-              <Route path="/help" component={HelpView} />
-              <Route path="/newsfeed" component={NewsfeedView} />
+              <ProtectedRoute path="/help" component={HelpView} />
+              <ProtectedRoute path="/newsfeed" component={NewsfeedView} />
               <Route path="/" exact component={LandingView} />
               <Route component={NotFoundView} />
-            </Switch> */}
+            </Switch>
           </div>
         </BrowserRouter>
       </ThemeProvider>

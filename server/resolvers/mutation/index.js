@@ -46,7 +46,7 @@ async function login(_, args, context) {
     { id: user.id, email: user.email },
     process.env.JWT_SECRET,
     {
-      expiresIn: '20',
+      expiresIn: '1d',
     }
   );
   const result = {

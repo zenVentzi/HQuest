@@ -14,10 +14,11 @@ async function books(root, __, context) {
   return null;
 }
 
-const notifications = async (_, __, context) => {
-  throw new Error('Test error');
-  return notificationController.getNotifications(context);
-};
+const notifications = isAuthenticatedResolver.createResolver(
+  async (_, __, context) => {
+    return notificationController.getNotifications(context);
+  }
+);
 
 const newsfeed = async (_, __, context) => {
   return newsfeedController.getNewsfeed({ context });
