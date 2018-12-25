@@ -36,7 +36,7 @@ const Right = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: 0.8em;
+  font-weight: bold;
   color: ${props => props.theme.foregroundColor};
   text-align: left;
   word-break: break-all;
@@ -44,7 +44,7 @@ const Text = styled.div`
 
 const Time = styled.div`
   color: ${props => props.theme.foregroundColor};
-  font-size: 0.5em;
+  /* font-size: 0.5em; */
 `;
 
 const getTime = createdOn => {

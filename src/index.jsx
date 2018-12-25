@@ -15,7 +15,7 @@ if (module.hot) {
       if (
         !(
           arguments.length == 1 &&
-          typeof arguments[0] === 'string' &&
+          typeof arguments[0] === "string" &&
           arguments[0].match(/^\[(HMR|WDS)\]/)
         )
       ) {

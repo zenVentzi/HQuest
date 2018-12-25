@@ -9,9 +9,9 @@ import {
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { getMainDefinition } from 'apollo-utilities';
-import introspectionQueryResultData from '../fragmentTypes.json';
+import introspectionQueryResultData from './fragmentTypes.json';
 
-import { getAuthToken } from '../utils';
+import { getAuthToken, deleteLoggedUserData } from './utils';
 
 const uploadLink = createUploadLink({
   uri: 'http://localhost:4000/graphql',
@@ -29,14 +29,24 @@ const authLink = setContext((_, { headers }) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.map(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL server error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
+    graphQLErrors.forEach(error => {
+      // const { name, message, locations, path } = error;
+      console.log(error);
+
+      if (error.extensions.code === 'UNAUTHENTICATED') {
+        deleteLoggedUserData();
+        window.location = '/';
+      }
+      // console.log(
+      //   `[GraphQL server error]: Name: ${name} Message: ${message}, Location: ${locations}, Path: ${path}`
+      // );
+    });
   }
 
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+  if (networkError) {
+    console.log(`[Network error]: \n`);
+    console.log(networkError);
+  }
 });
 
 const wsLink = new WebSocketLink({
@@ -49,8 +59,8 @@ const wsLink = new WebSocketLink({
   },
 });
 
-// to my current knowledge, upload link is a wrapper of http link
 const httpLink = ApolloLink.from([errorLink, authLink, uploadLink]);
+const wsocketLink = ApolloLink.from([errorLink, wsLink]);
 
 const link = split(
   // split based on operation type
@@ -58,10 +68,10 @@ const link = split(
     const { kind, operation } = getMainDefinition(query);
     const shouldUseFirst =
       kind === 'OperationDefinition' && operation === 'subscription';
-    return true;
+
     return shouldUseFirst;
   },
-  wsLink,
+  wsocketLink,
   httpLink
 );
 

@@ -1,19 +1,15 @@
 const { createError } = require('apollo-errors');
-
-const { baseResolver } = require('./baseResolver');
+const { AuthenticationError } = require('apollo-server');
+const { createResolver } = require('apollo-resolvers');
 
 const ForbiddenError = createError('ForbiddenError', {
   message: 'You are not allowed to do this',
 });
 
-const AuthenticationRequiredError = createError('AuthenticationRequiredError', {
-  message: 'You must be logged in to do this',
-});
-
-const isAuthenticatedResolver = baseResolver.createResolver(
+const isAuthenticatedResolver = createResolver(
   // Extract the user from context (undefined if non-existent)
   (root, args, { user }, info) => {
-    if (!user) throw new AuthenticationRequiredError();
+    if (!user) throw new AuthenticationError();
   }
 );
 

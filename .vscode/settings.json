@@ -2,7 +2,6 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
     "editor.detectIndentation": true,
-    "stylelint.enable": true,
     "css.validate": false,
     "scss.validate": false,
     "editor.formatOnSave": true,

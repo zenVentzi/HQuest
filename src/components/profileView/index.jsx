@@ -18,6 +18,7 @@ const ProfileView = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
 
+  return null;
   return (
     <Query
       query={GET_USER}
@@ -36,8 +37,6 @@ const ProfileView = ({ match }) => {
             </pre>
           );
         }
-
-        return null;
 
         return (
           <Fragment>

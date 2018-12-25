@@ -18,15 +18,9 @@ mongooseConnect(models => {
     resolvers,
     subscriptions: {
       onConnect: async (connectionParams, webSocket) => {
-        if (connectionParams.authToken) {
-          const verifiedUser = await getVerifiedUser(
-            connectionParams.authToken
-          );
-
-          return { user: verifiedUser };
-        }
-
-        throw new Error('Missing auth token!');
+        if (!connectionParams.authToken) return {};
+        const verifiedUser = await getVerifiedUser(connectionParams.authToken);
+        return { user: verifiedUser };
       },
       onDisconnect: () => {
         console.log(`ondisconnect`);
@@ -35,7 +29,9 @@ mongooseConnect(models => {
     context: ({ req, connection }) => {
       if (connection) {
         return {
-          user: connection.user,
+          user: connection.context.user,
+          // the below is just for testing
+          isFromConnection: true,
           models,
         };
       }

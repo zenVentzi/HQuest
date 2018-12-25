@@ -2,7 +2,8 @@ import React from 'react';
 import distanceInWords from 'date-fns/distance_in_words';
 import styled from 'styled-components';
 import User from 'Reusable/UserRow';
-import { NewsType } from 'Constants';
+import { NewsType } from '../../constants';
+// import { NewsType } from 'Constants';
 import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
 
 const { NEW_ANSWER_EDITION, NEW_ANSWER } = NewsType;
