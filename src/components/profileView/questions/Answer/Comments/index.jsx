@@ -33,13 +33,19 @@ class Comments extends Component {
     }
   }
 
-  updateComments = ({ newComment }) => {
+  updateComments = ({ newComment, removedComment }) => {
     if (newComment) {
       const [...comments] = this.state.comments;
-
       comments.push(newComment);
-      toast.success('Comment added!');
       this.setState(prevState => ({ ...prevState, comments }));
+    } else if (removedComment) {
+      const [...comments] = this.state.comments.filter(
+        c => c.id !== removedComment.id
+      );
+      this.setState(prevState => ({
+        ...prevState,
+        comments,
+      }));
     }
   };
 
@@ -64,12 +70,13 @@ class Comments extends Component {
     const { data } = await commentAnswerMutation({ variables });
     const newComment = data.commentAnswer;
     this.updateComments({ newComment });
+    toast.success('Comment added!');
     onAddComment();
     setSubmitting(false);
     resetForm({ comment: '' });
   };
 
-  onEditComment = editCommentMutation => async ({
+  onEditComment = ({ editCommentMutation }) => async ({
     commentId,
     commentValue,
   }) => {
@@ -79,10 +86,13 @@ class Comments extends Component {
     toast.success('Comment edited!');
   };
 
-  onRemoveComment = removeCommentMutation => async ({ commentId }) => {
-    const { answerId } = this.props;
+  onRemoveComment = ({ removeCommentMutation }) => async ({ commentId }) => {
+    const { answerId, onRemoveComment } = this.props;
     const variables = { answerId, commentId };
-    await removeCommentMutation({ variables });
+    const { data } = await removeCommentMutation({ variables });
+    const removedComment = data.removeComment;
+    this.updateComments({ removedComment });
+    onRemoveComment();
     toast.success('Comment removed!');
   };
 
@@ -102,8 +112,8 @@ class Comments extends Component {
         const commentProps = {
           key: com.id,
           comment: com,
-          onEdit: this.props.onEditComment,
-          onRemove: this.props.onRemoveComment,
+          onEdit: this.onEditComment({ editCommentMutation }),
+          onRemove: this.onRemoveComment({ removeCommentMutation }),
         };
 
         if (scrollToComment && scrollToComment === com.id) {
