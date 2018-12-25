@@ -97,14 +97,14 @@ class AnsweredQuestion extends Component {
     });
   };
 
-  onEditComment = async data => {
-    await this.props.onEditComment(data);
-  };
-
-  onRemoveComment = async ({ commentId }) => {
-    await this.props.onRemoveComment({ commentId });
-    const numOfComments = this.state.numOfComments + 1;
-    this.setState({ ...this.state, numOfComments });
+  decrementNumOfComments = () => {
+    this.setState(prevState => {
+      const numOfComments = prevState.numOfComments - 1;
+      return {
+        ...prevState,
+        numOfComments,
+      };
+    });
   };
 
   toggleHovered = value => {
@@ -337,7 +337,7 @@ class AnsweredQuestion extends Component {
                   scrollToComment={scrollToComment}
                   onAddComment={this.incrementNumOfComments}
                   onEditComment={this.onEditComment}
-                  onRemoveComment={this.onRemoveComment}
+                  onRemoveComment={this.decrementNumOfComments}
                 />
               )}
             </StyledQuestion>
