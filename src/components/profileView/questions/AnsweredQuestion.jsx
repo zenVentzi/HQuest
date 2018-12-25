@@ -83,8 +83,18 @@ class AnsweredQuestion extends Component {
     const answerId = this.props.question.answer.id;
     const variables = { answerId };
     await mutation({ variables });
-    toast.success('🦄 Answer removed!');
+    toast.success('Answer removed!');
     await this.props.onRemove();
+  };
+
+  incrementNumOfComments = () => {
+    this.setState(prevState => {
+      const numOfComments = prevState.numOfComments + 1;
+      return {
+        ...prevState,
+        numOfComments,
+      };
+    });
   };
 
   onEditComment = async data => {
@@ -143,7 +153,8 @@ class AnsweredQuestion extends Component {
     const answerId = this.props.question.answer.id;
     const variables = { answerId, answerValue };
     await mutation({ variables });
-    toast.success('🦄 Answer edited!');
+    toast.success('Answer edited!');
+
     const numOfEditions = this.state.numOfEditions + 1;
     this.setState({ ...this.state, numOfEditions });
     this.closeAnswerEditor();
@@ -181,14 +192,8 @@ class AnsweredQuestion extends Component {
     const variables = { answerId, position: newPosition };
     await mutation({ variables });
     // await this.props.onClickMove({ newPosition });
-    toast.success('🦄 Question moved!');
+    toast.success('Question moved!');
     this.closePositionEditor();
-  };
-
-  onAddComment = async ({ commentValue }) => {
-    await this.props.onAddComment({ commentValue });
-    const numOfComments = this.state.numOfComments + 1;
-    this.setState({ ...this.state, numOfComments });
   };
 
   wait = async ({ milliseconds }) => {
@@ -328,8 +333,9 @@ class AnsweredQuestion extends Component {
               {(showComments || scrollToComment) && (
                 <Comments
                   comments={comments}
+                  answerId={question.answer.id}
                   scrollToComment={scrollToComment}
-                  onAddComment={this.onAddComment}
+                  onAddComment={this.incrementNumOfComments}
                   onEditComment={this.onEditComment}
                   onRemoveComment={this.onRemoveComment}
                 />
