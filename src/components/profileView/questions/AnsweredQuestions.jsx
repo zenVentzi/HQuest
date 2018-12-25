@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import AnsweredQuestion from './AnsweredQuestion';
 

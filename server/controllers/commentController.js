@@ -19,7 +19,7 @@ const addCommentToAnswer = async ({ comment, answerId }, context) => {
   ).lean();
 
   const addedComment = comments[comments.length - 1];
-  addedComment.user = await User.findById(user.id);
+  addedComment.user = await User.findById(user.id).lean();
   return addedComment;
 };
 
@@ -46,7 +46,7 @@ async function editComment({ answerId, commentId, commentValue, context }) {
 
   await Answer.findByIdAndUpdate(answerId, { $set: { comments: newComments } });
 
-  editedComment.user = await User.findById(user.id);
+  editedComment.user = await User.findById(user.id).lean();
   return editedComment;
 }
 
@@ -63,7 +63,7 @@ async function removeComment({ answerId, commentId, context }) {
   }).lean();
 
   const removedComment = comments.find(com => com._id.toString() === commentId);
-  removedComment.user = await User.findById(user.id);
+  removedComment.user = await User.findById(user.id).lean();
   return removedComment;
 }
 

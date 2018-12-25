@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Formik, Form, ErrorMessage } from 'formik';
 import Textarea from 'react-textarea-autosize';
-import { Query, Mutation } from 'react-apollo';
 import { toast } from 'react-toastify';
 import Comment from './Comment';
 import CommentsGql from './CommentsGql';
@@ -34,8 +33,17 @@ class Comments extends Component {
     }
   }
 
-  validateForm = ({ commentAnswerMutation }) => async values => {
-    // const a = await commentAnswerMutation({ bla: 5 });
+  updateComments = ({ newComment }) => {
+    if (newComment) {
+      const [...comments] = this.state.comments;
+
+      comments.push(newComment);
+      toast.success('Comment added!');
+      this.setState(prevState => ({ ...prevState, comments }));
+    }
+  };
+
+  validateForm = values => {
     const errors = {};
     if (values.comment.length < 7)
       errors.comment = 'Comment must be at least 7 characters';
@@ -48,9 +56,15 @@ class Comments extends Component {
     { setSubmitting, resetForm }
   ) => {
     // console.log(commentAnswerMutation);
-    const addedComment = await commentAnswerMutation({
-      commentValue: values.comment,
-    });
+    const { answerId, onAddComment } = this.props;
+    const variables = {
+      answerId,
+      comment: values.comment,
+    };
+    const { data } = await commentAnswerMutation({ variables });
+    const newComment = data.commentAnswer;
+    this.updateComments({ newComment });
+    onAddComment();
     setSubmitting(false);
     resetForm({ comment: '' });
   };

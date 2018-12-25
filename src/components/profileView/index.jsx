@@ -18,7 +18,7 @@ const ProfileView = ({ match }) => {
   const { id } = match.params;
   const vars = { id };
 
-  return null;
+  // return null;
   return (
     <Query
       query={GET_USER}
