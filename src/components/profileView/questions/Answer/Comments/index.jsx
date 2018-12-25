@@ -33,7 +33,7 @@ class Comments extends Component {
     }
   }
 
-  updateComments = ({ newComment, removedComment }) => {
+  updateComments = ({ newComment, removedComment, editedComment }) => {
     if (newComment) {
       const [...comments] = this.state.comments;
       comments.push(newComment);
@@ -46,6 +46,14 @@ class Comments extends Component {
         ...prevState,
         comments,
       }));
+    } else if (editedComment) {
+      const [...comments] = this.state.comments;
+      for (let i = 0; i < comments.length; i++) {
+        if (comments[i].id === editedComment.id) {
+          comments[i] = editedComment;
+        }
+      }
+      this.setState(prevState => ({ ...prevState, comments }));
     }
   };
 
@@ -82,7 +90,9 @@ class Comments extends Component {
   }) => {
     const { answerId } = this.props;
     const variables = { answerId, commentId, commentValue };
-    await editCommentMutation({ variables });
+    const { data } = await editCommentMutation({ variables });
+    const editedComment = data.editComment;
+    this.updateComments({ editedComment });
     toast.success('Comment edited!');
   };
 
