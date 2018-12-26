@@ -9,7 +9,7 @@ const mLabURI = `mongodb://zenVentzi:${
 const connect = onConnected => {
   mongoose.connect(
     mLabURI,
-    { useNewUrlParser: true }
+    { useNewUrlParser: true, reconnectTries: 100, reconnectInterval: 2000 }
   );
 
   const db = mongoose.connection;
