@@ -22,10 +22,7 @@ const ErrorText = styled.div`
 `;
 
 class Comments extends Component {
-  // componentDidMount() {
-  //   console.log(`mount`);
-  // }
-  state = { comments: this.props.comments };
+  state = { comments: this.props.comments || [] };
 
   componentDidMount(prevProps, prevState) {
     if (this.highlightedComment) {
@@ -35,7 +32,8 @@ class Comments extends Component {
 
   updateComments = ({ newComment, removedComment, editedComment }) => {
     if (newComment) {
-      const [...comments] = this.state.comments;
+      let comments = [];
+      [...comments] = this.state.comments;
       comments.push(newComment);
       this.setState(prevState => ({ ...prevState, comments }));
     } else if (removedComment) {

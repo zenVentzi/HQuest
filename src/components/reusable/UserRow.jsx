@@ -59,19 +59,19 @@ class UserRow extends Component {
     };
   }
 
-  onMouseEnter = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      theme: inverseTheme(prevState.theme),
-    }));
-  };
+  // onMouseEnter = () => {
+  //   this.setState(prevState => ({
+  //     ...prevState,
+  //     theme: inverseTheme(prevState.theme),
+  //   }));
+  // };
 
-  onMouseLeave = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      theme: inverseTheme(prevState.theme),
-    }));
-  };
+  // onMouseLeave = () => {
+  //   this.setState(prevState => ({
+  //     ...prevState,
+  //     theme: inverseTheme(prevState.theme),
+  //   }));
+  // };
 
   render() {
     const {

@@ -7,6 +7,7 @@ const Viewer = styled.div`
   text-align: left;
   color: white;
   width: 60%;
+  font-size: 1.2em;
   line-height: 1.2;
   padding: 0.2em 1em;
   border-radius: 0.2em;
