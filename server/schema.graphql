@@ -7,9 +7,9 @@ type Book {
 }
 
 type PageInfo {
-  startCursor: String,
-  endCursor: String,
-  hasNextPage: Boolean!,  
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
   hasPreviousPage: Boolean!
 }
 
@@ -18,7 +18,7 @@ interface Node {
 }
 
 interface Edge {
-  cursor : String!
+  cursor: String!
   node: Node!
 }
 
@@ -139,7 +139,6 @@ type CommentNews implements News {
   createdOn: DateTime!
 }
 
-
 type NewFollowerNews implements News {
   type: NewsType!
   performer: User!
@@ -197,7 +196,13 @@ type Query {
   followers(userId: ID!): [User!]!
   following(userId: ID!): [User!]!
   newsfeed: [News!]
-  questions(answered: Boolean!, userId: ID!, tags: [String], first: Int!, after: String): QuestionConnection!
+  questions(
+    answered: Boolean!
+    userId: ID!
+    tags: [String]
+    first: Int!
+    after: String
+  ): QuestionConnection!
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }
 
@@ -226,22 +231,26 @@ type Mutation {
   commentAnswer(answerId: ID!, comment: String!): Comment!
   editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
   removeComment(answerId: ID!, commentId: ID!): Comment!
-  signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+  signUp(
+    firstName: String!
+    surName: String!
+    email: String!
+    password: String!
+  ): String
   login(email: String!, name: String!): LoginResult!
   addQuestions(questions: [InputQuestion!]): Boolean
   questionNotApply(questionId: ID!): Question!
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
-  likeAnswer(answerId: ID!, numOfLikes: Int!): Answer!
+  likeAnswer(answerId: ID!, userLikes: Int!): Answer!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
   removeQuestion(questionId: ID!): Question!
   uploadAvatar(base64Img: String!): String!
   follow(userId: ID!, follow: Boolean!): Boolean
 }
 
-""" 
-
+"""
 export const QUESTION_NOT_APPLY = gql`
   mutation questionNotApply($questionId: ID!) {
     questionNotApply(questionId: $questionId) {
@@ -250,9 +259,7 @@ export const QUESTION_NOT_APPLY = gql`
   }
   ${QuestionFields}
 `;
-
- """
-
+"""
 type Subscription {
   bookAdded: Book!
   newNotification(userId: ID!): Notification!

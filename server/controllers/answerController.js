@@ -1,7 +1,4 @@
 const { ObjectId } = require('mongoose').Types;
-const bcrypt = require('bcrypt');
-const { QuestionTypes } = require('../constants');
-const { mapGqlAnswer } = require('../resolvers/helper');
 
 const getComentators = async ({ answers, context }) => {
   const {
@@ -229,7 +226,7 @@ const remove = async ({ answerId }, context) => {
   return res;
 };
 
-const like = async ({ answerId, numOfLikes: userLikes }, context) => {
+const like = async ({ answerId, userLikes }, context) => {
   const {
     models: { Answer, User },
     user,
