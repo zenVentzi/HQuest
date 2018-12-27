@@ -1,32 +1,33 @@
-/* TODO replace this file with Modal.jsx OR delete entirely */
 import React from 'react';
 import styled from 'styled-components';
 import IconBtn from 'Reusable/IconBtn';
 import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
+import Modal from 'Reusable/Modal';
 
 const BackgroundShade = styled.div`
   position: fixed;
+  z-index: 1;
   top: 0;
   width: 100%;
   height: 100%;
   background: black;
 `;
 
-const StyledWindow = styled.div`
+const StyledPanel = styled.div`
   position: fixed;
   padding: 1em;
   display: flex;
   flex: 1;
-  overflow-y: auto;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
   top: 20%;
   left: 30%;
   width: 40%;
   height: 60%;
   background: white;
-  border-radius: 0.2em;
   color: black;
+  border-radius: 0.2em;
   z-index: 1;
 `;
 
@@ -40,23 +41,24 @@ const TopRightCorner = styled.span`
   margin-bottom: 1em;
 `;
 
-const Window = ({ onClose, children }) => (
-  <BackgroundShade onClick={onClose}>
-    <StyledWindow>
-      {/* <CloseBtn size="1.4em" /> */}
-      <TopRightCorner>
-        <IconBtn
-          icon={WindowClose}
-          size="1.4em"
-          onClick={e => {
-            e.stopPropagation();
-            onClose();
-          }}
-        />
-      </TopRightCorner>
-      {children}
-    </StyledWindow>
-  </BackgroundShade>
+const Panel = ({ onClose, children }) => (
+  <Modal>
+    <BackgroundShade onClick={onClose}>
+      <StyledPanel>
+        <TopRightCorner>
+          <IconBtn
+            icon={WindowClose}
+            size="1.4em"
+            onClick={e => {
+              e.stopPropagation();
+              onClose();
+            }}
+          />
+        </TopRightCorner>
+        {children}
+      </StyledPanel>
+    </BackgroundShade>
+  </Modal>
 );
 
-export default Window;
+export default Panel;

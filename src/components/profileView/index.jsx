@@ -20,28 +20,27 @@ const ProfileView = ({ match }) => {
 
   // return null;
   return (
-    <Query
-      query={GET_USER}
-      variables={vars}
-      fetchPolicy="network-only" // this could be changed to cache-and-network, the default, if not using HOT RELOAD
-      errorPolicy="all"
-    >
-      {({ loading, error, data: { user } }) => {
-        if (loading) return <div> loading user data.. </div>;
-        if (error) {
-          return (
-            <pre>
-              {error.graphQLErrors.map(({ message }, i) => (
-                <span key={`${shortid.generate()}`}>{message}</span>
-              ))}
-            </pre>
-          );
-        }
+    <StyledView>
+      <Query
+        query={GET_USER}
+        variables={vars}
+        fetchPolicy="network-only" // this could be changed to cache-and-network, the default, if not using HOT RELOAD
+        errorPolicy="all"
+      >
+        {({ loading, error, data: { user } }) => {
+          if (loading) return <div> Loading user profile.. </div>;
+          if (error) {
+            return (
+              <pre>
+                {error.graphQLErrors.map(({ message }, i) => (
+                  <span key={`${shortid.generate()}`}>{message}</span>
+                ))}
+              </pre>
+            );
+          }
 
-        return (
-          <Fragment>
-            <StyledView>
-              {/* <TestQuestions /> */}
+          return (
+            <Fragment>
               <Switch>
                 <Route
                   path="/userProfile/:id/:questionId/:commentId"
@@ -59,11 +58,11 @@ const ProfileView = ({ match }) => {
                 />
                 <Route component={NotFoundView} />
               </Switch>
-            </StyledView>
-          </Fragment>
-        );
-      }}
-    </Query>
+            </Fragment>
+          );
+        }}
+      </Query>
+    </StyledView>
   );
 };
 

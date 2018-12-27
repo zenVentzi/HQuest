@@ -26,4 +26,4 @@ if (module.hot) {
   /* eslint-enable */
 }
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app-root'));
