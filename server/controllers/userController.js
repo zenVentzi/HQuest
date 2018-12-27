@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
-const bcrypt = require('bcrypt');
+const path = require('path');
 const { mapGqlUser, mapGqlUsers } = require('../resolvers/helper');
 
 const registerUser = async ({ email, name }, context) => {
@@ -188,8 +188,18 @@ const getUsers = async (match, context) => {
   return mapGqlUsers({ users: matchedUsers, loggedUserId: user.id });
 };
 
+const ensureDirectoryExistence = filePath => {
+  const dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) {
+    return;
+  }
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
+};
+
 const saveAvatarToFile = async (base64Img, userId) => {
   const src = `/public/images/avatar${userId}.jpeg`;
+  ensureDirectoryExistence(`${process.cwd()}${src}`);
 
   return new Promise(resolve => {
     fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
