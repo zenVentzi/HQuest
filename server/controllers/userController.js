@@ -96,7 +96,7 @@ async function getFollowers(userId, context) {
       $in: followersIds,
     },
   }).lean();
-  return mapGqlUsers({ users: follow, loggedUserId: user.id });
+  return mapGqlUsers({ users: followers, loggedUserId: user.id });
 }
 
 async function getFollowing(userId, context) {
