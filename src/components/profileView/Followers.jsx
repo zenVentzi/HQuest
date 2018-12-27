@@ -1,6 +1,5 @@
 import React from 'react';
 import { Query } from 'react-apollo';
-import FloatingWindow from 'Reusable/FloatingWindow';
 import User from 'Reusable/UserRow';
 import { GET_FOLLOWERS } from 'Queries';
 import WhitePanel from 'Reusable/WhitePanel';
