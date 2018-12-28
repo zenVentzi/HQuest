@@ -95,9 +95,13 @@ const getNotifications = async context => {
     models: { User },
   } = context;
 
-  const userDoc = await User.findById(context.user.id);
-  const notifs = userDoc.toObject().notifications || [];
-  const res = mapGqlNotifications(notifs);
+  const { notifications } = await User.findById(context.user.id).lean();
+
+  if (!notifications) {
+    return null;
+  }
+
+  const res = mapGqlNotifications(notifications);
   return res.reverse();
 };
 

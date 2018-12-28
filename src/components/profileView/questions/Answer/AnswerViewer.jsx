@@ -16,6 +16,7 @@ const Viewer = styled.div`
 
   @media (max-width: 600px) {
     width: 90%;
+    font-size: 1em;
   }
 `;
 

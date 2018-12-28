@@ -11,6 +11,10 @@ const Text = styled.div`
   border-radius: 0.2em;
   padding-left: 1em;
   margin-bottom: 0.5em;
+
+  @media (max-width: 600px) {
+    font-size: 1.2em;
+  }
 `;
 
 class Question extends Component {

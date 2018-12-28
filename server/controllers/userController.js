@@ -214,7 +214,6 @@ const uploadAvatar = async (base64Img, context) => {
     user,
   } = context;
 
-  const { collections } = context;
   const avatarSrc = await saveAvatarToFile(base64Img, user.id);
   await User.findByIdAndUpdate(user.id, { $set: { avatarSrc } });
   return avatarSrc;

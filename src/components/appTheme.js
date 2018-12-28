@@ -2,22 +2,6 @@ import { inverseTheme } from 'Utils';
 import reset from 'styled-reset';
 import { createGlobalStyle } from 'styled-components';
 
-/* 
- input {
-    padding: 0.2em 0.9em;
-    border: 2px solid white;
-    border-radius: 0.2em;
-    background: black;
-    color: white;
-  }
-
-  input:hover {
-    background-color: white;
-    color: black;
-  }
-
-*/
-
 export const GlobalStyle = createGlobalStyle`
   ${reset}
   
@@ -98,7 +82,6 @@ export const GlobalStyle = createGlobalStyle`
     border: 0px solid black;
     border-radius: 1em;
     margin-right: 1em;
-    /* change me to blue to match the background */
   }
 
   ::-webkit-scrollbar-thumb {
@@ -106,15 +89,5 @@ export const GlobalStyle = createGlobalStyle`
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
     background: black;
-    /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
   }
 `;
-
-export const normalColors = {
-  backgroundColor: 'black',
-  foregroundColor: 'white',
-};
-
-export const inversedColors = inverseTheme(normalColors);
-
-export const theme = { ...normalColors };

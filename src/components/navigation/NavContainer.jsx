@@ -12,7 +12,7 @@ const NavContainer = styled.div`
   background: black;
   z-index: 1;
 
-  @media (max-width: 481px) {
+  @media (max-width: 600px) {
     flex-direction: column;
     align-items: center;
   }

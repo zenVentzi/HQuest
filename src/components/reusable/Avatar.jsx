@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   position: relative;
   font-size: 20px;
   text-align: center;
+  flex-shrink: 0;
   display: inline-block;
   width: ${props => props.theme.avatarSize};
   height: ${props => props.theme.avatarSize};

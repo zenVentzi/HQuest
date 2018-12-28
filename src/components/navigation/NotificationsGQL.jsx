@@ -5,24 +5,30 @@ import { NOTIFS_MARK_SEEN } from 'Mutations';
 import { NEW_NOTIFICATION } from 'Subscriptions';
 import { getLoggedUserId } from 'Utils';
 
-const subOptions = {
-  document: NEW_NOTIFICATION,
-  variables: { userId: getLoggedUserId() },
-  updateQuery: (prev, { subscriptionData }) => {
-    if (!subscriptionData.data) return prev; // start here, check when data is received
-    const { newNotification } = subscriptionData.data;
+const getSubcriptionOptions = () => {
+  const userId = getLoggedUserId();
+  return {
+    document: NEW_NOTIFICATION,
+    variables: { userId },
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data) return prev; // start here, check when data is received
+      const { newNotification } = subscriptionData.data;
 
-    const updatedQuery = {
-      ...prev,
-      notifications: [newNotification, ...prev.notifications],
-    };
+      const updatedQuery = {
+        ...prev,
+        notifications: [newNotification, ...prev.notifications],
+      };
 
-    return updatedQuery;
-  },
+      return updatedQuery;
+    },
+  };
 };
 
 const updateSeen = cache => {
   const { notifications } = cache.readQuery({ query: GET_NOTIFICATIONS });
+  if (!notifications || !notifications.length) {
+    return;
+  }
   const updated = notifications.map(n => ({ ...n, seen: true }));
 
   cache.writeQuery({
@@ -33,21 +39,12 @@ const updateSeen = cache => {
 
 let subscribed = false;
 
-/* 
-
-if (!subscribed) {
-        subscribeToMore(subOptions);
-        subscribed = true;
-      }
-
-*/
-
 const NotificationsGQL = ({ children }) => (
   <Query query={GET_NOTIFICATIONS}>
     {({ loading, error, data, subscribeToMore }) => {
       // return null;
       if (!subscribed) {
-        subscribeToMore(subOptions);
+        subscribeToMore(getSubcriptionOptions());
         subscribed = true;
       }
 
