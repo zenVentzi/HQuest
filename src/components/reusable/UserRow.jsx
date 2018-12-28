@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { overrideTheme, inverseTheme } from 'Utils';
-import { normalColors, inversedColors } from '../appTheme';
 import Avatar from './Avatar';
 
 const StyledUserName = styled.div`
@@ -10,17 +9,34 @@ const StyledUserName = styled.div`
   text-align: left;
   font-size: ${props => `${1 * props.size}em`};
   /* margin-bottom: 1em; */
+
+  @media (max-width: 600px) {
+    font-size: ${props => `${0.8 * props.size}em`};
+  }
+  @media (max-width: 500px) {
+    font-size: ${props => `${0.7 * props.size}em`};
+  }
 `;
 
 const StyledIntro = styled.div`
   font-size: ${props => `${0.7 * props.size}em`};
   font-style: oblique;
+  max-width: 100%;
+  word-wrap: break-word;
   color: ${props => props.theme.foregroundColor};
+
+  @media (max-width: 600px) {
+    font-size: ${props => `${0.6 * props.size}em`};
+  }
+  @media (max-width: 500px) {
+    font-size: ${props => `${0.5 * props.size}em`};
+  }
 `;
 
 const TextContainer = styled.div`
   display: flex;
   align-self: stretch;
+  max-width: 80%;
   padding: ${props => `${0.4 * props.size}em`};
   flex-direction: column;
   justify-content: space-between;
@@ -32,7 +48,7 @@ const StyledUser = styled.div`
   width: 100%;
   align-items: center;
   justify-content: flex-start;
-  ${'' /* z-index: 1; */} border-radius: 0.2em;
+  border-radius: 0.2em;
   /* border: 1px solid white; */
   background: ${props => props.theme.backgroundColor};
 
@@ -48,6 +64,8 @@ class UserRow extends Component {
     super(props);
 
     const avatarSize = `${1.5 * props.size}em`;
+    const normalColors = { backgroundColor: 'black', foregroundColor: 'white' };
+    const inversedColors = inverseTheme(normalColors);
     const themeColors = props.inversedColors ? inversedColors : normalColors;
 
     this.state = {
@@ -110,7 +128,10 @@ class UserRow extends Component {
           <Avatar src={avatarSrc} />
           <TextContainer size={size}>
             <StyledUserName size={size}>{fullName}</StyledUserName>
-            <StyledIntro size={size}>{intro}</StyledIntro>
+            <StyledIntro size={size}>
+              {intro}
+              fdddddddddddddddddddddddddddddddddddddddddddffffffffffffffffff
+            </StyledIntro>
           </TextContainer>
         </StyledUser>
       </ThemeProvider>

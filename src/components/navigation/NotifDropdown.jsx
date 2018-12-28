@@ -42,7 +42,7 @@ class NotifDropdown extends Component {
 
     return (
       <Dropdown>
-        {notifications.length ? (
+        {notifications && notifications.length ? (
           notifications.map(n => (
             <Notif key={n.id} notif={n} onClick={onClickNotification} />
           ))

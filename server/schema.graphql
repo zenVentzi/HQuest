@@ -188,7 +188,7 @@ type LoginResult {
 
 type Query {
   books: [Book!]!
-  notifications: [Notification]!
+  notifications: [Notification]
   book(title: String): Book
   users(match: String): [User!]!
   user(id: ID!): User

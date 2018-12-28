@@ -22,7 +22,7 @@ const App = () => {
   // return <div>test</div>;
   return (
     <ApolloProvider client={ApolloClient}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={{}}>
         <BrowserRouter>
           <div>
             <GlobalStyle />
