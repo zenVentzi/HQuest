@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-
 const books = [
   { title: 'Hello', author: 'Pesho' },
   { title: 'Hello1', author: 'Pesho1' },
@@ -56,14 +54,15 @@ const users = [
     firstName: 'Pesho1',
     surName: 'Ivanov1',
     email: 'a',
-    password: bcrypt.hashSync('a', 10),
+    password: 'bla',
     avatarSrc: ``,
   },
   {
     firstName: 'Pesho2',
     surName: 'Ivanov2',
     email: 'a2',
-    password: bcrypt.hashSync('1234', 10),
+    password: 'bla',
+    // password: bcrypt.hashSync('1234', 10),
     avatarSrc: ``,
   },
 ];
