@@ -1,40 +1,27 @@
 const { ObjectId } = require('mongoose').Types;
-const answerController = require('./answerController');
-const { mapGqlQuestions, mapGqlQuestion } = require('../resolvers/helper');
 
-const addQuestions = async ({ questions, context }) => {
-  const {
-    models: { Question },
-  } = context;
-
-  /* store the tags in separate collection? */
-
+const addQuestions = Question => async ({ questions }) => {
   await Question.create(questions);
 };
 
-const markNotApply = async ({ questionId }, context) => {
-  const {
-    models: { User, Question },
-    user,
-  } = context;
+const markNotApply = Question => async ({ questionId, loggedUserId }) => {
+  // old way
+  // await User.findByIdAndUpdate(
+  //   user.id,
+  //   { $push: { questionsNotApply: ObjectId(questionId) } },
+  //   { new: true, upsert: true }
+  // );
 
-  /* 1) store questionsNotApply list in user doc */
-
-  await User.findByIdAndUpdate(
-    user.id,
-    { $push: { questionsNotApply: ObjectId(questionId) } },
+  return Question.findByIdAndUpdate(
+    questionId,
+    { $push: { notApplyToUsers: loggedUserId } },
     { new: true, upsert: true }
-  );
+  ).lean();
 
-  const question = await Question.findById(questionId).lean();
-  return mapGqlQuestion({ question, loggedUserId: user.id });
+  // return Question.findById(questionId).lean();
 };
 
-const getAllTags = async context => {
-  const {
-    models: { Question },
-  } = context;
-
+const getAllTags = Question => async () => {
   const questions = await Question.find().lean();
   const reducer = (tags, currentQuestion) => {
     const questionTags = currentQuestion.tags.filter(t => !tags.includes(t));
@@ -68,20 +55,19 @@ const mergeAnswersWithQuestions = (answers, questions) => {
   return result;
 };
 
-const getAnsweredQuestion = async (userId, questionId, context) => {
-  const {
-    models: { Answer, Question },
-    user,
-  } = context;
+// const getAnsweredQuestion = Question => async (userId, questionId, context) => {
+//   const answer = await answerController.getUserAnswer({
+//     userId,
+//     questionId,
+//     context,
+//   });
+//   const question = await Question.findById(questionId).lean();
+//   const answeredQuestion = mergeAnswerWithQuestion(answer, question);
+//   return answeredQuestion;
+// };
 
-  const answer = await answerController.getUserAnswer({
-    userId,
-    questionId,
-    context,
-  });
-  const question = await Question.findById(questionId).lean();
-  const answeredQuestion = mergeAnswerWithQuestion(answer, question);
-  return mapGqlQuestion({ question: answeredQuestion, loggedUserId: user.id });
+const getQuestion = Question => async ({ questionId }) => {
+  return Question.findById(questionId).lean();
 };
 
 const preserveOrder = ({ questionsIds, questions }) => {
@@ -91,14 +77,11 @@ const preserveOrder = ({ questionsIds, questions }) => {
   return res;
 };
 
-const getAnsweredQuestions = async (
-  { answers, questionsIds, tags },
-  context
-) => {
-  const {
-    models: { Question },
-  } = context;
-
+const getAnsweredQuestions = Question => async ({
+  answers,
+  questionsIds,
+  tags,
+}) => {
   const query = { _id: { $in: questionsIds } };
 
   if (tags && tags.length) {
@@ -112,149 +95,51 @@ const getAnsweredQuestions = async (
   return mergedQuestions;
 };
 
-const getUnansweredQuestions = async ({ questionsIds, tags }, context) => {
-  const {
-    models: { User, Question },
-    user,
-  } = context;
-
-  const { questionsNotApply: questionsNotApplyIds } = await User.findById(
-    user.id
-  ).lean();
-
-  const notInArray = questionsIds.concat(questionsNotApplyIds);
-
+const getUnansweredQuestions = Question => async ({
+  questionsIds,
+  loggedUserId,
+  tags,
+}) => {
   const query = {
-    _id: { $nin: notInArray },
+    _id: { $in: questionsIds },
   };
 
   if (tags && tags.length) {
     query.tags = { $in: tags };
   }
 
-  return Question.find(query).lean();
+  const questions = await Question.find(query).lean();
+
+  return questions.filter(q => {
+    if (!q.notApplyToUsers) return true;
+    return !q.notApplyToUsers.includes(loggedUserId);
+  });
 };
 
 const getQuestionsIds = answers => answers.map(a => a.questionId);
 
-const getNewsFeedQuestions = async ({ newsFeed, context }) => {
-  const answerIds = [];
-  newsFeed.forEach(news => {
-    if (news.answerId) {
-      answerIds.push(news.answerId);
-    }
-  });
-
-  const answers = await answerController.getAnswersById({
-    answerIds,
-    context,
-  });
-
-  const questionsIds = await getQuestionsIds(answers);
-
-  const newsFeedQuestions = await getAnsweredQuestions(
-    { answers, questionsIds },
-    context
-  );
-
-  return newsFeedQuestions;
-};
-
-const getAllEdges = nodes => {
-  return nodes.map(node => {
-    const cursor = node.id;
-    return {
-      cursor,
-      node,
-    };
-  });
-};
-const getCurrentPageEdges = ({ first, after }, allEdges) => {
-  let startIndex = 0;
-
-  if (after) {
-    startIndex = allEdges.findIndex(e => e.cursor === after) + 1;
-  }
-
-  const endIndex = startIndex + first;
-  const res = allEdges.slice(startIndex, endIndex);
-  return res;
-};
-
-const getPageInfo = (allEdges, currentPageEdges) => {
-  let startCursor;
-  let endCursor;
-  let hasPreviousPage = false;
-  let hasNextPage = false;
-
-  if (!allEdges.length) {
-    hasPreviousPage = false;
-    hasNextPage = false;
-  } else if (!currentPageEdges.length) {
-    hasPreviousPage = true;
-    hasNextPage = false;
-  } else {
-    startCursor = currentPageEdges[0].cursor;
-    endCursor = currentPageEdges[currentPageEdges.length - 1].cursor;
-    const beforeStartCursor = edge =>
-      ObjectId(edge.cursor) < ObjectId(startCursor);
-    const afterEndCursor = edge => ObjectId(edge.cursor) > ObjectId(endCursor);
-
-    hasPreviousPage = allEdges.filter(beforeStartCursor).length > 0;
-    hasNextPage = allEdges.filter(afterEndCursor).length > 0;
-  }
-
-  return {
-    startCursor,
-    endCursor,
-    hasPreviousPage,
-    hasNextPage,
-  };
-};
-
-const getUserQuestionConnection = async (args, context) => {
+const getUserQuestions = Question => async ({ ...args }) => {
   const questionsIds = await getQuestionsIds(args.answers);
-  let gqlQuestions;
+  let questions;
 
   if (args.answered) {
-    const questions = await getAnsweredQuestions(
-      { ...args, questionsIds },
-      context
-    );
-
-    gqlQuestions = mapGqlQuestions({
-      questions,
-      loggedUserId: context.user.id,
-    });
+    questions = await getAnsweredQuestions(Question)({ ...args, questionsIds });
   } else {
-    const questions = await getUnansweredQuestions(
-      { ...args, questionsIds },
-      context
-    );
-
-    gqlQuestions = mapGqlQuestions({
-      questions,
-      loggedUserId: context.user.id,
+    questions = await getUnansweredQuestions(Question)({
+      ...args,
+      questionsIds,
     });
   }
 
-  const allEdges = getAllEdges(gqlQuestions);
-  const currentPageEdges = getCurrentPageEdges(args, allEdges);
-  const pageInfo = getPageInfo(allEdges, currentPageEdges);
-
-  const connection = {
-    pageInfo,
-    edges: currentPageEdges,
-    totalCount: allEdges.length,
-  };
-  return connection;
+  return questions;
 };
 
-module.exports = {
-  addQuestions,
-  markNotApply,
-  getAllTags,
-  getNewsFeedQuestions,
-  getAnsweredQuestion,
-  getUserQuestionConnection,
+module.exports = Question => {
+  return {
+    addQuestions: addQuestions(Question),
+    markNotApply: markNotApply(Question),
+    getAllTags: getAllTags(Question),
+    getQuestion: getQuestion(Question),
+    getUserQuestions: getUserQuestions(Question),
+  };
 };

@@ -9,6 +9,7 @@ const {
   newsfeedController,
   commentController,
 } = require('../../controllers');
+const { gqlMapper } = require('../../gqlMapper');
 const { isAuthenticatedResolver } = require('../accessResolvers');
 const { mapGqlAnswer, mapGqlComment } = require('../../resolvers/helper');
 
@@ -40,10 +41,11 @@ const addBook = isAuthenticatedResolver.createResolver(
   }
 );
 
-async function login(_, args, context) {
-  const user = await userController.login(args, context);
+const login = async (_, args, context) => {
+  const dbUser = await userController.login(args, context);
+
   const authToken = jsonwebtoken.sign(
-    { id: user.id, email: user.email },
+    { id: dbUser._id.toString(), email: dbUser.email },
     process.env.JWT_SECRET,
     {
       expiresIn: '1d',
@@ -51,28 +53,32 @@ async function login(_, args, context) {
   );
   const result = {
     authToken,
-    userId: user.id,
+    userId: dbUser._id.toString(),
   };
 
   return result;
-}
+};
 
 async function editUser(_, { input }, context) {
-  return userController.editUser(input, context);
+  const editedUser = await userController.editUser({ input });
+  const gqlUser = gqlMapper.getUser({
+    dbUser: editedUser,
+    loggedUserId: context.user.id,
+  });
+  return gqlUser;
 }
 
 async function commentAnswer(_, { answerId, comment }, context) {
-  const dbComment = await commentController.addCommentToAnswer(
-    { answerId, comment },
-    context
-  );
+  const dbComment = await commentController.addCommentToAnswer({
+    answerId,
+    comment,
+  });
 
   await newsfeedController.onNewComment({
     answerId,
     commentId: dbComment._id.toString(),
-    context,
   });
-  await notificationController.newComment(answerId, dbComment, context);
+  await notificationController.newComment({ answerId, dbComment });
 
   return mapGqlComment({
     dbComment,
@@ -137,7 +143,8 @@ async function removeAnswer(_, args, context) {
   return mapGqlAnswer({ answer: removedAnswer, loggedUserId: context.user.id });
 }
 async function likeAnswer(_, args, context) {
-  const likedAnswer = await answerController.like(args, context);
+  const dbUserLiker = await userController.getUser({ userId: context.user.id });
+  const likedAnswer = await answerController.like({ ...args, dbUserLiker });
   await newsfeedController.onLikeAnswer({
     answerId: likedAnswer._id.toString(),
     context,

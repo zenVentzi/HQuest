@@ -61,11 +61,7 @@ const normalizeComments = async ({ answers, context }) => {
   return answersWithNormalizedComments;
 };
 
-const getUserAnswers = async ({ userId }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const getUserAnswers = Answer => async ({ userId }, context) => {
   const userAnswers = await Answer.find({
     userId: ObjectId(userId),
     $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }],
@@ -78,11 +74,7 @@ const getUserAnswers = async ({ userId }, context) => {
   return res;
 };
 
-const getUserAnswer = async ({ userId, questionId, context }) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const getUserAnswer = Answer => async ({ userId, questionId, context }) => {
   const userIdObj = typeof userId === 'string' ? ObjectId(userId) : userId;
   const questionIdObj =
     typeof questionId === 'string' ? ObjectId(questionId) : questionId;
@@ -97,31 +89,19 @@ const getUserAnswer = async ({ userId, questionId, context }) => {
   return res;
 };
 
-const getAnswerById = async ({ answerId, context }) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const getAnswerById = Answer => async ({ answerId, context }) => {
   const answer = await Answer.findById(answerId).lean();
   const [res] = await normalizeComments({ answers: [answer], context });
   return res;
 };
 
-const getAnswersById = async ({ answerIds, context }) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const getAnswersById = Answer => async ({ answerIds, context }) => {
   const answers = await Answer.find({ _id: { $in: answerIds } }).lean();
   const res = await normalizeComments({ answers, context });
   return res;
 };
 
-const createEdition = async ({ answerId, answerValue }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const createEdition = Answer => async ({ answerId, answerValue }, context) => {
   const oldAnswer = await Answer.findById(answerId).lean();
 
   const before = oldAnswer.value;
@@ -135,11 +115,7 @@ const createEdition = async ({ answerId, answerValue }, context) => {
   };
 };
 
-const edit = async ({ answerId, answerValue }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const edit = Answer => async ({ answerId, answerValue }, context) => {
   const edition = await createEdition({ answerId, answerValue }, context);
 
   const updatedAnswer = await Answer.findByIdAndUpdate(
@@ -159,11 +135,8 @@ const edit = async ({ answerId, answerValue }, context) => {
   return res;
 };
 
-const add = async ({ questionId, answerValue }, context) => {
-  const {
-    models: { Answer },
-    user,
-  } = context;
+const add = Answer => async ({ questionId, answerValue }, context) => {
+  const { user } = context;
 
   await Answer.updateMany({}, { $inc: { position: 1 } });
   let addedAnswer;
@@ -200,11 +173,7 @@ const add = async ({ questionId, answerValue }, context) => {
   return res;
 };
 
-const remove = async ({ answerId }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const remove = Answer => async ({ answerId }, context) => {
   const removedAnswer = await Answer.findByIdAndUpdate(
     answerId,
     {
@@ -226,18 +195,16 @@ const remove = async ({ answerId }, context) => {
   return res;
 };
 
-const like = async ({ answerId, userLikes }, context) => {
-  const {
-    models: { Answer, User },
-    user,
-  } = context;
+const like = Answer => async (
+  { answerId, dbUserLiker, userLikes },
+  context
+) => {
   /* 
 
   likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
 */
 
   const { likes } = await Answer.findById(answerId).lean();
-  const dbUserLiker = await User.findById(user.id).lean();
   let updatedLikes = { total: 0, likers: [] };
 
   if (!likes) {
@@ -274,11 +241,7 @@ const like = async ({ answerId, userLikes }, context) => {
   return res;
 };
 
-const movePosition = async ({ answerId, position }, context) => {
-  const {
-    models: { Answer },
-  } = context;
-
+const movePosition = Answer => async ({ answerId, position }, context) => {
   const currentAnswer = await Answer.findById(answerId).lean();
   await Answer.findOneAndUpdate(
     { position },
@@ -292,14 +255,16 @@ const movePosition = async ({ answerId, position }, context) => {
   return position;
 };
 
-module.exports = {
-  add,
-  edit,
-  remove,
-  like,
-  movePosition,
-  getUserAnswer,
-  getAnswersById,
-  getUserAnswers,
-  getAnswerById,
+module.exports = Answer => {
+  return {
+    add: add(Answer),
+    edit: edit(Answer),
+    remove: remove(Answer),
+    like: like(Answer),
+    movePosition: movePosition(Answer),
+    getUserAnswer: getUserAnswer(Answer),
+    getAnswerById: getAnswerById(Answer),
+    getAnswersById: getAnswersById(Answer),
+    getUserAnswers: getUserAnswers(Answer),
+  };
 };

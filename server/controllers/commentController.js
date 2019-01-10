@@ -67,4 +67,7 @@ async function removeComment({ answerId, commentId, context }) {
   return removedComment;
 }
 
-module.exports = { addCommentToAnswer, editComment, removeComment };
+module.exports = () => {
+  return { addCommentToAnswer, editComment, removeComment };
+};
+// module.exports = { addCommentToAnswer, editComment, removeComment };

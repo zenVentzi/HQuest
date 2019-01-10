@@ -11,6 +11,24 @@
       "program": "${workspaceFolder}/server/server.js"
     },
     {
+      "name": "Launch TypeScript",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/server/server.js",
+      "smartStep": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug TypeScript in Node.js",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/server/server.ts",
+      "cwd": "${workspaceFolder}",
+      "protocol": "inspector",
+      "outFiles": ["${workspaceFolder}/dist/server/**/*.js"]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "test",
@@ -21,6 +39,6 @@
       "request": "launch",
       "name": "server1",
       "program": "${workspaceFolder}/server/server1.js"
-    },
+    }
   ]
 }

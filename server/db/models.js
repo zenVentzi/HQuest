@@ -6,7 +6,7 @@ const getModels = () => {
 
   return {
     Book: mongoose.model('Book', defaultSchema),
-    User: mongoose.model('User', defaultSchema),
+    // User: mongoose.model('User', defaultSchema),
     Question: mongoose.model('Question', defaultSchema),
     Answer: mongoose.model('Answer', defaultSchema),
     Newsfeed: mongoose.model('Newsfeed', defaultSchema),

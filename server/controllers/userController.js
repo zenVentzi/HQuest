@@ -1,13 +1,8 @@
 const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
 const path = require('path');
-const { mapGqlUser, mapGqlUsers } = require('../resolvers/helper');
 
-const registerUser = async ({ email, name }, context) => {
-  const {
-    models: { User },
-  } = context;
-
+const registerUser = User => async ({ email, name }) => {
   const [firstName, surName] = name.split(' ');
   const id = ObjectId();
 
@@ -27,32 +22,26 @@ const registerUser = async ({ email, name }, context) => {
   };
 
   const userDoc = await User.create(newUser);
-  return mapGqlUser({ user: userDoc.toObject(), loggedUserId: id.toString() });
+  return userDoc.toObject();
 };
 
-const login = async ({ email, name }, context) => {
-  const {
-    models: { User },
-  } = context;
-
+const login = User => async ({ email, name }) => {
   const user = await User.findOne({
     email,
   }).lean();
 
   if (!user) {
-    return registerUser({ email, name }, context);
+    return registerUser(User)({ email, name });
   }
 
-  return mapGqlUser({ user, loggedUserId: user._id.toString() });
+  return user;
 };
 
-const followBaseFunc = async ({ userId, follow: addFollower }, context) => {
-  const {
-    models: { User },
-    user,
-  } = context;
-
-  const followerId = user.id;
+const followBaseFunc = User => async (
+  { userId, follow: addFollower },
+  loggedUserId
+) => {
+  const followerId = loggedUserId;
   const followedId = userId;
 
   if (addFollower) {
@@ -76,91 +65,64 @@ const followBaseFunc = async ({ userId, follow: addFollower }, context) => {
   }
 };
 
-const follow = async (userId, context) => {
-  await followBaseFunc({ userId, follow: true }, context);
+const follow = User => async ({ userId, loggedUserId }) => {
+  await followBaseFunc(User)({ userId, follow: true }, loggedUserId);
 };
 
-const unfollow = async (userId, context) => {
-  await followBaseFunc({ userId, follow: false }, context);
+const unfollow = User => async ({ userId, loggedUserId }) => {
+  await followBaseFunc(User)({ userId, follow: false }, loggedUserId);
 };
 
-async function getFollowers(userId, context) {
-  const {
-    models: { User },
-    user,
-  } = context;
-
+const getFollowers = User => async ({ userId }) => {
   const { followers: followersIds } = await User.findById(userId).lean();
   const followers = await User.find({
     _id: {
       $in: followersIds,
     },
   }).lean();
-  return mapGqlUsers({ users: followers, loggedUserId: user.id });
-}
+  return followers;
+};
 
-async function getFollowing(userId, context) {
-  const {
-    models: { User },
-    user,
-  } = context;
-
+const getFollowing = User => async ({ userId }) => {
   const { following: followingIds } = await User.findById(userId).lean();
   const following = await User.find({
     _id: {
       $in: followingIds,
     },
   }).lean();
-  return mapGqlUsers({ users: following, loggedUserId: user.id });
-}
 
-const editUser = async (input, context) => {
-  const {
-    models: { User },
-    user,
-  } = context;
+  return following;
+};
+
+const editUser = User => async ({ input, loggedUserId }) => {
   const { fullName, intro, socialMediaLinks } = input;
 
   const [firstName, surName] = fullName.split(' ');
   const update = { $set: { firstName, surName, intro, socialMediaLinks } };
-  const updatedUser = await User.findByIdAndUpdate(user.id, update, {
+  const editedUser = await User.findByIdAndUpdate(loggedUserId, update, {
     new: true,
     upsert: true,
   }).lean();
 
-  return mapGqlUser({ user: updatedUser, loggedUserId: user.id });
+  return editedUser;
 };
 
-const getUser = async (userId, context) => {
-  const {
-    models: { User },
-    user: loggedUser,
-  } = context;
+const getUser = User => async ({ userId }) => {
   const user = await User.findById(userId).lean();
 
   if (!user) {
     throw new Error(`User with id ${userId} was not found`);
   }
 
-  return mapGqlUser({ user, loggedUserId: loggedUser.id });
+  return user;
 };
 
-const getUsersWithIds = async ({ ids, context }) => {
-  const {
-    models: { User },
-  } = context;
-
+const getUsersWithIds = User => async ({ ids }) => {
   const users = await User.find({ _id: { $in: ids } }).lean();
-
   return users;
 };
 
-const getUsers = async (match, context) => {
-  const {
-    models: { User },
-    user,
-  } = context;
-
+const getUsers = User => async ({ match }) => {
   const matchWords = match.split(' ');
 
   let matchedUsers;
@@ -185,9 +147,10 @@ const getUsers = async (match, context) => {
     }).lean();
   }
 
-  return mapGqlUsers({ users: matchedUsers, loggedUserId: user.id });
+  return matchedUsers;
 };
 
+// extract in utils
 const ensureDirectoryExistence = filePath => {
   const dirname = path.dirname(filePath);
   if (fs.existsSync(dirname)) {
@@ -208,26 +171,24 @@ const saveAvatarToFile = async (base64Img, userId) => {
   });
 };
 
-const uploadAvatar = async (base64Img, context) => {
-  const {
-    models: { User },
-    user,
-  } = context;
+const uploadAvatar = User => async ({ base64Img, context }) => {
+  const { user } = context;
 
   const avatarSrc = await saveAvatarToFile(base64Img, user.id);
-  await User.findByIdAndUpdate(user.id, { $set: { avatarSrc } });
   return avatarSrc;
 };
 
-module.exports = {
-  login,
-  editUser,
-  follow,
-  unfollow,
-  getFollowers,
-  getFollowing,
-  getUser,
-  getUsers,
-  getUsersWithIds,
-  uploadAvatar,
+module.exports = User => {
+  return {
+    login: login(User),
+    editUser: editUser(User),
+    follow: follow(User),
+    unfollow: unfollow(User),
+    getFollowers: getFollowers(User),
+    getFollowing: getFollowing(User),
+    getUser: getUser(User),
+    getUsers: getUsers(User),
+    getUsersWithIds: getUsersWithIds(User),
+    uploadAvatar: uploadAvatar(User),
+  };
 };
