@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
-const bcrypt = require('bcrypt');
+
 const {
   mapGqlNotifications,
   mapGqlNotification,
@@ -58,7 +58,6 @@ const newFollower = async (receiverId, context) => {
   } = context;
 
   const followerId = user.id;
-  const followedId = receiverId;
 
   const follower = await User.findById(followerId).lean();
 
@@ -81,7 +80,6 @@ const markSeen = async context => {
     user,
   } = context;
 
-  const { collections } = context;
   const searchQuery = {
     _id: ObjectId(user.id),
     'notifications.seen': false,
@@ -105,9 +103,11 @@ const getNotifications = async context => {
   return res.reverse();
 };
 
-module.exports = {
-  newFollower,
-  newComment,
-  getNotifications,
-  markSeen,
+module.exports = () => {
+  return {
+    newFollower,
+    newComment,
+    getNotifications,
+    markSeen,
+  };
 };

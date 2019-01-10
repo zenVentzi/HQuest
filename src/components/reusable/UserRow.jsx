@@ -128,10 +128,7 @@ class UserRow extends Component {
           <Avatar src={avatarSrc} />
           <TextContainer size={size}>
             <StyledUserName size={size}>{fullName}</StyledUserName>
-            <StyledIntro size={size}>
-              {intro}
-              fdddddddddddddddddddddddddddddddddddddddddddffffffffffffffffff
-            </StyledIntro>
+            <StyledIntro size={size}>{intro}</StyledIntro>
           </TextContainer>
         </StyledUser>
       </ThemeProvider>

@@ -1,13 +1,12 @@
 {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2,
-    "editor.detectIndentation": true,
-    "css.validate": false,
-    "scss.validate": false,
-    "editor.formatOnSave": true,
-    "[javascript]": {
-        "editor.formatOnSave": false
-    },
-    "eslint.autoFixOnSave": true,
-    "eslint.alwaysShowStatus": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": true,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "javascript.validate.enable": false,
+  "eslint.autoFixOnSave": true,
+  "eslint.alwaysShowStatus": true
 }

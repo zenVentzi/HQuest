@@ -1,18 +1,19 @@
-const http = require('http');
-require('dotenv').config();
-const { ApolloServer } = require('apollo-server-express');
-const requireGraphQLFile = require('require-graphql-file');
-const { getVerifiedUser } = require('./utils');
-const app = require('./App');
-const { connect: mongooseConnect } = require('./db');
+const http = require("http");
+require("dotenv").config();
+const { ApolloServer } = require("apollo-server-express");
+const requireGraphQLFile = require("require-graphql-file");
+// const { getVerifiedUser } = require("./utils");
+import { getVerifiedUser } from "./utils";
+const app = require("./App");
+const { connect: mongooseConnect } = require("./db");
 
-const resolvers = require('./resolvers');
+const resolvers = require("./resolvers");
 
-const typeDefs = requireGraphQLFile('./schema');
+const typeDefs = requireGraphQLFile("./schema");
 
 const PORT = process.env.PORT || 4000;
 
-mongooseConnect(models => {
+mongooseConnect(() => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -24,22 +25,20 @@ mongooseConnect(models => {
       },
       onDisconnect: () => {
         console.log(`ondisconnect`);
-      },
+      }
     },
     context: ({ req, connection }) => {
       if (connection) {
         return {
           user: connection.context.user,
           // the below is just for testing
-          isFromConnection: true,
-          models,
+          isFromConnection: true
         };
       }
       return {
-        user: req.user,
-        models,
+        user: req.user
       };
-    },
+    }
   });
   server.applyMiddleware({ app });
 

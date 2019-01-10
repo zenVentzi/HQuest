@@ -1,6 +1,5 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const { getModels } = require('../db/models');
 
 const mLabURI = `mongodb://zenVentzi:${
   process.env.MLAB_PASS
@@ -15,8 +14,7 @@ const connect = onConnected => {
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', () => {
-    const models = getModels(mongoose);
-    onConnected(models);
+    onConnected();
   });
 };
 

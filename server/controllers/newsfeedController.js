@@ -1,9 +1,4 @@
 const { ObjectId } = require('mongoose').Types;
-// not using index.js bcuz it causes cycle dependencies
-const answerController = require('./answerController');
-const questionController = require('./questionController');
-const userController = require('./userController');
-const { mapGqlUsers, mapGqlNewsFeed } = require('../resolvers/helper');
 
 const NEW_ANSWER = 'NEW_ANSWER';
 const NEW_ANSWER_EDITION = 'NEW_ANSWER_EDITION';
@@ -11,11 +6,7 @@ const NEW_COMMENT = 'NEW_COMMENT';
 const NEW_FOLLOWER = 'NEW_FOLLOWER';
 const NEW_LIKE = 'NEW_LIKE';
 
-const checkIfAnswerLikedBefore = async ({ news, context }) => {
-  const {
-    models: { Newsfeed },
-  } = context;
-
+const checkLikedBefore = Newsfeed => async ({ news }) => {
   const existingNews = await Newsfeed.findOne({
     type: news.type,
     performerId: news.performerId,
@@ -25,152 +16,105 @@ const checkIfAnswerLikedBefore = async ({ news, context }) => {
   return !!existingNews;
 };
 
-const onLikeAnswer = async ({ answerId, context }) => {
-  const {
-    models: { Newsfeed },
-    user,
-  } = context;
-
-  const answer = await answerController.getAnswerById({ answerId, context });
-
+const onLikeAnswer = Newsfeed => async ({ dbAnswer, performerId }) => {
   const news = {
     type: NEW_LIKE,
-    performerId: user.id,
-    answerOwnerId: answer.userId.toString(),
-    answerId,
+    performerId,
+    answerOwnerId: dbAnswer.userId.toString(),
+    answerId: dbAnswer._id.toString(),
   };
 
-  if (!(await checkIfAnswerLikedBefore({ news, context }))) {
+  if (!(await checkLikedBefore(Newsfeed)({ news }))) {
     await Newsfeed.create(news);
   }
 };
 
-const onFollowUser = async ({ followedUserId, context }) => {
-  const {
-    models: { Newsfeed },
-    user,
-  } = context;
-
+const onFollowUser = Newsfeed => async ({
+  followedUserId,
+  performedId: performerId,
+}) => {
   const news = {
     type: NEW_FOLLOWER,
-    performerId: user.id,
+    performerId,
     followedUserId,
   };
 
   await Newsfeed.create(news);
 };
 
-const onNewComment = async ({ answerId, commentId, context }) => {
-  const {
-    models: { Newsfeed },
-    user,
-  } = context;
-
-  const answer = await answerController.getAnswerById({ answerId, context });
-
+const onNewComment = Newsfeed => async ({
+  dbAnswer,
+  commentId,
+  performerId,
+}) => {
   const news = {
     type: NEW_COMMENT,
-    performerId: user.id,
-    answerOwnerId: answer.userId.toString(),
-    answerId,
+    performerId,
+    answerOwnerId: dbAnswer.userId.toString(),
+    answerId: dbAnswer._id.toString(),
     commentId,
   };
 
   await Newsfeed.create(news);
 };
 
-const onAnswerChange = async ({ type, answer, context }) => {
-  const {
-    models: { Newsfeed },
-    user,
-  } = context;
-
+const onAnswerChange = Newsfeed => async ({ type, answerId, performerId }) => {
   const news = {
     type,
-    performerId: user.id,
-    answerId: answer._id.toString(),
+    performerId,
+    answerId,
   };
 
   await Newsfeed.create(news);
 };
 
-const onNewAnswer = async ({ answer, context }) => {
-  await onAnswerChange({
+const onNewAnswer = Newsfeed => async ({ answerId, performerId }) => {
+  await onAnswerChange(Newsfeed)({
     type: NEW_ANSWER,
-    answer,
-    context,
+    answerId,
+    performerId,
   });
 };
 
-const onEditAnswer = async ({ answer, context }) => {
-  await onAnswerChange({
+const onEditAnswer = Newsfeed => async ({ answerId, performerId }) => {
+  await onAnswerChange(Newsfeed)({
     type: NEW_ANSWER_EDITION,
-    answer,
-    context,
+    answerId,
+    performerId,
   });
 };
 
-const getNewsFeedUsers = async ({ newsFeed, context }) => {
-  const neewsFeedUserIds = [];
+const getParticipantsIds = async ({ newsfeed }) => {
+  const participantsIds = [];
+  const isAdded = id => participantsIds.includes(id);
 
-  newsFeed.forEach(news => {
-    if (!neewsFeedUserIds.includes(news.performerId)) {
-      neewsFeedUserIds.push(news.performerId);
+  // todo imrprove readability
+  newsfeed.forEach(news => {
+    if (!isAdded(news.performerId)) {
+      participantsIds.push(news.performerId);
     }
-    if (!neewsFeedUserIds.includes(news.answerOwnerId)) {
-      neewsFeedUserIds.push(news.answerOwnerId);
+    if (!isAdded(news.answerOwnerId)) {
+      participantsIds.push(news.answerOwnerId);
     }
   });
 
-  const newsFeedUsers = await userController.getUsersWithIds({
-    ids: neewsFeedUserIds,
-    context,
-  });
-  return newsFeedUsers;
+  return participantsIds;
 };
 
-const getNewsfeed = async ({ context }) => {
-  const {
-    models: { Newsfeed, User },
-    user,
-  } = context;
-
-  const { following } = await User.findById(user.id).lean();
-  const followingIds = [];
-
-  if (following) {
-    following.forEach(userr => {
-      followingIds.push(userr._id.toString());
-    });
-  }
-
-  const newsFeed = await Newsfeed.find({
-    performerId: { $in: followingIds },
+const getUsersActivity = Newsfeed => async ({ usersIds }) => {
+  return Newsfeed.find({
+    performerId: { $in: usersIds },
   }).lean();
-
-  const newsFeedUsers = await getNewsFeedUsers({
-    newsFeed,
-    context,
-  });
-
-  const newsFeedQuestions = await questionController.getNewsFeedQuestions({
-    newsFeed,
-    context,
-  });
-
-  const gqlNewsfeed = mapGqlNewsFeed({
-    newsFeed,
-    newsFeedUsers,
-    newsFeedQuestions,
-  });
-  return gqlNewsfeed.reverse();
 };
 
-module.exports = {
-  onNewAnswer,
-  onEditAnswer,
-  onNewComment,
-  onLikeAnswer,
-  onFollowUser,
-  getNewsfeed,
+module.exports = Newsfeed => {
+  return {
+    onNewAnswer,
+    onEditAnswer,
+    onNewComment,
+    onLikeAnswer,
+    onFollowUser,
+    getUsersActivity,
+    getParticipantsIds,
+  };
 };

@@ -1,13 +1,14 @@
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const webpack = require('webpack');
-const { getVerifiedUser } = require('./utils');
-const webpackConfig = require('../webpack/config');
+const express = require("express");
+const { Request, Response } = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const webpack = require("webpack");
+const { getVerifiedUser } = require("./utils");
+const webpackConfig = require("../webpack/config");
 
 const compiler = webpack(webpackConfig);
 
-const auth = async (req, res, next) => {
+const auth = async (req: Request, res: Response, next) => {
   const authToken = req.headers.authorization;
   if (authToken) {
     const user = await getVerifiedUser(authToken);
@@ -24,12 +25,12 @@ const app = express();
 app.use(bodyParser.json(), auth);
 // app.use(bodyParser.json(), auth);
 
-app.use('/public', express.static('public'));
+app.use("/public", express.static("public"));
 
 app.use(
-  require('webpack-dev-middleware')(compiler, {
+  require("webpack-dev-middleware")(compiler, {
     hot: true,
-    publicPath: webpackConfig.output.publicPath,
+    publicPath: webpackConfig.output.publicPath
   })
 ); /* The webpack-dev-middleware serves the files emitted from webpack over a connect server and webpack-hot-middleware will allow us to hot reload on Express. */
 
@@ -48,13 +49,13 @@ app.use(
 } */
 
 app.use(
-  require('webpack-hot-middleware')(compiler, {
-    log: false,
+  require("webpack-hot-middleware")(compiler, {
+    log: false
   })
 );
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "index.html"));
 });
 
 module.exports = app;
