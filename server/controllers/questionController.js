@@ -134,7 +134,7 @@ const getUserQuestions = Question => async ({ ...args }) => {
   return questions;
 };
 
-module.exports = Question => {
+export default Question => {
   return {
     addQuestions: addQuestions(Question),
     markNotApply: markNotApply(Question),

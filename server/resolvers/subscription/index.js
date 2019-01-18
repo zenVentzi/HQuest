@@ -32,7 +32,7 @@ const newNotification = {
   ),
 };
 
-module.exports = {
+export default {
   newNotification,
   bookAdded,
 };

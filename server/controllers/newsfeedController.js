@@ -107,7 +107,7 @@ const getUsersActivity = Newsfeed => async ({ usersIds }) => {
   }).lean();
 };
 
-module.exports = Newsfeed => {
+export default Newsfeed => {
   return {
     onNewAnswer,
     onEditAnswer,

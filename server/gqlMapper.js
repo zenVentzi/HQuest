@@ -161,4 +161,4 @@ const getNewsfeed = ({
 
 const gqlMapper = { getUser, getUsers, getQuestion, getQuestions, getNewsfeed };
 
-module.exports = { gqlMapper };
+export { gqlMapper };

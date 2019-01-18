@@ -103,7 +103,7 @@ const getNotifications = async context => {
   return res.reverse();
 };
 
-module.exports = () => {
+export default ToBeChanged => {
   return {
     newFollower,
     newComment,

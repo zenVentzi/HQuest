@@ -6,7 +6,8 @@
   "scripts": {
     "genSchema": "node introspect.js",
     "test": "node_modules/.bin/tape test/*.js",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "typegen": "gql-gen --config codegen.yml"
   },
   "author": "",
   "license": "ISC",
@@ -39,7 +40,7 @@
     "graphql": "^0.13.2",
     "graphql-subscriptions": "^0.5.8",
     "graphql-tag": "^2.9.2",
-    "graphql-tools": "^3.0.5",
+    "graphql-tools": "^3.1.1",
     "history": "^4.7.2",
     "jsonwebtoken": "^8.3.0",
     "lodash.isequal": "^4.5.0",
@@ -67,6 +68,10 @@
     "validator": "^10.7.0"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.0",
+    "@types/express": "^4.16.0",
+    "@types/mongoose": "^5.3.8",
+    "@types/node": "^10.12.18",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
     "babel-loader": "^7.1.5",
@@ -88,6 +93,11 @@
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.10.0",
     "file-loader": "^1.1.11",
+    "graphql-code-generator": "^0.15.2",
+    "graphql-codegen-typescript-common": "0.15.2",
+    "graphql-codegen-typescript-mongodb": "0.15.2",
+    "graphql-codegen-typescript-resolvers": "0.15.2",
+    "graphql-codegen-typescript-server": "0.15.2",
     "html-webpack-plugin": "^3.2.0",
     "prop-types": "^15.6.2",
     "regenerator-runtime": "^0.12.1",
