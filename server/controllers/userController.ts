@@ -1,9 +1,13 @@
-const { ObjectId } = require('mongoose').Types;
-const fs = require('fs');
-const path = require('path');
+import { User } from "../models/user";
+import { UserQueryArgs, UsersQueryArgs, Maybe } from "../generated/gqltypes";
+import * as Types from "./userControllerTypes";
+
+const { ObjectId } = require("mongoose").Types;
+const fs = require("fs");
+const path = require("path");
 
 const registerUser = User => async ({ email, name }) => {
-  const [firstName, surName] = name.split(' ');
+  const [firstName, surName] = name.split(" ");
   const id = ObjectId();
 
   const newUser = {
@@ -11,14 +15,14 @@ const registerUser = User => async ({ email, name }) => {
     firstName,
     surName,
     email,
-    intro: 'Hey, I am an intro',
+    intro: "Hey, I am an intro",
     avatarSrc: `/public/images/avatar${id}.jpeg`,
     socialMediaLinks: {
-      facebookLink: '',
-      twitterLink: '',
-      instagramLink: '',
-      linkedInLink: '',
-    },
+      facebookLink: "",
+      twitterLink: "",
+      instagramLink: "",
+      linkedInLink: ""
+    }
   };
 
   const userDoc = await User.create(newUser);
@@ -27,7 +31,7 @@ const registerUser = User => async ({ email, name }) => {
 
 const login = User => async ({ email, name }) => {
   const user = await User.findOne({
-    email,
+    email
   }).lean();
 
   if (!user) {
@@ -57,10 +61,10 @@ const followBaseFunc = User => async (
     );
   } else {
     await User.findByIdAndUpdate(followerId, {
-      $pull: { following: ObjectId(followedId) },
+      $pull: { following: ObjectId(followedId) }
     });
     await User.findByIdAndUpdate(followedId, {
-      $pull: { followers: ObjectId(followerId) },
+      $pull: { followers: ObjectId(followerId) }
     });
   }
 };
@@ -77,8 +81,8 @@ const getFollowers = User => async ({ userId }) => {
   const { followers: followersIds } = await User.findById(userId).lean();
   const followers = await User.find({
     _id: {
-      $in: followersIds,
-    },
+      $in: followersIds
+    }
   }).lean();
   return followers;
 };
@@ -87,8 +91,8 @@ const getFollowing = User => async ({ userId }) => {
   const { following: followingIds } = await User.findById(userId).lean();
   const following = await User.find({
     _id: {
-      $in: followingIds,
-    },
+      $in: followingIds
+    }
   }).lean();
 
   return following;
@@ -97,21 +101,25 @@ const getFollowing = User => async ({ userId }) => {
 const editUser = User => async ({ input, loggedUserId }) => {
   const { fullName, intro, socialMediaLinks } = input;
 
-  const [firstName, surName] = fullName.split(' ');
+  const [firstName, surName] = fullName.split(" ");
   const update = { $set: { firstName, surName, intro, socialMediaLinks } };
   const editedUser = await User.findByIdAndUpdate(loggedUserId, update, {
     new: true,
-    upsert: true,
+    upsert: true
   }).lean();
 
   return editedUser;
 };
 
-const getUser = User => async ({ userId }) => {
-  const user = await User.findById(userId).lean();
+const a: Types.Blaa = { bla: "" };
+
+const getUser: (
+  User: any
+) => (args: UserQueryArgs) => Promise<User> = User => async ({ id }) => {
+  const user = await User.findById(id).lean();
 
   if (!user) {
-    throw new Error(`User with id ${userId} was not found`);
+    throw new Error(`User with id ${id} was not found`);
   }
 
   return user;
@@ -123,7 +131,7 @@ const getUsersWithIds = User => async ({ ids }) => {
 };
 
 const getUsers = User => async ({ match }) => {
-  const matchWords = match.split(' ');
+  const matchWords = match.split(" ");
 
   let matchedUsers;
   const numOfWords = matchWords.length;
@@ -137,13 +145,13 @@ const getUsers = User => async ({ match }) => {
     matchedUsers = await User.find({
       $and: [
         { firstName: { $regex: firstNameRegex } },
-        { surName: { $regex: surNameRegex } },
-      ],
+        { surName: { $regex: surNameRegex } }
+      ]
     }).lean();
   } else {
     const regex = new RegExp(`.*${match}.*`, `i`);
     matchedUsers = await User.find({
-      $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }],
+      $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }]
     }).lean();
   }
 
@@ -165,7 +173,7 @@ const saveAvatarToFile = async (base64Img, userId) => {
   ensureDirectoryExistence(`${process.cwd()}${src}`);
 
   return new Promise(resolve => {
-    fs.writeFile(`${process.cwd()}${src}`, base64Img, 'base64', err => {
+    fs.writeFile(`${process.cwd()}${src}`, base64Img, "base64", err => {
       resolve(src);
     });
   });
@@ -178,7 +186,7 @@ const uploadAvatar = User => async ({ base64Img, context }) => {
   return avatarSrc;
 };
 
-module.exports = User => {
+export default User => {
   return {
     login: login(User),
     editUser: editUser(User),
@@ -189,6 +197,6 @@ module.exports = User => {
     getUser: getUser(User),
     getUsers: getUsers(User),
     getUsersWithIds: getUsersWithIds(User),
-    uploadAvatar: uploadAvatar(User),
+    uploadAvatar: uploadAvatar(User)
   };
 };

@@ -255,7 +255,7 @@ const movePosition = Answer => async ({ answerId, position }, context) => {
   return position;
 };
 
-module.exports = Answer => {
+export default Answer => {
   return {
     add: add(Answer),
     edit: edit(Answer),

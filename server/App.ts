@@ -1,14 +1,17 @@
-const express = require("express");
-const { Request, Response } = require("express");
+import express, { Request, Response, NextFunction } from "express";
 const path = require("path");
 const bodyParser = require("body-parser");
 const webpack = require("webpack");
 const { getVerifiedUser } = require("./utils");
-const webpackConfig = require("../webpack/config");
+const webpackConfig = require(process.cwd() + "/webpack/config.js");
 
 const compiler = webpack(webpackConfig);
 
-const auth = async (req: Request, res: Response, next) => {
+interface AuthMiddleware {
+  (req: Request, res: Response, next: NextFunction): void;
+}
+
+const auth: AuthMiddleware = async (req, res, next) => {
   const authToken = req.headers.authorization;
   if (authToken) {
     const user = await getVerifiedUser(authToken);
@@ -23,10 +26,7 @@ const auth = async (req: Request, res: Response, next) => {
 const app = express();
 
 app.use(bodyParser.json(), auth);
-// app.use(bodyParser.json(), auth);
-
 app.use("/public", express.static("public"));
-
 app.use(
   require("webpack-dev-middleware")(compiler, {
     hot: true,
@@ -54,8 +54,8 @@ app.use(
   })
 );
 
-app.get("*", (req, res) => {
+app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "index.html"));
 });
 
-module.exports = app;
+export default app;

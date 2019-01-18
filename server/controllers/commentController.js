@@ -67,7 +67,6 @@ async function removeComment({ answerId, commentId, context }) {
   return removedComment;
 }
 
-module.exports = () => {
+export default ToBeChanged => {
   return { addCommentToAnswer, editComment, removeComment };
 };
-// module.exports = { addCommentToAnswer, editComment, removeComment };

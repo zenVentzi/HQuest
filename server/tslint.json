@@ -3,7 +3,8 @@
   "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
-    "no-unused-variable": true
+    "no-unused-variable": false,
+    "trailing-comma": [false]
   },
   "rulesDirectory": []
 }

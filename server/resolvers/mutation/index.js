@@ -174,7 +174,7 @@ async function notifsMarkSeen(_, __, context) {
   await notificationController.markSeen(context);
 }
 
-module.exports = {
+export default {
   addBook,
   notifsMarkSeen,
   commentAnswer,

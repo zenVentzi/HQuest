@@ -1,0 +1,12 @@
+overwrite: true
+schema: "./server/schema.graphql"
+documents: null
+generates:
+  ./server/generated/gqltypes.ts:
+    config:
+      contextType: ../types#ApolloContext
+    plugins:
+      - "typescript-common"
+      - "typescript-server"
+      - "typescript-resolvers"
+      # - "typescript-mongodb"
