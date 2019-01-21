@@ -1,15 +1,19 @@
 // import * as mongoose from "mongoose";
-import { Document, model, Model, Schema, Types } from "mongoose";
+import { Document, model, Model, Schema, Types as GooseTypes } from "mongoose";
 
-interface User extends Document {
-  firstName: string;
-  surName: string;
-  email: string;
-  password: string;
-  avatarSrc: Types.ObjectId;
-  followers: [Types.ObjectId];
-  following: [Types.ObjectId];
-  notifications: [];
+namespace Types {
+  export interface User extends Document {
+    firstName: string;
+    surName: string;
+    email: string;
+    password: string;
+    avatarSrc: GooseTypes.ObjectId;
+    followers: [GooseTypes.ObjectId];
+    following: [GooseTypes.ObjectId];
+    notifications: [];
+  }
+
+  export type UserModel = Model<User>;
 }
 
 const UserSchema = new Schema({
@@ -23,10 +27,6 @@ const UserSchema = new Schema({
   notifications: []
 });
 
-const UserModel = model<User>("User", UserSchema);
+const UserModel: Model<Types.User> = model<Types.User>("User", UserSchema);
 
-type BlaType = Model<User>;
-
-let a: BlaType;
-
-export { UserModel, User };
+export { UserModel, Types };

@@ -41,6 +41,7 @@ const newsfeed: QueryResolvers.NewsfeedResolver = isAuthenticatedResolver.create
     });
 
     const newsfeedAnswersIds = [];
+    // @ts-ignore
 
     newsfeedd.forEach(news => {
       if (news.answerId) {
@@ -50,6 +51,7 @@ const newsfeed: QueryResolvers.NewsfeedResolver = isAuthenticatedResolver.create
     });
 
     const newsfeedAnswers = await answerController.getAnswersById({
+      // @ts-ignore
       ids: newsfeedAnswersIds
     });
 
@@ -60,6 +62,7 @@ const newsfeed: QueryResolvers.NewsfeedResolver = isAuthenticatedResolver.create
     });
 
     const gqlNewsfeed = gqlMapper.getNewsfeed({
+      // @ts-ignore
       newsfeed: newsfeedd,
       newsFeedUsers,
       newsfeedAnswers,
