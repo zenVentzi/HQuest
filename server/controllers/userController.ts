@@ -1,12 +1,12 @@
-import { User } from "../models/user";
 import { UserQueryArgs, UsersQueryArgs, Maybe } from "../generated/gqltypes";
-import * as Types from "./userControllerTypes";
+import * as FnTypes from "./userControllerTypes";
+import { Types as ModelTypes } from "../models/user";
 
 const { ObjectId } = require("mongoose").Types;
 const fs = require("fs");
 const path = require("path");
 
-const registerUser = User => async ({ email, name }) => {
+const registerUser: FnTypes.RegisterUser = User => async ({ email, name }) => {
   const [firstName, surName] = name.split(" ");
   const id = ObjectId();
 
@@ -26,10 +26,11 @@ const registerUser = User => async ({ email, name }) => {
   };
 
   const userDoc = await User.create(newUser);
-  return userDoc.toObject();
+  return userDoc;
+  // return userDoc.toObject();
 };
 
-const login = User => async ({ email, name }) => {
+const login: FnTypes.LoginUser = User => async ({ email, name }) => {
   const user = await User.findOne({
     email
   }).lean();
@@ -41,14 +42,15 @@ const login = User => async ({ email, name }) => {
   return user;
 };
 
-const followBaseFunc = User => async (
-  { userId, follow: addFollower },
+const followBaseFunc: FnTypes.FollowUserBase = User => async (
+  { userId },
+  follow,
   loggedUserId
 ) => {
   const followerId = loggedUserId;
   const followedId = userId;
 
-  if (addFollower) {
+  if (follow) {
     await User.findByIdAndUpdate(
       followerId,
       { $push: { following: ObjectId(followedId) } },
@@ -69,54 +71,61 @@ const followBaseFunc = User => async (
   }
 };
 
-const follow = User => async ({ userId, loggedUserId }) => {
-  await followBaseFunc(User)({ userId, follow: true }, loggedUserId);
+const follow: FnTypes.FollowUser = User => async (args, loggedUserId) => {
+  await followBaseFunc(User)(args, true, loggedUserId);
 };
 
-const unfollow = User => async ({ userId, loggedUserId }) => {
-  await followBaseFunc(User)({ userId, follow: false }, loggedUserId);
+const unfollow: FnTypes.UnfollowUser = User => async (args, loggedUserId) => {
+  await followBaseFunc(User)(args, false, loggedUserId);
 };
 
-const getFollowers = User => async ({ userId }) => {
-  const { followers: followersIds } = await User.findById(userId).lean();
-  const followers = await User.find({
-    _id: {
-      $in: followersIds
-    }
-  }).lean();
-  return followers;
+const getFollowers: FnTypes.GetFollowers = User => async ({ userId }) => {
+  const user = await User.findById(userId);
+
+  if (user) {
+    const { followers: followersIds } = user;
+
+    return User.find({
+      _id: {
+        $in: followersIds
+      }
+    }).lean();
+  }
+
+  return null;
 };
 
-const getFollowing = User => async ({ userId }) => {
-  const { following: followingIds } = await User.findById(userId).lean();
-  const following = await User.find({
-    _id: {
-      $in: followingIds
-    }
-  }).lean();
+const getFollowing: FnTypes.GetFollowing = User => async ({ userId }) => {
+  const user = await User.findById(userId);
 
-  return following;
+  if (user) {
+    const { following: followingIds } = user;
+
+    return User.find({
+      _id: {
+        $in: followingIds
+      }
+    }).lean();
+  }
+
+  return null;
 };
 
-const editUser = User => async ({ input, loggedUserId }) => {
-  const { fullName, intro, socialMediaLinks } = input;
+const editUser: FnTypes.EditUser = User => async ({ input }, loggedUserId) => {
+  const { fullName, intro, socialMediaLinks } = input!;
 
   const [firstName, surName] = fullName.split(" ");
   const update = { $set: { firstName, surName, intro, socialMediaLinks } };
   const editedUser = await User.findByIdAndUpdate(loggedUserId, update, {
     new: true,
     upsert: true
-  }).lean();
+  });
 
   return editedUser;
 };
 
-const a: Types.Blaa = { bla: "" };
-
-const getUser: (
-  User: any
-) => (args: UserQueryArgs) => Promise<User> = User => async ({ id }) => {
-  const user = await User.findById(id).lean();
+const getUser: FnTypes.GetUser = User => async ({ id }) => {
+  const user = await User.findById(id);
 
   if (!user) {
     throw new Error(`User with id ${id} was not found`);
@@ -125,15 +134,16 @@ const getUser: (
   return user;
 };
 
-const getUsersWithIds = User => async ({ ids }) => {
-  const users = await User.find({ _id: { $in: ids } }).lean();
+const getUsersWithIds: FnTypes.GetUsersWithIds = User => async ({ ids }) => {
+  const users = await User.find({ _id: { $in: ids } });
+  // return null;
   return users;
 };
 
-const getUsers = User => async ({ match }) => {
-  const matchWords = match.split(" ");
+const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
+  const matchWords = match!.split(" ");
 
-  let matchedUsers;
+  let matchedUsers: ModelTypes.User[];
   const numOfWords = matchWords.length;
 
   if (numOfWords > 2) {
@@ -147,12 +157,12 @@ const getUsers = User => async ({ match }) => {
         { firstName: { $regex: firstNameRegex } },
         { surName: { $regex: surNameRegex } }
       ]
-    }).lean();
+    });
   } else {
     const regex = new RegExp(`.*${match}.*`, `i`);
     matchedUsers = await User.find({
       $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }]
-    }).lean();
+    });
   }
 
   return matchedUsers;
@@ -179,10 +189,11 @@ const saveAvatarToFile = async (base64Img, userId) => {
   });
 };
 
-const uploadAvatar = User => async ({ base64Img, context }) => {
-  const { user } = context;
-
-  const avatarSrc = await saveAvatarToFile(base64Img, user.id);
+const uploadAvatar: FnTypes.UploadAvatar = User => async (
+  { base64Img },
+  loggedUserId
+) => {
+  const avatarSrc = (await saveAvatarToFile(base64Img, loggedUserId)) as string;
   return avatarSrc;
 };
 
