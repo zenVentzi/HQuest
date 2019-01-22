@@ -1,5 +1,4 @@
 import { QueryResolvers, Maybe } from "../../generated/gqltypes";
-import { isAuthenticatedResolver } from "../accessResolvers";
 import {
   userController,
   commentController,
@@ -17,75 +16,84 @@ const books = async (root, __, context) => {
   return null;
 };
 
-const notifications: QueryResolvers.NotificationsResolver = isAuthenticatedResolver.createResolver(
-  async (_, __, context) => {
-    return notificationController.getNotifications(context);
-  }
-);
+const notifications: QueryResolvers.NotificationsResolver = async (
+  _,
+  __,
+  context
+) => {
+  const dbNotifications = await notificationController.getNotifications({
+    loggedUserId: context.user!.id
+  });
 
-const newsfeed: QueryResolvers.NewsfeedResolver = isAuthenticatedResolver.createResolver(
-  async (_, __, context) => {
-    const loggedUser = await userController.getUser({
-      id: context.user!.id
-    });
-    const followingUsersIds = loggedUser.following;
-    const newsfeedd = await newsfeedController.getUsersActivity({
-      usersIds: followingUsersIds
-    });
-    const participantsIds = newsfeedController.getParticipantsIds({
-      newsfeed: newsfeedd
-    });
+  const gqlNotifications = gqlMapper.getNotifications(dbNotifications);
+  return gqlNotifications;
+};
 
-    const newsFeedUsers = await userController.getUsersWithIds({
-      ids: participantsIds
-    });
+const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
+  const loggedUser = await userController.getUser({
+    id: context.user!.id
+  });
+  const followingUsersIds = loggedUser.following;
+  const newsfeedd = await newsfeedController.getUsersActivity({
+    usersIds: followingUsersIds
+  });
+  const participantsIds = newsfeedController.getParticipantsIds({
+    newsfeed: newsfeedd
+  });
 
-    const newsfeedAnswersIds = [];
+  const newsFeedUsers = await userController.getUsersWithIds({
+    ids: participantsIds
+  });
+
+  const newsfeedAnswersIds = [];
+  // @ts-ignore
+
+  newsfeedd.forEach(news => {
+    if (news.answerId) {
+      // @ts-ignore
+      newsfeedAnswersIds.push(news.answerId);
+    }
+  });
+
+  const newsfeedAnswers = await answerController.getAnswersById({
     // @ts-ignore
+    ids: newsfeedAnswersIds
+  });
 
-    newsfeedd.forEach(news => {
-      if (news.answerId) {
-        // @ts-ignore
-        newsfeedAnswersIds.push(news.answerId);
-      }
-    });
+  const newsfeedQuestionsIds = newsfeedAnswers.map(a => a.questionId);
 
-    const newsfeedAnswers = await answerController.getAnswersById({
-      // @ts-ignore
-      ids: newsfeedAnswersIds
-    });
+  const newsfeedQuestions = await questionController.getQuestionsById({
+    ids: newsfeedQuestionsIds
+  });
 
-    const newsfeedQuestionsIds = newsfeedAnswers.map(a => a.questionId);
+  const gqlNewsfeed = gqlMapper.getNewsfeed({
+    // @ts-ignore
+    newsfeed: newsfeedd,
+    newsFeedUsers,
+    newsfeedAnswers,
+    newsfeedQuestions,
+    loggedUserId: context.user!.id
+  });
+  return gqlNewsfeed.reverse();
+};
 
-    const newsfeedQuestions = await questionController.getQuestionsById({
-      ids: newsfeedQuestionsIds
-    });
+const followers: QueryResolvers.FollowersResolver = async (
+  _,
+  { userId },
+  { user }
+) => {
+  const dbFollowers = await userController.getFollowers({ userId });
+  return gqlMapper.getUsers({ dbUsers: dbFollowers, loggedUserId: user!.id });
+};
 
-    const gqlNewsfeed = gqlMapper.getNewsfeed({
-      // @ts-ignore
-      newsfeed: newsfeedd,
-      newsFeedUsers,
-      newsfeedAnswers,
-      newsfeedQuestions,
-      loggedUserId: context.user!.id
-    });
-    return gqlNewsfeed.reverse();
-  }
-);
-
-const followers: QueryResolvers.FollowersResolver = isAuthenticatedResolver.createResolver(
-  async (_, { userId }, { user }) => {
-    const dbFollowers = await userController.getFollowers({ userId });
-    return gqlMapper.getUsers({ dbUsers: dbFollowers, loggedUserId: user!.id });
-  }
-);
-
-const following: QueryResolvers.FollowingResolver = isAuthenticatedResolver.createResolver(
-  async (_, { userId }, { user }) => {
-    const dbFollowing = await userController.getFollowing({ userId });
-    return gqlMapper.getUsers({ dbUsers: dbFollowing, loggedUserId: user!.id });
-  }
-);
+const following: QueryResolvers.FollowingResolver = async (
+  _,
+  { userId },
+  { user }
+) => {
+  const dbFollowing = await userController.getFollowing({ userId });
+  return gqlMapper.getUsers({ dbUsers: dbFollowing, loggedUserId: user!.id });
+};
 
 const getAllEdges = nodes => {
   return nodes.map(node => {
@@ -164,65 +172,72 @@ const relayConnection: RelayConnection = ({ nodes, first, after }) => {
   return connection;
 };
 
-const questions: QueryResolvers.QuestionsResolver = isAuthenticatedResolver.createResolver(
-  async (root, args, context) => {
-    const answers = await answerController.getUserAnswers(
-      { userId: args.userId },
-      context
-    );
+const questions: QueryResolvers.QuestionsResolver = async (
+  root,
+  args,
+  context
+) => {
+  const dbAnswers = await answerController.getUserAnswers(
+    { userId: args.userId },
+    context
+  );
 
-    const dbQuestions = questionController.getUserQuestions({
-      ...args,
-      answers,
-      loggedUserId: context.user!.id
-    });
-    const gqlQuestions = gqlMapper.getQuestions({
-      dbQuestions,
-      loggedUserId: context.user!.id
-    });
+  const dbQuestions = await questionController.getUserQuestions({
+    ...args,
+    answers: dbAnswers,
+    loggedUserId: context.user!.id
+  });
 
-    return relayConnection({ nodes: gqlQuestions, ...args });
-  }
-);
+  const gqlQuestions = gqlMapper.getQuestions({
+    dbQuestions,
+    loggedUserId: context.user!.id
+  });
 
-const questionsTags: QueryResolvers.QuestionsTagsResolver = isAuthenticatedResolver.createResolver(
-  async (_, __, context) => {
-    return questionController.getAllTags();
-  }
-);
+  return relayConnection({ nodes: gqlQuestions, ...args });
+};
 
-const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = isAuthenticatedResolver.createResolver(
-  async (_, { userId, questionId }, context) => {
-    const dbQuestion = questionController.getQuestion({ questionId });
-    const dbAnswer = answerController.getAnswer({ userId, questionId });
-    const res = gqlMapper.getQuestion({
-      dbQuestion,
-      dbAnswer,
-      loggedUserId: context.user!.id
-    });
+const questionsTags: QueryResolvers.QuestionsTagsResolver = async (
+  _,
+  __,
+  context
+) => {
+  return questionController.getAllTags();
+};
 
-    return res;
-  }
-);
+const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
+  _,
+  { userId, questionId },
+  context
+) => {
+  const dbQuestion = questionController.getQuestion({ questionId });
+  const dbAnswer = answerController.getAnswer({ userId, questionId });
+  const res = gqlMapper.getQuestion({
+    dbQuestion,
+    dbAnswer,
+    loggedUserId: context.user!.id
+  });
 
-const users: QueryResolvers.UsersResolver = isAuthenticatedResolver.createResolver(
-  async (_, args, context) => {
-    const dbUsers = await userController.getUsers(args.match, context);
-    const gqlUsers = gqlMapper.getUsers({
-      dbUsers,
-      loggedUserId: context.user!.id
-    });
+  return res;
+};
 
-    return gqlUsers;
-  }
-);
+const users: QueryResolvers.UsersResolver = async (_, args, context) => {
+  const dbUsers = await userController.getUsers(args);
+  const gqlUsers = gqlMapper.getUsers({
+    dbUsers,
+    loggedUserId: context.user!.id
+  });
 
-const user: QueryResolvers.UserResolver = isAuthenticatedResolver.createResolver(
-  async (_, args, context) => {
-    const dbUser = await userController.getUser(args);
-    return gqlMapper.getUser({ dbUser, loggedUserId: context.user!.id });
-  }
-);
+  return gqlUsers;
+};
+
+const user: QueryResolvers.UserResolver = async (_, args, context) => {
+  const dbUser = await userController.getUser(args);
+  const gqlUser = gqlMapper.getUser({
+    dbUser,
+    loggedUserId: context.user!.id
+  });
+  return gqlUser;
+};
 
 export default {
   books,

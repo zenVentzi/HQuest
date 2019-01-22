@@ -12,4 +12,4 @@ const isAdminResolver = isAuthenticatedResolver.createResolver(
   }
 );
 
-export { isAuthenticatedResolver, isAdminResolver };
+// export { isAuthenticatedResolver, isAdminResolver };

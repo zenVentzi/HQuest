@@ -1,20 +1,12 @@
-// import * as mongoose from "mongoose";
-import { Document, model, Model, Schema, Types as GooseTypes } from "mongoose";
-
-namespace Types {
-  export interface User extends Document {
-    firstName: string;
-    surName: string;
-    email: string;
-    password: string;
-    avatarSrc: GooseTypes.ObjectId;
-    followers: [GooseTypes.ObjectId];
-    following: [GooseTypes.ObjectId];
-    notifications: [];
-  }
-
-  export type UserModel = Model<User>;
-}
+import {
+  Document,
+  MongooseDocument,
+  model,
+  Model,
+  Schema,
+  Types as GooseTypes
+} from "mongoose";
+import * as DbTypes from "../dbTypes";
 
 const UserSchema = new Schema({
   firstName: { type: String, required: true },
@@ -27,6 +19,8 @@ const UserSchema = new Schema({
   notifications: []
 });
 
-const UserModel: Model<Types.User> = model<Types.User>("User", UserSchema);
+const UserModel = model<DbTypes.User>("User", UserSchema);
 
-export { UserModel, Types };
+type UserModel = Model<DbTypes.User>;
+
+export { UserModel };

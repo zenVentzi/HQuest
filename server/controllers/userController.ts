@@ -1,6 +1,7 @@
 import { UserQueryArgs, UsersQueryArgs, Maybe } from "../generated/gqltypes";
 import * as FnTypes from "./userControllerTypes";
-import { Types as ModelTypes } from "../models/user";
+import * as DbTypes from "../dbTypes";
+// import { Types as ModelTypes } from "../models/user";
 
 const { ObjectId } = require("mongoose").Types;
 const fs = require("fs");
@@ -143,7 +144,7 @@ const getUsersWithIds: FnTypes.GetUsersWithIds = User => async ({ ids }) => {
 const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
   const matchWords = match!.split(" ");
 
-  let matchedUsers: ModelTypes.User[];
+  let matchedUsers: DbTypes.User[];
   const numOfWords = matchWords.length;
 
   if (numOfWords > 2) {

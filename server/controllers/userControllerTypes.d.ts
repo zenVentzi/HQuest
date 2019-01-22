@@ -10,48 +10,52 @@ import {
   Maybe,
   UploadAvatarMutationArgs
 } from "../generated/gqltypes";
-import { Types } from "../models/user";
+import * as DbTypes from "../dbTypes";
+import { UserModel } from "../models/user";
 
 export type RegisterUser = (
-  User: Types.UserModel
-) => (args: LoginMutationArgs) => Promise<Types.User>;
+  User: UserModel
+) => (args: LoginMutationArgs) => Promise<DbTypes.User>;
 
 export type LoginUser = RegisterUser;
 
 export type FollowUserBase = (
-  User: Types.UserModel
+  User: UserModel
 ) => (args: FollowMutationArgs, follow: boolean, loggedUserId: string) => void;
 
 export type FollowUser = (
-  User: Types.UserModel
+  User: UserModel
 ) => (args: FollowMutationArgs, loggedUserId: string) => void;
 
 export type UnfollowUser = FollowUser;
 
 export type GetFollowers = (
-  User: Types.UserModel
-) => (args: FollowingQueryArgs) => Promise<Types.User>;
+  User: UserModel
+) => (args: FollowingQueryArgs) => Promise<DbTypes.User>;
 
 export type GetFollowing = (
-  User: Types.UserModel
-) => (args: FollowingQueryArgs) => Promise<Types.User>;
+  User: UserModel
+) => (args: FollowingQueryArgs) => Promise<DbTypes.User>;
 
 export type EditUser = (
-  User: Types.UserModel
-) => (args: EditUserMutationArgs, loggedUserId: string) => Promise<Types.User>;
+  User: UserModel
+) => (
+  args: EditUserMutationArgs,
+  loggedUserId: string
+) => Promise<DbTypes.User>;
 
 export type GetUsersWithIds = (
-  User: Types.UserModel
-) => ({ ids }: { ids: GooseTypes.ObjectId }) => Promise<Types.User[]>;
+  User: UserModel
+) => ({ ids }: { ids: GooseTypes.ObjectId[] }) => Promise<DbTypes.User[]>;
 
 export type GetUser = (
-  User: Types.UserModel
-) => (args: UserQueryArgs) => Promise<Types.User>;
+  User: UserModel
+) => (args: UserQueryArgs) => Promise<DbTypes.User>;
 
 export type GetUsers = (
-  User: Types.UserModel
-) => (args: UsersQueryArgs) => Promise<Types.User[]>;
+  User: UserModel
+) => (args: UsersQueryArgs) => Promise<DbTypes.User[]>;
 
 export type UploadAvatar = (
-  User: Types.UserModel
+  User: UserModel
 ) => (args: UploadAvatarMutationArgs, loggedUserId: string) => Promise<string>;

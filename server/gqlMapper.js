@@ -67,7 +67,7 @@ const getLikes = ({ dbLikes, loggedUserId }) => {
   const gqlLikes = { total: dbLikes.total, likers: [] };
   dbLikes.likers.forEach(dbLiker => {
     const gqlLiker = {
-      user: getUser({ user: dbLiker.user, loggedUserId }),
+      user: getUser({ dbUser: dbLiker.user, loggedUserId }),
       numOfLikes: dbLiker.numOfLikes,
     };
     gqlLikes.likers.push(gqlLiker);
@@ -109,7 +109,11 @@ const getQuestion = ({ dbQuestion, dbAnswer, loggedUserId }) => {
 
 const getQuestions = ({ dbQuestions, loggedUserId }) => {
   return dbQuestions.map(dbQuestion => {
-    return getQuestion({ dbQuestion, loggedUserId });
+    return getQuestion({
+      dbQuestion,
+      dbAnswer: dbQuestion.answer,
+      loggedUserId,
+    });
   });
 };
 
@@ -159,6 +163,41 @@ const getNewsfeed = ({
   return res;
 };
 
-const gqlMapper = { getUser, getUsers, getQuestion, getQuestions, getNewsfeed };
+const getNotification = notif => {
+  const res = {
+    id: notif._id.toString(),
+    type: notif.type,
+    performerId: notif.performerId,
+    performerAvatarSrc: notif.performerAvatarSrc,
+    text: notif.text,
+    seen: notif.seen,
+    createdOn: notif._id.getTimestamp(),
+  };
+
+  switch (notif.type) {
+    case 'NEW_COMMENT':
+      res.questionId = notif.questionId;
+      res.commentId = notif.commentId;
+      break;
+
+    default:
+      break;
+  }
+
+  return res;
+};
+
+const getNotifications = notifs => {
+  return notifs.map(getNotification);
+};
+
+const gqlMapper = {
+  getUser,
+  getUsers,
+  getQuestion,
+  getQuestions,
+  getNewsfeed,
+  getNotifications,
+};
 
 export { gqlMapper };

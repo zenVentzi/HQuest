@@ -84,7 +84,7 @@ const onEditAnswer = Newsfeed => async ({ answerId, performerId }) => {
   });
 };
 
-const getParticipantsIds = async ({ newsfeed }) => {
+const getParticipantsIds = ({ newsfeed }) => {
   const participantsIds = [];
   const isAdded = id => participantsIds.includes(id);
 

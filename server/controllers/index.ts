@@ -16,9 +16,9 @@ const { NewsfeedModel } = require("../models/newsfeed");
 
 const userController = userC(UserModel);
 const questionController = questionC(QuestionModel);
-const answerController = answerC(AnswerModel);
+const answerController = answerC(AnswerModel, UserModel);
 const commentController = commentC(AnswerModel);
-const notificationController = notificationC(UserModel);
+const notificationController = notificationC(UserModel, AnswerModel);
 const newsfeedController = newsfeedC(NewsfeedModel);
 
 // injecting the Models from here in case I want to do testing later
