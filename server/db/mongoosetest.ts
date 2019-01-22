@@ -1,7 +1,7 @@
 require("dotenv").config();
 import mongoose from "mongoose";
 
-import { UserModel, Types } from "../models/user";
+import { UserModel } from "../models/user";
 
 const mLabURI = `mongodb://zenVentzi:${
   process.env.MLAB_PASS
@@ -33,7 +33,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async () => {
   console.log(`open`);
   // const user = await UserModel.findById("");
-  const user = await UserModel.findById("5c08b7766f91b01640e54921").catch();
+  const user = await UserModel.findById("5c08b7766f91b01640e54921");
 
   if (user) {
     user.firstName = "Test1";

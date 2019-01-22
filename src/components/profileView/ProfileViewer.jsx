@@ -34,7 +34,8 @@ class ProfileViewer extends Component {
   render() {
     const { user } = this.props;
     const { showFollowers, showFollowing } = this.state;
-    const isFollowed = user.followers.includes(getLoggedUserId());
+    const isFollowed =
+      user.followers && user.followers.includes(getLoggedUserId());
     const theme = {
       avatarSize: '150px',
     };

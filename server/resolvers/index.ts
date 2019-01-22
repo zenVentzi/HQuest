@@ -11,6 +11,6 @@ export const resolvers: any = {
   ...interfaces,
   ...scalars,
   Query,
-  // Mutation,
+  Mutation,
   Subscription
 };

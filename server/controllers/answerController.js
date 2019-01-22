@@ -1,10 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 
-const getComentators = async ({ answers, context }) => {
-  const {
-    models: { User },
-  } = context;
-
+const getComentators = User => async ({ answers }) => {
   const commentatorsIds = answers.reduce((userIdsFromAllAnswers, answer) => {
     const { comments: answerComments } = answer;
 
@@ -50,8 +46,8 @@ const swapUserIdForUserObj = ({ commentators, answers }) => {
   return res;
 };
 
-const normalizeComments = async ({ answers, context }) => {
-  const commentators = await getComentators({ answers, context });
+const normalizeComments = User => async ({ answers, context }) => {
+  const commentators = await getComentators(User)({ answers, context });
 
   const answersWithNormalizedComments = swapUserIdForUserObj({
     commentators,
@@ -61,7 +57,7 @@ const normalizeComments = async ({ answers, context }) => {
   return answersWithNormalizedComments;
 };
 
-const getUserAnswers = Answer => async ({ userId }, context) => {
+const getUserAnswers = (Answer, User) => async ({ userId }, context) => {
   const userAnswers = await Answer.find({
     userId: ObjectId(userId),
     $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }],
@@ -69,7 +65,7 @@ const getUserAnswers = Answer => async ({ userId }, context) => {
     .sort({ position: 1 })
     .lean();
 
-  const res = await normalizeComments({ answers: userAnswers, context });
+  const res = await normalizeComments(User)({ answers: userAnswers, context });
 
   return res;
 };
@@ -255,7 +251,7 @@ const movePosition = Answer => async ({ answerId, position }, context) => {
   return position;
 };
 
-export default Answer => {
+export default (Answer, User) => {
   return {
     add: add(Answer),
     edit: edit(Answer),
@@ -265,6 +261,6 @@ export default Answer => {
     getUserAnswer: getUserAnswer(Answer),
     getAnswerById: getAnswerById(Answer),
     getAnswersById: getAnswersById(Answer),
-    getUserAnswers: getUserAnswers(Answer),
+    getUserAnswers: getUserAnswers(Answer, User),
   };
 };
