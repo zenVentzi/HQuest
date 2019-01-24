@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "genSchema": "node introspect.js",
-    "test": "node_modules/.bin/tape test/*.js",
-    "start": "node server/server.js",
+    "test": "jest",
     "typegen": "gql-gen --config codegen.yml"
   },
   "author": "",
@@ -70,6 +69,7 @@
   "devDependencies": {
     "@types/dotenv": "^6.1.0",
     "@types/express": "^4.16.0",
+    "@types/jest": "^23.3.13",
     "@types/jsonwebtoken": "^8.3.0",
     "@types/mongoose": "^5.3.8",
     "@types/node": "^10.12.18",
@@ -100,6 +100,8 @@
     "graphql-codegen-typescript-resolvers": "0.15.2",
     "graphql-codegen-typescript-server": "0.15.2",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^23.6.0",
+    "jest-config": "^23.6.0",
     "prop-types": "^15.6.2",
     "regenerator-runtime": "^0.12.1",
     "style-loader": "^0.21.0",
@@ -108,7 +110,10 @@
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.3.1",
     "tape": "^4.9.1",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.0.1",
     "tslint": "^5.12.0",
+    "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.2",
     "webpack": "^4.15.1",
     "webpack-bundle-analyzer": "^2.13.1",

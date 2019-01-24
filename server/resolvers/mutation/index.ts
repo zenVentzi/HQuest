@@ -1,19 +1,19 @@
-import {
-  userController,
-  questionController,
-  answerController,
-  notificationController,
-  newsfeedController,
-  commentController
-} from "../../controllers";
 import jsonwebtoken from "jsonwebtoken";
+import {
+  answerController,
+  commentController,
+  newsfeedController,
+  notificationController,
+  questionController,
+  userController
+} from "../../controllers";
 
 // const jsonwebtoken = require("jsonwebtoken");
 // const { createError } = require("apollo-errors");
 import { gqlMapper } from "../../gqlMapper";
 
+import { Maybe, MutationResolvers } from "../../generated/gqltypes";
 import { mapGqlAnswer, mapGqlComment } from "../../resolvers/helper";
-import { MutationResolvers, Maybe } from "../../generated/gqltypes";
 
 // *book is for testing purposes
 const addBook = async (root, args, context) => {};

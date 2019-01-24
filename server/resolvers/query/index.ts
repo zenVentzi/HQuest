@@ -1,17 +1,18 @@
-import { QueryResolvers, Maybe } from "../../generated/gqltypes";
-import {
-  userController,
-  commentController,
-  questionController,
-  answerController,
-  notificationController,
-  newsfeedController
-} from "../../controllers";
-import { gqlMapper } from "../../gqlMapper";
 import { Types } from "mongoose";
+import {
+  answerController,
+  commentController,
+  newsfeedController,
+  notificationController,
+  questionController,
+  userController
+} from "../../controllers";
+import { Maybe, QueryResolvers } from "../../generated/gqltypes";
+import { gqlMapper } from "../../gqlMapper";
+import { authMiddleware } from "../middlewares";
 const { ObjectId } = Types;
 
-//books is for testing
+// books is for testing
 const books = async (root, __, context) => {
   return null;
 };
@@ -21,6 +22,8 @@ const notifications: QueryResolvers.NotificationsResolver = async (
   __,
   context
 ) => {
+  authMiddleware(context);
+
   const dbNotifications = await notificationController.getNotifications({
     loggedUserId: context.user!.id
   });
@@ -30,6 +33,8 @@ const notifications: QueryResolvers.NotificationsResolver = async (
 };
 
 const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
+  authMiddleware(context);
+
   const loggedUser = await userController.getUser({
     id: context.user!.id
   });
@@ -80,19 +85,29 @@ const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
 const followers: QueryResolvers.FollowersResolver = async (
   _,
   { userId },
-  { user }
+  context
 ) => {
+  authMiddleware(context);
+
   const dbFollowers = await userController.getFollowers({ userId });
-  return gqlMapper.getUsers({ dbUsers: dbFollowers, loggedUserId: user!.id });
+  return gqlMapper.getUsers({
+    dbUsers: dbFollowers,
+    loggedUserId: context.user!.id
+  });
 };
 
 const following: QueryResolvers.FollowingResolver = async (
   _,
   { userId },
-  { user }
+  context
 ) => {
+  authMiddleware(context);
+
   const dbFollowing = await userController.getFollowing({ userId });
-  return gqlMapper.getUsers({ dbUsers: dbFollowing, loggedUserId: user!.id });
+  return gqlMapper.getUsers({
+    dbUsers: dbFollowing,
+    loggedUserId: context.user!.id
+  });
 };
 
 const getAllEdges = nodes => {
@@ -148,15 +163,9 @@ const getPageInfo = (allEdges, currentPageEdges) => {
   };
 };
 
-interface RelayConnection {
-  (
-    {
-      nodes,
-      first,
-      after
-    }: { nodes: any; first: number; after?: Maybe<string> }
-  ): any;
-}
+type RelayConnection = (
+  { nodes, first, after }: { nodes: any; first: number; after?: Maybe<string> }
+) => any;
 
 // todo extract in utils/helper
 const relayConnection: RelayConnection = ({ nodes, first, after }) => {
@@ -177,6 +186,8 @@ const questions: QueryResolvers.QuestionsResolver = async (
   args,
   context
 ) => {
+  authMiddleware(context);
+
   const dbAnswers = await answerController.getUserAnswers(
     { userId: args.userId },
     context
@@ -201,6 +212,8 @@ const questionsTags: QueryResolvers.QuestionsTagsResolver = async (
   __,
   context
 ) => {
+  authMiddleware(context);
+
   return questionController.getAllTags();
 };
 
@@ -209,6 +222,8 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
   { userId, questionId },
   context
 ) => {
+  authMiddleware(context);
+
   const dbQuestion = questionController.getQuestion({ questionId });
   const dbAnswer = answerController.getAnswer({ userId, questionId });
   const res = gqlMapper.getQuestion({
@@ -221,6 +236,8 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
 };
 
 const users: QueryResolvers.UsersResolver = async (_, args, context) => {
+  authMiddleware(context);
+
   const dbUsers = await userController.getUsers(args);
   const gqlUsers = gqlMapper.getUsers({
     dbUsers,
@@ -231,6 +248,8 @@ const users: QueryResolvers.UsersResolver = async (_, args, context) => {
 };
 
 const user: QueryResolvers.UserResolver = async (_, args, context) => {
+  authMiddleware(context);
+
   const dbUser = await userController.getUser(args);
   const gqlUser = gqlMapper.getUser({
     dbUser,
