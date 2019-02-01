@@ -15,7 +15,7 @@ import { UserModel } from "../models/user";
 
 export type RegisterUser = (
   User: UserModel
-) => (args: LoginMutationArgs) => Promise<DbTypes.User>;
+) => (args: LoginMutationArgs) => Promise<DbTypes.UserDoc>;
 
 export type LoginUser = RegisterUser;
 
@@ -31,30 +31,30 @@ export type UnfollowUser = FollowUser;
 
 export type GetFollowers = (
   User: UserModel
-) => (args: FollowingQueryArgs) => Promise<DbTypes.User>;
+) => (args: FollowingQueryArgs) => Promise<DbTypes.UserDoc>;
 
 export type GetFollowing = (
   User: UserModel
-) => (args: FollowingQueryArgs) => Promise<DbTypes.User>;
+) => (args: FollowingQueryArgs) => Promise<DbTypes.UserDoc>;
 
 export type EditUser = (
   User: UserModel
 ) => (
   args: EditUserMutationArgs,
   loggedUserId: string
-) => Promise<DbTypes.User>;
+) => Promise<DbTypes.UserDoc>;
 
 export type GetUsersWithIds = (
   User: UserModel
-) => ({ ids }: { ids: GooseTypes.ObjectId[] }) => Promise<DbTypes.User[]>;
+) => ({ ids }: { ids: GooseTypes.ObjectId[] }) => Promise<DbTypes.UserDoc[]>;
 
 export type GetUser = (
   User: UserModel
-) => (args: UserQueryArgs) => Promise<DbTypes.User>;
+) => (args: UserQueryArgs) => Promise<DbTypes.UserDoc>;
 
 export type GetUsers = (
   User: UserModel
-) => (args: UsersQueryArgs) => Promise<DbTypes.User[]>;
+) => (args: UsersQueryArgs) => Promise<DbTypes.UserDoc[]>;
 
 export type UploadAvatar = (
   User: UserModel

@@ -13,6 +13,17 @@
         }
       },
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "server\\tsconfig.json",
+      "option": "watch",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      },
+      "problemMatcher": ["$tsc-watch"]
     }
   ]
 }
