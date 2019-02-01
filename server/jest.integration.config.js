@@ -9,11 +9,20 @@
 // "test": "ts-node node_modules/jest/bin/jest",
 
 module.exports = {
-  roots: ['<rootDir>/server'],
-  // testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testEnvironment: 'node',
+  // roots: ['<rootDir>/server'],
+  globals: {
+    'ts-jest': {
+      tsConfig: 'server/tsconfig.json',
+    },
+  },
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.jsx?$': 'babel-jest',
+    // '^.+\\.tsx?$': 'ts-jest',
   },
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+  testRegex: '((\\.|/)(int.test|int.spec))\\.(jsx?|tsx?)$',
+  // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  setupTestFrameworkScriptFile: './jestSetup.ts',
 };

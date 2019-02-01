@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { parse } from 'qs';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
 import { GET_USERS } from 'Queries';

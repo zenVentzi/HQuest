@@ -1,18 +1,14 @@
-// const userController = require('./userController');
-import userC from "./userController";
-import questionC from "./questionController";
-import answerC from "./answerController";
-import commentC from "./commentController";
-import notificationC from "./notificationController";
-import newsfeedC from "./newsfeedController";
+import { AnswerModel } from "../models/answer";
+import { NewsfeedModel } from "../models/newsfeed";
+import { QuestionModel } from "../models/question";
 import { UserModel } from "../models/user";
 
-// const { UserModel } = require('../models/user');
-const { QuestionModel } = require("../models/question");
-const { AnswerModel } = require("../models/answer");
-// const { CommentModel } = require('../models/comment'); // comments are in the Answer model
-// const { NotificationModel } = require('../models/notification'); // notifications are in the User model
-const { NewsfeedModel } = require("../models/newsfeed");
+import answerC from "./answerController";
+import commentC from "./commentController";
+import newsfeedC from "./newsfeedController";
+import notificationC from "./notificationController";
+import questionC from "./questionController";
+import userC from "./userController";
 
 const userController = userC(UserModel);
 const questionController = questionC(QuestionModel);

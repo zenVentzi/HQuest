@@ -11,16 +11,17 @@ export interface Notification {
   seen: boolean;
 }
 
-export interface User extends Document {
+export interface User {
   firstName: string;
   surName: string;
   email: string;
-  password: string;
   avatarSrc: string;
-  followers: GooseTypes.ObjectId[];
-  following: GooseTypes.ObjectId[];
-  notifications: Notification[];
+  followers?: GooseTypes.ObjectId[];
+  following?: GooseTypes.ObjectId[];
+  notifications?: Notification[];
 }
+
+export interface UserDoc extends User, Document {}
 
 export interface Comment extends Document {
   value: string;
@@ -28,7 +29,7 @@ export interface Comment extends Document {
 }
 
 export interface Liker extends Document {
-  user: User; //this has to change only to userId
+  user: UserDoc; //this has to change only to userId
   numOfLikes: number;
 }
 

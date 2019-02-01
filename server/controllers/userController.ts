@@ -144,7 +144,7 @@ const getUsersWithIds: FnTypes.GetUsersWithIds = User => async ({ ids }) => {
 const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
   const matchWords = match!.split(" ");
 
-  let matchedUsers: DbTypes.User[];
+  let matchedUsers: DbTypes.UserDoc[];
   const numOfWords = matchWords.length;
 
   if (numOfWords > 2) {

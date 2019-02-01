@@ -19,8 +19,8 @@ const UserSchema = new Schema({
   notifications: []
 });
 
-const UserModel = model<DbTypes.User>("User", UserSchema);
+const UserModel = model<DbTypes.UserDoc>("User", UserSchema);
 
-type UserModel = Model<DbTypes.User>;
+type UserModel = Model<DbTypes.UserDoc>;
 
 export { UserModel };
