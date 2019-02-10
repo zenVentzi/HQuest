@@ -31,11 +31,11 @@ export type UnfollowUser = FollowUser;
 
 export type GetFollowers = (
   User: UserModel
-) => (args: FollowingQueryArgs) => Promise<DbTypes.UserDoc>;
+) => (args: FollowingQueryArgs) => Promise<DbTypes.User[] | null>;
 
 export type GetFollowing = (
   User: UserModel
-) => (args: FollowingQueryArgs) => Promise<DbTypes.UserDoc>;
+) => (args: FollowingQueryArgs) => Promise<DbTypes.User[] | null>;
 
 export type EditUser = (
   User: UserModel
@@ -54,7 +54,7 @@ export type GetUser = (
 
 export type GetUsers = (
   User: UserModel
-) => (args: UsersQueryArgs) => Promise<DbTypes.UserDoc[]>;
+) => (args: UsersQueryArgs) => Promise<DbTypes.User[]>;
 
 export type UploadAvatar = (
   User: UserModel

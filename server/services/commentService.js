@@ -12,14 +12,15 @@ const addCommentToAnswer = async ({ comment, answerId }, context) => {
     answerId,
     {
       $push: {
-        comments: { _id: ObjectId(), value: comment, userId: performer._id },
+        comments: { _id: ObjectId(), value: comment, user: performer._id },
       },
     },
     { new: true, fields: 'comments -_id' }
-  ).lean();
+  )
+    .populate('user')
+    .lean();
 
   const addedComment = comments[comments.length - 1];
-  addedComment.user = await User.findById(user.id).lean();
   return addedComment;
 };
 
@@ -29,7 +30,9 @@ async function editComment({ answerId, commentId, commentValue, context }) {
     user,
   } = context;
 
-  const { comments: oldComments } = await Answer.findById(answerId).lean();
+  const { comments: oldComments } = await Answer.findById(answerId)
+    .populate('user')
+    .lean();
   const newComments = [];
   let editedComment;
 
@@ -46,24 +49,23 @@ async function editComment({ answerId, commentId, commentValue, context }) {
 
   await Answer.findByIdAndUpdate(answerId, { $set: { comments: newComments } });
 
-  editedComment.user = await User.findById(user.id).lean();
   return editedComment;
 }
 
 async function removeComment({ answerId, commentId, context }) {
   const {
     models: { Answer, User },
-    user,
   } = context;
 
   const { comments } = await Answer.findByIdAndUpdate(answerId, {
     $pull: {
       comments: { _id: ObjectId(commentId) },
     },
-  }).lean();
+  })
+    .populate('user')
+    .lean();
 
   const removedComment = comments.find(com => com._id.toString() === commentId);
-  removedComment.user = await User.findById(user.id).lean();
   return removedComment;
 }
 

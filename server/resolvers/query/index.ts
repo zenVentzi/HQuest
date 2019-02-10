@@ -1,14 +1,14 @@
 import { Types } from "mongoose";
-import {
-  answerController,
-  commentController,
-  newsfeedController,
-  notificationController,
-  questionController,
-  userController
-} from "../../controllers";
 import { Maybe, QueryResolvers } from "../../generated/gqltypes";
 import { gqlMapper } from "../../gqlMapper";
+import {
+  answerService,
+  commentService,
+  newsfeedService,
+  notificationService,
+  questionService,
+  userService
+} from "../../services";
 import { authMiddleware } from "../middlewares";
 const { ObjectId } = Types;
 
@@ -24,7 +24,7 @@ const notifications: QueryResolvers.NotificationsResolver = async (
 ) => {
   authMiddleware(context);
 
-  const dbNotifications = await notificationController.getNotifications({
+  const dbNotifications = await notificationService.getNotifications({
     loggedUserId: context.user!.id
   });
 
@@ -35,18 +35,18 @@ const notifications: QueryResolvers.NotificationsResolver = async (
 const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
   authMiddleware(context);
 
-  const loggedUser = await userController.getUser({
+  const loggedUser = await userService.getUser({
     id: context.user!.id
   });
   const followingUsersIds = loggedUser.following;
-  const newsfeedd = await newsfeedController.getUsersActivity({
+  const newsfeedd = await newsfeedService.getUsersActivity({
     usersIds: followingUsersIds
   });
-  const participantsIds = newsfeedController.getParticipantsIds({
+  const participantsIds = newsfeedService.getParticipantsIds({
     newsfeed: newsfeedd
   });
 
-  const newsFeedUsers = await userController.getUsersWithIds({
+  const newsFeedUsers = await userService.getUsersWithIds({
     ids: participantsIds
   });
 
@@ -60,14 +60,14 @@ const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
     }
   });
 
-  const newsfeedAnswers = await answerController.getAnswersById({
+  const newsfeedAnswers = await answerService.getAnswersById({
     // @ts-ignore
     ids: newsfeedAnswersIds
   });
 
   const newsfeedQuestionsIds = newsfeedAnswers.map(a => a.questionId);
 
-  const newsfeedQuestions = await questionController.getQuestionsById({
+  const newsfeedQuestions = await questionService.getQuestionsById({
     ids: newsfeedQuestionsIds
   });
 
@@ -89,7 +89,7 @@ const followers: QueryResolvers.FollowersResolver = async (
 ) => {
   authMiddleware(context);
 
-  const dbFollowers = await userController.getFollowers({ userId });
+  const dbFollowers = await userService.getFollowers({ userId });
   return gqlMapper.getUsers({
     dbUsers: dbFollowers,
     loggedUserId: context.user!.id
@@ -103,7 +103,7 @@ const following: QueryResolvers.FollowingResolver = async (
 ) => {
   authMiddleware(context);
 
-  const dbFollowing = await userController.getFollowing({ userId });
+  const dbFollowing = await userService.getFollowing({ userId });
   return gqlMapper.getUsers({
     dbUsers: dbFollowing,
     loggedUserId: context.user!.id
@@ -163,9 +163,15 @@ const getPageInfo = (allEdges, currentPageEdges) => {
   };
 };
 
-type RelayConnection = (
-  { nodes, first, after }: { nodes: any; first: number; after?: Maybe<string> }
-) => any;
+type RelayConnection = ({
+  nodes,
+  first,
+  after
+}: {
+  nodes: any;
+  first: number;
+  after?: Maybe<string>;
+}) => any;
 
 // todo extract in utils/helper
 const relayConnection: RelayConnection = ({ nodes, first, after }) => {
@@ -188,12 +194,12 @@ const questions: QueryResolvers.QuestionsResolver = async (
 ) => {
   authMiddleware(context);
 
-  const dbAnswers = await answerController.getUserAnswers(
+  const dbAnswers = await answerService.getUserAnswers(
     { userId: args.userId },
     context
   );
 
-  const dbQuestions = await questionController.getUserQuestions({
+  const dbQuestions = await questionService.getUserQuestions({
     ...args,
     answers: dbAnswers,
     loggedUserId: context.user!.id
@@ -214,7 +220,7 @@ const questionsTags: QueryResolvers.QuestionsTagsResolver = async (
 ) => {
   authMiddleware(context);
 
-  return questionController.getAllTags();
+  return questionService.getAllTags();
 };
 
 const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
@@ -224,8 +230,8 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
 ) => {
   authMiddleware(context);
 
-  const dbQuestion = questionController.getQuestion({ questionId });
-  const dbAnswer = answerController.getAnswer({ userId, questionId });
+  const dbQuestion = await questionService.getQuestion({ questionId });
+  const dbAnswer = await answerService.getAnswer({ userId, questionId });
   const res = gqlMapper.getQuestion({
     dbQuestion,
     dbAnswer,
@@ -238,11 +244,15 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
 const users: QueryResolvers.UsersResolver = async (_, args, context) => {
   authMiddleware(context);
 
-  const dbUsers = await userController.getUsers(args);
+  const dbUsers = await userService.getUsers(args);
   const gqlUsers = gqlMapper.getUsers({
     dbUsers,
     loggedUserId: context.user!.id
   });
+
+  if (!gqlUsers) {
+    throw new Error("Failed to fetch users");
+  }
 
   return gqlUsers;
 };
@@ -250,7 +260,7 @@ const users: QueryResolvers.UsersResolver = async (_, args, context) => {
 const user: QueryResolvers.UserResolver = async (_, args, context) => {
   authMiddleware(context);
 
-  const dbUser = await userController.getUser(args);
+  const dbUser = await userService.getUser(args);
   const gqlUser = gqlMapper.getUser({
     dbUser,
     loggedUserId: context.user!.id

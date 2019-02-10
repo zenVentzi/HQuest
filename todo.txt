@@ -14,3 +14,4 @@ react-router-page-transition
 react-reveal
 react-floater
 popperjs
+draftJS

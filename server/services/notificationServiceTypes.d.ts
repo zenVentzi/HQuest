@@ -10,29 +10,37 @@ import { AnswerModel } from "../models/answer";
 
 export type Notify = (
   User: UserModel
-) => (
-  {
-    receiverId,
-    notif,
-    loggedUserId
-  }: { receiverId: string; notif: DbTypes.Notification; loggedUserId: string }
-) => void;
+) => ({
+  receiverId,
+  notif,
+  loggedUserId
+}: {
+  receiverId: string;
+  notif: DbTypes.Notification;
+  loggedUserId: string;
+}) => void;
 export type NewComment = (
   User: UserModel,
   Answer: AnswerModel
-) => (
-  {
-    answerId,
-    dbComment,
-    loggedUserId
-  }: { answerId: string; dbComment: DbTypes.Comment; loggedUserId: string }
-) => void;
+) => ({
+  answerId,
+  dbComment,
+  loggedUserId
+}: {
+  answerId: string;
+  dbComment: DbTypes.CommentDoc;
+  loggedUserId: string;
+}) => void;
 
 export type NewFollower = (
   User: UserModel
-) => (
-  { receiverId, loggedUserId }: { receiverId: string; loggedUserId: string }
-) => void;
+) => ({
+  receiverId,
+  loggedUserId
+}: {
+  receiverId: string;
+  loggedUserId: string;
+}) => void;
 
 export type MarkSeen = (
   User: UserModel
@@ -40,6 +48,8 @@ export type MarkSeen = (
 
 export type GetNotifications = (
   User: UserModel
-) => (
-  { loggedUserId }: { loggedUserId: string }
-) => Promise<Maybe<(Maybe<DbTypes.Notification>)[]>>;
+) => ({
+  loggedUserId
+}: {
+  loggedUserId: string;
+}) => Promise<DbTypes.Notification[] | null>;
