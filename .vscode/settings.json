@@ -8,5 +8,6 @@
   },
   "javascript.validate.enable": false,
   "eslint.autoFixOnSave": true,
-  "eslint.alwaysShowStatus": true
+  "eslint.alwaysShowStatus": true,
+  "prettier.printWidth": 80
 }

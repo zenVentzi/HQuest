@@ -1,73 +1,14 @@
 const { ObjectId } = require('mongoose').Types;
 
-const getComentators = User => async ({ answers }) => {
-  const commentatorsIds = answers.reduce((userIdsFromAllAnswers, answer) => {
-    const { comments: answerComments } = answer;
-
-    if (answerComments) {
-      answerComments.forEach(com => {
-        if (!userIdsFromAllAnswers.includes(com.userId.toString())) {
-          userIdsFromAllAnswers.push(com.userId.toString());
-        }
-      });
-    }
-
-    return userIdsFromAllAnswers;
-  }, []);
-
-  const commentatorsObjs = await User.find({
-    _id: { $in: commentatorsIds },
-  }).lean();
-
-  return commentatorsObjs;
-};
-
-const swapUserIdForUserObj = ({ commentators, answers }) => {
-  const res = answers.map(answ => {
-    if (!answ.comments) {
-      return answ;
-    }
-
-    const answerWithUpdatedComments = { ...answ };
-    delete answerWithUpdatedComments.comments;
-
-    answerWithUpdatedComments.comments = answ.comments.map(comment => {
-      const commentWithUserObj = { ...comment };
-      delete commentWithUserObj.userId;
-      commentWithUserObj.user = commentators.find(comObj =>
-        comObj._id.equals(comment.userId)
-      );
-      return commentWithUserObj;
-    });
-
-    return answerWithUpdatedComments;
-  });
-
-  return res;
-};
-
-const normalizeComments = User => async ({ answers, context }) => {
-  const commentators = await getComentators(User)({ answers, context });
-
-  const answersWithNormalizedComments = swapUserIdForUserObj({
-    commentators,
-    answers,
-  });
-
-  return answersWithNormalizedComments;
-};
-
 const getUserAnswers = (Answer, User) => async ({ userId }, context) => {
   const userAnswers = await Answer.find({
     userId: ObjectId(userId),
     $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }],
   })
-    .sort({ position: 1 })
-    .lean();
+    .populate('comments.user')
+    .sort({ position: 1 });
 
-  const res = await normalizeComments(User)({ answers: userAnswers, context });
-
-  return res;
+  return userAnswers;
 };
 
 const getUserAnswer = Answer => async ({ userId, questionId, context }) => {
@@ -78,23 +19,22 @@ const getUserAnswer = Answer => async ({ userId, questionId, context }) => {
   const answer = await Answer.findOne({
     userId: userIdObj,
     questionId: questionIdObj,
-  }).lean();
+  }).populate('comments.user');
 
-  const [res] = await normalizeComments({ answers: [answer], context });
-
-  return res;
+  return answer;
 };
 
 const getAnswerById = Answer => async ({ answerId, context }) => {
-  const answer = await Answer.findById(answerId).lean();
-  const [res] = await normalizeComments({ answers: [answer], context });
-  return res;
+  const answer = await Answer.findById(answerId).populate('comments.user');
+  return answer;
 };
 
 const getAnswersById = Answer => async ({ answerIds, context }) => {
-  const answers = await Answer.find({ _id: { $in: answerIds } }).lean();
-  const res = await normalizeComments({ answers, context });
-  return res;
+  const answers = await Answer.find({ _id: { $in: answerIds } }).populate(
+    'comments.user'
+  );
+
+  return answers;
 };
 
 const createEdition = Answer => async ({ answerId, answerValue }, context) => {
@@ -121,14 +61,9 @@ const edit = Answer => async ({ answerId, answerValue }, context) => {
       $push: { editions: edition },
     },
     { new: true, upsert: true }
-  ).lean();
+  ).populate('comments.user');
 
-  const [res] = await normalizeComments({
-    answers: [updatedAnswer],
-    context,
-  });
-
-  return res;
+  return updatedAnswer;
 };
 
 const add = Answer => async ({ questionId, answerValue }, context) => {
@@ -161,12 +96,7 @@ const add = Answer => async ({ questionId, answerValue }, context) => {
     addedAnswer = (await Answer.create(newAnswer)).toObject();
   }
 
-  const [res] = await normalizeComments({
-    answers: [addedAnswer],
-    context,
-  });
-
-  return res;
+  return addedAnswer;
 };
 
 const remove = Answer => async ({ answerId }, context) => {
@@ -176,19 +106,14 @@ const remove = Answer => async ({ answerId }, context) => {
       $set: { isRemoved: true },
     },
     { new: true, upsert: true }
-  ).lean();
+  ).populate('comments.user');
 
   await Answer.updateMany(
     { position: { gt: removedAnswer.position } },
     { $inc: { position: -1 } }
   );
 
-  const [res] = await normalizeComments({
-    answers: [removedAnswer],
-    context,
-  });
-
-  return res;
+  return removedAnswer;
 };
 
 const like = Answer => async (
@@ -227,14 +152,9 @@ const like = Answer => async (
       $set: { likes: updatedLikes },
     },
     { new: true, upsert: true }
-  ).lean();
+  ).populate('comments.user');
 
-  const [res] = await normalizeComments({
-    answers: [likedAnswer],
-    context,
-  });
-
-  return res;
+  return likedAnswer;
 };
 
 const movePosition = Answer => async ({ answerId, position }, context) => {

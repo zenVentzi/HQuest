@@ -1,25 +1,24 @@
 import jsonwebtoken from "jsonwebtoken";
 import {
-  answerController,
-  commentController,
-  newsfeedController,
-  notificationController,
-  questionController,
-  userController
-} from "../../controllers";
+  answerService,
+  commentService,
+  newsfeedService,
+  notificationService,
+  questionService,
+  userService
+} from "../../services";
 
 // const jsonwebtoken = require("jsonwebtoken");
 // const { createError } = require("apollo-errors");
 import { gqlMapper } from "../../gqlMapper";
 
 import { Maybe, MutationResolvers } from "../../generated/gqltypes";
-import { mapGqlAnswer, mapGqlComment } from "../../resolvers/helper";
 
 // *book is for testing purposes
 const addBook = async (root, args, context) => {};
 
 const login: MutationResolvers.LoginResolver = async (_, args, context) => {
-  const dbUser = await userController.login(args);
+  const dbUser = await userService.login(args);
 
   const authToken = jsonwebtoken.sign(
     { id: dbUser._id.toString(), email: dbUser.email },
@@ -41,7 +40,7 @@ const editUser: MutationResolvers.EditUserResolver = async (
   args,
   context
 ) => {
-  const editedUser = await userController.editUser(args, context.user!.id);
+  const editedUser = await userService.editUser(args, context.user!.id);
   const gqlUser = gqlMapper.getUser({
     dbUser: editedUser,
     loggedUserId: context.user!.id
@@ -54,22 +53,22 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
   { answerId, comment },
   context
 ) => {
-  const dbComment = await commentController.addCommentToAnswer({
+  const dbComment = await commentService.addCommentToAnswer({
     answerId,
     comment
   });
 
-  await newsfeedController.onNewComment({
+  await newsfeedService.onNewComment({
     answerId,
     commentId: dbComment._id.toString()
   });
-  await notificationController.newComment({
+  await notificationService.newComment({
     answerId,
     dbComment,
     loggedUserId: context.user!.id
   });
 
-  return mapGqlComment({
+  return gqlMapper.getComment({
     dbComment,
     loggedUserId: context.user!.id
   });
@@ -80,9 +79,9 @@ const editComment: MutationResolvers.EditCommentResolver = async (
   args,
   context
 ) => {
-  const dbComment = await commentController.editComment({ ...args, context });
+  const dbComment = await commentService.editComment({ ...args, context });
 
-  return mapGqlComment({
+  return gqlMapper.getComment({
     dbComment,
     loggedUserId: context.user!.id
   });
@@ -93,12 +92,12 @@ const removeComment: MutationResolvers.RemoveCommentResolver = async (
   args,
   context
 ) => {
-  const dbComment = await commentController.removeComment({
+  const dbComment = await commentService.removeComment({
     ...args,
     context
   });
 
-  return mapGqlComment({
+  return gqlMapper.getComment({
     dbComment,
     loggedUserId: context.user!.id
   });
@@ -109,70 +108,70 @@ const addQuestions: MutationResolvers.AddQuestionsResolver = async (
   { questions },
   context
 ) => {
-  return questionController.addQuestions({ questions }) as any;
+  return questionService.addQuestions({ questions }) as any;
 };
 
 const questionNotApply = async (_, args, context) => {
-  return questionController.markNotApply(args);
+  return questionService.markNotApply(args);
 };
 
 const editAnswer = async (_, args, context) => {
-  const answer = await answerController.edit(args, context);
+  const dbAnswer = await answerService.edit(args, context);
 
-  await newsfeedController.onEditAnswer({
-    answer,
+  await newsfeedService.onEditAnswer({
+    answer: dbAnswer,
     context
   });
 
-  return mapGqlAnswer({ answer, loggedUserId: context.user.id });
+  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 
 const addAnswer = async (_, args, context) => {
-  const answer = await answerController.add(args, context);
+  const dbAnswer = await answerService.add(args, context);
 
-  await newsfeedController.onNewAnswer({
-    answer,
+  await newsfeedService.onNewAnswer({
+    answer: dbAnswer,
     context
   });
 
-  return mapGqlAnswer({ answer, loggedUserId: context.user.id });
+  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 
 const removeAnswer = async (_, args, context) => {
-  const removedAnswer = await answerController.remove(args, context);
+  const dbAnswer = await answerService.remove(args, context);
 
-  return mapGqlAnswer({ answer: removedAnswer, loggedUserId: context.user.id });
+  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 const likeAnswer = async (_, args, context) => {
-  const dbUserLiker = await userController.getUser(args);
-  const likedAnswer = await answerController.like({ ...args, dbUserLiker });
-  await newsfeedController.onLikeAnswer({
-    answerId: likedAnswer._id.toString(),
+  const dbUserLiker = await userService.getUser(args);
+  const dbAnswer = await answerService.like({ ...args, dbUserLiker });
+  await newsfeedService.onLikeAnswer({
+    answerId: dbAnswer._id.toString(),
     context
   });
-  return mapGqlAnswer({ answer: likedAnswer, loggedUserId: context.user.id });
+  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 const moveAnswerPosition = async (_, args, context) => {
-  return answerController.movePosition(args, context);
+  return answerService.movePosition(args, context);
 };
 
 const uploadAvatar = async (_, { base64Img }, context) => {
-  const avatarSrc = await userController.uploadAvatar(base64Img, context);
+  const avatarSrc = await userService.uploadAvatar(base64Img, context);
   return avatarSrc;
 };
 
 const follow = async (_, { userId, follow: shouldFollow }, context) => {
   if (shouldFollow) {
-    await userController.follow(userId, context);
-    await newsfeedController.onFollowUser({ followedUserId: userId, context });
-    await notificationController.newFollower(userId);
+    await userService.follow(userId, context);
+    await newsfeedService.onFollowUser({ followedUserId: userId, context });
+    await notificationService.newFollower(userId);
   } else {
-    await userController.unfollow(userId, context);
+    await userService.unfollow(userId, context);
   }
 };
 
 const notifsMarkSeen = async (_, __, context) => {
-  await notificationController.markSeen(context);
+  await notificationService.markSeen(context);
 };
 
 export default {

@@ -21,7 +21,7 @@ module.exports = {
     '^.+\\.jsx?$': 'babel-jest',
     // '^.+\\.tsx?$': 'ts-jest',
   },
-  testRegex: '((\\.|/)(unit.test|unit.spec))\\.tsx?$',
+  testRegex: '((\\.|/)(unit.test|unit.spec))\\.(jsx?|tsx?)$',
   // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

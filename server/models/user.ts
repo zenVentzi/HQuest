@@ -8,19 +8,38 @@ import {
 } from "mongoose";
 import * as DbTypes from "../dbTypes";
 
+const NEW_FOLLOWER_TYPE = "NEW_FOLLOWER";
+const NEW_COMMENT_TYPE = "NEW_COMMENT";
+
+const NotificationSchema = new Schema({
+  type: { type: [NEW_FOLLOWER_TYPE, NEW_COMMENT_TYPE], required: true },
+  questionId: { type: String, required: false },
+  commentId: { type: String, required: false },
+  performerId: { type: String, required: true },
+  performerAvatarSrc: { type: String, required: true },
+  text: { type: String, required: true },
+  seen: { type: Boolean, required: true }
+});
+
 const UserSchema = new Schema({
   firstName: { type: String, required: true },
-  surName: String,
-  email: String,
-  password: String,
-  avatarSrc: String,
-  followers: [Schema.Types.ObjectId],
-  following: [Schema.Types.ObjectId],
-  notifications: []
+  surName: { type: String, required: true },
+  email: { type: String, required: true },
+  intro: { type: String, required: true },
+  avatarSrc: { type: String, required: true },
+  followers: { type: [Schema.Types.ObjectId], required: false },
+  following: { type: [Schema.Types.ObjectId], required: false },
+  notifications: { type: [NotificationSchema], required: false },
+  socialMediaLinks: {
+    facebookLink: String,
+    twitterLink: String,
+    instagramLink: String,
+    linkedInLink: String,
+    required: false
+  }
 });
 
 const UserModel = model<DbTypes.UserDoc>("User", UserSchema);
-
 type UserModel = Model<DbTypes.UserDoc>;
 
-export { UserModel };
+export { UserModel, UserSchema };

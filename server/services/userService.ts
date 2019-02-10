@@ -1,6 +1,7 @@
-import { UserQueryArgs, UsersQueryArgs, Maybe } from "../generated/gqltypes";
-import * as FnTypes from "./userControllerTypes";
 import * as DbTypes from "../dbTypes";
+import { Maybe, UserQueryArgs, UsersQueryArgs } from "../generated/gqltypes";
+import { UserModel } from "../models/user";
+import * as FnTypes from "./userServiceTypes";
 // import { Types as ModelTypes } from "../models/user";
 
 const { ObjectId } = require("mongoose").Types;
@@ -198,7 +199,7 @@ const uploadAvatar: FnTypes.UploadAvatar = User => async (
   return avatarSrc;
 };
 
-export default User => {
+export default (User: UserModel) => {
   return {
     login: login(User),
     editUser: editUser(User),

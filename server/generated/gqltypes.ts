@@ -94,9 +94,9 @@ export interface Node {
 export interface Query {
   books: Book[];
 
-  notifications?: Maybe<(Maybe<Notification>)[]>;
-
   book?: Maybe<Book>;
+
+  notifications?: Maybe<Notification[]>;
 
   users: User[];
 
@@ -104,9 +104,9 @@ export interface Query {
 
   questionsTags: string[];
 
-  followers: User[];
+  followers?: Maybe<User[]>;
 
-  following: User[];
+  following?: Maybe<User[]>;
 
   newsfeed?: Maybe<News[]>;
 
@@ -229,7 +229,7 @@ export interface Liker {
 export interface AnswerEdition {
   id: string;
 
-  date?: Maybe<DateTime>;
+  date: DateTime;
 
   before: string;
 
@@ -548,13 +548,13 @@ export namespace QueryResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
     books?: BooksResolver<Book[], TypeParent, Context>;
 
+    book?: BookResolver<Maybe<Book>, TypeParent, Context>;
+
     notifications?: NotificationsResolver<
-      Maybe<(Maybe<Notification>)[]>,
+      Maybe<Notification[]>,
       TypeParent,
       Context
     >;
-
-    book?: BookResolver<Maybe<Book>, TypeParent, Context>;
 
     users?: UsersResolver<User[], TypeParent, Context>;
 
@@ -562,9 +562,9 @@ export namespace QueryResolvers {
 
     questionsTags?: QuestionsTagsResolver<string[], TypeParent, Context>;
 
-    followers?: FollowersResolver<User[], TypeParent, Context>;
+    followers?: FollowersResolver<Maybe<User[]>, TypeParent, Context>;
 
-    following?: FollowingResolver<User[], TypeParent, Context>;
+    following?: FollowingResolver<Maybe<User[]>, TypeParent, Context>;
 
     newsfeed?: NewsfeedResolver<Maybe<News[]>, TypeParent, Context>;
 
@@ -578,11 +578,6 @@ export namespace QueryResolvers {
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type NotificationsResolver<
-    R = Maybe<(Maybe<Notification>)[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
   export type BookResolver<
     R = Maybe<Book>,
     Parent = {},
@@ -592,6 +587,11 @@ export namespace QueryResolvers {
     title?: Maybe<string>;
   }
 
+  export type NotificationsResolver<
+    R = Maybe<Notification[]>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
   export type UsersResolver<
     R = User[],
     Parent = {},
@@ -616,7 +616,7 @@ export namespace QueryResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type FollowersResolver<
-    R = User[],
+    R = Maybe<User[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context, FollowersArgs>;
@@ -625,7 +625,7 @@ export namespace QueryResolvers {
   }
 
   export type FollowingResolver<
-    R = User[],
+    R = Maybe<User[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context, FollowingArgs>;
@@ -1050,7 +1050,7 @@ export namespace AnswerEditionResolvers {
   > {
     id?: IdResolver<string, TypeParent, Context>;
 
-    date?: DateResolver<Maybe<DateTime>, TypeParent, Context>;
+    date?: DateResolver<DateTime, TypeParent, Context>;
 
     before?: BeforeResolver<string, TypeParent, Context>;
 
@@ -1063,7 +1063,7 @@ export namespace AnswerEditionResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type DateResolver<
-    R = Maybe<DateTime>,
+    R = DateTime,
     Parent = AnswerEdition,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;

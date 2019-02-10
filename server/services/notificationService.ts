@@ -1,13 +1,10 @@
-import * as FnTypes from "./notificationControllerTypes";
+import mongoose from "mongoose";
 import * as DbTypes from "../dbTypes";
+import { gqlMapper } from "../gqlMapper";
+import { NEW_NOTIFICATION, pubsub } from "../PubSub";
+import * as FnTypes from "./notificationServiceTypes";
 
-const { ObjectId } = require("mongoose").Types;
-
-const {
-  mapGqlNotifications,
-  mapGqlNotification
-} = require("../resolvers/helper");
-const { pubsub, NEW_NOTIFICATION } = require("../PubSub");
+const { ObjectId } = mongoose.Types;
 
 const notify: FnTypes.Notify = User => async ({ receiverId, notif }) => {
   await User.findByIdAndUpdate(
@@ -18,7 +15,7 @@ const notify: FnTypes.Notify = User => async ({ receiverId, notif }) => {
 
   const payload = {
     receiverId: receiverId.toString(),
-    notif: mapGqlNotification(notif)
+    notif: gqlMapper.getNotification(notif)
   };
 
   pubsub.publish(NEW_NOTIFICATION, payload);

@@ -27,16 +27,6 @@ interface Connection {
   edges: [Edge!]
 }
 
-interface Notification {
-  id: ID!
-  type: NotificationType!
-  performerId: ID!
-  performerAvatarSrc: String!
-  text: String!
-  seen: Boolean!
-  createdOn: DateTime!
-}
-
 interface News {
   type: NewsType!
   performer: User!
@@ -104,7 +94,7 @@ type Liker {
 
 type AnswerEdition {
   id: ID!
-  date: DateTime
+  date: DateTime!
   before: String!
   after: String!
 }
@@ -159,6 +149,16 @@ enum NotificationType {
   NEW_COMMENT
 }
 
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
 type NewComment implements Notification {
   id: ID!
   type: NotificationType!
@@ -188,13 +188,13 @@ type LoginResult {
 
 type Query {
   books: [Book!]!
-  notifications: [Notification]
   book(title: String): Book
+  notifications: [Notification!]
   users(match: String): [User!]!
   user(id: ID!): User
   questionsTags: [String!]!
-  followers(userId: ID!): [User!]!
-  following(userId: ID!): [User!]!
+  followers(userId: ID!): [User!]
+  following(userId: ID!): [User!]
   newsfeed: [News!]
   questions(
     answered: Boolean!
