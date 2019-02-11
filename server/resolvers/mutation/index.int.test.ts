@@ -1,31 +1,47 @@
+import { Types as GooseTypes } from "mongoose";
 import { AnswerModel } from "../../models/answer";
 import { NewsfeedModel } from "../../models/newsfeed";
 import { QuestionModel } from "../../models/question";
 import { UserModel } from "../../models/user";
 
-import { EditUserMutationArgs } from "../../generated/gqltypes";
-import { ApolloContext } from "../../types/index";
+import * as DbTypes from "../../dbTypes";
+import * as GqlTypes from "../../generated/gqltypes";
+import { ApolloContext } from "../../types/gqlContext";
 import mutations from "./index";
 
-import * as DbTypes from "../../dbTypes";
+const { ObjectId } = GooseTypes;
+
+const tempUser = {
+  _id: ObjectId(),
+  email: "fdf",
+  firstName: "Pesho",
+  surName: "Goeshev",
+  intro: "blaIntro",
+  avatarSrc: "test"
+} as DbTypes.User;
 
 const context: ApolloContext = {
-  user: { email: "ff", id: "5c08b7766f91b01640e54921" }
+  user: { email: tempUser.email, id: tempUser._id.toHexString() },
+  models: {
+    answer: AnswerModel,
+    newsfeed: NewsfeedModel,
+    question: QuestionModel,
+    user: UserModel
+  }
 };
 
-test("should login if user exists", async done => {
-  const user: DbTypes.User = {
+test("login() should login if user exists", async done => {
+  const existingUser = await new UserModel({
     email: "fdf",
     firstName: "Pesho",
     surName: "Goeshev",
+    intro: "blaIntro",
     avatarSrc: "test"
-  };
-
-  const existingUser = await new UserModel(user).save();
+  } as DbTypes.User).save();
 
   const args = {
-    email: user.email,
-    name: [user.firstName, user.surName].join(" ")
+    email: existingUser.email,
+    name: [existingUser.firstName, existingUser.surName].join(" ")
   };
 
   const actual = await mutations.login({}, args, context, {} as any);
@@ -36,7 +52,7 @@ test("should login if user exists", async done => {
   done();
 });
 
-test("should register if user doesn't exist", async done => {
+test("login() should register if user doesn't exist", async done => {
   const args = { email: "fdf", name: "fdf hh" };
 
   const actual = await mutations.login({}, args, context, {} as any);
@@ -46,17 +62,10 @@ test("should register if user doesn't exist", async done => {
   done();
 });
 
-test("should edit existing user", async done => {
-  const user: DbTypes.User = {
-    email: "fdf",
-    firstName: "Pesho",
-    surName: "Goeshev",
-    avatarSrc: "test"
-  };
+test("editUser() should edit existing user", async done => {
+  const existingUser = (await new UserModel(tempUser).save()).toObject();
 
-  const existingUser = await new UserModel(user).save();
-
-  const args: EditUserMutationArgs = {
+  const args: GqlTypes.EditUserMutationArgs = {
     input: {
       fullName: "Pesho Goshev1",
       intro: "fdf",
@@ -74,5 +83,108 @@ test("should edit existing user", async done => {
   expect(existingUser._id).toBeTruthy();
   expect(actual.fullName).toEqual(args.input!.fullName);
   expect(actual.intro).toEqual(args.input!.intro);
+  done();
+});
+
+test("commentAnswer() should return added comment", async done => {
+  await new UserModel(tempUser).save();
+
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId()
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.CommentAnswerMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    comment: "commentValue"
+  };
+  const addedComment = await mutations.commentAnswer(
+    {},
+    args,
+    context,
+    {} as any
+  );
+
+  const actual = addedComment.value;
+  const expected = "commentValue";
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("editComment() should return edited comment", async done => {
+  const existingUser = (await new UserModel(tempUser).save()).toObject();
+
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId(),
+    comments: [
+      { _id: ObjectId(), user: existingUser, value: "commentValue" }
+    ] as DbTypes.Comment[]
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.EditCommentMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    commentId: existingAnswer.comments![0]._id.toHexString(),
+    commentValue: "editedCommentValue"
+  };
+
+  const editedComment = await mutations.editComment(
+    {},
+    args,
+    context,
+    {} as any
+  );
+
+  const actual = editedComment.value;
+  const expected = "editedCommentValue";
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("removeComment() should return removed comment", async done => {
+  const existingUser = (await new UserModel(tempUser).save()).toObject();
+
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId(),
+    comments: [
+      { _id: ObjectId(), user: existingUser, value: "commentValue" }
+    ] as DbTypes.Comment[]
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.RemoveCommentMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    commentId: existingAnswer.comments![0]._id.toHexString()
+  };
+
+  const removedComment = await mutations.removeComment(
+    {},
+    args,
+    context,
+    {} as any
+  );
+
+  const actual = removedComment.id;
+  const expected = existingAnswer.comments![0]._id.toHexString();
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("addAnswer() should return added answer", async done => {
+  const args: GqlTypes.AddAnswerMutationArgs = {
+    answerValue: "answerValue",
+    questionId: ObjectId().toHexString()
+  };
+
+  const addedAnswer = await mutations.addAnswer({}, args, context, {} as any);
+  const actual = addedAnswer.value;
+  const expected = args.answerValue;
+  expect(actual).toEqual(expected);
   done();
 });

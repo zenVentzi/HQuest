@@ -35,8 +35,8 @@ const newComment: FnTypes.NewComment = (User, Answer) => async ({
   const performerName = `${performer.firstName} ${performer.surName}`;
   const notif: DbTypes.Notification = {
     _id: ObjectId(),
-    type: "NEW_COMMENT",
-    questionId,
+    type: DbTypes.NotificationType.NewComment,
+    questionId: questionId.toHexString(),
     commentId: dbComment._id.toString(),
     performerId,
     performerAvatarSrc: performer.avatarSrc,
@@ -44,7 +44,11 @@ const newComment: FnTypes.NewComment = (User, Answer) => async ({
     seen: false
   };
 
-  await notify(User)({ receiverId, notif, loggedUserId });
+  await notify(User)({
+    receiverId: receiverId.toHexString(),
+    notif,
+    loggedUserId
+  });
 };
 
 const newFollower: FnTypes.NewFollower = User => async ({
@@ -56,9 +60,9 @@ const newFollower: FnTypes.NewFollower = User => async ({
   const follower = await User.findById(followerId).lean();
 
   const followerName = `${follower.firstName} ${follower.surName}`;
-  const notif = {
+  const notif: DbTypes.Notification = {
     _id: ObjectId(),
-    type: "NEW_FOLLOWER",
+    type: DbTypes.NotificationType.NewFollower,
     performerId: followerId,
     performerAvatarSrc: follower.avatarSrc,
     text: `${followerName} is following you`,

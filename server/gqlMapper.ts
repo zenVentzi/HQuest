@@ -1,21 +1,5 @@
-import * as gqlTypes from "./generated/gqltypes";
 import * as dbTypes from "./dbTypes";
-
-import * as mapperTypes from "./gqlMapperTypes";
-// import {
-//   GetAnswer,
-//   GetComment,
-//   GetComments,
-//   GetNewsfeed,
-//   GetNotification,
-//   GetNotifications,
-//   GetQuestion,
-//   GetQuestions,
-//   GetUser,
-//   GetUsers,
-//   GetLikes,
-//   GetAnswerEditions
-// } from "./gqlMapperTypes";
+import * as gqlTypes from "./generated/gqltypes";
 
 function getLikes({
   dbLikes,
@@ -121,7 +105,7 @@ function getQuestion({
   loggedUserId
 }: {
   dbQuestion: dbTypes.Question;
-  dbAnswer: dbTypes.Answer;
+  dbAnswer?: dbTypes.Answer;
   loggedUserId: string;
 }): gqlTypes.Question {
   const gqlQuestion: gqlTypes.Question = {
@@ -241,7 +225,7 @@ function getNotification(notif: dbTypes.Notification): gqlTypes.Notification {
 }
 
 function getNotifications(
-  notifs: dbTypes.Notification[]
+  notifs: dbTypes.Notification[] | null
 ): gqlTypes.Notification[] | null {
   if (!notifs || !notifs.length) return null;
   return notifs.map(getNotification);

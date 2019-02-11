@@ -6,7 +6,6 @@ import { gqlMapper } from "./gqlMapper";
 import { AnswerModel } from "./models/answer";
 import { QuestionModel } from "./models/question";
 import { UserModel } from "./models/user";
-import { gql } from "apollo-server";
 
 const { ObjectId } = Types;
 
@@ -172,7 +171,10 @@ describe("questions", () => {
       position: dbAnswer.position,
       value: dbAnswer.value,
       questionId: dbAnswer.questionId.toString(),
-      userId: dbAnswer.userId.toString()
+      userId: dbAnswer.userId.toString(),
+      comments: null,
+      editions: null,
+      likes: null
     };
 
     const actual = gqlMapper.getAnswer({
@@ -240,7 +242,9 @@ describe("questions", () => {
       value: dbAnswer.value,
       questionId: dbAnswer.questionId.toString(),
       userId: dbAnswer.userId.toString(),
-      likes: gqlLikes
+      likes: gqlLikes,
+      comments: null,
+      editions: null
     };
 
     const actual = gqlMapper.getAnswer({
@@ -301,7 +305,9 @@ describe("questions", () => {
       value: dbAnswer.value,
       questionId: dbAnswer.questionId.toString(),
       userId: dbAnswer.userId.toString(),
-      editions: gqlEditions
+      editions: gqlEditions,
+      comments: null,
+      likes: null
     };
 
     const actual = gqlMapper.getAnswer({
@@ -356,7 +362,10 @@ describe("questions", () => {
       position: dbAnswer.position,
       value: dbAnswer.value,
       questionId: dbAnswer.questionId.toString(),
-      userId: dbAnswer.userId.toString()
+      userId: dbAnswer.userId.toString(),
+      comments: null,
+      editions: null,
+      likes: null
     };
 
     expectedQ.answer = expectedA;

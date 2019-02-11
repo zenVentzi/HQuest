@@ -9,5 +9,6 @@
   "javascript.validate.enable": false,
   "eslint.autoFixOnSave": true,
   "eslint.alwaysShowStatus": true,
-  "prettier.printWidth": 80
+  "prettier.printWidth": 80,
+  "terminal.integrated.copyOnSelection": true
 }
