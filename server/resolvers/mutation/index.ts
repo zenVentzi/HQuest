@@ -149,7 +149,11 @@ const addAnswer: MutationResolvers.AddAnswerResolver = async (
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 
-const removeAnswer = async (_, args, context) => {
+const removeAnswer: MutationResolvers.RemoveAnswerResolver = async (
+  _,
+  args,
+  context
+) => {
   const dbAnswer = await answerService.remove(args, context);
 
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
