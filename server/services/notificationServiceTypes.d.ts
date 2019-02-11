@@ -28,7 +28,7 @@ export type NewComment = (
   loggedUserId
 }: {
   answerId: string;
-  dbComment: DbTypes.CommentDoc;
+  dbComment: DbTypes.Comment;
   loggedUserId: string;
 }) => void;
 

@@ -13,6 +13,7 @@ import {
 import { gqlMapper } from "../../gqlMapper";
 
 import { Maybe, MutationResolvers } from "../../generated/gqltypes";
+import { ApolloContext } from "gqlContext";
 
 // *book is for testing purposes
 const addBook = async (root, args, context) => {};
@@ -54,9 +55,12 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
   context
 ) => {
   const dbComment = await commentService.addCommentToAnswer({
+    comment,
     answerId,
-    comment
+    context
   });
+
+  if (!dbComment) throw Error("Failed to add comment");
 
   await newsfeedService.onNewComment({
     answerId,
@@ -81,10 +85,14 @@ const editComment: MutationResolvers.EditCommentResolver = async (
 ) => {
   const dbComment = await commentService.editComment({ ...args, context });
 
-  return gqlMapper.getComment({
-    dbComment,
-    loggedUserId: context.user!.id
-  });
+  if (dbComment) {
+    return gqlMapper.getComment({
+      dbComment,
+      loggedUserId: context.user!.id
+    });
+  }
+
+  throw Error("Failed to edit comment");
 };
 
 const removeComment: MutationResolvers.RemoveCommentResolver = async (
@@ -126,7 +134,11 @@ const editAnswer = async (_, args, context) => {
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
 };
 
-const addAnswer = async (_, args, context) => {
+const addAnswer: MutationResolvers.AddAnswerResolver = async (
+  _,
+  args,
+  context
+) => {
   const dbAnswer = await answerService.add(args, context);
 
   await newsfeedService.onNewAnswer({

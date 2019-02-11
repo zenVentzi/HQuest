@@ -111,9 +111,9 @@ export interface Answer {
   questionId: GooseTypes.ObjectId;
   value: string;
   position: number;
-  comments?: CommentDoc[];
+  comments?: Comment[];
   likes?: Likes;
-  editions?: EditionDoc[];
+  editions?: Edition[];
 }
 
 export interface AnswerDoc extends Answer, Document {

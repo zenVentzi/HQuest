@@ -1,4 +1,4 @@
-import { User } from "./index";
+import { User } from "./gqlContext";
 
 declare global {
   namespace Express {
