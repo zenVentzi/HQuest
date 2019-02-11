@@ -1,14 +1,16 @@
+import fs from "fs";
+import { ApolloContext, User } from "gqlContext";
+import { Types } from "mongoose";
+import path from "path";
 import * as DbTypes from "../dbTypes";
-import { Maybe, UserQueryArgs, UsersQueryArgs } from "../generated/gqltypes";
-import { UserModel } from "../models/user";
-import * as FnTypes from "./userServiceTypes";
-// import { Types as ModelTypes } from "../models/user";
+import * as GqlTypes from "../generated/gqltypes";
 
-const { ObjectId } = require("mongoose").Types;
-const fs = require("fs");
-const path = require("path");
+const { ObjectId } = Types;
 
-const registerUser: FnTypes.RegisterUser = User => async ({ email, name }) => {
+async function registerUser(
+  { email, name }: GqlTypes.LoginMutationArgs,
+  { models }: ApolloContext
+): Promise<DbTypes.User> {
   const [firstName, surName] = name.split(" ");
   const id = ObjectId();
 
@@ -27,122 +29,131 @@ const registerUser: FnTypes.RegisterUser = User => async ({ email, name }) => {
     }
   };
 
-  const userDoc = await User.create(newUser);
-  return userDoc;
-  // return userDoc.toObject();
-};
+  const userDoc = await models.user.create(newUser);
+  return userDoc.toObject();
+}
 
-const login: FnTypes.LoginUser = User => async ({ email, name }) => {
-  const user = await User.findOne({
-    email
-  }).lean();
+async function login(
+  { email, name }: GqlTypes.LoginMutationArgs,
+  context: ApolloContext
+): Promise<DbTypes.User> {
+  const user = await context.models.user
+    .findOne({
+      email
+    })
+    .lean();
 
   if (!user) {
-    return registerUser(User)({ email, name });
+    return registerUser({ email, name }, context);
   }
 
   return user;
-};
+}
 
-const followBaseFunc: FnTypes.FollowUserBase = User => async (
-  { userId },
-  follow,
-  loggedUserId
-) => {
-  const followerId = loggedUserId;
+async function followBaseFunc(
+  { userId }: GqlTypes.FollowMutationArgs,
+  shouldFollow: boolean,
+  { models, user }: ApolloContext
+): Promise<void> {
+  const followerId = user!.id;
   const followedId = userId;
 
-  if (follow) {
-    await User.findByIdAndUpdate(
+  if (shouldFollow) {
+    await models.user.findByIdAndUpdate(
       followerId,
       { $push: { following: ObjectId(followedId) } },
       { new: true, upsert: true }
     );
-    await User.findByIdAndUpdate(
+    await models.user.findByIdAndUpdate(
       followedId,
       { $push: { followers: ObjectId(followerId) } },
       { new: true, upsert: true }
     );
   } else {
-    await User.findByIdAndUpdate(followerId, {
+    await models.user.findByIdAndUpdate(followerId, {
       $pull: { following: ObjectId(followedId) }
     });
-    await User.findByIdAndUpdate(followedId, {
+    await models.user.findByIdAndUpdate(followedId, {
       $pull: { followers: ObjectId(followerId) }
     });
   }
-};
+}
 
-const follow: FnTypes.FollowUser = User => async (args, loggedUserId) => {
-  await followBaseFunc(User)(args, true, loggedUserId);
-};
+async function follow(
+  args: GqlTypes.FollowMutationArgs,
+  context: ApolloContext
+): Promise<void> {
+  await followBaseFunc(args, true, context);
+}
 
-const unfollow: FnTypes.UnfollowUser = User => async (args, loggedUserId) => {
-  await followBaseFunc(User)(args, false, loggedUserId);
-};
+async function unfollow(
+  args: GqlTypes.FollowMutationArgs,
+  context: ApolloContext
+): Promise<void> {
+  await followBaseFunc(args, false, context);
+}
 
-const getFollowers: FnTypes.GetFollowers = User => async ({ userId }) => {
-  const user = await User.findById(userId);
+async function getFollowers(
+  { userId }: GqlTypes.FollowersQueryArgs,
+  { models }: ApolloContext
+): Promise<DbTypes.User[]> {
+  const user = (await models.user
+    .findById(userId)
+    .populate("following"))!.toObject();
 
-  if (user) {
-    const { followers: followersIds } = user;
+  return user.following as DbTypes.User[];
+}
 
-    return User.find({
-      _id: {
-        $in: followersIds
-      }
-    }).lean();
-  }
+async function getFollowing(
+  { userId }: GqlTypes.FollowingQueryArgs,
+  { models }: ApolloContext
+): Promise<DbTypes.User[]> {
+  const user = (await models.user
+    .findById(userId)
+    .populate("following"))!.toObject();
 
-  return null;
-};
+  return user.following as DbTypes.User[];
+}
 
-const getFollowing: FnTypes.GetFollowing = User => async ({ userId }) => {
-  const user = await User.findById(userId);
-
-  if (user) {
-    const { following: followingIds } = user;
-
-    return User.find({
-      _id: {
-        $in: followingIds
-      }
-    }).lean();
-  }
-
-  return null;
-};
-
-const editUser: FnTypes.EditUser = User => async ({ input }, loggedUserId) => {
-  const { fullName, intro, socialMediaLinks } = input!;
-
+async function editUser(
+  { fullName, intro, socialMediaLinks }: GqlTypes.EditUserInput,
+  { models, user }: ApolloContext
+) {
   const [firstName, surName] = fullName.split(" ");
   const update = { $set: { firstName, surName, intro, socialMediaLinks } };
-  const editedUser = await User.findByIdAndUpdate(loggedUserId, update, {
+  const editedUser = await models.user.findByIdAndUpdate(user!.id, update, {
     new: true,
     upsert: true
   });
 
   return editedUser;
-};
+}
 
-const getUser: FnTypes.GetUser = User => async ({ id }) => {
-  const user = await User.findById(id);
+async function getUser(
+  { id }: GqlTypes.UserQueryArgs,
+  { models }: ApolloContext
+): Promise<DbTypes.User> {
+  const user = await models.user.findById(id);
 
   if (!user) {
     throw new Error(`User with id ${id} was not found`);
   }
 
-  return user;
-};
+  return user.toObject();
+}
 
-const getUsersWithIds: FnTypes.GetUsersWithIds = User => async ({ ids }) => {
-  const users = await User.find({ _id: { $in: ids } });
-  // return null;
+async function getUsersWithIds(
+  { ids }: { ids: string[] },
+  { models }: ApolloContext
+): Promise<DbTypes.User[]> {
+  const users = await models.user.find({ _id: { $in: ids } }).lean();
   return users;
-};
+}
 
-const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
+async function getUsers(
+  { match }: GqlTypes.UsersQueryArgs,
+  { models }: ApolloContext
+): Promise<DbTypes.User[]> {
   const matchWords = match!.split(" ");
 
   let matchedUsers: DbTypes.UserDoc[];
@@ -154,7 +165,7 @@ const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
     const firstNameRegex = new RegExp(`.*${matchWords[0]}.*`, `i`);
     const surNameRegex = new RegExp(`.*${matchWords[1]}.*`, `i`);
 
-    matchedUsers = await User.find({
+    matchedUsers = await models.user.find({
       $and: [
         { firstName: { $regex: firstNameRegex } },
         { surName: { $regex: surNameRegex } }
@@ -162,13 +173,13 @@ const getUsers: FnTypes.GetUsers = User => async ({ match }) => {
     });
   } else {
     const regex = new RegExp(`.*${match}.*`, `i`);
-    matchedUsers = await User.find({
+    matchedUsers = await models.user.find({
       $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }]
     });
   }
 
   return matchedUsers;
-};
+}
 
 // extract in utils
 const ensureDirectoryExistence = filePath => {
@@ -180,7 +191,10 @@ const ensureDirectoryExistence = filePath => {
   fs.mkdirSync(dirname);
 };
 
-const saveAvatarToFile = async (base64Img, userId) => {
+async function saveAvatarToFile(
+  base64Img: string,
+  userId: string
+): Promise<string> {
   const src = `/public/images/avatar${userId}.jpeg`;
   ensureDirectoryExistence(`${process.cwd()}${src}`);
 
@@ -189,27 +203,25 @@ const saveAvatarToFile = async (base64Img, userId) => {
       resolve(src);
     });
   });
-};
+}
 
-const uploadAvatar: FnTypes.UploadAvatar = User => async (
-  { base64Img },
-  loggedUserId
-) => {
-  const avatarSrc = (await saveAvatarToFile(base64Img, loggedUserId)) as string;
+async function uploadAvatar(
+  { base64Img }: GqlTypes.UploadAvatarMutationArgs,
+  { user }: ApolloContext
+): Promise<string> {
+  const avatarSrc = await saveAvatarToFile(base64Img, user!.id);
   return avatarSrc;
-};
+}
 
-export default (User: UserModel) => {
-  return {
-    login: login(User),
-    editUser: editUser(User),
-    follow: follow(User),
-    unfollow: unfollow(User),
-    getFollowers: getFollowers(User),
-    getFollowing: getFollowing(User),
-    getUser: getUser(User),
-    getUsers: getUsers(User),
-    getUsersWithIds: getUsersWithIds(User),
-    uploadAvatar: uploadAvatar(User)
-  };
+export const userService = {
+  login,
+  editUser,
+  follow,
+  unfollow,
+  getFollowers,
+  getFollowing,
+  getUser,
+  getUsers,
+  getUsersWithIds,
+  uploadAvatar
 };

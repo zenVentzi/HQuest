@@ -27,9 +27,9 @@ const UserSchema = new Schema({
   email: { type: String, required: true },
   intro: { type: String, required: true },
   avatarSrc: { type: String, required: true },
-  followers: { type: [Schema.Types.ObjectId], required: false },
-  following: { type: [Schema.Types.ObjectId], required: false },
-  notifications: { type: [NotificationSchema], required: false },
+  followers: [{ type: Schema.Types.ObjectId, required: true, ref: "User" }],
+  following: [{ type: Schema.Types.ObjectId, required: true, ref: "User" }],
+  notifications: [NotificationSchema],
   socialMediaLinks: {
     facebookLink: String,
     twitterLink: String,

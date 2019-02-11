@@ -49,8 +49,8 @@ export interface User {
   email: string;
   intro: string;
   avatarSrc: string;
-  followers?: GooseTypes.ObjectId[];
-  following?: GooseTypes.ObjectId[];
+  followers?: GooseTypes.ObjectId[] | User[];
+  following?: GooseTypes.ObjectId[] | User[];
   notifications?: Notification[];
   socialMediaLinks?: {
     facebookLink?: string;
