@@ -85,7 +85,7 @@ export interface CommentDoc extends Comment, Document {
 
 export interface Edition {
   _id: GooseTypes.ObjectId;
-  date: Date;
+  date: string;
   before: string;
   after: string;
 }
