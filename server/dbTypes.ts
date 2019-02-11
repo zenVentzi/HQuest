@@ -96,7 +96,7 @@ export interface EditionDoc extends Edition, Document {
 }
 
 export interface Liker {
-  user: User; //this has to change only to id
+  user: User; // this has to change only to id
   numOfLikes: number;
 }
 

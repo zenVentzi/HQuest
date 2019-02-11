@@ -9,6 +9,7 @@
     "curly": [true, "ignore-same-line"],
     "object-literal-sort-keys": false,
     "no-console": false,
+    "interface-name": false,
     "unified-signatures": false
     // "max-line-length": [
     //   true,
