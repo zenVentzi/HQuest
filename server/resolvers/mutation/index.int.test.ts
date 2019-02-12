@@ -189,7 +189,7 @@ test("addAnswer() should return added answer", async done => {
   done();
 });
 
-test.only("removeAnswer() should return removed answer", async done => {
+test("removeAnswer() should return removed answer", async done => {
   const existingAnswer = (await new AnswerModel({
     position: 1,
     value: "ass",
@@ -210,5 +210,24 @@ test.only("removeAnswer() should return removed answer", async done => {
   const actual = removedAnswer.id;
   const expexted = args.answerId;
   expect(actual).toEqual(expexted);
+  done();
+});
+
+test.only("editAnswer() should return edited answer", async done => {
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId()
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.EditAnswerMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    answerValue: "newAss brand new fuck ya fresh mirin"
+  };
+  const editedAnswer = await mutations.editAnswer({}, args, context, {} as any);
+  const actual = editedAnswer.value;
+  const expected = args.answerValue;
+  expect(actual).toEqual(expected);
   done();
 });
