@@ -199,7 +199,7 @@ type Query {
   questions(
     answered: Boolean!
     userId: ID!
-    tags: [String]
+    tags: [String!]
     first: Int!
     after: String
   ): QuestionConnection!

@@ -393,7 +393,7 @@ export interface QuestionsQueryArgs {
 
   userId: string;
 
-  tags?: Maybe<(Maybe<string>)[]>;
+  tags?: Maybe<string[]>;
 
   first: number;
 
@@ -648,7 +648,7 @@ export namespace QueryResolvers {
 
     userId: string;
 
-    tags?: Maybe<(Maybe<string>)[]>;
+    tags?: Maybe<string[]>;
 
     first: number;
 

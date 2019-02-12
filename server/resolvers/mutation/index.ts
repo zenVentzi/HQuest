@@ -116,14 +116,23 @@ const addQuestions: MutationResolvers.AddQuestionsResolver = async (
   { questions },
   context
 ) => {
-  return questionService.addQuestions({ questions }) as any;
+  return questionService.addQuestions({ questions }, context) as any;
 };
 
-const questionNotApply = async (_, args, context) => {
-  return questionService.markNotApply(args);
+const questionNotApply: MutationResolvers.QuestionNotApplyResolver = async (
+  _,
+  args,
+  context
+) => {
+  const dbQuestion = await questionService.markNotApply(args, context);
+  return gqlMapper.getQuestion({ dbQuestion, loggedUserId: context.user!.id });
 };
 
-const editAnswer = async (_, args, context) => {
+const editAnswer: MutationResolvers.EditAnswerResolver = async (
+  _,
+  args,
+  context
+) => {
   const dbAnswer = await answerService.edit(args, context);
 
   await newsfeedService.onEditAnswer({
@@ -131,7 +140,7 @@ const editAnswer = async (_, args, context) => {
     context
   });
 
-  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user.id });
+  return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user!.id });
 };
 
 const addAnswer: MutationResolvers.AddAnswerResolver = async (
@@ -174,27 +183,45 @@ const likeAnswer: MutationResolvers.LikeAnswerResolver = async (
   });
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user!.id });
 };
-const moveAnswerPosition = async (_, args, context) => {
+const moveAnswerPosition: MutationResolvers.MoveAnswerPositionResolver = async (
+  _,
+  args,
+  context
+) => {
   return answerService.movePosition(args, context);
 };
 
-const uploadAvatar = async (_, { base64Img }, context) => {
-  const avatarSrc = await userService.uploadAvatar(base64Img, context);
+const uploadAvatar: MutationResolvers.UploadAvatarResolver = async (
+  _,
+  args,
+  context
+) => {
+  const avatarSrc = await userService.uploadAvatar(args, context);
   return avatarSrc;
 };
 
-const follow = async (_, { userId, follow: shouldFollow }, context) => {
-  if (shouldFollow) {
-    await userService.follow(userId, context);
-    await newsfeedService.onFollowUser({ followedUserId: userId, context });
-    await notificationService.newFollower(userId, context);
+const follow: MutationResolvers.FollowResolver = async (_, args, context) => {
+  if (args.follow) {
+    await userService.follow(args, context);
+    await newsfeedService.onFollowUser({
+      followedUserId: args.userId,
+      context
+    });
+    await notificationService.newFollower({ receiverId: args.userId }, context);
   } else {
-    await userService.unfollow(userId, context);
+    await userService.unfollow(args, context);
   }
+
+  return args.follow; // fix: this is not needed
 };
 
-const notifsMarkSeen = async (_, __, context) => {
+const notifsMarkSeen: MutationResolvers.NotifsMarkSeenResolver = async (
+  _,
+  __,
+  context
+) => {
   await notificationService.markSeen(context);
+  return true; // fix: remove that
 };
 
 export default {

@@ -68,9 +68,12 @@ const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
 
   const newsfeedQuestionsIds = newsfeedAnswers.map(a => a.questionId);
 
-  const newsfeedQuestions = await questionService.getQuestionsById({
-    ids: newsfeedQuestionsIds
-  });
+  const newsfeedQuestions = await questionService.getQuestionsById(
+    {
+      ids: newsfeedQuestionsIds
+    },
+    context
+  );
 
   const gqlNewsfeed = gqlMapper.getNewsfeed({
     // @ts-ignore
@@ -194,11 +197,14 @@ const questions: QueryResolvers.QuestionsResolver = async (
     context
   );
 
-  const dbQuestions = await questionService.getUserQuestions({
-    ...args,
-    answers: dbAnswers,
-    loggedUserId: context.user!.id
-  });
+  const dbQuestions = await questionService.getUserQuestions(
+    {
+      answered: args.answered,
+      answers: dbAnswers,
+      tags: args.tags
+    },
+    context
+  );
 
   const gqlQuestions = gqlMapper.getQuestions({
     dbQuestions,
@@ -213,7 +219,7 @@ const questionsTags: QueryResolvers.QuestionsTagsResolver = async (
   __,
   context
 ) => {
-  return await questionService.getAllTags();
+  return await questionService.getAllTags(context);
 };
 
 const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
@@ -221,7 +227,7 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
   { userId, questionId },
   context
 ) => {
-  const dbQuestion = await questionService.getQuestion({ questionId });
+  const dbQuestion = await questionService.getQuestion({ questionId }, context);
   const dbAnswer = await answerService.getUserAnswer(
     { userId, questionId },
     context
