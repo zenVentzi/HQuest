@@ -4,7 +4,7 @@ documents: null
 generates:
   ./server/generated/gqltypes.ts:
     config:
-      contextType: ../types#ApolloContext
+      contextType: ../types/gqlContext#ApolloContext
     plugins:
       - "typescript-common"
       - "typescript-server"
