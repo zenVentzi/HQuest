@@ -189,7 +189,7 @@ test("addAnswer() should return added answer", async done => {
   done();
 });
 
-test("removeAnswer() should return removed answer", async done => {
+test.only("removeAnswer() should return removed answer", async done => {
   const existingAnswer = (await new AnswerModel({
     position: 1,
     value: "ass",
