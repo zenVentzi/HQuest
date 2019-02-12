@@ -9,11 +9,10 @@ import {
 } from "../../services";
 
 // const jsonwebtoken = require("jsonwebtoken");
-// const { createError } = require("apollo-errors");
 import { gqlMapper } from "../../gqlMapper";
 
 import { Maybe, MutationResolvers } from "../../generated/gqltypes";
-import { ApolloContext } from "gqlContext";
+// import { ApolloContext } from "gqlContext";
 
 // *book is for testing purposes
 const addBook = async (root, args, context) => {};
@@ -68,11 +67,13 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
     answerId,
     commentId: dbComment._id.toString()
   });
-  await notificationService.newComment({
-    answerId,
-    dbComment,
-    loggedUserId: context.user!.id
-  });
+  await notificationService.newComment(
+    {
+      answerId,
+      dbComment
+    },
+    context
+  );
 
   return gqlMapper.getComment({
     dbComment,
@@ -85,7 +86,7 @@ const editComment: MutationResolvers.EditCommentResolver = async (
   args,
   context
 ) => {
-  const dbComment = await commentService.editComment({ ...args, context });
+  const dbComment = await commentService.editComment(args, context);
 
   if (dbComment) {
     return gqlMapper.getComment({
@@ -102,10 +103,7 @@ const removeComment: MutationResolvers.RemoveCommentResolver = async (
   args,
   context
 ) => {
-  const dbComment = await commentService.removeComment({
-    ...args,
-    context
-  });
+  const dbComment = await commentService.removeComment(args, context);
 
   return gqlMapper.getComment({
     dbComment,

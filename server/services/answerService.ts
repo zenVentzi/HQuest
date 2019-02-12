@@ -1,16 +1,14 @@
 import { Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
+import * as GqlTypes from "../generated/gqltypes";
 import { ApolloContext } from "../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-async function getUserAnswers({
-  userId,
-  context: { models }
-}: {
-  userId: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer[]> {
+async function getUserAnswers(
+  { userId }: { userId: string },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer[]> {
   const userAnswers = (await models.answer
     .find({
       userId: ObjectId(userId),
@@ -23,15 +21,16 @@ async function getUserAnswers({
   return userAnswers;
 }
 
-async function getUserAnswer({
-  userId,
-  questionId,
-  context: { models }
-}: {
-  userId: string;
-  questionId: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
+async function getUserAnswer(
+  {
+    userId,
+    questionId
+  }: {
+    userId: string;
+    questionId: string;
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer> {
   const userIdObj = typeof userId === "string" ? ObjectId(userId) : userId;
   const questionIdObj =
     typeof questionId === "string" ? ObjectId(questionId) : questionId;
@@ -46,26 +45,28 @@ async function getUserAnswer({
   return answer!.toObject();
 }
 
-async function getAnswerById({
-  answerId,
-  context: { models }
-}: {
-  answerId: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
+async function getAnswerById(
+  {
+    answerId
+  }: {
+    answerId: string;
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer> {
   const answer = await models.answer
     .findById(answerId)
     .populate("comments.user");
   return answer!.toObject();
 }
 
-async function getAnswersById({
-  answerIds,
-  context: { models }
-}: {
-  answerIds: string[];
-  context: ApolloContext;
-}): Promise<DbTypes.Answer[]> {
+async function getAnswersById(
+  {
+    answerIds
+  }: {
+    answerIds: string[];
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer[]> {
   const answers = (await models.answer
     .find({ _id: { $in: answerIds } })
     .populate("comments.user")
@@ -74,15 +75,16 @@ async function getAnswersById({
   return answers;
 }
 
-async function createEdition({
-  answerId,
-  answerValue,
-  context: { models }
-}: {
-  answerId: string;
-  answerValue: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Edition> {
+async function createEdition(
+  {
+    answerId,
+    answerValue
+  }: {
+    answerId: string;
+    answerValue: string;
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Edition> {
   const oldAnswer = await models.answer.findById(answerId).lean();
 
   const before = oldAnswer.value;
@@ -96,16 +98,11 @@ async function createEdition({
   };
 }
 
-async function edit({
-  answerId,
-  answerValue,
-  context
-}: {
-  answerId: string;
-  answerValue: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
-  const edition = await createEdition({ answerId, answerValue, context });
+async function edit(
+  { answerId, answerValue }: GqlTypes.EditAnswerMutationArgs,
+  context: ApolloContext
+): Promise<DbTypes.Answer> {
+  const edition = await createEdition({ answerId, answerValue }, context);
 
   const updatedAnswer = await context.models.answer
     .findByIdAndUpdate(
@@ -121,15 +118,10 @@ async function edit({
   return updatedAnswer.toObject();
 }
 
-async function add({
-  questionId,
-  answerValue,
-  context
-}: {
-  questionId: string;
-  answerValue: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
+async function add(
+  { questionId, answerValue }: GqlTypes.AddAnswerMutationArgs,
+  context: ApolloContext
+): Promise<DbTypes.Answer> {
   const { user, models } = context;
 
   await models.answer.updateMany({}, { $inc: { position: 1 } });
@@ -143,11 +135,13 @@ async function add({
     .lean();
 
   if (deletedAnswer) {
-    await edit({
-      answerId: deletedAnswer._id.toString(),
-      answerValue,
+    await edit(
+      {
+        answerId: deletedAnswer._id.toString(),
+        answerValue
+      },
       context
-    });
+    );
     addedAnswer = (await models.answer.findByIdAndUpdate(deletedAnswer._id, {
       $set: { isRemoved: false, position: 1 }
     }))!.toObject();
@@ -165,13 +159,14 @@ async function add({
   return addedAnswer;
 }
 
-async function remove({
-  answerId,
-  context: { models }
-}: {
-  answerId: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
+async function remove(
+  {
+    answerId
+  }: {
+    answerId: string;
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer> {
   const removedAnswer = (await models.answer
     .findByIdAndUpdate(
       answerId,
@@ -190,17 +185,18 @@ async function remove({
   return removedAnswer;
 }
 
-async function like({
-  answerId,
-  dbUserLiker,
-  userLikes,
-  context: { models }
-}: {
-  answerId: string;
-  dbUserLiker: DbTypes.User;
-  userLikes: number;
-  context: ApolloContext;
-}): Promise<DbTypes.Answer> {
+async function like(
+  {
+    answerId,
+    dbUserLiker,
+    userLikes
+  }: {
+    answerId: string;
+    dbUserLiker: DbTypes.User;
+    userLikes: number;
+  },
+  { models }: ApolloContext
+): Promise<DbTypes.Answer> {
   /* 
 
   likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
@@ -240,15 +236,16 @@ async function like({
   return likedAnswer.toObject();
 }
 
-async function movePosition({
-  answerId,
-  position,
-  context: { models }
-}: {
-  answerId: string;
-  position: number;
-  context: ApolloContext;
-}): Promise<number> {
+async function movePosition(
+  {
+    answerId,
+    position
+  }: {
+    answerId: string;
+    position: number;
+  },
+  { models }: ApolloContext
+): Promise<number> {
   const currentAnswer = await models.answer.findById(answerId).lean();
   await models.answer.findOneAndUpdate(
     { position },
