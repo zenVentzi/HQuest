@@ -93,13 +93,9 @@ const getNotifications: FnTypes.GetNotifications = User => async ({
   return notifications.reverse();
 };
 
-const controllerCreator = (User, Answer) => {
-  return {
-    newFollower,
-    newComment: newComment(User, Answer),
-    getNotifications: getNotifications(User),
-    markSeen
-  };
+export const notificationService = {
+  newFollower,
+  newComment,
+  getNotifications,
+  markSeen
 };
-
-export default controllerCreator;

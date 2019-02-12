@@ -42,15 +42,15 @@ export interface NewFollower extends Notification {
   type: NotificationType.NewFollower;
 }
 
-export interface User {
+export interface User<Populated extends boolean = false> {
   _id: GooseTypes.ObjectId;
   firstName: string;
   surName: string;
   email: string;
   intro: string;
   avatarSrc: string;
-  followers?: GooseTypes.ObjectId[] | User[];
-  following?: GooseTypes.ObjectId[] | User[];
+  followers?: Populated extends true ? User[] : GooseTypes.ObjectId[];
+  following?: Populated extends true ? User[] : GooseTypes.ObjectId[];
   notifications?: Notification[];
   socialMediaLinks?: {
     facebookLink?: string;
@@ -62,7 +62,9 @@ export interface User {
 
 export interface UserDoc extends User, Document {
   _id: GooseTypes.ObjectId;
-  toObject(options?: DocumentToObjectOptions): User;
+  toObject<Populated extends boolean = false>(
+    options?: DocumentToObjectOptions
+  ): User<Populated>;
 }
 
 // type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;

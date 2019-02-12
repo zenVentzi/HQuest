@@ -134,12 +134,10 @@ const getUserQuestions = Question => async ({ ...args }) => {
   return questions;
 };
 
-export default Question => {
-  return {
-    addQuestions: addQuestions(Question),
-    markNotApply: markNotApply(Question),
-    getAllTags: getAllTags(Question),
-    getQuestion: getQuestion(Question),
-    getUserQuestions: getUserQuestions(Question),
-  };
+export const questionService = {
+  addQuestions,
+  markNotApply,
+  getAllTags,
+  getQuestion,
+  getUserQuestions,
 };

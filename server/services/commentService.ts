@@ -5,15 +5,10 @@ import { ApolloContext } from "../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-async function addCommentToAnswer({
-  comment,
-  answerId,
-  context
-}: {
-  comment: string;
-  answerId: string;
-  context: ApolloContext;
-}) {
+async function addCommentToAnswer(
+  { comment, answerId }: GqlTypes.CommentAnswerMutationArgs,
+  context: ApolloContext
+) {
   const { models, user } = context;
   const performerId = user!.id;
 
@@ -63,17 +58,10 @@ async function addCommentToAnswer({
 
 //   throw Error("Failed to edit comment");
 // }
-async function editComment({
-  answerId,
-  commentId,
-  commentValue,
-  context
-}: {
-  answerId: string;
-  commentId: string;
-  commentValue: string;
-  context: ApolloContext;
-}) {
+async function editComment(
+  { answerId, commentId, commentValue }: GqlTypes.EditCommentMutationArgs,
+  context: ApolloContext
+) {
   const { models } = context;
 
   const { comments: oldComments } = (await models.answer
@@ -102,15 +90,10 @@ async function editComment({
   return editedComment;
 }
 
-async function removeComment({
-  answerId,
-  commentId,
-  context
-}: {
-  answerId: string;
-  commentId: string;
-  context: ApolloContext;
-}): Promise<DbTypes.Comment> {
+async function removeComment(
+  { answerId, commentId }: GqlTypes.RemoveCommentMutationArgs,
+  context: ApolloContext
+): Promise<DbTypes.Comment> {
   const { models } = context;
 
   const answer = (await models.answer
@@ -129,6 +112,8 @@ async function removeComment({
   return removedComment!;
 }
 
-export default ToBeChanged => {
-  return { addCommentToAnswer, editComment, removeComment };
+export const commentService = {
+  addCommentToAnswer,
+  editComment,
+  removeComment
 };

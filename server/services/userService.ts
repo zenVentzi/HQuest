@@ -99,7 +99,7 @@ async function getFollowers(
 ): Promise<DbTypes.User[]> {
   const user = (await models.user
     .findById(userId)
-    .populate("following"))!.toObject();
+    .populate("following"))!.toObject<true>();
 
   return user.following as DbTypes.User[];
 }
@@ -110,7 +110,7 @@ async function getFollowing(
 ): Promise<DbTypes.User[]> {
   const user = (await models.user
     .findById(userId)
-    .populate("following"))!.toObject();
+    .populate("following"))!.toObject<true>();
 
   return user.following as DbTypes.User[];
 }

@@ -258,7 +258,7 @@ describe("questions", () => {
   test("map editions", () => {
     const dbEdition: dbTypes.Edition = {
       _id: ObjectId(),
-      date: new Date(),
+      date: new Date().toISOString(),
       before: "beforee",
       after: "after"
     };
@@ -282,7 +282,7 @@ describe("questions", () => {
   test("map answer with editions", () => {
     const dbEdition: dbTypes.Edition = {
       _id: ObjectId(),
-      date: new Date(),
+      date: new Date().toISOString(),
       before: "beforee",
       after: "after"
     };

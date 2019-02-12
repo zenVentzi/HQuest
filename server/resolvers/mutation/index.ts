@@ -19,7 +19,7 @@ import { ApolloContext } from "gqlContext";
 const addBook = async (root, args, context) => {};
 
 const login: MutationResolvers.LoginResolver = async (_, args, context) => {
-  const dbUser = await userService.login(args);
+  const dbUser = await userService.login(args, context);
 
   const authToken = jsonwebtoken.sign(
     { id: dbUser._id.toString(), email: dbUser.email },
@@ -41,7 +41,7 @@ const editUser: MutationResolvers.EditUserResolver = async (
   args,
   context
 ) => {
-  const editedUser = await userService.editUser(args, context.user!.id);
+  const editedUser = await userService.editUser(args.input!, context);
   const gqlUser = gqlMapper.getUser({
     dbUser: editedUser,
     loggedUserId: context.user!.id
@@ -54,11 +54,13 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
   { answerId, comment },
   context
 ) => {
-  const dbComment = await commentService.addCommentToAnswer({
-    comment,
-    answerId,
+  const dbComment = await commentService.addCommentToAnswer(
+    {
+      comment,
+      answerId
+    },
     context
-  });
+  );
 
   if (!dbComment) throw Error("Failed to add comment");
 

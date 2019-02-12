@@ -262,7 +262,7 @@ async function movePosition({
   return position;
 }
 
-export default {
+export const answerService = {
   add,
   edit,
   remove,
