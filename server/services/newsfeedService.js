@@ -107,14 +107,12 @@ const getUsersActivity = Newsfeed => async ({ usersIds }) => {
   }).lean();
 };
 
-export default Newsfeed => {
-  return {
-    onNewAnswer,
-    onEditAnswer,
-    onNewComment,
-    onLikeAnswer,
-    onFollowUser,
-    getUsersActivity,
-    getParticipantsIds,
-  };
+export const newsfeedService = {
+  onNewAnswer,
+  onEditAnswer,
+  onNewComment,
+  onLikeAnswer,
+  onFollowUser,
+  getUsersActivity,
+  getParticipantsIds,
 };

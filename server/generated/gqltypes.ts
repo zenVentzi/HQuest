@@ -493,7 +493,7 @@ import {
   GraphQLScalarTypeConfig
 } from "graphql";
 
-import { ApolloContext } from "../types";
+import { ApolloContext } from "../types/gqlContext";
 
 export type Resolver<Result, Parent = {}, Context = {}, Args = {}> = (
   parent: Parent,
