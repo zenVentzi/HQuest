@@ -3,11 +3,15 @@ import * as DbTypes from "../dbTypes";
 import { gqlMapper } from "../gqlMapper";
 import { NEW_NOTIFICATION, pubsub } from "../PubSub";
 import * as FnTypes from "./notificationServiceTypes";
+import { ApolloContext } from "gqlContext";
 
 const { ObjectId } = mongoose.Types;
 
-const notify: FnTypes.Notify = User => async ({ receiverId, notif }) => {
-  await User.findByIdAndUpdate(
+async function notify(
+  { receiverId, notif },
+  { models }: ApolloContext
+): Promise<void> {
+  await models.user.findByIdAndUpdate(
     receiverId,
     { $push: { notifications: notif } },
     { upsert: true }
@@ -19,17 +23,19 @@ const notify: FnTypes.Notify = User => async ({ receiverId, notif }) => {
   };
 
   pubsub.publish(NEW_NOTIFICATION, payload);
-};
+}
 
-const newComment: FnTypes.NewComment = (User, Answer) => async ({
-  answerId,
-  dbComment,
-  loggedUserId
-}) => {
-  const { questionId, userId: receiverId } = (await Answer.findById(answerId))!;
+async function newComment(
+  { answerId, dbComment }: { answerId: string; dbComment: DbTypes.Comment },
+  context: ApolloContext
+): Promise<void> {
+  const { models, user } = context;
+  const { questionId, userId: receiverId } = (await models.answer.findById(
+    answerId
+  ))!;
 
-  const performerId = loggedUserId;
-  const performer = await User.findById(performerId).lean();
+  const performerId = user!.id;
+  const performer = await models.user.findById(performerId).lean();
 
   if (performer._id.equals(receiverId)) return;
   const performerName = `${performer.firstName} ${performer.surName}`;
@@ -44,20 +50,23 @@ const newComment: FnTypes.NewComment = (User, Answer) => async ({
     seen: false
   };
 
-  await notify(User)({
-    receiverId: receiverId.toHexString(),
-    notif,
-    loggedUserId
-  });
-};
+  await notify(
+    {
+      receiverId: receiverId.toHexString(),
+      notif
+    },
+    context
+  );
+}
 
-const newFollower: FnTypes.NewFollower = User => async ({
-  receiverId,
-  loggedUserId
-}) => {
-  const followerId = loggedUserId;
+async function newFollower(
+  { receiverId }: { receiverId: string },
+  context: ApolloContext
+): Promise<void> {
+  const { models, user } = context;
+  const followerId = user!.id;
 
-  const follower = await User.findById(followerId).lean();
+  const follower = await models.user.findById(followerId).lean();
 
   const followerName = `${follower.firstName} ${follower.surName}`;
   const notif: DbTypes.Notification = {
@@ -69,29 +78,32 @@ const newFollower: FnTypes.NewFollower = User => async ({
     seen: false
   };
 
-  await notify(User)({ receiverId, notif, loggedUserId });
-};
+  await notify({ receiverId, notif }, context);
+}
 
-const markSeen: FnTypes.MarkSeen = User => async ({ loggedUserId }) => {
+async function markSeen({ models, user }: ApolloContext): Promise<void> {
   const searchQuery = {
-    _id: ObjectId(loggedUserId),
+    _id: ObjectId(user!.id),
     "notifications.seen": false
   };
 
-  await User.update(searchQuery, { $set: { "notifications.$[].seen": true } });
-};
+  await models.user.update(searchQuery, {
+    $set: { "notifications.$[].seen": true }
+  });
+}
 
-const getNotifications: FnTypes.GetNotifications = User => async ({
-  loggedUserId
-}) => {
-  const { notifications } = (await User.findById(loggedUserId))!;
+async function getNotifications({
+  models,
+  user
+}: ApolloContext): Promise<DbTypes.Notification[] | null> {
+  const { notifications } = (await models.user.findById(user!.id))!;
 
   if (!notifications) {
     return null;
   }
   //newest first
   return notifications.reverse();
-};
+}
 
 export const notificationService = {
   newFollower,
