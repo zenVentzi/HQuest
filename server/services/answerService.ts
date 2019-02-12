@@ -178,7 +178,7 @@ async function remove(
     .populate("comments.user")).toObject();
 
   await models.answer.updateMany(
-    { position: { gt: removedAnswer.position } },
+    { position: { $gt: removedAnswer.position } },
     { $inc: { position: -1 } }
   );
 

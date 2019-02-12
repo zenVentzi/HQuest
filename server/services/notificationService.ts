@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import * as DbTypes from "../dbTypes";
 import { gqlMapper } from "../gqlMapper";
 import { NEW_NOTIFICATION, pubsub } from "../PubSub";
-import * as FnTypes from "./notificationServiceTypes";
 import { ApolloContext } from "gqlContext";
 
 const { ObjectId } = mongoose.Types;
