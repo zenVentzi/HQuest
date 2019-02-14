@@ -150,29 +150,33 @@ async function getUsersWithIds(
 async function getUsers(
   { match }: GqlTypes.UsersQueryArgs,
   { models }: ApolloContext
-): Promise<DbTypes.User[]> {
+): Promise<DbTypes.User[] | null> {
   const matchWords = match!.split(" ");
 
-  let matchedUsers: DbTypes.UserDoc[];
+  let matchedUsers: DbTypes.User[];
   const numOfWords = matchWords.length;
 
   if (numOfWords > 2) {
-    return [];
+    return null;
   } else if (numOfWords === 2) {
     const firstNameRegex = new RegExp(`.*${matchWords[0]}.*`, `i`);
     const surNameRegex = new RegExp(`.*${matchWords[1]}.*`, `i`);
 
-    matchedUsers = await models.user.find({
-      $and: [
-        { firstName: { $regex: firstNameRegex } },
-        { surName: { $regex: surNameRegex } }
-      ]
-    });
+    matchedUsers = await models.user
+      .find({
+        $and: [
+          { firstName: { $regex: firstNameRegex } },
+          { surName: { $regex: surNameRegex } }
+        ]
+      })
+      .lean();
   } else {
     const regex = new RegExp(`.*${match}.*`, `i`);
-    matchedUsers = await models.user.find({
-      $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }]
-    });
+    matchedUsers = await models.user
+      .find({
+        $or: [{ firstName: { $regex: regex } }, { surName: { $regex: regex } }]
+      })
+      .lean();
   }
 
   return matchedUsers;

@@ -94,13 +94,13 @@ async function getQuestion(
 }
 
 function preserveOrder({
-  questionsIds,
+  answeredQuestionsIds,
   questions
 }: {
-  questionsIds: string[];
+  answeredQuestionsIds: string[];
   questions: DbTypes.Question[];
 }): DbTypes.Question[] {
-  const res = questionsIds
+  const res = answeredQuestionsIds
     .map(id => questions.find(q => q._id.equals(id))!)
     .filter(q => q); // filters undefined or null values
 
@@ -110,16 +110,16 @@ function preserveOrder({
 async function getAnsweredQuestions(
   {
     answers,
-    questionsIds,
+    answeredQuestionsIds,
     tags
   }: {
     answers: DbTypes.Answer[];
-    questionsIds: string[];
+    answeredQuestionsIds: string[];
     tags?: string[] | null;
   },
   { models }: ApolloContext
 ): Promise<DbTypes.AnsweredQuestion[]> {
-  const query = { _id: { $in: questionsIds }, tags: {} };
+  const query: any = { _id: { $in: answeredQuestionsIds } };
 
   if (tags && tags.length) {
     query.tags = { $in: tags };
@@ -129,18 +129,20 @@ async function getAnsweredQuestions(
     .find(query)
     .lean()) as DbTypes.Question[];
   // ordering is done because the $in query returns in random order
-  const orderedQs = preserveOrder({ questionsIds, questions });
+  const orderedQs = preserveOrder({ answeredQuestionsIds, questions });
   const mergedQuestions = mergeAnswersWithQuestions(answers, orderedQs);
   return mergedQuestions;
 }
 
 async function getUnansweredQuestions(
-  { questionsIds, tags }: { questionsIds: string[]; tags?: string[] | null },
+  {
+    answeredQuestionsIds,
+    tags
+  }: { answeredQuestionsIds: string[]; tags?: string[] | null },
   { models, user }: ApolloContext
 ): Promise<DbTypes.Question[]> {
-  const query = {
-    _id: { $in: questionsIds },
-    tags: {}
+  const query: any = {
+    _id: { $nin: answeredQuestionsIds }
   };
 
   if (tags && tags.length) {
@@ -167,18 +169,18 @@ async function getUserQuestions(
   }: { answers: DbTypes.Answer[]; tags?: string[] | null; answered: boolean },
   context: ApolloContext
 ): Promise<DbTypes.Question[]> {
-  const questionsIds = await getQuestionsIds(answers);
+  const answeredQuestionsIds = await getQuestionsIds(answers);
   let questions: DbTypes.Question[];
 
   if (answered) {
     questions = await getAnsweredQuestions(
-      { questionsIds, tags, answers },
+      { answeredQuestionsIds, tags, answers },
       context
     );
   } else {
     questions = await getUnansweredQuestions(
       {
-        questionsIds,
+        answeredQuestionsIds,
         tags
       },
       context

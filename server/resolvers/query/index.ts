@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { Maybe, QueryResolvers } from "../../generated/gqltypes";
+import * as GqlTypes from "../../generated/gqltypes";
 import { gqlMapper } from "../../gqlMapper";
 import {
   answerService,
@@ -110,7 +111,17 @@ const following: QueryResolvers.FollowingResolver = async (
   });
 };
 
-const getAllEdges = nodes => {
+interface Node {
+  id: string;
+}
+
+interface Edge<NodeT> {
+  cursor: string;
+  node: NodeT;
+}
+
+type GetAllEdges = <NodeT extends Node>(nodes: NodeT[]) => Array<Edge<NodeT>>;
+const getAllEdges: GetAllEdges = nodes => {
   return nodes.map(node => {
     const cursor = node.id;
     return {
@@ -120,7 +131,20 @@ const getAllEdges = nodes => {
   });
 };
 
-const getCurrentPageEdges = ({ first, after }, allEdges) => {
+type GetCurrentPageEdges = <NodeT>(
+  {
+    first,
+    after
+  }: {
+    first: number;
+    after?: string | null;
+  },
+  allEdges: Array<Edge<NodeT>>
+) => Array<Edge<NodeT>>;
+const getCurrentPageEdges: GetCurrentPageEdges = (
+  { first, after },
+  allEdges
+) => {
   let startIndex = 0;
 
   if (after) {
@@ -132,7 +156,19 @@ const getCurrentPageEdges = ({ first, after }, allEdges) => {
   return res;
 };
 
-const getPageInfo = (allEdges, currentPageEdges) => {
+interface PageInfo {
+  startCursor: string;
+  endCursor: string;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+type GetPageInfo = <NodeT>(
+  allEdges: Array<Edge<NodeT>>,
+  currentPageEdges: Array<Edge<NodeT>>
+) => PageInfo;
+
+const getPageInfo: GetPageInfo = (allEdges, currentPageEdges) => {
   let startCursor;
   let endCursor;
   let hasPreviousPage = false;
@@ -159,19 +195,22 @@ const getPageInfo = (allEdges, currentPageEdges) => {
     startCursor,
     endCursor,
     hasPreviousPage,
-    hasNextPage
+    hasNextPage,
+    no_Idea_Why_Typescript_Allows_that: 5,
+    whatever: 6,
+    wasted_enough_time_already: 7
   };
 };
 
-type RelayConnection = ({
+type RelayConnection = <NodeT extends Node>({
   nodes,
   first,
   after
 }: {
-  nodes: any;
+  nodes: NodeT[];
   first: number;
   after?: Maybe<string>;
-}) => any;
+}) => { pageInfo: PageInfo; edges: Array<Edge<NodeT>>; totalCount: number };
 
 // todo extract in utils/helper
 const relayConnection: RelayConnection = ({ nodes, first, after }) => {
@@ -211,7 +250,8 @@ const questions: QueryResolvers.QuestionsResolver = async (
     loggedUserId: context.user!.id
   });
 
-  return relayConnection({ nodes: gqlQuestions, ...args });
+  const connection = relayConnection({ nodes: gqlQuestions, ...args });
+  return connection;
 };
 
 const questionsTags: QueryResolvers.QuestionsTagsResolver = async (
@@ -247,10 +287,6 @@ const users: QueryResolvers.UsersResolver = async (_, args, context) => {
     dbUsers,
     loggedUserId: context.user!.id
   });
-
-  if (!gqlUsers) {
-    throw new Error("Failed to fetch users");
-  }
 
   return gqlUsers;
 };
