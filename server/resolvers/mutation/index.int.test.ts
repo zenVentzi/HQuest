@@ -3,6 +3,7 @@ import { AnswerModel } from "../../models/answer";
 import { NewsfeedModel } from "../../models/newsfeed";
 import { QuestionModel } from "../../models/question";
 import { UserModel } from "../../models/user";
+// import { deepFreeze } from "../../utils";
 
 import * as DbTypes from "../../dbTypes";
 import * as GqlTypes from "../../generated/gqltypes";
@@ -29,6 +30,9 @@ const tempContext: ApolloContext = {
     user: UserModel
   }
 };
+
+// console.log(tempUser._id.toHexString());
+// console.log(tempContext.user!.id);
 
 test("login() should login if user exists", async done => {
   const existingUser = await new UserModel({
@@ -109,6 +113,41 @@ test("commentAnswer() should return added comment", async done => {
 
   const actual = addedComment.value;
   const expected = "commentValue";
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("commentAnswer() should notify answer owner", async done => {
+  await new UserModel(tempUser).save();
+
+  const answerOwner = (await new UserModel({
+    ...tempUser,
+    _id: ObjectId()
+  } as DbTypes.User).save()).toObject();
+
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: answerOwner._id
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.CommentAnswerMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    comment: "commentValue"
+  };
+  const addedComment = await mutations.commentAnswer(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
+
+  const answerOwnerWithNotifications = (await UserModel.findById(
+    answerOwner._id
+  ))!.toObject();
+  const actual = answerOwnerWithNotifications.notifications![0].commentId;
+  const expected = addedComment.id;
   expect(actual).toEqual(expected);
   done();
 });
@@ -367,7 +406,7 @@ test("follow(false) should remove followers from user doc", async done => {
 });
 
 test("follow() should add notification to the followed user", async done => {
-  const followingUser = (await new UserModel({
+  const follower = (await new UserModel({
     email: "fdf@",
     firstName: "Pesho123",
     surName: "Goeshev",
@@ -375,54 +414,56 @@ test("follow() should add notification to the followed user", async done => {
     avatarSrc: "test"
   } as DbTypes.User).save())!.toObject();
 
-  const userToFollow = (await new UserModel(tempUser).save())!.toObject();
+  const followedUser = (await new UserModel(tempUser).save())!.toObject();
 
   const args: GqlTypes.FollowMutationArgs = {
     follow: true,
-    userId: userToFollow._id.toHexString()
+    userId: followedUser._id.toHexString()
   };
 
-  const context = tempContext;
-  context.user = {
-    email: followingUser.email,
-    id: followingUser._id.toHexString()
+  const followerContext = { ...tempContext };
+  followerContext.user = {
+    email: follower.email,
+    id: follower._id.toHexString()
   };
-  await mutations.follow({}, args, context, {} as any);
+  await mutations.follow({}, args, followerContext, {} as any);
 
-  const followedUser = (await UserModel.findById(userToFollow._id))!.toObject();
-  const actual = followedUser.notifications![0].seen;
+  const followedUserUpdated = (await UserModel.findById(
+    followedUser._id
+  ))!.toObject();
+  const actual = followedUserUpdated.notifications![0].seen;
   const expected = false;
   expect(actual).toEqual(expected);
   done();
 });
 
 test("notifsMarkSeen() should mark user notifications as seen", async done => {
-  const followingUser = (await new UserModel({
+  const follower = (await new UserModel({
     email: "fdf@",
     firstName: "Pesho123",
     surName: "Goeshev",
     intro: "blaIntro",
     avatarSrc: "test"
   } as DbTypes.User).save())!.toObject();
+  const followerContext = { ...tempContext };
+  followerContext.user = {
+    email: follower.email,
+    id: follower._id.toHexString()
+  };
 
-  const userToFollow = (await new UserModel(tempUser).save())!.toObject();
+  const followed = (await new UserModel(tempUser).save())!.toObject();
+  const followedContext = tempContext;
 
   const args: GqlTypes.FollowMutationArgs = {
     follow: true,
-    userId: userToFollow._id.toHexString()
+    userId: followed._id.toHexString()
   };
+  await mutations.follow({}, args, followerContext, {} as any);
 
-  const contextWithFollowedUser = tempContext;
-  const contextWithFollower = tempContext;
-  contextWithFollower.user = {
-    email: followingUser.email,
-    id: followingUser._id.toHexString()
-  };
-  await mutations.follow({}, args, contextWithFollowedUser, {} as any);
+  await mutations.notifsMarkSeen({}, {}, followedContext, {} as any);
+  const followedUpdated = (await UserModel.findById(followed._id))!.toObject();
 
-  await mutations.notifsMarkSeen({}, {}, contextWithFollower, {} as any);
-  const followedUser = (await UserModel.findById(userToFollow._id))!.toObject();
-  const actual = followedUser.notifications![0].seen;
+  const actual = followedUpdated.notifications![0].seen;
   const expected = true;
   expect(actual).toEqual(expected);
   done();
