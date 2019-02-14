@@ -103,13 +103,10 @@ async function getNotifications({
   models,
   user
 }: ApolloContext): Promise<DbTypes.Notification[] | null> {
-  const { notifications } = (await models.user.findById(user!.id))!;
+  const dbUser = (await models.user.findById(user!.id))!.toObject();
+  const { notifications } = dbUser;
 
-  if (!notifications) {
-    return null;
-  }
-  //newest first
-  return notifications.reverse();
+  return notifications && notifications.length ? notifications.reverse() : null;
 }
 
 export const notificationService = {
