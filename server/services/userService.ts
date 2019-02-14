@@ -96,23 +96,25 @@ async function unfollow(
 async function getFollowers(
   { userId }: GqlTypes.FollowersQueryArgs,
   { models }: ApolloContext
-): Promise<DbTypes.User[]> {
-  const user = (await models.user
-    .findById(userId)
-    .populate("following"))!.toObject<true>();
-
-  return user.following as DbTypes.User[];
+): Promise<DbTypes.User[] | null> {
+  const userDoc = await models.user.findById(userId).populate("followers");
+  if (!userDoc) {
+    return null;
+  }
+  const { followers } = userDoc.toObject<true>();
+  return followers && followers.length ? followers : null;
 }
 
 async function getFollowing(
   { userId }: GqlTypes.FollowingQueryArgs,
   { models }: ApolloContext
-): Promise<DbTypes.User[]> {
-  const user = (await models.user
-    .findById(userId)
-    .populate("following"))!.toObject<true>();
-
-  return user.following as DbTypes.User[];
+): Promise<DbTypes.User[] | null> {
+  const userDoc = await models.user.findById(userId).populate("following");
+  if (!userDoc) {
+    return null;
+  }
+  const { following } = userDoc.toObject<true>();
+  return following && following.length ? following : null;
 }
 
 async function editUser(
