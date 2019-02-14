@@ -91,3 +91,57 @@ test("notifications() should return null if not found", async done => {
   expect(actual).toEqual(expected);
   done();
 });
+
+test("followers() should return followers if found", async done => {
+  const follower = (await new UserModel({
+    ...contextUser,
+    _id: ObjectId()
+  } as DbTypes.User).save())!.toObject();
+
+  const followed = (await new UserModel({
+    ...contextUser,
+    followers: [follower._id]
+  } as DbTypes.User).save())!.toObject();
+
+  const args: GqlTypes.FollowersQueryArgs = {
+    userId: followed._id.toHexString()
+  };
+  const followers = await queries.followers({}, args, context, {} as any);
+  const actual = followers![0].id;
+  const expected = follower._id.toHexString();
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("followers() should return null if user has no followers", async done => {
+  // const follower = (await new UserModel({
+  //   ...contextUser,
+  //   _id: ObjectId()
+  // } as DbTypes.User).save())!.toObject();
+
+  const userWithoutFollowers = (await new UserModel({
+    ...contextUser
+    // followers: [follower._id]
+  } as DbTypes.User).save())!.toObject();
+
+  const args: GqlTypes.FollowersQueryArgs = {
+    userId: userWithoutFollowers._id.toHexString()
+  };
+  const followers = await queries.followers({}, args, context, {} as any);
+  const actual = followers;
+  const expected = null;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("followers() should return null if user is not found", async done => {
+  const randomId = ObjectId().toHexString();
+  const args: GqlTypes.FollowersQueryArgs = {
+    userId: randomId
+  };
+  const followers = await queries.followers({}, args, context, {} as any);
+  const actual = followers;
+  const expected = null;
+  expect(actual).toEqual(expected);
+  done();
+});
