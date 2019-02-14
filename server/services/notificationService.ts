@@ -82,13 +82,21 @@ async function newFollower(
 
 async function markSeen({ models, user }: ApolloContext): Promise<void> {
   const searchQuery = {
-    _id: ObjectId(user!.id),
-    "notifications.seen": false
+    _id: ObjectId(user!.id)
+    // "notifications.seen": false
   };
 
-  await models.user.update(searchQuery, {
-    $set: { "notifications.$[].seen": true }
+  const userDoc = await models.user.findOne(searchQuery);
+
+  userDoc!.notifications!.forEach(notif => {
+    notif.seen = true;
   });
+
+  await userDoc!.save();
+
+  // await models.user.update(searchQuery, {
+  //   $set: { "notifications.$[].seen": true }
+  // });
 }
 
 async function getNotifications({
