@@ -20,7 +20,7 @@ const tempUser = {
   avatarSrc: "test"
 } as DbTypes.User;
 
-const context: ApolloContext = {
+const tempContext: ApolloContext = {
   user: { email: tempUser.email, id: tempUser._id.toHexString() },
   models: {
     answer: AnswerModel,
@@ -44,7 +44,7 @@ test("login() should login if user exists", async done => {
     name: [existingUser.firstName, existingUser.surName].join(" ")
   };
 
-  const actual = await mutations.login({}, args, context, {} as any);
+  const actual = await mutations.login({}, args, tempContext, {} as any);
 
   expect(existingUser._id).toBeTruthy();
   expect(actual.userId).toEqual(existingUser._id.toString());
@@ -55,7 +55,7 @@ test("login() should login if user exists", async done => {
 test("login() should register if user doesn't exist", async done => {
   const args = { email: "fdf", name: "fdf hh" };
 
-  const actual = await mutations.login({}, args, context, {} as any);
+  const actual = await mutations.login({}, args, tempContext, {} as any);
 
   expect(actual.authToken).toBeTruthy();
   expect(actual.userId).toBeTruthy();
@@ -78,7 +78,7 @@ test("editUser() should edit existing user", async done => {
     }
   };
 
-  const actual = await mutations.editUser({}, args, context, {} as any);
+  const actual = await mutations.editUser({}, args, tempContext, {} as any);
 
   expect(existingUser._id).toBeTruthy();
   expect(actual.fullName).toEqual(args.input!.fullName);
@@ -103,7 +103,7 @@ test("commentAnswer() should return added comment", async done => {
   const addedComment = await mutations.commentAnswer(
     {},
     args,
-    context,
+    tempContext,
     {} as any
   );
 
@@ -135,7 +135,7 @@ test("editComment() should return edited comment", async done => {
   const editedComment = await mutations.editComment(
     {},
     args,
-    context,
+    tempContext,
     {} as any
   );
 
@@ -166,7 +166,7 @@ test("removeComment() should return removed comment", async done => {
   const removedComment = await mutations.removeComment(
     {},
     args,
-    context,
+    tempContext,
     {} as any
   );
 
@@ -182,7 +182,12 @@ test("addAnswer() should return added answer", async done => {
     questionId: ObjectId().toHexString()
   };
 
-  const addedAnswer = await mutations.addAnswer({}, args, context, {} as any);
+  const addedAnswer = await mutations.addAnswer(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
   const actual = addedAnswer.value;
   const expected = args.answerValue;
   expect(actual).toEqual(expected);
@@ -203,7 +208,7 @@ test("removeAnswer() should return removed answer", async done => {
   const removedAnswer = await mutations.removeAnswer(
     {},
     args,
-    context,
+    tempContext,
     {} as any
   );
 
@@ -213,7 +218,7 @@ test("removeAnswer() should return removed answer", async done => {
   done();
 });
 
-test.only("editAnswer() should return edited answer", async done => {
+test("editAnswer() should return edited answer", async done => {
   const existingAnswer = (await new AnswerModel({
     position: 1,
     value: "ass",
@@ -225,9 +230,200 @@ test.only("editAnswer() should return edited answer", async done => {
     answerId: existingAnswer._id.toHexString(),
     answerValue: "newAss brand new fuck ya fresh mirin"
   };
-  const editedAnswer = await mutations.editAnswer({}, args, context, {} as any);
+  const editedAnswer = await mutations.editAnswer(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
   const actual = editedAnswer.value;
   const expected = args.answerValue;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("editAnswer() result should contain editions", async done => {
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId()
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.EditAnswerMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    answerValue: "newAss brand new fuck ya fresh mirin"
+  };
+  const editedAnswer = await mutations.editAnswer(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
+  const actual = editedAnswer.editions!.length;
+  const expected = 1;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("likeAnswer() result should contain likes", async done => {
+  await new UserModel(tempUser).save();
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId()
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.LikeAnswerMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    userLikes: 5
+  };
+  const likedAnswer = await mutations.likeAnswer(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
+  const actual = likedAnswer.likes!.total;
+  const expected = args.userLikes;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("moveAnswerPosition() should return new position", async done => {
+  // await new UserModel(tempUser).save();
+  const existingAnswer = (await new AnswerModel({
+    position: 1,
+    value: "ass",
+    questionId: ObjectId(),
+    userId: ObjectId()
+  } as DbTypes.Answer).save()).toObject();
+
+  const args: GqlTypes.MoveAnswerPositionMutationArgs = {
+    answerId: existingAnswer._id.toHexString(),
+    position: 4
+  };
+  const newPosition = await mutations.moveAnswerPosition(
+    {},
+    args,
+    tempContext,
+    {} as any
+  );
+  const actual = newPosition;
+  const expected = args.position;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("follow() should add followers to user doc", async done => {
+  const existingUser = (await new UserModel({
+    email: "fdf@",
+    firstName: "Pesho123",
+    surName: "Goeshev",
+    intro: "blaIntro",
+    avatarSrc: "test"
+  } as DbTypes.User).save())!.toObject();
+
+  const args: GqlTypes.FollowMutationArgs = {
+    follow: true,
+    userId: existingUser._id.toHexString()
+  };
+  await mutations.follow({}, args, tempContext, {} as any);
+
+  const updatedUser = (await UserModel.findById(existingUser._id))!.toObject();
+  const actual = updatedUser.followers![0].toHexString();
+  const expected = tempContext.user!.id;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("follow(false) should remove followers from user doc", async done => {
+  const existingUser = (await new UserModel({
+    email: "fdf@",
+    firstName: "Pesho123",
+    surName: "Goeshev",
+    intro: "blaIntro",
+    avatarSrc: "test"
+  } as DbTypes.User).save())!.toObject();
+
+  const args: GqlTypes.FollowMutationArgs = {
+    follow: true,
+    userId: existingUser._id.toHexString()
+  };
+  await mutations.follow({}, args, tempContext, {} as any);
+  await mutations.follow(
+    {},
+    { ...args, follow: false },
+    tempContext,
+    {} as any
+  );
+
+  const updatedUser = (await UserModel.findById(existingUser._id))!.toObject();
+  const actual = updatedUser.followers;
+  const expected = [] || undefined;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("follow() should add notification to the followed user", async done => {
+  const followingUser = (await new UserModel({
+    email: "fdf@",
+    firstName: "Pesho123",
+    surName: "Goeshev",
+    intro: "blaIntro",
+    avatarSrc: "test"
+  } as DbTypes.User).save())!.toObject();
+
+  const userToFollow = (await new UserModel(tempUser).save())!.toObject();
+
+  const args: GqlTypes.FollowMutationArgs = {
+    follow: true,
+    userId: userToFollow._id.toHexString()
+  };
+
+  const context = tempContext;
+  context.user = {
+    email: followingUser.email,
+    id: followingUser._id.toHexString()
+  };
+  await mutations.follow({}, args, context, {} as any);
+
+  const followedUser = (await UserModel.findById(userToFollow._id))!.toObject();
+  const actual = followedUser.notifications![0].seen;
+  const expected = false;
+  expect(actual).toEqual(expected);
+  done();
+});
+
+test("notifsMarkSeen() should mark user notifications as seen", async done => {
+  const followingUser = (await new UserModel({
+    email: "fdf@",
+    firstName: "Pesho123",
+    surName: "Goeshev",
+    intro: "blaIntro",
+    avatarSrc: "test"
+  } as DbTypes.User).save())!.toObject();
+
+  const userToFollow = (await new UserModel(tempUser).save())!.toObject();
+
+  const args: GqlTypes.FollowMutationArgs = {
+    follow: true,
+    userId: userToFollow._id.toHexString()
+  };
+
+  const contextWithFollowedUser = tempContext;
+  const contextWithFollower = tempContext;
+  contextWithFollower.user = {
+    email: followingUser.email,
+    id: followingUser._id.toHexString()
+  };
+  await mutations.follow({}, args, contextWithFollowedUser, {} as any);
+
+  await mutations.notifsMarkSeen({}, {}, contextWithFollower, {} as any);
+  const followedUser = (await UserModel.findById(userToFollow._id))!.toObject();
+  const actual = followedUser.notifications![0].seen;
+  const expected = true;
   expect(actual).toEqual(expected);
   done();
 });
