@@ -190,7 +190,7 @@ type Query {
   books: [Book!]!
   book(title: String): Book
   notifications: [Notification!]
-  users(match: String): [User!]!
+  users(match: String): [User!]
   user(id: ID!): User
   questionsTags: [String!]!
   followers(userId: ID!): [User!]

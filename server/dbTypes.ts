@@ -126,7 +126,7 @@ export interface AnswerDoc extends Answer, Document {
 export interface Question {
   _id: GooseTypes.ObjectId;
   value: string;
-  tags: [string];
+  tags: string[];
 }
 
 export interface AnsweredQuestion extends Question {
