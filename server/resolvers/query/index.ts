@@ -33,7 +33,7 @@ const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
     { id: context.user!.id },
     context
   );
-  const followingUsersIds = loggedUser.following;
+  const followingUsersIds = loggedUser!.following;
   const newsfeedd = await newsfeedService.getUsersActivity({
     usersIds: followingUsersIds
   });
@@ -257,6 +257,11 @@ const users: QueryResolvers.UsersResolver = async (_, args, context) => {
 
 const user: QueryResolvers.UserResolver = async (_, args, context) => {
   const dbUser = await userService.getUser(args, context);
+
+  if (!dbUser) {
+    return null;
+  }
+
   const gqlUser = gqlMapper.getUser({
     dbUser,
     loggedUserId: context.user!.id

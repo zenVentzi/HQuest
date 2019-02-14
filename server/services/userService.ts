@@ -132,14 +132,9 @@ async function editUser(
 async function getUser(
   { id }: GqlTypes.UserQueryArgs,
   { models }: ApolloContext
-): Promise<DbTypes.User> {
+): Promise<DbTypes.User | null> {
   const user = await models.user.findById(id);
-
-  if (!user) {
-    throw new Error(`User with id ${id} was not found`);
-  }
-
-  return user.toObject();
+  return user ? user.toObject() : null;
 }
 
 async function getUsersWithIds(
