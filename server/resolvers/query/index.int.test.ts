@@ -250,6 +250,112 @@ test("questions() should return total number of questions", async ____done____SE
   expect(actual).toEqual(expected);
   ____done____SERIOUSLY____DONE();
 });
+
+// tslint:disable-next-line: variable-name
+test("questions() should return correct page info", async __just_a_little_bit_more_and_DONE => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question1 = {
+    _id: ObjectId(),
+    tags: ["bla", "shegichka_we_bonak_hihi"],
+    value: "questionValue1"
+  };
+  await new QuestionModel(question).save();
+  await new QuestionModel(question1).save();
+  await new UserModel(contextUser).save();
+  const questions = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 5
+    },
+    context,
+    {} as any
+  );
+
+  expect(questions.totalCount).toEqual(2);
+  expect(questions.pageInfo.startCursor).toEqual(questions.edges![0].cursor);
+  expect(questions.pageInfo.endCursor).toEqual(questions.edges![1].cursor);
+  expect(questions.pageInfo.hasNextPage).toEqual(false);
+  expect(questions.pageInfo.hasPreviousPage).toEqual(false);
+  __just_a_little_bit_more_and_DONE();
+});
+
+test("questions() return pageInfo hasNextPage=true", async done => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question1 = {
+    _id: ObjectId(),
+    tags: ["bla", "shegichka_we_bonak_hihi"],
+    value: "questionValue1"
+  };
+  await new QuestionModel(question).save();
+  await new QuestionModel(question1).save();
+  await new UserModel(contextUser).save();
+  const questions = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 1
+    },
+    context,
+    {} as any
+  );
+
+  expect(questions.totalCount).toEqual(2);
+  expect(questions.pageInfo.startCursor).toEqual(questions.edges![0].cursor);
+  expect(questions.pageInfo.endCursor).toEqual(questions.edges![0].cursor);
+  expect(questions.pageInfo.hasNextPage).toEqual(true);
+  expect(questions.pageInfo.hasPreviousPage).toEqual(false);
+  done();
+});
+
+test("questions() return pageInfo hasPreviousPage=true hasNextPage=false", async done => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question1 = {
+    _id: ObjectId(),
+    tags: ["bla", "shegichka_we_bonak_hihi"],
+    value: "questionValue1"
+  };
+  await new QuestionModel(question).save();
+  await new QuestionModel(question1).save();
+  await new UserModel(contextUser).save();
+  const questionsFirstFetch = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 1
+    },
+    context,
+    {} as any
+  );
+
+  const questionsSecondFetch = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 1,
+      after: questionsFirstFetch.pageInfo.endCursor
+    },
+    context,
+    {} as any
+  );
+
+  expect(questionsSecondFetch.totalCount).toEqual(2);
+  expect(questionsSecondFetch.pageInfo.startCursor).toEqual(
+    questionsSecondFetch.edges![0].cursor
+  );
+  expect(questionsSecondFetch.pageInfo.endCursor).toEqual(
+    questionsSecondFetch.edges![0].cursor
+  );
+  expect(questionsSecondFetch.pageInfo.hasNextPage).toEqual(false);
+  expect(questionsSecondFetch.pageInfo.hasPreviousPage).toEqual(true);
+  done();
+});
+
+// tslint:disable-next-line: variable-name
 test("questions() should return total number of questions", async ____done____SERIOUSLY____DONE => {
   const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
   const question1 = {
@@ -260,16 +366,49 @@ test("questions() should return total number of questions", async ____done____SE
   await new QuestionModel(question).save();
   await new QuestionModel(question1).save();
   await new UserModel(contextUser).save();
+  const questionsFirstFetch = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 5
+    },
+    context,
+    {} as any
+  );
 
-  const args: GqlTypes.QuestionsQueryArgs = {
-    userId: contextUser._id.toHexString(),
-    answered: false,
-    first: 5,
-    after: question._id.toHexString()
-  };
-  const questions = await queries.questions({}, args, context, {} as any);
-  const actual = questions.totalCount;
+  const questionsSecondFetch = await queries.questions(
+    {},
+    {
+      userId: contextUser._id.toHexString(),
+      answered: false,
+      first: 5,
+      after: questionsFirstFetch.pageInfo.startCursor
+    },
+    context,
+    {} as any
+  );
+  const actual = questionsSecondFetch.edges!.length;
   const expected = 1;
   expect(actual).toEqual(expected);
   ____done____SERIOUSLY____DONE();
+});
+
+test("questionsTags() should return all tags", async notDONEyet => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question1 = {
+    _id: ObjectId(),
+    tags: ["bla1", "shegichka_we_bonak_hihi"],
+    value: "questionValue1"
+  };
+  await new QuestionModel(question).save();
+  await new QuestionModel(question1).save();
+  await new UserModel(contextUser).save();
+
+  const allTags = await queries.questionsTags({}, {}, context, {} as any);
+  // console.log(allTags);
+  expect(allTags).toContain("bla");
+  expect(allTags).toContain("bla1");
+  expect(allTags).toContain("shegichka_we_bonak_hihi");
+  notDONEyet();
 });

@@ -152,7 +152,9 @@ const getCurrentPageEdges: GetCurrentPageEdges = (
   }
 
   const endIndex = startIndex + first;
+  // console.log(`startIndex ${startIndex}`);
   const res = allEdges.slice(startIndex, endIndex);
+  // console.log(`result ${res}`);
   return res;
 };
 
@@ -184,7 +186,7 @@ const getPageInfo: GetPageInfo = (allEdges, currentPageEdges) => {
     startCursor = currentPageEdges[0].cursor;
     endCursor = currentPageEdges[currentPageEdges.length - 1].cursor;
     const beforeStartCursor = edge =>
-      ObjectId(edge.cursor) < ObjectId(startCursor);
+      ObjectId(edge.cursor) < ObjectId(startCursor); // compares by date
     const afterEndCursor = edge => ObjectId(edge.cursor) > ObjectId(endCursor);
 
     hasPreviousPage = allEdges.filter(beforeStartCursor).length > 0;
