@@ -412,3 +412,30 @@ test("questionsTags() should return all tags", async notDONEyet => {
   expect(allTags).toContain("shegichka_we_bonak_hihi");
   notDONEyet();
 });
+
+test("answeredQuestion() should return answered question", async done => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  await new QuestionModel(question).save();
+  await new UserModel(contextUser).save();
+  const answer: DbTypes.Answer = {
+    _id: ObjectId(),
+    userId: contextUser._id,
+    position: 1,
+    questionId: question._id,
+    value: "answerValue"
+  };
+  await new AnswerModel(answer).save();
+
+  const answeredQuestion = await queries.answeredQuestion(
+    {},
+    {
+      questionId: question._id.toHexString(),
+      userId: contextUser._id.toHexString()
+    },
+    context,
+    {} as any
+  );
+  expect(answeredQuestion.value).toEqual(question.value);
+  expect(answeredQuestion.answer!.value).toEqual(answer.value);
+  done();
+});
