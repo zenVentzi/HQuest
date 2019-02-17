@@ -144,62 +144,6 @@ function getQuestions({
   });
 }
 
-function getNewsfeed({
-  newsFeed,
-  newsFeedUsers,
-  newsFeedQuestions,
-  loggedUserId
-}: {
-  newsFeed: any;
-  newsFeedUsers: any;
-  newsFeedQuestions: any;
-  loggedUserId: string;
-}): any {
-  const gqlUsers = getUsers({ dbUsers: newsFeedUsers, loggedUserId });
-  const gqlQuestions = getQuestions({
-    dbQuestions: newsFeedQuestions,
-    loggedUserId
-  });
-
-  // type Fn = <T, R>(arg: T) => R;
-
-  const res = newsFeed.map(news => {
-    const gqlNews = { ...news };
-    gqlNews.createdOn = news._id.getTimestamp();
-    // @ts-ignore
-    gqlNews.performer = gqlUsers.find(usr => news.performerId === usr.id);
-
-    if (news.followedUserId) {
-      // @ts-ignore
-      gqlNews.followedUser = gqlUsers.find(
-        usr => news.followedUserId === usr.id
-      );
-      delete gqlNews.followedUserId;
-    } else if (news.answerId) {
-      const newsQuestion = gqlQuestions.find(
-        q => news.answerId === q.answer!.id
-      );
-
-      if (newsQuestion) {
-        gqlNews.question = newsQuestion;
-        // @ts-ignore
-        gqlNews.answerOwner = gqlUsers.find(
-          usr => news.answerOwnerId === usr.id
-        );
-        delete gqlNews.answerOwnerId;
-        delete gqlNews.questionId;
-      }
-      delete gqlNews.answerId;
-    }
-
-    delete gqlNews._id;
-    delete gqlNews.performerId;
-    return gqlNews;
-  });
-
-  return res;
-}
-
 function getNotification(notif: dbTypes.Notification): gqlTypes.Notification {
   const res: gqlTypes.Notification = {
     id: notif._id.toString(),
@@ -312,6 +256,89 @@ function getAnswer({
 
   return gqlAnswer;
 }
+
+type GetNews = (
+  news: dbTypes.News,
+  newsfeedUsers: gqlTypes.User[],
+  newsfeedQuestions: gqlTypes.Question[]
+) => gqlTypes.News;
+
+const getNews: GetNews = (news, newsfeedUsers, newsfeedQuestions) => {
+  let gqlNews: gqlTypes.News;
+
+  switch (news.type) {
+    case dbTypes.NewsType.NewFollower:
+      gqlNews = {
+        createdOn: news._id.getTimestamp(),
+        type: gqlTypes.NewsType.NewFollower,
+        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
+        followedUser: newsfeedUsers.find(u => u.id === news.followedUserId)!
+      };
+      break;
+    case dbTypes.NewsType.NewLike:
+      gqlNews = {
+        createdOn: news._id.getTimestamp(),
+        type: gqlTypes.NewsType.NewLike,
+        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
+        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
+        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
+      };
+      break;
+    case dbTypes.NewsType.NewAnswer:
+    case dbTypes.NewsType.NewAnswerEdition:
+      gqlNews = {
+        createdOn: news._id.getTimestamp(),
+        type: news.type,
+        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
+        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
+        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
+      };
+      break;
+    case dbTypes.NewsType.NewComment:
+      gqlNews = {
+        createdOn: news._id.getTimestamp(),
+        type: news.type,
+        commentId: news.commentId,
+        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
+        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
+        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
+      };
+      break;
+  }
+
+  return gqlNews!;
+  /* gqlNews is always covered by the switch statements. 
+  Using ! because of typescript compiler limitation
+  link to issue https://github.com/Microsoft/TypeScript/issues/18362 */
+};
+
+type GetNewsfeed = (
+  newsFeed: dbTypes.Newsfeed | null,
+  newsFeedUsers: dbTypes.User[],
+  newsFeedQuestions: dbTypes.Question[],
+  loggedUserId: string
+) => gqlTypes.News[] | null;
+
+const getNewsfeed: GetNewsfeed = (
+  newsfeed,
+  newsfeedUsers,
+  newsfeedQuestions,
+  loggedUserId
+) => {
+  if (!newsfeed || !newsfeed.length) return null;
+
+  const newsfeedUsersGql = getUsers({ dbUsers: newsfeedUsers, loggedUserId });
+  const newsfeedQuestionsGql = getQuestions({
+    dbQuestions: newsfeedQuestions,
+    loggedUserId
+  });
+
+  const newsfeedGql = newsfeed.map(news =>
+    getNews(news, newsfeedUsersGql, newsfeedQuestionsGql)
+  );
+
+  return newsfeedGql;
+};
 
 const gqlMapper = {
   getLikes,

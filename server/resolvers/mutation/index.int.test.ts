@@ -31,9 +31,6 @@ const tempContext: ApolloContext = {
   }
 };
 
-// console.log(tempUser._id.toHexString());
-// console.log(tempContext.user!.id);
-
 test("login() should login if user exists", async done => {
   const existingUser = await new UserModel({
     email: "fdf",

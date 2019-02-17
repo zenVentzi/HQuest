@@ -439,3 +439,8 @@ test("answeredQuestion() should return answered question", async done => {
   expect(answeredQuestion.answer!.value).toEqual(answer.value);
   done();
 });
+
+test("newsfeed()", async done => {
+  const newsfeed = await queries.newsfeed({}, {}, context, {} as any);
+  done();
+});

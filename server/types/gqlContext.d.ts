@@ -14,8 +14,16 @@ interface ApolloContext {
     user: UserModel;
     question: QuestionModel;
     answer: AnswerModel;
-    newsfeed: any;
+    newsfeed: NewsfeedModel;
   };
+  // services: {
+  //   answer: any;
+  //   comment: any;
+  //   newsfeed: any;
+  //   notification: any;
+  //   question: any;
+  //   user: any;
+  // };
 }
 
 export { User, ApolloContext };
