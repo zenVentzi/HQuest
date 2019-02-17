@@ -315,7 +315,7 @@ const getNews: GetNews = (news, newsfeedUsers, newsfeedQuestions) => {
 type GetNewsfeed = (
   newsFeed: dbTypes.Newsfeed | null,
   newsFeedUsers: dbTypes.User[],
-  newsFeedQuestions: dbTypes.Question[],
+  newsFeedQuestions: dbTypes.AnsweredQuestion[],
   loggedUserId: string
 ) => gqlTypes.News[] | null;
 

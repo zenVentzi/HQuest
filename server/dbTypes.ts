@@ -5,16 +5,7 @@ import {
   DocumentToObjectOptions
 } from "mongoose";
 
-// export interface Notification {
-//   _id: GooseTypes.ObjectId;
-//   type: NotificationType;
-//   questionId?: string;
-//   commentId?: string;
-//   performerId: string;
-//   performerAvatarSrc: string;
-//   text: string;
-//   seen: boolean;
-// }
+export type ObjectId = GooseTypes.ObjectId;
 
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
@@ -22,7 +13,7 @@ export enum NotificationType {
 }
 
 export interface Notification {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   type: NotificationType;
   questionId?: string;
   commentId?: string;
@@ -43,14 +34,14 @@ export interface NewFollower extends Notification {
 }
 
 export interface User<Populated extends boolean = false> {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   firstName: string;
   surName: string;
   email: string;
   intro: string;
   avatarSrc: string;
-  followers?: Populated extends true ? User[] : GooseTypes.ObjectId[];
-  following?: Populated extends true ? User[] : GooseTypes.ObjectId[];
+  followers?: Populated extends true ? User[] : ObjectId[];
+  following?: Populated extends true ? User[] : ObjectId[];
   notifications?: Notification[];
   socialMediaLinks?: {
     facebookLink?: string;
@@ -61,7 +52,7 @@ export interface User<Populated extends boolean = false> {
 }
 
 export interface UserDoc extends User, Document {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject<Populated extends boolean = false>(
     options?: DocumentToObjectOptions
   ): User<Populated>;
@@ -75,25 +66,25 @@ export interface UserDoc extends User, Document {
 // type Bla = Omit<User, UserDoc>;
 
 export interface Comment {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   value: string;
-  user: User | GooseTypes.ObjectId;
+  user: User | ObjectId;
 }
 
 export interface CommentDoc extends Comment, Document {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject(options?: DocumentToObjectOptions): Comment;
 }
 
 export interface Edition {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   date: string;
   before: string;
   after: string;
 }
 
 export interface EditionDoc extends Edition, Document {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject(options?: DocumentToObjectOptions): Edition;
 }
 
@@ -108,9 +99,9 @@ export interface Likes {
 }
 
 export interface Answer {
-  _id: GooseTypes.ObjectId;
-  userId: GooseTypes.ObjectId;
-  questionId: GooseTypes.ObjectId;
+  _id: ObjectId;
+  userId: ObjectId;
+  questionId: ObjectId;
   value: string;
   position: number;
   comments?: Comment[];
@@ -119,12 +110,12 @@ export interface Answer {
 }
 
 export interface AnswerDoc extends Answer, Document {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject(options?: DocumentToObjectOptions): Answer;
 }
 
 export interface Question {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   value: string;
   tags: string[];
 }
@@ -134,7 +125,7 @@ export interface AnsweredQuestion extends Question {
 }
 
 export interface QuestionDoc extends Question, Document {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject(options?: DocumentToObjectOptions): Question;
 }
 
@@ -147,7 +138,7 @@ export enum NewsType {
 }
 
 export interface NewsBase {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   type: NewsType;
   performerId: string;
 }
@@ -184,11 +175,6 @@ export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
 export type Newsfeed = News[];
 
 export type NewsDoc = News & {
-  _id: GooseTypes.ObjectId;
+  _id: ObjectId;
   toObject(options?: DocumentToObjectOptions): News;
 } & Document;
-
-// export interface NewsDoc extends News, Document {
-//   _id: GooseTypes.ObjectId;
-//   toObject(options?: DocumentToObjectOptions): NewsBase;
-// }

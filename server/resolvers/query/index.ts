@@ -30,61 +30,24 @@ const notifications: QueryResolvers.NotificationsResolver = async (
 };
 
 const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
-  const loggedUser = await userService.getUser(
-    { id: context.user!.id },
+  const newsfeedDb = await newsfeedService.getNewsfeed(context);
+  const newsfeedQuestions = await newsfeedService.getNewsFeedQuestions(
+    newsfeedDb,
     context
   );
-  const followingUsersIds = loggedUser!.following;
-  const newsfeedd = await newsfeedService.getUsersActivity({
-    usersIds: followingUsersIds
-  });
-  const participantsIds = newsfeedService.getParticipantsIds({
-    newsfeed: newsfeedd
-  });
-
-  const newsFeedUsers = await userService.getUsersWithIds(
-    {
-      ids: participantsIds
-    },
+  const newsfeedUsers = await newsfeedService.getNewsFeedUsers(
+    newsfeedDb,
     context
   );
 
-  const newsfeedAnswersIds: string[] = [];
-  // @ts-ignore
-
-  newsfeedd.forEach(news => {
-    if (news.answerId) {
-      // @ts-ignore
-      newsfeedAnswersIds.push(news.answerId);
-    }
-  });
-
-  const newsfeedAnswers = await answerService.getAnswersById(
-    {
-      // @ts-ignore
-      ids: newsfeedAnswersIds
-    },
-    context
-  );
-
-  const newsfeedQuestionsIds = newsfeedAnswers.map(a => a.questionId);
-
-  const newsfeedQuestions = await questionService.getQuestionsById(
-    {
-      ids: newsfeedQuestionsIds
-    },
-    context
-  );
-
-  const gqlNewsfeed = gqlMapper.getNewsfeed({
-    // @ts-ignore
-    newsfeed: newsfeedd,
-    newsFeedUsers,
-    newsfeedAnswers,
+  const gqlNewsfeed = gqlMapper.getNewsfeed(
+    newsfeedDb,
+    newsfeedUsers,
     newsfeedQuestions,
-    loggedUserId: context.user!.id
-  });
-  return gqlNewsfeed.reverse();
+    context.user!.id
+  );
+
+  return gqlNewsfeed;
 };
 
 const followers: QueryResolvers.FollowersResolver = async (
