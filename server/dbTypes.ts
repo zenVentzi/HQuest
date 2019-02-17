@@ -184,6 +184,7 @@ export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
 export type Newsfeed = News[];
 
 export type NewsDoc = News & {
+  _id: GooseTypes.ObjectId;
   toObject(options?: DocumentToObjectOptions): News;
 } & Document;
 
