@@ -87,33 +87,23 @@ const onEditAnswer = Newsfeed => async ({ answerId, performerId }) => {
   });
 };
 
-const getParticipantsIds = ({ newsfeed }) => {
-  const participantsIds = [];
-  const isAdded = id => participantsIds.includes(id);
-
-  // todo imrprove readability
-  newsfeed.forEach(news => {
-    if (!isAdded(news.performerId)) {
-      participantsIds.push(news.performerId);
-    }
-    if (!isAdded(news.answerOwnerId)) {
-      participantsIds.push(news.answerOwnerId);
-    }
-  });
-
-  return participantsIds;
-};
-
 const getUsersActivity = Newsfeed => async ({ usersIds }) => {
   return Newsfeed.find({
     performerId: { $in: usersIds }
   }).lean();
 };
 
+type GetAnswerIdFromNews = (news: DbTypes.News) => string | null;
+
+const getAnswerIdFromNews: GetAnswerIdFromNews = news => {
+  if (news.type === DbTypes.NewsType.NewFollower) return null;
+  return news.answerId;
+};
+
 type GetNewsfeedQuestions = (
   newsfeed: DbTypes.Newsfeed,
   context: ApolloContext
-) => Promise<DbTypes.Question>;
+) => Promise<DbTypes.AnsweredQuestion[]>;
 
 const getNewsFeedQuestions: GetNewsfeedQuestions = async (
   newsfeed,
@@ -121,8 +111,9 @@ const getNewsFeedQuestions: GetNewsfeedQuestions = async (
 ) => {
   const answerIds: string[] = [];
   newsfeed.forEach(news => {
-    if (news.answerId) {
-      answerIds.push(news.answerId);
+    const answerId = getAnswerIdFromNews(news);
+    if (answerId && !answerIds.includes(answerId)) {
+      answerIds.push(answerId);
     }
   });
 
@@ -137,15 +128,23 @@ const getNewsFeedQuestions: GetNewsfeedQuestions = async (
 
   const answeredQuestions = answers.map(a => {
     const question = unansweredQs.find(q => q._id.equals(a.questionId));
-    return { ...question, answer: a };
+    return { ...question!, answer: a };
   });
 
-  const newsFeedQuestions = await getAnsweredQuestions(
-    { answers, questionsIds },
-    context
-  );
+  return answeredQuestions;
+};
 
-  return newsFeedQuestions;
+type GetUsersFromNews = (news: DbTypes.News) => string[];
+
+const getUsersFromNews: GetUsersFromNews = news => {
+  if (news.type === DbTypes.NewsType.NewFollower) {
+    return [news.performerId, news.followedUserId];
+    /* 
+     double check if we need followedUserId
+      */
+  }
+
+  return [news.performerId, news.answerOwnerId];
 };
 
 type GetNewsfeedUsers = (
@@ -156,12 +155,12 @@ const getNewsFeedUsers: GetNewsfeedUsers = async (newsfeed, { models }) => {
   const newsfeedUsersIds: string[] = [];
 
   newsfeed.forEach(news => {
-    if (!newsfeedUsersIds.includes(news.performerId)) {
-      newsfeedUsersIds.push(news.performerId);
-    }
-    if (!newsfeedUsersIds.includes(news.answerOwnerId)) {
-      newsfeedUsersIds.push(news.answerOwnerId);
-    }
+    const newsUsers = getUsersFromNews(news);
+    newsUsers.forEach(userId => {
+      if (!newsfeedUsersIds.includes(userId)) {
+        newsfeedUsersIds.push(userId);
+      }
+    });
   });
 
   const newsfeedUsers = (await models.user.find({
@@ -172,6 +171,7 @@ const getNewsFeedUsers: GetNewsfeedUsers = async (newsfeed, { models }) => {
 };
 
 type GetNewsfeed = (context: ApolloContext) => Promise<DbTypes.Newsfeed>;
+
 const getNewsfeed: GetNewsfeed = async context => {
   const { models, user } = context;
   const { following } = (await models.user.findById(user!.id))!.toObject();
@@ -189,16 +189,7 @@ const getNewsfeed: GetNewsfeed = async context => {
     })
     .lean()) as DbTypes.Newsfeed;
 
-  const newsFeedUsers = await getNewsFeedUsers(newsfeed, context);
-
-  const newsFeedQuestions = await getNewsFeedQuestions(newsfeed, context);
-
-  const gqlNewsfeed = mapGqlNewsFeed({
-    newsFeed,
-    newsFeedUsers,
-    newsFeedQuestions
-  });
-  return gqlNewsfeed.reverse();
+  return newsfeed.reverse(); // newest first
 };
 
 export const newsfeedService = {
@@ -208,5 +199,7 @@ export const newsfeedService = {
   onLikeAnswer,
   onFollowUser,
   getUsersActivity,
-  getParticipantsIds
+  getNewsfeed,
+  getNewsFeedQuestions,
+  getNewsFeedUsers
 };
