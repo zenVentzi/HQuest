@@ -49,7 +49,7 @@ const interfaces = {
       return 'NewFollower';
     },
   },
-  News: {
+  NewsBase: {
     __resolveType(obj, context, info) {
       switch (obj.type) {
         case 'NEW_ANSWER':

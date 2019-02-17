@@ -137,3 +137,57 @@ export interface QuestionDoc extends Question, Document {
   _id: GooseTypes.ObjectId;
   toObject(options?: DocumentToObjectOptions): Question;
 }
+
+export enum NewsType {
+  NewAnswer = "NEW_ANSWER",
+  NewAnswerEdition = "NEW_ANSWER_EDITION",
+  NewComment = "NEW_COMMENT",
+  NewLike = "NEW_LIKE",
+  NewFollower = "NEW_FOLLOWER"
+}
+
+export interface NewsBase {
+  _id: GooseTypes.ObjectId;
+  type: NewsType;
+  performerId: string;
+}
+
+export interface AnswerNews extends NewsBase {
+  type: NewsType.NewAnswer | NewsType.NewAnswerEdition;
+  answerOwnerId: string;
+  answerId: string;
+  // toObject(options?: DocumentToObjectOptions): AnswerNews;
+}
+
+export interface CommentNews extends NewsBase {
+  type: NewsType.NewComment;
+  answerOwnerId: string;
+  answerId: string;
+  commentId: string;
+  // toObject(options?: DocumentToObjectOptions): CommentNews;
+}
+
+export interface NewFollowerNews extends NewsBase {
+  type: NewsType.NewFollower;
+  followedUserId: string;
+  // toObject(options?: DocumentToObjectOptions): NewFollowerNews;
+}
+
+export interface NewLikeNews extends NewsBase {
+  type: NewsType.NewLike;
+  answerOwnerId: string;
+  answerId: string;
+  // toObject(options?: DocumentToObjectOptions): NewLikeNews;
+}
+
+export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+export type Newsfeed = News[];
+
+export type NewsDoc = News & {
+  toObject(options?: DocumentToObjectOptions): News;
+} & Document;
+
+// export interface NewsDoc extends News, Document {
+//   _id: GooseTypes.ObjectId;
+//   toObject(options?: DocumentToObjectOptions): NewsBase;
+// }

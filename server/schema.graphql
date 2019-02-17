@@ -27,12 +27,6 @@ interface Connection {
   edges: [Edge!]
 }
 
-interface News {
-  type: NewsType!
-  performer: User!
-  createdOn: DateTime!
-}
-
 type SocialMediaLinks {
   facebookLink: String
   twitterLink: String
@@ -113,14 +107,20 @@ enum NewsType {
   NEW_FOLLOWER
 }
 
-type AnswerNews implements News {
+interface NewsBase {
+  type: NewsType!
+  performer: User!
+  createdOn: DateTime!
+}
+
+type AnswerNews implements NewsBase {
   type: NewsType!
   performer: User!
   question: Question!
   createdOn: DateTime!
 }
 
-type CommentNews implements News {
+type CommentNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
@@ -129,20 +129,22 @@ type CommentNews implements News {
   createdOn: DateTime!
 }
 
-type NewFollowerNews implements News {
+type NewFollowerNews implements NewsBase {
   type: NewsType!
   performer: User!
   followedUser: User!
   createdOn: DateTime!
 }
 
-type NewLikeNews implements News {
+type NewLikeNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
   question: Question!
   createdOn: DateTime!
 }
+
+union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
 
 enum NotificationType {
   NEW_FOLLOWER
@@ -250,16 +252,6 @@ type Mutation {
   follow(userId: ID!, follow: Boolean!): Boolean
 }
 
-"""
-export const QUESTION_NOT_APPLY = gql`
-  mutation questionNotApply($questionId: ID!) {
-    questionNotApply(questionId: $questionId) {
-      ...QuestionFields
-    }
-  }
-  ${QuestionFields}
-`;
-"""
 type Subscription {
   bookAdded: Book!
   newNotification(userId: ID!): Notification!
