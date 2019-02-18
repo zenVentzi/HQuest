@@ -263,10 +263,7 @@ const user: QueryResolvers.UserResolver = async (_, args, context) => {
     return null;
   }
 
-  const gqlUser = gqlMapper.getUser({
-    dbUser,
-    loggedUserId: context.user!.id
-  });
+  const gqlUser = gqlMapper.getUser(dbUser, context.user!.id);
   return gqlUser;
 };
 

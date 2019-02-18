@@ -1,7 +1,8 @@
 import { ApolloContext } from "gqlContext";
+import { Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
 
-const { ObjectId } = require("mongoose").Types;
+const { ObjectId } = GooseTypes;
 
 const NEW_ANSWER = "NEW_ANSWER";
 const NEW_ANSWER_EDITION = "NEW_ANSWER_EDITION";
@@ -9,88 +10,140 @@ const NEW_COMMENT = "NEW_COMMENT";
 const NEW_FOLLOWER = "NEW_FOLLOWER";
 const NEW_LIKE = "NEW_LIKE";
 
-const checkLikedBefore = Newsfeed => async ({ news }) => {
-  const existingNews = await Newsfeed.findOne({
-    type: news.type,
-    performerId: news.performerId,
-    answerId: news.answerId
-  }).lean();
+type CheckLikedBefore = (
+  news: DbTypes.News,
+  context: ApolloContext
+) => Promise<boolean>;
+
+const checkLikedBefore: CheckLikedBefore = async (news, { models }) => {
+  const existingNews = await models.newsfeed.findById(news._id);
+
+  // old way
+  // const existingNews = await models.newsfeed.findOne({
+  //   type: news.type,
+  //   performerId: news.performerId,
+  //   answerId: news.answerId
+  // }).lean();
 
   return !!existingNews;
 };
 
-const onLikeAnswer = Newsfeed => async ({ dbAnswer, performerId }) => {
-  const news = {
-    type: NEW_LIKE,
+type OnLikeAnswer = (
+  answer: DbTypes.Answer,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onLikeAnswer: OnLikeAnswer = async (answer, performerId, context) => {
+  const news: DbTypes.NewLikeNews = {
+    _id: ObjectId(),
+    type: DbTypes.NewsType.NewLike,
     performerId,
-    answerOwnerId: dbAnswer.userId.toString(),
-    answerId: dbAnswer._id.toString()
+    answerOwnerId: answer.userId.toString(),
+    answerId: answer._id.toString()
   };
 
-  if (!(await checkLikedBefore(Newsfeed)({ news }))) {
-    await Newsfeed.create(news);
+  if (!(await checkLikedBefore(news, context))) {
+    await context.models.newsfeed.create(news);
   }
 };
 
-const onFollowUser = Newsfeed => async ({
+type OnFollowUser = (
+  followedUserId: string,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onFollowUser: OnFollowUser = async (
   followedUserId,
-  performedId: performerId
-}) => {
+  performerId,
+  context
+) => {
   const news = {
     type: NEW_FOLLOWER,
     performerId,
     followedUserId
   };
 
-  await Newsfeed.create(news);
+  await context.models.newsfeed.create(news);
 };
 
-const onNewComment = Newsfeed => async ({
-  dbAnswer,
+type OnNewComment = (
+  answer: DbTypes.Answer,
+  commentId: string,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onNewComment: OnNewComment = async (
+  answer,
   commentId,
-  performerId
-}) => {
+  performerId,
+  context
+) => {
   const news = {
     type: NEW_COMMENT,
     performerId,
-    answerOwnerId: dbAnswer.userId.toString(),
-    answerId: dbAnswer._id.toString(),
+    answerOwnerId: answer.userId.toString(),
+    answerId: answer._id.toString(),
     commentId
   };
 
-  await Newsfeed.create(news);
+  await context.models.newsfeed.create(news);
 };
 
-const onAnswerChange = Newsfeed => async ({ type, answerId, performerId }) => {
-  const news = {
+type OnAnswerChange = (
+  type: DbTypes.NewsType.NewAnswer | DbTypes.NewsType.NewAnswerEdition,
+  answerId: string,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onAnswerChange: OnAnswerChange = async (
+  type,
+  answerId,
+  performerId,
+  context
+) => {
+  const news: DbTypes.AnswerNews = {
+    _id: ObjectId(),
     type,
     performerId,
+    answerOwnerId: performerId, // double check if that is true
     answerId
   };
 
-  await Newsfeed.create(news);
+  await context.models.newsfeed.create(news);
 };
 
-const onNewAnswer = Newsfeed => async ({ answerId, performerId }) => {
-  await onAnswerChange(Newsfeed)({
-    type: NEW_ANSWER,
+type OnNewAnswer = (
+  answerId: string,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onNewAnswer: OnNewAnswer = async (answerId, performerId, context) => {
+  await onAnswerChange(
+    DbTypes.NewsType.NewAnswer,
     answerId,
-    performerId
-  });
+    performerId,
+    context
+  );
 };
 
-const onEditAnswer = Newsfeed => async ({ answerId, performerId }) => {
-  await onAnswerChange(Newsfeed)({
-    type: NEW_ANSWER_EDITION,
+type OnEditAnswer = (
+  answerId: string,
+  performerId: string,
+  context: ApolloContext
+) => Promise<void>;
+
+const onEditAnswer: OnEditAnswer = async (answerId, performerId, context) => {
+  await onAnswerChange(
+    DbTypes.NewsType.NewAnswerEdition,
     answerId,
-    performerId
-  });
-};
-
-const getUsersActivity = Newsfeed => async ({ usersIds }) => {
-  return Newsfeed.find({
-    performerId: { $in: usersIds }
-  }).lean();
+    performerId,
+    context
+  );
 };
 
 type GetAnswerIdFromNews = (news: DbTypes.News) => string | null;
@@ -198,7 +251,6 @@ export const newsfeedService = {
   onNewComment,
   onLikeAnswer,
   onFollowUser,
-  getUsersActivity,
   getNewsfeed,
   getNewsFeedQuestions,
   getNewsFeedUsers

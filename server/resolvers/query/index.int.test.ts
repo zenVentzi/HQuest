@@ -440,7 +440,21 @@ test("answeredQuestion() should return answered question", async done => {
   done();
 });
 
-test("newsfeed()", async done => {
+test("newsfeed() should return newsfeed", async done => {
+  await new UserModel(contextUser).save();
+
+  // new NewsfeedModel.save suddenly decided that it's not gonna work. Cool.
+  await NewsfeedModel.create({
+    _id: ObjectId(),
+    answerId: ObjectId().toHexString(),
+    answerOwnerId: ObjectId().toHexString(),
+    performerId: ObjectId().toHexString(),
+    type: DbTypes.NewsType.NewAnswer
+  } as DbTypes.AnswerNews);
+  // const newsfeed = (await NewsfeedModel.find().lean()) as DbTypes.Newsfeed;
   const newsfeed = await queries.newsfeed({}, {}, context, {} as any);
+  const actual = newsfeed!.length;
+  const expected = 1;
+  expect(actual).toEqual(expected);
   done();
 });
