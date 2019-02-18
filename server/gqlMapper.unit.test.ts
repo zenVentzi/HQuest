@@ -28,10 +28,7 @@ describe("users", () => {
       avatarSrc: "blaSrc"
     };
 
-    const actual = gqlMapper.getUser({
-      dbUser,
-      loggedUserId: dbUser._id.toString()
-    });
+    const actual = gqlMapper.getUser(dbUser, dbUser._id.toString());
 
     expect(actual).toEqual(expected);
   });
@@ -58,10 +55,7 @@ describe("users", () => {
       following: dbUser.following!.map(f => f.toString())
     };
 
-    const actual = gqlMapper.getUser({
-      dbUser,
-      loggedUserId: dbUser._id.toString()
-    });
+    const actual = gqlMapper.getUser(dbUser, dbUser._id.toString());
 
     expect(actual).toEqual(expected);
   });
@@ -139,10 +133,7 @@ describe("questions", () => {
       value: "commentValue"
     };
 
-    const gqlUser = gqlMapper.getUser({
-      dbUser,
-      loggedUserId: ObjectId().toHexString()
-    });
+    const gqlUser = gqlMapper.getUser(dbUser, ObjectId().toHexString());
 
     const expected: gqlTypes.Comment = {
       id: dbComment._id.toHexString(),
@@ -196,7 +187,7 @@ describe("questions", () => {
       following: [ObjectId(), ObjectId()]
     }).toObject();
 
-    const gqlUser = gqlMapper.getUser({ dbUser, loggedUserId: "" });
+    const gqlUser = gqlMapper.getUser(dbUser, "");
     const dbLikes: dbTypes.Likes = {
       total: 1,
       likers: [{ user: dbUser, numOfLikes: 1 }]
@@ -380,7 +371,7 @@ describe("questions", () => {
   });
 });
 
-test("getNotification", () => {
+test("getNotification()", () => {
   const dbNotif: dbTypes.Notification = {
     _id: ObjectId(),
     commentId: "",
@@ -404,6 +395,71 @@ test("getNotification", () => {
     type: dbTypes.NotificationType.NewComment,
     createdOn: dbNotif._id.getTimestamp()
   };
+  expect(true).toEqual(true);
 
   expect(actual).toEqual(expected);
+});
+
+test.only("getNewsfeed()", () => {
+  return;
+  const followedDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoPerformer",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const performerDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoFollowed",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const newsfeedUsers: dbTypes.User[] = [followedDb, performerDb];
+  const newsfeed: dbTypes.Newsfeed = [
+    {
+      _id: ObjectId(),
+      type: dbTypes.NewsType.NewFollower,
+      followedUserId: followedDb._id.toHexString(),
+      performerId: performerDb._id.toHexString()
+    }
+  ];
+  // const questionId = ObjectId();
+  // const newsfeedQuestions: dbTypes.AnsweredQuestion[] = [
+  //   {
+  //     _id: questionId,
+  //     tags: ["blaTag"],
+  //     value: "qValue",
+  //     answer: {
+  //       _id: ObjectId(),
+  //       value: "aValue",
+  //       position: 1,
+  //       questionId,
+  //       userId: ObjectId()
+  //     }
+  //   }
+  // ];
+
+  return;
+
+  const followedUser: gqlTypes.User = gqlMapper.getUser(followedDb, "");
+  const performer: gqlTypes.User = gqlMapper.getUser(performerDb, "");
+
+  const expected: gqlTypes.NewFollowerNews = {
+    type: gqlTypes.NewsType.NewFollower,
+    createdOn: newsfeed[0]._id.getTimestamp(),
+    followedUser,
+    performer
+  };
+  const actual = gqlMapper.getNewsfeed(
+    newsfeed,
+    newsfeedUsers,
+    null,
+    ObjectId().toHexString()
+  )![0];
+
+  // expect(actual).toEqual(expected);
 });

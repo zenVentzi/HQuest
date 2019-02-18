@@ -33,15 +33,24 @@ export interface NewFollower extends Notification {
   type: NotificationType.NewFollower;
 }
 
-export interface User<Populated extends boolean = false> {
+/* 
+User<FollowT extends User[] | ObjectId[] = ObjectId[]> {
+  looks is cleaner but creates circular dependency
+*/
+
+export interface User<
+  PopulatedFields extends
+    | "noPopulatedFields"
+    | keyof User<"noPopulatedFields"> = "noPopulatedFields"
+> {
   _id: ObjectId;
   firstName: string;
   surName: string;
   email: string;
   intro: string;
   avatarSrc: string;
-  followers?: Populated extends true ? User[] : ObjectId[];
-  following?: Populated extends true ? User[] : ObjectId[];
+  followers?: PopulatedFields extends "followers" ? User[] : ObjectId[];
+  following?: PopulatedFields extends "following" ? User[] : ObjectId[];
   notifications?: Notification[];
   socialMediaLinks?: {
     facebookLink?: string;
@@ -51,29 +60,63 @@ export interface User<Populated extends boolean = false> {
   };
 }
 
+// experiments
+// type Populated<T, K extends keyof T> = {
+//   [P in keyof T]: P extends K ? null : T[P];
+// }
+
+// type PopulatedUser = Populated<User, 'followers' | 'following'>;
+
+// interface Bla<K extends keyof Bla | "" = ""> {
+//   field1: K extends "field1" ? string : ObjectId;
+//   field2: K extends "field2" ? string : null;
+// }
+// interface Bla<K extends { populatedFields: keyof Bla } | "" = ""> {
+//   field1: K extends { populatedFields: 'field1' } ? string : null;
+//   field2: K extends { populatedFields: 'field2' } ? string : null;
+// }
+
+// type Bl = Bla<"field1" & "field2">;
+// type Bl = Bla<{ populatedFields: "field1" }>;
+
+// const bl: Bl = { field1: "", field2: "" };
+
+// export interface UserUnpopulated extends UserBase {
+//   followers?: ObjectId[];
+//   following?: ObjectId[];
+// }
+
+// export interface UserPopulated {
+//   followers?: UserUnpopulated[];
+//   following?: UserUnpopulated[];
+// }
+
 export interface UserDoc extends User, Document {
   _id: ObjectId;
-  toObject<Populated extends boolean = false>(
+  toObject<
+    PopulatedFields extends
+      | "noPopulatedFields"
+      | keyof User = "noPopulatedFields"
+  >(
     options?: DocumentToObjectOptions
-  ): User<Populated>;
+  ): User<PopulatedFields>;
 }
+// export interface UserPopulatedDoc extends UserPopulated, Document {
+//   _id: ObjectId;
+//   toObject(options?: DocumentToObjectOptions): UserPopulated;
+// }
 
-// type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-// type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-// export type someFunc = () => Omit<User, UserDoc>;
-
-// type Bla = Omit<User, UserDoc>;
-
-export interface Comment {
+export interface Comment<UserT extends User | ObjectId = User> {
   _id: ObjectId;
   value: string;
-  user: User | ObjectId;
+  user: UserT;
 }
 
 export interface CommentDoc extends Comment, Document {
   _id: ObjectId;
-  toObject(options?: DocumentToObjectOptions): Comment;
+  toObject<UserT extends User | ObjectId = User>(
+    options?: DocumentToObjectOptions
+  ): Comment<UserT>;
 }
 
 export interface Edition {

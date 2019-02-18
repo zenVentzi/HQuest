@@ -14,7 +14,7 @@ function getLikes({
 
   dbLikes.likers.forEach(dbLiker => {
     const gqlLiker = {
-      user: getUser({ dbUser: dbLiker.user, loggedUserId }),
+      user: getUser(dbLiker.user, loggedUserId),
       numOfLikes: dbLiker.numOfLikes
     };
     gqlLikes.likers!.push(gqlLiker);
@@ -23,13 +23,7 @@ function getLikes({
   return gqlLikes;
 }
 
-function getUser({
-  dbUser,
-  loggedUserId
-}: {
-  dbUser: dbTypes.User;
-  loggedUserId: string;
-}): gqlTypes.User {
+function getUser(dbUser: dbTypes.User, loggedUserId: string): gqlTypes.User {
   let me = false;
 
   if (loggedUserId) {
@@ -92,7 +86,7 @@ function getUsers({
   loggedUserId: string;
 }): gqlTypes.User[] | null {
   if (!dbUsers || !dbUsers.length) return null;
-  return dbUsers.map(dbUser => getUser({ dbUser, loggedUserId }));
+  return dbUsers.map(dbUser => getUser(dbUser, loggedUserId));
 }
 
 // const us = getUsers({ dbUsers: null! as dbTypes.User[], loggedUserId: "" });
@@ -184,10 +178,7 @@ function getComment({
   dbComment: dbTypes.Comment;
   loggedUserId: string;
 }): gqlTypes.Comment {
-  const gqlUser = getUser({
-    dbUser: dbComment.user as dbTypes.UserDoc,
-    loggedUserId
-  });
+  const gqlUser = getUser(dbComment.user, loggedUserId);
 
   const gqlComment = {
     id: dbComment._id.toString(),
@@ -315,7 +306,7 @@ const getNews: GetNews = (news, newsfeedUsers, newsfeedQuestions) => {
 type GetNewsfeed = (
   newsFeed: dbTypes.Newsfeed | null,
   newsFeedUsers: dbTypes.User[],
-  newsFeedQuestions: dbTypes.AnsweredQuestion[],
+  newsFeedQuestions: dbTypes.AnsweredQuestion[] | null,
   loggedUserId: string
 ) => gqlTypes.News[] | null;
 

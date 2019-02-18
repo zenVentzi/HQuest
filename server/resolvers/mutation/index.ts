@@ -41,10 +41,7 @@ const editUser: MutationResolvers.EditUserResolver = async (
   context
 ) => {
   const editedUser = await userService.editUser(args.input!, context);
-  const gqlUser = gqlMapper.getUser({
-    dbUser: editedUser,
-    loggedUserId: context.user!.id
-  });
+  const gqlUser = gqlMapper.getUser(editedUser, context.user!.id);
   return gqlUser;
 };
 
@@ -53,6 +50,7 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
   { answerId, comment },
   context
 ) => {
+  const dbAnswer = await answerService.getAnswerById(answerId, context);
   const dbComment = await commentService.addCommentToAnswer(
     {
       comment,
@@ -63,10 +61,12 @@ const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
 
   if (!dbComment) throw Error("Failed to add comment");
 
-  await newsfeedService.onNewComment({
-    answerId,
-    commentId: dbComment._id.toString()
-  });
+  await newsfeedService.onNewComment(
+    dbAnswer,
+    dbComment._id.toString(),
+    context.user!.id,
+    context
+  );
   await notificationService.newComment(
     {
       answerId,
@@ -135,10 +135,7 @@ const editAnswer: MutationResolvers.EditAnswerResolver = async (
 ) => {
   const dbAnswer = await answerService.edit(args, context);
 
-  await newsfeedService.onEditAnswer({
-    answer: dbAnswer,
-    context
-  });
+  await newsfeedService.onEditAnswer(args.answerId, context.user!.id, context);
 
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user!.id });
 };
@@ -150,10 +147,11 @@ const addAnswer: MutationResolvers.AddAnswerResolver = async (
 ) => {
   const dbAnswer = await answerService.add(args, context);
 
-  await newsfeedService.onNewAnswer({
-    answer: dbAnswer,
+  await newsfeedService.onNewAnswer(
+    dbAnswer._id.toHexString(),
+    context.user!.id,
     context
-  });
+  );
 
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user!.id });
 };
@@ -172,15 +170,12 @@ const likeAnswer: MutationResolvers.LikeAnswerResolver = async (
   args,
   context
 ) => {
-  const dbUserLiker = await userService.getUser(
+  const dbUserLiker = (await userService.getUser(
     { id: context.user!.id },
     context
-  );
+  ))!;
   const dbAnswer = await answerService.like({ ...args, dbUserLiker }, context);
-  await newsfeedService.onLikeAnswer({
-    answerId: dbAnswer._id.toString(),
-    context
-  });
+  await newsfeedService.onLikeAnswer(dbAnswer, context.user!.id, context);
   return gqlMapper.getAnswer({ dbAnswer, loggedUserId: context.user!.id });
 };
 const moveAnswerPosition: MutationResolvers.MoveAnswerPositionResolver = async (
@@ -203,10 +198,7 @@ const uploadAvatar: MutationResolvers.UploadAvatarResolver = async (
 const follow: MutationResolvers.FollowResolver = async (_, args, context) => {
   if (args.follow) {
     await userService.follow(args, context);
-    await newsfeedService.onFollowUser({
-      followedUserId: args.userId,
-      context
-    });
+    await newsfeedService.onFollowUser(args.userId, context.user!.id, context);
     await notificationService.newFollower({ receiverId: args.userId }, context);
   } else {
     await userService.unfollow(args, context);

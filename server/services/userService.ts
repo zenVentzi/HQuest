@@ -101,7 +101,7 @@ async function getFollowers(
   if (!userDoc) {
     return null;
   }
-  const { followers } = userDoc.toObject<true>();
+  const { followers } = userDoc.toObject<"followers">();
   return followers && followers.length ? followers : null;
 }
 
@@ -113,14 +113,14 @@ async function getFollowing(
   if (!userDoc) {
     return null;
   }
-  const { following } = userDoc.toObject<true>();
+  const { following } = userDoc.toObject<"following">();
   return following && following.length ? following : null;
 }
 
 async function editUser(
   { fullName, intro, socialMediaLinks }: GqlTypes.EditUserInput,
   { models, user }: ApolloContext
-) {
+): Promise<DbTypes.User> {
   const [firstName, surName] = fullName.split(" ");
   const update = { $set: { firstName, surName, intro, socialMediaLinks } };
   const editedUser = await models.user.findByIdAndUpdate(user!.id, update, {
@@ -128,13 +128,13 @@ async function editUser(
     upsert: true
   });
 
-  return editedUser;
+  return editedUser.toObject();
 }
 
 async function getUser(
   { id }: GqlTypes.UserQueryArgs,
   { models }: ApolloContext
-): Promise<DbTypes.User | null> {
+): Promise<DbTypes.User<"noPopulatedFields"> | null> {
   const user = await models.user.findById(id);
   return user ? user.toObject() : null;
 }

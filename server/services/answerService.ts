@@ -46,11 +46,7 @@ async function getUserAnswer(
 }
 
 async function getAnswerById(
-  {
-    answerId
-  }: {
-    answerId: string;
-  },
+  answerId: string,
   { models }: ApolloContext
 ): Promise<DbTypes.Answer> {
   const answer = await models.answer
