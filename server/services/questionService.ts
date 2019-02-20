@@ -162,12 +162,10 @@ function getQuestionsIds(answers: DbTypes.Answer[]): string[] {
 }
 
 async function getUserQuestions(
-  {
-    answers,
-    tags,
-    answered
-  }: { answers: DbTypes.Answer[]; tags?: string[] | null; answered: boolean },
-  context: ApolloContext
+  answers: DbTypes.Answer[],
+  answered: boolean,
+  context: ApolloContext,
+  tags?: string[] | null
 ): Promise<DbTypes.Question[]> {
   const answeredQuestionsIds = await getQuestionsIds(answers);
   let questions: DbTypes.Question[];
