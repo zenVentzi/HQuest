@@ -156,7 +156,7 @@ const getAnswerIdFromNews: GetAnswerIdFromNews = news => {
 type GetNewsfeedQuestions = (
   newsfeed: DbTypes.Newsfeed,
   context: ApolloContext
-) => Promise<DbTypes.AnsweredQuestion[]>;
+) => Promise<DbTypes.AnsweredQuestion[] | null>;
 
 const getNewsFeedQuestions: GetNewsfeedQuestions = async (
   newsfeed,
@@ -170,17 +170,27 @@ const getNewsFeedQuestions: GetNewsfeedQuestions = async (
     }
   });
 
+  if (!answerIds) return null;
+
   const answers = (await models.answer.find({ _id: { $in: answerIds } })).map(
     answerDoc => answerDoc.toObject()
   );
 
+  if (!answers.length) {
+    throw Error(`couldn't find answers in the database`);
+  }
+
   const questionsIds = answers.map(a => a.questionId);
-  const unansweredQs = (await models.question.find({
+  const questions = (await models.question.find({
     _id: { $in: questionsIds }
   })).map(questionDoc => questionDoc.toObject());
 
-  const answeredQuestions = answers.map(a => {
-    const question = unansweredQs.find(q => q._id.equals(a.questionId));
+  if (!questions.length) {
+    throw Error(`couldn't find questions in the database`);
+  }
+
+  const answeredQuestions: DbTypes.AnsweredQuestion[] = answers.map(a => {
+    const question = questions.find(q => q._id.equals(a.questionId));
     return { ...question!, answer: a };
   });
 

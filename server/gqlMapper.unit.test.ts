@@ -513,3 +513,136 @@ test("getNewsfeed() to return newsfeed with NewLikeNews", () => {
 
   expect(actual).toEqual(expected);
 });
+
+test("getNewsfeed() to return newsfeed with NewAnswerNews", () => {
+  const performerDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoLiker",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const answerOwnerDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoOwner",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const answerOwnerGql = gqlMapper.getUser(answerOwnerDb, "");
+
+  const questionId = ObjectId();
+  const newsfeedQuestion: dbTypes.AnsweredQuestion = {
+    _id: questionId,
+    tags: ["blaTag"],
+    value: "qValue",
+    answer: {
+      _id: ObjectId(),
+      value: "aValue",
+      position: 1,
+      questionId,
+      userId: answerOwnerDb._id
+    }
+  };
+
+  const newAnswerNews: dbTypes.AnswerNews = {
+    _id: ObjectId(),
+    type: dbTypes.NewsType.NewAnswer,
+    performerId: performerDb._id.toHexString(),
+    answerId: newsfeedQuestion.answer._id.toHexString(),
+    answerOwnerId: answerOwnerDb._id.toHexString()
+  };
+
+  const gqlQuestion = gqlMapper.getQuestion(
+    "",
+    newsfeedQuestion,
+    newsfeedQuestion.answer
+  );
+
+  const performer: gqlTypes.User = gqlMapper.getUser(performerDb, "");
+
+  const expected: gqlTypes.NewLikeNews = {
+    type: gqlTypes.NewsType.NewAnswer,
+    createdOn: newAnswerNews._id.getTimestamp(),
+    performer,
+    answerOwner: answerOwnerGql,
+    question: gqlQuestion
+  };
+  const actual = gqlMapper.getNewsfeed(
+    [newAnswerNews],
+    [performerDb, answerOwnerDb],
+    [newsfeedQuestion],
+    ""
+  )![0];
+
+  expect(actual).toEqual(expected);
+});
+test("getNewsfeed() to return newsfeed with NewCommentNews", () => {
+  const performerDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoLiker",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const answerOwnerDb: dbTypes.User = {
+    _id: ObjectId(),
+    firstName: "PeshoOwner",
+    surName: "Goshev",
+    email: "bla@",
+    intro: "introo",
+    avatarSrc: "blaSrc"
+  };
+  const answerOwnerGql = gqlMapper.getUser(answerOwnerDb, "");
+
+  const questionId = ObjectId();
+  const newsfeedQuestion: dbTypes.AnsweredQuestion = {
+    _id: questionId,
+    tags: ["blaTag"],
+    value: "qValue",
+    answer: {
+      _id: ObjectId(),
+      value: "aValue",
+      position: 1,
+      questionId,
+      userId: answerOwnerDb._id
+    }
+  };
+
+  const newCommentNews: dbTypes.CommentNews = {
+    _id: ObjectId(),
+    type: dbTypes.NewsType.NewComment,
+    performerId: performerDb._id.toHexString(),
+    answerId: newsfeedQuestion.answer._id.toHexString(),
+    answerOwnerId: answerOwnerDb._id.toHexString(),
+    commentId: ""
+  };
+
+  const gqlQuestion = gqlMapper.getQuestion(
+    "",
+    newsfeedQuestion,
+    newsfeedQuestion.answer
+  );
+
+  const performer: gqlTypes.User = gqlMapper.getUser(performerDb, "");
+
+  const expected: gqlTypes.CommentNews = {
+    type: gqlTypes.NewsType.NewComment,
+    createdOn: newCommentNews._id.getTimestamp(),
+    performer,
+    answerOwner: answerOwnerGql,
+    question: gqlQuestion,
+    commentId: ""
+  };
+  const actual = gqlMapper.getNewsfeed(
+    [newCommentNews],
+    [performerDb, answerOwnerDb],
+    [newsfeedQuestion],
+    ""
+  )![0];
+
+  expect(actual).toEqual(expected);
+});
