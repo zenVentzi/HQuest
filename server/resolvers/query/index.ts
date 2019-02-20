@@ -208,12 +208,10 @@ const questions: QueryResolvers.QuestionsResolver = async (
   );
 
   const dbQuestions = await questionService.getUserQuestions(
-    {
-      answered: args.answered,
-      answers: dbAnswers,
-      tags: args.tags
-    },
-    context
+    dbAnswers,
+    args.answered,
+    context,
+    args.tags
   );
 
   const gqlQuestions = gqlMapper.getQuestions({
