@@ -201,7 +201,7 @@ describe("questions", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("map answer with likes", () => {
+  test("getLikes() should return gql likes", () => {
     const dbUser = new UserModel({
       firstName: "Pesho",
       surName: "Goshev",
@@ -246,10 +246,10 @@ describe("questions", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("map editions", () => {
+  test("getAnswerEditions() should return gql editions", () => {
     const dbEdition: dbTypes.Edition = {
       _id: ObjectId(),
-      date: new Date().toISOString(),
+      date: new Date(),
       before: "beforee",
       after: "after"
     };
@@ -270,10 +270,10 @@ describe("questions", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("map answer with editions", () => {
+  test("getAnswer() should return gql object with editions", () => {
     const dbEdition: dbTypes.Edition = {
       _id: ObjectId(),
-      date: new Date().toISOString(),
+      date: new Date(),
       before: "beforee",
       after: "after"
     };
@@ -309,7 +309,7 @@ describe("questions", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("map question without answer", () => {
+  test("getQuestion() should return question without answer", () => {
     const dbQuestion = new QuestionModel({
       value: "haha?",
       tags: ["fasa"]
@@ -329,7 +329,7 @@ describe("questions", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("map question with answer", () => {
+  test("getQuestion() should return question with answer", () => {
     const dbQuestion = new QuestionModel({
       value: "haha?",
       tags: ["fasa"]
@@ -400,8 +400,7 @@ test("getNotification()", () => {
   expect(actual).toEqual(expected);
 });
 
-test.only("getNewsfeed()", () => {
-  return;
+test("getNewsfeed()", () => {
   const followedDb: dbTypes.User = {
     _id: ObjectId(),
     firstName: "PeshoPerformer",
@@ -443,8 +442,6 @@ test.only("getNewsfeed()", () => {
   //   }
   // ];
 
-  return;
-
   const followedUser: gqlTypes.User = gqlMapper.getUser(followedDb, "");
   const performer: gqlTypes.User = gqlMapper.getUser(performerDb, "");
 
@@ -461,5 +458,5 @@ test.only("getNewsfeed()", () => {
     ObjectId().toHexString()
   )![0];
 
-  // expect(actual).toEqual(expected);
+  expect(actual).toEqual(expected);
 });
