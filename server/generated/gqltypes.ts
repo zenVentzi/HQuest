@@ -158,6 +158,8 @@ export interface AnswerNews extends NewsBase {
 
   performer: User;
 
+  answerOwner: User;
+
   question: Question;
 
   createdOn: DateTime;
@@ -816,6 +818,8 @@ export namespace AnswerNewsResolvers {
 
     performer?: PerformerResolver<User, TypeParent, Context>;
 
+    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
+
     question?: QuestionResolver<Question, TypeParent, Context>;
 
     createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
@@ -827,6 +831,11 @@ export namespace AnswerNewsResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type PerformerResolver<
+    R = User,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type AnswerOwnerResolver<
     R = User,
     Parent = AnswerNews,
     Context = ApolloContext

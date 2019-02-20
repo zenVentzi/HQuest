@@ -245,7 +245,7 @@ test("questions() should return total number of questions", async ____done____SE
     first: 5
   };
   const questions = await queries.questions({}, args, context, {} as any);
-  const actual = questions.totalCount;
+  const actual = questions!.totalCount;
   const expected = 2;
   expect(actual).toEqual(expected);
   ____done____SERIOUSLY____DONE();
@@ -273,11 +273,11 @@ test("questions() should return correct page info", async __just_a_little_bit_mo
     {} as any
   );
 
-  expect(questions.totalCount).toEqual(2);
-  expect(questions.pageInfo.startCursor).toEqual(questions.edges![0].cursor);
-  expect(questions.pageInfo.endCursor).toEqual(questions.edges![1].cursor);
-  expect(questions.pageInfo.hasNextPage).toEqual(false);
-  expect(questions.pageInfo.hasPreviousPage).toEqual(false);
+  expect(questions!.totalCount).toEqual(2);
+  expect(questions!.pageInfo.startCursor).toEqual(questions!.edges![0].cursor);
+  expect(questions!.pageInfo.endCursor).toEqual(questions!.edges![1].cursor);
+  expect(questions!.pageInfo.hasNextPage).toEqual(false);
+  expect(questions!.pageInfo.hasPreviousPage).toEqual(false);
   __just_a_little_bit_more_and_DONE();
 });
 
@@ -302,11 +302,11 @@ test("questions() return pageInfo hasNextPage=true", async done => {
     {} as any
   );
 
-  expect(questions.totalCount).toEqual(2);
-  expect(questions.pageInfo.startCursor).toEqual(questions.edges![0].cursor);
-  expect(questions.pageInfo.endCursor).toEqual(questions.edges![0].cursor);
-  expect(questions.pageInfo.hasNextPage).toEqual(true);
-  expect(questions.pageInfo.hasPreviousPage).toEqual(false);
+  expect(questions!.totalCount).toEqual(2);
+  expect(questions!.pageInfo.startCursor).toEqual(questions!.edges![0].cursor);
+  expect(questions!.pageInfo.endCursor).toEqual(questions!.edges![0].cursor);
+  expect(questions!.pageInfo.hasNextPage).toEqual(true);
+  expect(questions!.pageInfo.hasPreviousPage).toEqual(false);
   done();
 });
 
@@ -337,21 +337,21 @@ test("questions() return pageInfo hasPreviousPage=true hasNextPage=false", async
       userId: contextUser._id.toHexString(),
       answered: false,
       first: 1,
-      after: questionsFirstFetch.pageInfo.endCursor
+      after: questionsFirstFetch!.pageInfo.endCursor
     },
     context,
     {} as any
   );
 
-  expect(questionsSecondFetch.totalCount).toEqual(2);
-  expect(questionsSecondFetch.pageInfo.startCursor).toEqual(
-    questionsSecondFetch.edges![0].cursor
+  expect(questionsSecondFetch!.totalCount).toEqual(2);
+  expect(questionsSecondFetch!.pageInfo.startCursor).toEqual(
+    questionsSecondFetch!.edges![0].cursor
   );
-  expect(questionsSecondFetch.pageInfo.endCursor).toEqual(
-    questionsSecondFetch.edges![0].cursor
+  expect(questionsSecondFetch!.pageInfo.endCursor).toEqual(
+    questionsSecondFetch!.edges![0].cursor
   );
-  expect(questionsSecondFetch.pageInfo.hasNextPage).toEqual(false);
-  expect(questionsSecondFetch.pageInfo.hasPreviousPage).toEqual(true);
+  expect(questionsSecondFetch!.pageInfo.hasNextPage).toEqual(false);
+  expect(questionsSecondFetch!.pageInfo.hasPreviousPage).toEqual(true);
   done();
 });
 
@@ -383,12 +383,12 @@ test("questions() should return total number of questions", async ____done____SE
       userId: contextUser._id.toHexString(),
       answered: false,
       first: 5,
-      after: questionsFirstFetch.pageInfo.startCursor
+      after: questionsFirstFetch!.pageInfo.startCursor
     },
     context,
     {} as any
   );
-  const actual = questionsSecondFetch.edges!.length;
+  const actual = questionsSecondFetch!.edges!.length;
   const expected = 1;
   expect(actual).toEqual(expected);
   ____done____SERIOUSLY____DONE();

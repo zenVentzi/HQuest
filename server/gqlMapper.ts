@@ -1,5 +1,6 @@
 import * as dbTypes from "./dbTypes";
 import * as gqlTypes from "./generated/gqltypes";
+import assert from "assert";
 
 function getLikes({
   dbLikes,
@@ -93,15 +94,11 @@ function getUsers({
 // let users: dbTypes.User[] | null = 1 > 5 ? null : [];
 // const us1 = getUsers({ dbUsers: users, loggedUserId: "" });
 
-function getQuestion({
-  dbQuestion,
-  dbAnswer,
-  loggedUserId
-}: {
-  dbQuestion: dbTypes.Question;
-  dbAnswer?: dbTypes.Answer;
-  loggedUserId: string;
-}): gqlTypes.Question {
+function getQuestion(
+  loggedUserId: string,
+  dbQuestion: dbTypes.Question,
+  dbAnswer?: dbTypes.Answer
+): gqlTypes.Question {
   const gqlQuestion: gqlTypes.Question = {
     id: dbQuestion._id.toString(),
     value: dbQuestion.value,
@@ -131,11 +128,7 @@ function getQuestions({
 }): gqlTypes.Question[] | null {
   if (!dbQuestions) return null;
   return dbQuestions.map(dbQuestion => {
-    return getQuestion({
-      dbQuestion,
-      dbAnswer: dbQuestion.answer,
-      loggedUserId
-    });
+    return getQuestion(loggedUserId, dbQuestion, dbQuestion.answer);
   });
 }
 
@@ -259,53 +252,83 @@ type GetNews = (
 ) => gqlTypes.News;
 
 const getNews: GetNews = (news, newsfeedUsers, newsfeedQuestions) => {
-  let gqlNews: gqlTypes.News;
-
-  switch (news.type) {
-    case dbTypes.NewsType.NewFollower:
-      gqlNews = {
-        createdOn: news._id.getTimestamp(),
-        type: gqlTypes.NewsType.NewFollower,
-        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
-        followedUser: newsfeedUsers.find(u => u.id === news.followedUserId)!
-      };
-      break;
-    case dbTypes.NewsType.NewLike:
-      gqlNews = {
-        createdOn: news._id.getTimestamp(),
-        type: gqlTypes.NewsType.NewLike,
-        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
-        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
-        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
-      };
-      break;
-    case dbTypes.NewsType.NewAnswer:
-    case dbTypes.NewsType.NewAnswerEdition:
-      gqlNews = {
-        createdOn: news._id.getTimestamp(),
-        type: news.type,
-        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
-        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
-        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
-      };
-      break;
-    case dbTypes.NewsType.NewComment:
-      gqlNews = {
-        createdOn: news._id.getTimestamp(),
-        type: news.type,
-        commentId: news.commentId,
-        performer: newsfeedUsers.find(u => u.id === news.performerId)!,
-        answerOwner: newsfeedUsers.find(u => u.id === news.answerOwnerId)!,
-        question: newsfeedQuestions.find(q => q.answer!.id === news.answerId)!
-      };
-      break;
+  // some repetition down there could use some refactoring
+  const createdOn = news._id.getTimestamp();
+  const performer = newsfeedUsers.find(u => u.id === news.performerId);
+  if (!performer) {
+    throw Error(`performer not found`);
   }
 
-  return gqlNews!;
-  /* gqlNews is always covered by the switch statements. 
-  Using ! because of typescript compiler limitation
-  link to issue https://github.com/Microsoft/TypeScript/issues/18362 */
+  let answerOwner: gqlTypes.User | undefined;
+
+  if (news.type === dbTypes.NewsType.NewFollower) {
+    const followedUser = newsfeedUsers.find(u => u.id === news.followedUserId);
+
+    if (!followedUser) {
+      throw Error(`followedUser not found`);
+    }
+
+    const gqlNews: gqlTypes.NewFollowerNews = {
+      createdOn,
+      type: news.type,
+      performer,
+      followedUser
+    };
+
+    return gqlNews;
+  } else {
+    answerOwner = newsfeedUsers.find(u => u.id === news.answerOwnerId);
+    if (!answerOwner) {
+      throw Error("answerOwner was not found");
+    }
+    const question = newsfeedQuestions.find(
+      q => q.answer!.id === news.answerId
+    );
+
+    if (!question) {
+      throw Error("question was not found");
+    }
+
+    if (news.type === dbTypes.NewsType.NewLike) {
+      const gqlNews: gqlTypes.NewLikeNews = {
+        type: news.type,
+        createdOn,
+        performer,
+        answerOwner,
+        question
+      };
+      return gqlNews;
+    } else if (
+      news.type === dbTypes.NewsType.NewAnswer ||
+      dbTypes.NewsType.NewAnswerEdition
+    ) {
+      const gqlNews: gqlTypes.AnswerNews = {
+        createdOn,
+        type: news.type,
+        performer,
+        answerOwner,
+        question
+      };
+      return gqlNews;
+    } else if (news.type === dbTypes.NewsType.NewComment) {
+      const gqlNews: gqlTypes.CommentNews = {
+        createdOn,
+        type: news.type,
+        commentId: news.commentId,
+        performer,
+        answerOwner,
+        question
+      };
+      return gqlNews;
+    }
+  }
+
+  return assertUnreachable(news.type);
 };
+
+function assertUnreachable(x?: dbTypes.NewsType): never {
+  throw new Error(`Didn't expect to get here for type ${x}`);
+}
 
 type GetNewsfeed = (
   newsFeed: dbTypes.Newsfeed | null,
@@ -321,6 +344,12 @@ const getNewsfeed: GetNewsfeed = (
   loggedUserId
 ) => {
   if (!newsfeed || !newsfeed.length) return null;
+  const newsfeedHasQuestions = newsfeed.some(
+    news => news.type !== dbTypes.NewsType.NewFollower
+  );
+  if (newsfeedHasQuestions && !newsfeedQuestions) {
+    throw Error("Newsfeed questions not provided");
+  }
 
   const newsfeedUsersGql = getUsers({ dbUsers: newsfeedUsers, loggedUserId });
   const newsfeedQuestionsGql = getQuestions({
