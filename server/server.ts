@@ -1,48 +1,26 @@
-import { Request } from "express";
-import http from "http";
-import dotenv from "dotenv";
 import { ApolloServer } from "apollo-server-express";
+import dotenv from "dotenv";
+import http from "http";
 import requireGraphQLFile from "require-graphql-file";
-import { getVerifiedUser } from "./utils";
 import app from "./App";
 import { connect as mongooseConnect } from "./db";
 import { resolvers } from "./resolvers";
+import { getVerifiedUser, onWebScoketConnect, createContext } from "./utils";
+
 dotenv.config();
 
 const typeDefs = requireGraphQLFile("./schema");
 
 const PORT = process.env.PORT || 4000;
 
-interface ConnectionParams {
-  authToken?: string;
-}
-
 mongooseConnect(() => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     subscriptions: {
-      onConnect: async (connectionParams: ConnectionParams, webSocket) => {
-        if (!connectionParams.authToken) return {};
-        const verifiedUser = await getVerifiedUser(connectionParams.authToken);
-        return { user: verifiedUser };
-      },
-      onDisconnect: () => {
-        console.log(`ondisconnect`);
-      }
+      onConnect: onWebScoketConnect
     },
-    context: ({ req, connection }: { req: Request; connection: any }) => {
-      if (connection) {
-        return {
-          user: connection.context.user,
-          // the below is just for testing
-          isFromConnection: true
-        };
-      }
-      return {
-        user: req.user
-      };
-    }
+    context: createContext
   });
   server.applyMiddleware({ app });
 

@@ -1,5 +1,6 @@
 import { Types as GooseTypes } from "mongoose";
-import { AnswerModel } from "../../models/answer";
+import { models } from "../../models";
+import { AnswerModel } from "../../models/answer"; // redundant remove and the below
 import { NewsfeedModel } from "../../models/newsfeed";
 import { QuestionModel } from "../../models/question";
 import { UserModel } from "../../models/user";
@@ -22,12 +23,7 @@ const contextUser = {
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
-  models: {
-    answer: AnswerModel,
-    newsfeed: NewsfeedModel,
-    question: QuestionModel,
-    user: UserModel
-  }
+  models
 };
 
 test("should register if login doesn't exist", async done => {
