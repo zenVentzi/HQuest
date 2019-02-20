@@ -121,7 +121,7 @@ export interface CommentDoc extends Comment, Document {
 
 export interface Edition {
   _id: ObjectId;
-  date: string;
+  date: Date;
   before: string;
   after: string;
 }
@@ -161,6 +161,7 @@ export interface Question {
   _id: ObjectId;
   value: string;
   tags: string[];
+  answer?: Answer;
 }
 
 export interface AnsweredQuestion extends Question {

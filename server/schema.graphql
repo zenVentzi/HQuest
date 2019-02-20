@@ -204,7 +204,7 @@ type Query {
     tags: [String!]
     first: Int!
     after: String
-  ): QuestionConnection!
+  ): QuestionConnection
   answeredQuestion(userId: ID!, questionId: ID!): Question!
 }
 

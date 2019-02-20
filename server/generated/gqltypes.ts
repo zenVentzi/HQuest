@@ -110,7 +110,7 @@ export interface Query {
 
   newsfeed?: Maybe<News[]>;
 
-  questions: QuestionConnection;
+  questions?: Maybe<QuestionConnection>;
 
   answeredQuestion: Question;
 }
@@ -573,7 +573,11 @@ export namespace QueryResolvers {
 
     newsfeed?: NewsfeedResolver<Maybe<News[]>, TypeParent, Context>;
 
-    questions?: QuestionsResolver<QuestionConnection, TypeParent, Context>;
+    questions?: QuestionsResolver<
+      Maybe<QuestionConnection>,
+      TypeParent,
+      Context
+    >;
 
     answeredQuestion?: AnsweredQuestionResolver<Question, TypeParent, Context>;
   }
@@ -644,7 +648,7 @@ export namespace QueryResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type QuestionsResolver<
-    R = QuestionConnection,
+    R = Maybe<QuestionConnection>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context, QuestionsArgs>;

@@ -88,7 +88,7 @@ async function createEdition(
 
   return {
     _id: ObjectId(),
-    date: new Date().toISOString(),
+    date: new Date(),
     before,
     after
   };

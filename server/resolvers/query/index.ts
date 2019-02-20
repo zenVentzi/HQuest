@@ -172,13 +172,19 @@ type RelayConnection = <NodeT extends Node>({
   first,
   after
 }: {
-  nodes: NodeT[];
+  nodes: NodeT[] | null;
   first: number;
   after?: Maybe<string>;
-}) => { pageInfo: PageInfo; edges: Array<Edge<NodeT>>; totalCount: number };
+}) => {
+  pageInfo: PageInfo;
+  edges: Array<Edge<NodeT>>;
+  totalCount: number;
+} | null;
 
 // todo extract in utils/helper
 const relayConnection: RelayConnection = ({ nodes, first, after }) => {
+  if (!nodes || !nodes.length) return null;
+
   const allEdges = getAllEdges(nodes);
   const currentPageEdges = getCurrentPageEdges({ first, after }, allEdges);
   const pageInfo = getPageInfo(allEdges, currentPageEdges);

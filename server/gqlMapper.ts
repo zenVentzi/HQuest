@@ -126,9 +126,10 @@ function getQuestions({
   dbQuestions,
   loggedUserId
 }: {
-  dbQuestions: any;
+  dbQuestions: dbTypes.Question[] | null;
   loggedUserId: string;
-}): gqlTypes.Question[] {
+}): gqlTypes.Question[] | null {
+  if (!dbQuestions) return null;
   return dbQuestions.map(dbQuestion => {
     return getQuestion({
       dbQuestion,
@@ -214,6 +215,7 @@ function getAnswerEditions({
   dbEditions?: dbTypes.Edition[];
 }): gqlTypes.AnswerEdition[] | null {
   if (!dbEditions || !dbEditions.length) return null;
+  // console.trace();
 
   return dbEditions.map(dbE => {
     const gqlEdition: gqlTypes.AnswerEdition = {
@@ -222,6 +224,8 @@ function getAnswerEditions({
       before: dbE.before,
       date: dbE.date
     };
+
+    // console.log(typeof dbE.date);
 
     return gqlEdition;
   });
@@ -325,7 +329,7 @@ const getNewsfeed: GetNewsfeed = (
   });
 
   const newsfeedGql = newsfeed.map(news =>
-    getNews(news, newsfeedUsersGql, newsfeedQuestionsGql)
+    getNews(news, newsfeedUsersGql, newsfeedQuestionsGql!)
   );
 
   return newsfeedGql;
