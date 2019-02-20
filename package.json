@@ -7,7 +7,7 @@
     "genSchema": "node introspect.js",
     "test:integration": "jest --detectOpenHandles --config server/jest.integration.config.js",
     "test:unit": "jest --detectOpenHandles --config server/jest.unit.config.js",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "jest --detectOpenHandles --config server/jest.config.js",
     "typegen": "gql-gen --config codegen.yml"
   },
   "author": "",
