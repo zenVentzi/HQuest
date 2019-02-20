@@ -243,11 +243,7 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
     { userId, questionId },
     context
   );
-  const res = gqlMapper.getQuestion({
-    dbQuestion,
-    dbAnswer,
-    loggedUserId: context.user!.id
-  });
+  const res = gqlMapper.getQuestion(context.user!.id, dbQuestion, dbAnswer);
 
   return res;
 };

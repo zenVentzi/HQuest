@@ -125,7 +125,7 @@ const questionNotApply: MutationResolvers.QuestionNotApplyResolver = async (
   context
 ) => {
   const dbQuestion = await questionService.markNotApply(args, context);
-  return gqlMapper.getQuestion({ dbQuestion, loggedUserId: context.user!.id });
+  return gqlMapper.getQuestion(context.user!.id, dbQuestion);
 };
 
 const editAnswer: MutationResolvers.EditAnswerResolver = async (

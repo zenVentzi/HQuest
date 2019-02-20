@@ -116,6 +116,7 @@ interface NewsBase {
 type AnswerNews implements NewsBase {
   type: NewsType!
   performer: User!
+  answerOwner: User!
   question: Question!
   createdOn: DateTime!
 }
