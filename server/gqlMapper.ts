@@ -300,7 +300,7 @@ const getNews: GetNews = (news, newsfeedUsers, newsfeedQuestions) => {
       return gqlNews;
     } else if (
       news.type === dbTypes.NewsType.NewAnswer ||
-      dbTypes.NewsType.NewAnswerEdition
+      news.type === dbTypes.NewsType.NewAnswerEdition
     ) {
       const gqlNews: gqlTypes.AnswerNews = {
         createdOn,
@@ -347,7 +347,11 @@ const getNewsfeed: GetNewsfeed = (
   const newsfeedHasQuestions = newsfeed.some(
     news => news.type !== dbTypes.NewsType.NewFollower
   );
-  if (newsfeedHasQuestions && !newsfeedQuestions) {
+
+  if (
+    newsfeedHasQuestions &&
+    (!newsfeedQuestions || !newsfeedQuestions.length)
+  ) {
     throw Error("Newsfeed questions not provided");
   }
 

@@ -441,14 +441,36 @@ test("answeredQuestion() should return answered question", async done => {
 });
 
 test("newsfeed() should return newsfeed", async done => {
-  await new UserModel(contextUser).save();
+  const performer = (await new UserModel({
+    ...contextUser,
+    _id: ObjectId()
+  } as DbTypes.User).save()).toObject();
+
+  await new UserModel({
+    ...contextUser,
+    following: [performer._id]
+  } as DbTypes.User).save();
+
+  const questionDb = (await new QuestionModel({
+    _id: ObjectId(),
+    value: "hahaQuestion",
+    tags: ["tag1"]
+  } as DbTypes.Question).save()).toObject();
+
+  const answerDb = (await new AnswerModel({
+    _id: ObjectId(),
+    position: 1,
+    questionId: questionDb._id,
+    userId: contextUser._id,
+    value: "answerrrValue"
+  } as DbTypes.Answer).save()).toObject();
 
   // new NewsfeedModel.save suddenly decided that it's not gonna work. Cool.
   await NewsfeedModel.create({
     _id: ObjectId(),
-    answerId: ObjectId().toHexString(),
-    answerOwnerId: ObjectId().toHexString(),
-    performerId: ObjectId().toHexString(),
+    answerId: answerDb._id.toHexString(),
+    answerOwnerId: answerDb.userId.toHexString(),
+    performerId: performer._id.toHexString(),
     type: DbTypes.NewsType.NewAnswer
   } as DbTypes.AnswerNews);
   // const newsfeed = (await NewsfeedModel.find().lean()) as DbTypes.Newsfeed;
