@@ -1,0 +1,56 @@
+type SocialMediaLinks {
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
+}
+
+type User {
+  id: ID!
+  me: Boolean
+  email: String
+  fullName: String
+  intro: String
+  socialMediaLinks: SocialMediaLinks
+  avatarSrc: String
+  following: [ID!]
+  followers: [ID!]
+}
+
+type Query {
+  users(match: String): [User!]
+  user(id: ID!): User
+  followers(userId: ID!): [User!]
+  following(userId: ID!): [User!]
+}
+
+input SocialMediaLinksInput {
+  facebookLink: String!
+  twitterLink: String!
+  instagramLink: String!
+  linkedInLink: String!
+}
+
+input EditUserInput {
+  fullName: String!
+  intro: String!
+  socialMediaLinks: SocialMediaLinksInput!
+}
+
+type LoginResult {
+  authToken: String!
+  userId: ID!
+}
+
+type Mutation {
+  signUp(
+    firstName: String!
+    surName: String!
+    email: String!
+    password: String!
+  ): String
+  login(email: String!, name: String!): LoginResult!
+  editUser(input: EditUserInput): User!
+  uploadAvatar(base64Img: String!): String!
+  follow(userId: ID!, follow: Boolean!): Boolean
+}

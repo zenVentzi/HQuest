@@ -1,0 +1,11 @@
+type Comment {
+  id: ID!
+  user: User!
+  value: String!
+}
+
+type Mutation {
+  commentAnswer(answerId: ID!, comment: String!): Comment!
+  editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
+  removeComment(answerId: ID!, commentId: ID!): Comment!
+}

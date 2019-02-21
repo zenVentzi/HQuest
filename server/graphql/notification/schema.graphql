@@ -1,0 +1,48 @@
+enum NotificationType {
+  NEW_FOLLOWER
+  NEW_COMMENT
+}
+
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type NewComment implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  questionId: ID!
+  commentId: ID!
+}
+
+type NewFollower implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type Query {
+  notifications: [Notification!]
+}
+
+type Mutation {
+  notifsMarkSeen: Boolean
+}
+
+type Subscription {
+  newNotification(userId: ID!): Notification!
+}
