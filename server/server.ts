@@ -5,7 +5,7 @@ import requireGraphQLFile from "require-graphql-file";
 import app from "./App";
 import { connect as mongooseConnect } from "./db";
 import { resolvers } from "./resolvers";
-import { getVerifiedUser, onWebScoketConnect, createContext } from "./utils";
+import { createContext, onWebScoketConnect } from "./utils";
 
 dotenv.config();
 
