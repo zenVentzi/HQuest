@@ -1,0 +1,51 @@
+enum NewsType {
+  NEW_ANSWER
+  NEW_ANSWER_EDITION
+  NEW_COMMENT
+  NEW_LIKE
+  NEW_FOLLOWER
+}
+
+interface NewsBase {
+  type: NewsType!
+  performer: User!
+  createdOn: DateTime!
+}
+
+type AnswerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+type CommentNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+type NewFollowerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  followedUser: User!
+  createdOn: DateTime!
+}
+
+type NewLikeNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
+
+type Query {
+  newsfeed: [News!]
+}

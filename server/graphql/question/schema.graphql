@@ -1,0 +1,41 @@
+# question should be made an interface
+type Question implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+  answer: Answer
+}
+
+type QuestionEdge implements Edge {
+  cursor: String!
+  node: Question!
+}
+
+type QuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [QuestionEdge!]
+  totalCount: Int!
+}
+
+type Query {
+  questionsTags: [String!]!
+  questions(
+    answered: Boolean!
+    userId: ID!
+    tags: [String!]
+    first: Int!
+    after: String
+  ): QuestionConnection
+  answeredQuestion(userId: ID!, questionId: ID!): Question!
+}
+
+input InputQuestion {
+  value: String!
+  tags: [String!]!
+}
+
+type Mutation {
+  addQuestions(questions: [InputQuestion!]): Boolean
+  removeQuestion(questionId: ID!): Question!
+  questionNotApply(questionId: ID!): Question!
+}

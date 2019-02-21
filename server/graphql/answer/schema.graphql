@@ -1,0 +1,35 @@
+type Answer {
+  id: ID!
+  userId: ID!
+  questionId: ID!
+  value: String!
+  comments: [Comment!]
+  likes: Likes
+  editions: [AnswerEdition!]
+  position: Int!
+}
+
+type Likes {
+  total: Int!
+  likers: [Liker!]
+}
+
+type Liker {
+  user: User!
+  numOfLikes: Int!
+}
+
+type AnswerEdition {
+  id: ID!
+  date: DateTime!
+  before: String!
+  after: String!
+}
+
+type Mutation {
+  editAnswer(answerId: ID!, answerValue: String!): Answer!
+  addAnswer(questionId: ID!, answerValue: String!): Answer!
+  removeAnswer(answerId: ID!): Answer!
+  likeAnswer(answerId: ID!, userLikes: Int!): Answer!
+  moveAnswerPosition(answerId: ID!, position: Int!): Int
+}

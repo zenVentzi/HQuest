@@ -1,0 +1,27 @@
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+interface Node {
+  id: ID!
+}
+
+interface Edge {
+  cursor: String!
+  node: Node!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
+  edges: [Edge!]
+}
+
+type SocialMediaLinks {
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
+}
