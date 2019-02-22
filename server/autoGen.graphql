@@ -1,0 +1,245 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  newsfeed: [News!]
+  notifications: [Notification!]
+  questionsTags: [String!]!
+  questions(answered: Boolean!, userId: ID!, tags: [String!], first: Int!, after: String): QuestionConnection
+  answeredQuestion(userId: ID!, questionId: ID!): Question!
+  users(match: String): [User!]
+  user(id: ID!): User
+  followers(userId: ID!): [User!]
+  following(userId: ID!): [User!]
+}
+
+type Mutation {
+  notifsMarkSeen: Boolean
+  commentAnswer(answerId: ID!, comment: String!): Comment!
+  editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
+  removeComment(answerId: ID!, commentId: ID!): Comment!
+  editAnswer(answerId: ID!, answerValue: String!): Answer!
+  addAnswer(questionId: ID!, answerValue: String!): Answer!
+  removeAnswer(answerId: ID!): Answer!
+  likeAnswer(answerId: ID!, userLikes: Int!): Answer!
+  moveAnswerPosition(answerId: ID!, position: Int!): Int
+  addQuestions(questions: [InputQuestion!]): Boolean
+  # removeQuestion(questionId: ID!): Question!
+  questionNotApply(questionId: ID!): Question!
+  signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+  login(email: String!, name: String!): LoginResult!
+  editUser(input: EditUserInput): User!
+  uploadAvatar(base64Img: String!): String!
+  follow(userId: ID!, follow: Boolean!): Boolean
+}
+
+type Subscription {
+  newNotification(userId: ID!): Notification!
+}
+
+scalar DateTime
+
+enum NewsType {
+  NEW_ANSWER
+  NEW_ANSWER_EDITION
+  NEW_COMMENT
+  NEW_LIKE
+  NEW_FOLLOWER
+}
+
+interface NewsBase {
+  type: NewsType!
+  performer: User!
+  createdOn: DateTime!
+}
+
+type AnswerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+type CommentNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+type NewFollowerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  followedUser: User!
+  createdOn: DateTime!
+}
+
+type NewLikeNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: Question!
+  createdOn: DateTime!
+}
+
+union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
+
+enum NotificationType {
+  NEW_FOLLOWER
+  NEW_COMMENT
+}
+
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type NewComment implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  questionId: ID!
+  commentId: ID!
+}
+
+type NewFollower implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type Comment {
+  id: ID!
+  user: User!
+  value: String!
+}
+
+type Answer {
+  id: ID!
+  userId: ID!
+  questionId: ID!
+  value: String!
+  comments: [Comment!]
+  likes: Likes
+  editions: [AnswerEdition!]
+  position: Int!
+}
+
+type Likes {
+  total: Int!
+  likers: [Liker!]
+}
+
+type Liker {
+  user: User!
+  numOfLikes: Int!
+}
+
+type AnswerEdition {
+  id: ID!
+  date: DateTime!
+  before: String!
+  after: String!
+}
+
+# question should be made an interface
+type Question implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+  answer: Answer
+}
+
+type QuestionEdge implements Edge {
+  cursor: String!
+  node: Question!
+}
+
+type QuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [QuestionEdge!]
+  totalCount: Int!
+}
+
+input InputQuestion {
+  value: String!
+  tags: [String!]!
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+interface Node {
+  id: ID!
+}
+
+interface Edge {
+  cursor: String!
+  node: Node!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
+  edges: [Edge!]
+  totalCount: Int!
+}
+
+type SocialMediaLinks {
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
+}
+
+type User {
+  id: ID!
+  me: Boolean
+  email: String
+  fullName: String
+  intro: String
+  socialMediaLinks: SocialMediaLinks
+  avatarSrc: String
+  following: [ID!]
+  followers: [ID!]
+}
+
+input SocialMediaLinksInput {
+  facebookLink: String!
+  twitterLink: String!
+  instagramLink: String!
+  linkedInLink: String!
+}
+
+input EditUserInput {
+  fullName: String!
+  intro: String!
+  socialMediaLinks: SocialMediaLinksInput!
+}
+
+type LoginResult {
+  authToken: String!
+  userId: ID!
+}
