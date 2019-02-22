@@ -17,5 +17,5 @@ interface Edge {
 interface Connection {
   pageInfo: PageInfo!
   edges: [Edge!]
-  totalCount: number;
+  totalCount: Int!
 }
