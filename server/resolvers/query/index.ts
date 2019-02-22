@@ -13,11 +13,6 @@ import {
 
 const { ObjectId } = Types;
 
-// books is for testing
-const books = async (root, __, context) => {
-  return null;
-};
-
 const notifications: QueryResolvers.NotificationsResolver = async (
   _,
   __,
@@ -48,30 +43,6 @@ const newsfeed: QueryResolvers.NewsfeedResolver = async (_, __, context) => {
   );
 
   return gqlNewsfeed;
-};
-
-const followers: QueryResolvers.FollowersResolver = async (
-  _,
-  { userId },
-  context
-) => {
-  const dbFollowers = await userService.getFollowers({ userId }, context);
-  return gqlMapper.getUsers({
-    dbUsers: dbFollowers,
-    loggedUserId: context.user!.id
-  });
-};
-
-const following: QueryResolvers.FollowingResolver = async (
-  _,
-  { userId },
-  context
-) => {
-  const dbFollowing = await userService.getFollowing({ userId }, context);
-  return gqlMapper.getUsers({
-    dbUsers: dbFollowing,
-    loggedUserId: context.user!.id
-  });
 };
 
 interface Node {
@@ -246,35 +217,9 @@ const answeredQuestion: QueryResolvers.AnsweredQuestionResolver = async (
   return res;
 };
 
-const users: QueryResolvers.UsersResolver = async (_, args, context) => {
-  const dbUsers = await userService.getUsers(args, context);
-  const gqlUsers = gqlMapper.getUsers({
-    dbUsers,
-    loggedUserId: context.user!.id
-  });
-
-  return gqlUsers;
-};
-
-const user: QueryResolvers.UserResolver = async (_, args, context) => {
-  const dbUser = await userService.getUser(args, context);
-
-  if (!dbUser) {
-    return null;
-  }
-
-  const gqlUser = gqlMapper.getUser(dbUser, context.user!.id);
-  return gqlUser;
-};
-
 export default {
-  books,
   notifications,
   newsfeed,
-  users,
-  followers,
-  following,
-  user,
   questions,
   questionsTags,
   answeredQuestion

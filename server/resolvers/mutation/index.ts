@@ -14,37 +14,6 @@ import { gqlMapper } from "../../gqlMapper";
 import { Maybe, MutationResolvers } from "../../generated/gqltypes";
 // import { ApolloContext } from "gqlContext";
 
-// *book is for testing purposes
-const addBook = async (root, args, context) => {};
-
-const login: MutationResolvers.LoginResolver = async (_, args, context) => {
-  const dbUser = await userService.login(args, context);
-
-  const authToken = jsonwebtoken.sign(
-    { id: dbUser._id.toString(), email: dbUser.email },
-    process.env.JWT_SECRET as jsonwebtoken.Secret,
-    {
-      expiresIn: "1d"
-    }
-  );
-  const result = {
-    authToken,
-    userId: dbUser._id.toString()
-  };
-
-  return result;
-};
-
-const editUser: MutationResolvers.EditUserResolver = async (
-  _,
-  args,
-  context
-) => {
-  const editedUser = await userService.editUser(args.input!, context);
-  const gqlUser = gqlMapper.getUser(editedUser, context.user!.id);
-  return gqlUser;
-};
-
 const commentAnswer: MutationResolvers.CommentAnswerResolver = async (
   _,
   { answerId, comment },
@@ -217,13 +186,10 @@ const notifsMarkSeen: MutationResolvers.NotifsMarkSeenResolver = async (
 };
 
 export default {
-  addBook,
   notifsMarkSeen,
   commentAnswer,
   editComment,
   removeComment,
-  editUser,
-  login,
   addQuestions,
   questionNotApply,
   addAnswer,
