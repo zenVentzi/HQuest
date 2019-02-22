@@ -1,5 +1,7 @@
+import { Resolver } from "../../global/types";
 import { User } from "../../user/types";
 import { Comment } from "./comment/types";
+import { ApolloContext } from "gqlContext";
 
 export interface Answer {
   id: string;
@@ -39,4 +41,43 @@ export interface AnswerEdition {
   before: string;
 
   after: string;
+}
+
+// export interface Query {}
+
+interface EditAnswerArgs {
+  answerId: string;
+  answerValue: string;
+}
+
+interface AddAnswerArgs {
+  questionId: string;
+  answerValue: string;
+}
+
+interface RemoveAnswerArgs {
+  answerId: string;
+}
+
+interface LikeAnswerArgs {
+  answerId: string;
+  userLikes: number;
+}
+
+interface MoveAnswerPositionArgs {
+  answerId: string;
+  position: number;
+}
+
+export interface Mutation {
+  editAnswer: Resolver<{}, EditAnswerArgs, ApolloContext, Answer>;
+  addAnswer: Resolver<{}, AddAnswerArgs, ApolloContext, Answer>;
+  removeAnswer: Resolver<{}, RemoveAnswerArgs, ApolloContext, Answer>;
+  likeAnswer: Resolver<{}, LikeAnswerArgs, ApolloContext, Answer>;
+  moveAnswerPosition: Resolver<
+    {},
+    MoveAnswerPositionArgs,
+    ApolloContext,
+    number
+  >;
 }
