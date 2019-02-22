@@ -56,31 +56,24 @@ export interface Query {
 
 interface LoginArgs {
   email: string;
-
   name: string;
 }
 
 interface LoginResult {
   authToken: string;
-
   userId: string;
 }
 
 interface SocialMediaLinksInput {
   facebookLink: string;
-
   twitterLink: string;
-
   instagramLink: string;
-
   linkedInLink: string;
 }
 
 interface EditUserInput {
   fullName: string;
-
   intro: string;
-
   socialMediaLinks: SocialMediaLinksInput;
 }
 
@@ -88,7 +81,18 @@ interface EditUserArgs {
   input?: EditUserInput | null;
 }
 
+interface FollowArgs {
+  userId: string;
+  follow: boolean;
+}
+
+interface UploadAvatarArgs {
+  base64Img: string;
+}
+
 export interface Mutation {
   login: Resolver<{}, LoginArgs, ApolloContext, LoginResult>;
   editUser: Resolver<{}, EditUserArgs, ApolloContext, User>;
+  follow: Resolver<{}, FollowArgs, ApolloContext, boolean | null>;
+  uploadAvatar: Resolver<{}, UploadAvatarArgs, ApolloContext, string>;
 }
