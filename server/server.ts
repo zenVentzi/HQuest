@@ -1,15 +1,23 @@
 import { ApolloServer } from "apollo-server-express";
 import dotenv from "dotenv";
+import { writeFileSync } from "fs";
 import http from "http";
-import requireGraphQLFile from "require-graphql-file";
+import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
+import path from "path";
 import app from "./App";
 import { connect as mongooseConnect } from "./db";
-import { resolvers } from "./resolvers";
 import { createContext, onWebScoketConnect } from "./utils";
-
 dotenv.config();
 
-const typeDefs = requireGraphQLFile("./schema");
+const typesArray = fileLoader(path.join(__dirname, "./modules/**/*.graphql"));
+const typeDefs: any = mergeTypes(typesArray, { all: true });
+writeFileSync("joined.graphql", typeDefs);
+
+const resolversArray = fileLoader(
+  path.join(__dirname, "./modules/**/resolvers.ts")
+);
+
+const resolvers = mergeResolvers(resolversArray);
 
 const PORT = process.env.PORT || 4000;
 
