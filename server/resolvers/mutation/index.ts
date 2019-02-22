@@ -13,15 +13,6 @@ import {
 import { Maybe, MutationResolvers } from "../../generated/gqltypes";
 // import { ApolloContext } from "gqlContext";
 
-const notifsMarkSeen: MutationResolvers.NotifsMarkSeenResolver = async (
-  _,
-  __,
-  context
-) => {
-  await notificationService.markSeen(context);
-  return true; // fix: remove that
-};
-
 export default {
   notifsMarkSeen
 };
