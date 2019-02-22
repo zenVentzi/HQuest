@@ -1,4 +1,3 @@
-import jsonwebtoken from "jsonwebtoken";
 import { Query, Mutation } from "./types";
 import { mapQuestion, mapQuestions } from "./gqlMapper";
 import { questionService, answerService } from "../../services";
