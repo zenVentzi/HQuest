@@ -9,12 +9,13 @@ import { connect as mongooseConnect } from "./db";
 import { createContext, onWebScoketConnect } from "./utils";
 dotenv.config();
 
-const typesArray = fileLoader(path.join(__dirname, "./modules/**/*.graphql"));
-const typeDefs: any = mergeTypes(typesArray, { all: true });
-writeFileSync("joined.graphql", typeDefs);
+const typesArray = fileLoader(path.join(__dirname, "./graphql/**/*.graphql"));
+const typeDefs: any = mergeTypes(typesArray);
+// const typeDefs: any = mergeTypes(typesArray, { all: true });
+writeFileSync("server/autoGen.graphql", typeDefs);
 
 const resolversArray = fileLoader(
-  path.join(__dirname, "./modules/**/resolvers.ts")
+  path.join(__dirname, "./graphql/**/*resolvers.js")
 );
 
 const resolvers = mergeResolvers(resolversArray);
