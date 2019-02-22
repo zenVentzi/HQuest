@@ -1,7 +1,11 @@
 import jsonwebtoken from "jsonwebtoken";
 import { Query, Mutation } from "./types";
 import { mapUser, mapUsers } from "./gqlMapper";
-import { userService } from "../../services";
+import {
+  userService,
+  newsfeedService,
+  notificationService
+} from "../../services";
 
 const Query: Query = {
   async user(_, args, context) {
@@ -61,6 +65,28 @@ const Mutation: Mutation = {
     const editedUser = await userService.editUser(args.input!, context);
     const gqlUser = mapUser(editedUser, context.user!.id);
     return gqlUser;
+  },
+  async follow(_, args, context) {
+    if (args.follow) {
+      await userService.follow(args, context);
+      await newsfeedService.onFollowUser(
+        args.userId,
+        context.user!.id,
+        context
+      );
+      await notificationService.newFollower(
+        { receiverId: args.userId },
+        context
+      );
+    } else {
+      await userService.unfollow(args, context);
+    }
+
+    return args.follow; // fix: this is not needed
+  },
+  async uploadAvatar(_, args, context) {
+    const avatarSrc = await userService.uploadAvatar(args, context);
+    return avatarSrc;
   }
 };
 
