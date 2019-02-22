@@ -17,11 +17,5 @@ interface Edge {
 interface Connection {
   pageInfo: PageInfo!
   edges: [Edge!]
-}
-
-type SocialMediaLinks {
-  facebookLink: String
-  twitterLink: String
-  instagramLink: String
-  linkedInLink: String
+  totalCount: number;
 }

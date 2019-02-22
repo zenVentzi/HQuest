@@ -36,6 +36,6 @@ input InputQuestion {
 
 type Mutation {
   addQuestions(questions: [InputQuestion!]): Boolean
-  removeQuestion(questionId: ID!): Question!
+  # removeQuestion(questionId: ID!): Question!
   questionNotApply(questionId: ID!): Question!
 }
