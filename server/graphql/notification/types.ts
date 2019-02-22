@@ -1,3 +1,6 @@
+import { Resolver, SubscriptionResolver } from "../global/types";
+import { ApolloContext } from "gqlContext";
+
 export interface Notification {
   id: string;
 
@@ -53,4 +56,23 @@ export interface NewFollower extends Notification {
   seen: boolean;
 
   createdOn: Date;
+}
+
+export interface Query {
+  notifications: Resolver<{}, {}, ApolloContext, Notification[] | null>;
+}
+export interface Mutation {
+  notifsMarkSeen: Resolver<{}, {}, ApolloContext, boolean | null>;
+}
+
+interface NewNotificationArgs {
+  userId: string;
+}
+export interface Subscription {
+  newNotification: SubscriptionResolver<
+    {},
+    NewNotificationArgs,
+    ApolloContext,
+    Notification
+  >;
 }

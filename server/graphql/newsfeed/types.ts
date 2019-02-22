@@ -1,7 +1,7 @@
 import { User } from "../user/types";
 import { Question } from "../question/types";
-
-export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+import { Resolver } from "../global/types";
+import { ApolloContext } from "gqlContext";
 
 export enum NewsType {
   NewAnswer = "NEW_ANSWER",
@@ -21,48 +21,38 @@ export interface NewsBase {
 
 export interface AnswerNews extends NewsBase {
   type: NewsType;
-
   performer: User;
-
   answerOwner: User;
-
   question: Question;
-
   createdOn: Date;
 }
 
 export interface CommentNews extends NewsBase {
   type: NewsType;
-
   performer: User;
-
   answerOwner: User;
-
   question: Question;
-
   commentId: string;
-
   createdOn: Date;
 }
 
 export interface NewFollowerNews extends NewsBase {
   type: NewsType;
-
   performer: User;
-
   followedUser: User;
-
   createdOn: Date;
 }
 
 export interface NewLikeNews extends NewsBase {
   type: NewsType;
-
   performer: User;
-
   answerOwner: User;
-
   question: Question;
-
   createdOn: Date;
+}
+
+export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+
+export interface Query {
+  newsfeed: Resolver<{}, {}, ApolloContext, News[] | null>;
 }
