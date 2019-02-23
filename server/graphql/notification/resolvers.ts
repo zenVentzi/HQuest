@@ -1,4 +1,6 @@
-import { Query, Mutation } from "./types";
+import { withFilter } from "apollo-server";
+import { pubsub, NEW_NOTIFICATION } from "../../PubSub";
+import { Query, Mutation, Subscription } from "./types";
 import { mapNotifications } from "./gqlMapper";
 
 const Notification = {
@@ -28,4 +30,20 @@ const Mutation: Mutation = {
   }
 };
 
-export { Notification, Query, Mutation };
+// fix the type
+const Subscription: any = {
+  newNotification: {
+    resolve: payload => payload.notif, // this needs gqlMapper
+    subscribe: withFilter(
+      () => {
+        return pubsub.asyncIterator(NEW_NOTIFICATION);
+      },
+      (payload, variables) => {
+        const subscriberId = variables.userId;
+        return payload.receiverId === subscriberId;
+      }
+    )
+  }
+};
+
+export { Notification, Query, Mutation, Subscription };
