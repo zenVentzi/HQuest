@@ -54,8 +54,16 @@ app.use(
   })
 );
 
-app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(process.cwd(), "index.html"));
+// app.get("/graphql", (_, __, next) => {
+//   next();
+// });
+
+app.get("*", (req: Request, res: Response, next) => {
+  if (req.url === "/graphql") {
+    next();
+  } else {
+    res.sendFile(path.join(process.cwd(), "index.html"));
+  }
 });
 
 export default app;
