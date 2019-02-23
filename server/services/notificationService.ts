@@ -11,16 +11,16 @@ class NotificationService {
   constructor(private models: Models) {}
 
   public async newComment(
-    { answerId, dbComment }: { answerId: string; dbComment: DbTypes.Comment },
-    context: ApolloContext
+    performerId: string,
+    answerId: string,
+    dbComment: DbTypes.Comment
   ): Promise<void> {
-    const { models, user } = context;
-    const { questionId, userId: receiverId } = (await models.answer.findById(
-      answerId
-    ))!;
+    const {
+      questionId,
+      userId: receiverId
+    } = (await this.models.answer.findById(answerId))!;
 
-    const performerId = user!.id;
-    const performer = await models.user.findById(performerId).lean();
+    const performer = await this.models.user.findById(performerId).lean();
 
     if (performer._id.equals(receiverId)) return;
     const performerName = `${performer.firstName} ${performer.surName}`;
@@ -35,23 +35,14 @@ class NotificationService {
       seen: false
     };
 
-    await this.notify(
-      {
-        receiverId: receiverId.toHexString(),
-        notif
-      },
-      context
-    );
+    await this.notify(receiverId.toHexString(), notif);
   }
 
   public async newFollower(
-    { receiverId }: { receiverId: string },
-    context: ApolloContext
+    receiverId: string,
+    followerId: string
   ): Promise<void> {
-    const { models, user } = context;
-    const followerId = user!.id;
-
-    const follower = await models.user.findById(followerId).lean();
+    const follower = await this.models.user.findById(followerId).lean();
 
     const followerName = `${follower.firstName} ${follower.surName}`;
     const notif: DbTypes.Notification = {
@@ -63,33 +54,27 @@ class NotificationService {
       seen: false
     };
 
-    await this.notify({ receiverId, notif }, context);
+    await this.notify(receiverId, notif);
   }
 
-  public async markSeen({ models, user }: ApolloContext): Promise<void> {
+  public async markSeen(userId: string): Promise<void> {
     const searchQuery = {
-      _id: ObjectId(user!.id)
-      // "notifications.seen": false
+      _id: ObjectId(userId)
     };
 
-    const userDoc = await models.user.findOne(searchQuery);
+    const userDoc = await this.models.user.findOne(searchQuery);
 
     userDoc!.notifications!.forEach(notif => {
       notif.seen = true;
     });
 
     await userDoc!.save();
-
-    // await models.user.update(searchQuery, {
-    //   $set: { "notifications.$[].seen": true }
-    // });
   }
 
-  public async getNotifications({
-    models,
-    user
-  }: ApolloContext): Promise<DbTypes.Notification[] | null> {
-    const dbUser = (await models.user.findById(user!.id))!.toObject();
+  public async getNotifications(
+    userId
+  ): Promise<DbTypes.Notification[] | null> {
+    const dbUser = (await this.models.user.findById(userId))!.toObject();
     const { notifications } = dbUser;
 
     return notifications && notifications.length
@@ -98,10 +83,10 @@ class NotificationService {
   }
 
   private async notify(
-    { receiverId, notif },
-    { models }: ApolloContext
+    receiverId: string,
+    notif: DbTypes.Notification
   ): Promise<void> {
-    await models.user.findByIdAndUpdate(
+    await this.models.user.findByIdAndUpdate(
       receiverId,
       { $push: { notifications: notif } },
       { upsert: true }
