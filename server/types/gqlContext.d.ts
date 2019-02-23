@@ -2,6 +2,7 @@ import { UserModel } from "../models/user";
 import { QuestionModel } from "../models/question";
 import { AnswerModel } from "../models/answer";
 import { NewsfeedModel } from "../models/newsfeed";
+import { Services } from "../services";
 
 interface User {
   id: string;
@@ -10,20 +11,14 @@ interface User {
 
 interface ApolloContext {
   user?: User;
-  models: {
-    user: UserModel;
-    question: QuestionModel;
-    answer: AnswerModel;
-    newsfeed: NewsfeedModel;
-  };
-  // services: {
-  //   answer: any;
-  //   comment: any;
-  //   newsfeed: any;
-  //   notification: any;
-  //   question: any;
-  //   user: any;
+  // models: {
+  //   // models will be removed
+  //   user: UserModel;
+  //   question: QuestionModel;
+  //   answer: AnswerModel;
+  //   newsfeed: NewsfeedModel;
   // };
+  services: Services;
 }
 
 export { User, ApolloContext };

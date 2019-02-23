@@ -11,42 +11,37 @@ const { ObjectId } = Types;
 class UserService {
   constructor(private models: Models) {}
 
-  public async login(
-    { email, name }: GqlTypes.LoginMutationArgs,
-    context: ApolloContext
-  ): Promise<DbTypes.User> {
-    const user = await context.models.user
+  public async login({
+    email,
+    name
+  }: GqlTypes.LoginMutationArgs): Promise<DbTypes.User> {
+    const user = await this.models.user
       .findOne({
         email
       })
       .lean();
 
     if (!user) {
-      return this.registerUser({ email, name }, context);
+      return this.registerUser({ email, name });
     }
 
     return user;
   }
 
-  public async follow(
-    args: GqlTypes.FollowMutationArgs,
-    context: ApolloContext
-  ): Promise<void> {
-    await this.followBaseFunc(args, true, context);
+  public async follow(followerId: string, followedId: string): Promise<void> {
+    await this.followBaseFunc(followerId, followedId, true);
   }
 
-  public async unfollow(
-    args: GqlTypes.FollowMutationArgs,
-    context: ApolloContext
-  ): Promise<void> {
-    await this.followBaseFunc(args, false, context);
+  public async unfollow(followerId: string, followedId: string): Promise<void> {
+    await this.followBaseFunc(followerId, followedId, false);
   }
 
-  public async getFollowers(
-    { userId }: GqlTypes.FollowersQueryArgs,
-    { models }: ApolloContext
-  ): Promise<DbTypes.User[] | null> {
-    const userDoc = await models.user.findById(userId).populate("followers");
+  public async getFollowers({
+    userId
+  }: GqlTypes.FollowersQueryArgs): Promise<DbTypes.User[] | null> {
+    const userDoc = await this.models.user
+      .findById(userId)
+      .populate("followers");
     if (!userDoc) {
       return null;
     }
@@ -54,11 +49,12 @@ class UserService {
     return followers && followers.length ? followers : null;
   }
 
-  public async getFollowing(
-    { userId }: GqlTypes.FollowingQueryArgs,
-    { models }: ApolloContext
-  ): Promise<DbTypes.User[] | null> {
-    const userDoc = await models.user.findById(userId).populate("following");
+  public async getFollowing({
+    userId
+  }: GqlTypes.FollowingQueryArgs): Promise<DbTypes.User[] | null> {
+    const userDoc = await this.models.user
+      .findById(userId)
+      .populate("following");
     if (!userDoc) {
       return null;
     }
@@ -66,40 +62,52 @@ class UserService {
     return following && following.length ? following : null;
   }
 
-  public async editUser(
-    { fullName, intro, socialMediaLinks }: GqlTypes.EditUserInput,
-    { models, user }: ApolloContext
-  ): Promise<DbTypes.User> {
+  public async editUser({
+    userId,
+    fullName,
+    intro,
+    socialMediaLinks
+  }: {
+    userId: string;
+    fullName: string;
+    intro: string;
+    socialMediaLinks: GqlTypes.SocialMediaLinksInput;
+  }): Promise<DbTypes.User> {
     const [firstName, surName] = fullName.split(" ");
     const update = { $set: { firstName, surName, intro, socialMediaLinks } };
-    const editedUser = await models.user.findByIdAndUpdate(user!.id, update, {
-      new: true,
-      upsert: true
-    });
+    const editedUser = await this.models.user.findByIdAndUpdate(
+      userId,
+      update,
+      {
+        new: true,
+        upsert: true
+      }
+    );
 
     return editedUser.toObject();
   }
 
-  public async getUser(
-    { id }: GqlTypes.UserQueryArgs,
-    { models }: ApolloContext
-  ): Promise<DbTypes.User<"noPopulatedFields"> | null> {
-    const user = await models.user.findById(id);
+  public async getUser({
+    id
+  }: GqlTypes.UserQueryArgs): Promise<DbTypes.User<
+    "noPopulatedFields"
+  > | null> {
+    const user = await this.models.user.findById(id);
     return user ? user.toObject() : null;
   }
 
-  public async getUsersWithIds(
-    { ids }: { ids: string[] },
-    { models }: ApolloContext
-  ): Promise<DbTypes.User[]> {
-    const users = await models.user.find({ _id: { $in: ids } }).lean();
+  public async getUsersWithIds({
+    ids
+  }: {
+    ids: string[];
+  }): Promise<DbTypes.User[]> {
+    const users = await this.models.user.find({ _id: { $in: ids } }).lean();
     return users;
   }
 
-  public async getUsers(
-    { match }: GqlTypes.UsersQueryArgs,
-    { models }: ApolloContext
-  ): Promise<DbTypes.User[] | null> {
+  public async getUsers({
+    match
+  }: GqlTypes.UsersQueryArgs): Promise<DbTypes.User[] | null> {
     const matchWords = match!.split(" ");
 
     let matchedUsers: DbTypes.User[];
@@ -111,7 +119,7 @@ class UserService {
       const firstNameRegex = new RegExp(`.*${matchWords[0]}.*`, `i`);
       const surNameRegex = new RegExp(`.*${matchWords[1]}.*`, `i`);
 
-      matchedUsers = await models.user
+      matchedUsers = await this.models.user
         .find({
           $and: [
             { firstName: { $regex: firstNameRegex } },
@@ -121,7 +129,7 @@ class UserService {
         .lean();
     } else {
       const regex = new RegExp(`.*${match}.*`, `i`);
-      matchedUsers = await models.user
+      matchedUsers = await this.models.user
         .find({
           $or: [
             { firstName: { $regex: regex } },
@@ -135,10 +143,10 @@ class UserService {
   }
 
   public async uploadAvatar(
-    { base64Img }: GqlTypes.UploadAvatarMutationArgs,
-    { user }: ApolloContext
+    base64Img: string,
+    userId: string
   ): Promise<string> {
-    const avatarSrc = await this.saveAvatarToFile(base64Img, user!.id);
+    const avatarSrc = await this.saveAvatarToFile(base64Img, userId);
     return avatarSrc;
   }
 
@@ -157,7 +165,7 @@ class UserService {
   }
 
   // extract in utils
-  private ensureDirectoryExistence(filePath) {
+  private ensureDirectoryExistence(filePath: string) {
     const dirname = path.dirname(filePath);
     if (fs.existsSync(dirname)) {
       return;
@@ -166,10 +174,10 @@ class UserService {
     fs.mkdirSync(dirname);
   }
 
-  private async registerUser(
-    { email, name }: GqlTypes.LoginMutationArgs,
-    { models }: ApolloContext
-  ): Promise<DbTypes.User> {
+  private async registerUser({
+    email,
+    name
+  }: GqlTypes.LoginMutationArgs): Promise<DbTypes.User> {
     const [firstName, surName] = name.split(" ");
     const id = ObjectId();
 
@@ -188,34 +196,31 @@ class UserService {
       }
     };
 
-    const userDoc = await models.user.create(newUser);
+    const userDoc = await this.models.user.create(newUser);
     return userDoc.toObject();
   }
 
   private async followBaseFunc(
-    { userId }: GqlTypes.FollowMutationArgs,
-    shouldFollow: boolean,
-    { models, user }: ApolloContext
+    followerId: string,
+    followedId: string,
+    shouldFollow: boolean
   ): Promise<void> {
-    const followerId = user!.id;
-    const followedId = userId;
-
     if (shouldFollow) {
-      await models.user.findByIdAndUpdate(
+      await this.models.user.findByIdAndUpdate(
         followerId,
         { $push: { following: ObjectId(followedId) } },
         { new: true, upsert: true }
       );
-      await models.user.findByIdAndUpdate(
+      await this.models.user.findByIdAndUpdate(
         followedId,
         { $push: { followers: ObjectId(followerId) } },
         { new: true, upsert: true }
       );
     } else {
-      await models.user.findByIdAndUpdate(followerId, {
+      await this.models.user.findByIdAndUpdate(followerId, {
         $pull: { following: ObjectId(followedId) }
       });
-      await models.user.findByIdAndUpdate(followedId, {
+      await this.models.user.findByIdAndUpdate(followedId, {
         $pull: { followers: ObjectId(followerId) }
       });
     }
