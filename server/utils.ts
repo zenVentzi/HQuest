@@ -5,6 +5,7 @@ import { ApolloContext } from "gqlContext";
 import jwt from "jsonwebtoken";
 import { USERS_CONTENT } from "./constants";
 import { models } from "./models";
+import { services } from "./services";
 
 type ReadDirAsync = (dir: string) => Promise<string[]>;
 
@@ -70,7 +71,7 @@ type OnWebScoketConnect = (
 ) => Promise<ApolloContext>;
 
 const onWebScoketConnect: OnWebScoketConnect = async connectionParams => {
-  const context: ApolloContext = { models };
+  const context: ApolloContext = { models, services };
 
   if (!connectionParams.authToken) return context;
   const verifiedUser = await getVerifiedUser(connectionParams.authToken);
@@ -93,6 +94,7 @@ const createContext: CreateContext = ({ req, connection }) => {
 
   const context: ApolloContext = {
     models,
+    services,
     user: req.user
   };
   return context;
