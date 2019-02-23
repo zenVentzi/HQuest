@@ -49,6 +49,7 @@ export interface User<
   email: string;
   intro: string;
   avatarSrc: string;
+  questionsNotApply?: string[];
   followers?: PopulatedFields extends "followers" ? User[] : ObjectId[];
   following?: PopulatedFields extends "following" ? User[] : ObjectId[];
   notifications?: Notification[];

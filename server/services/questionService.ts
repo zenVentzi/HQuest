@@ -9,16 +9,15 @@ const { ObjectId } = mongoose.Types;
 class QuestionService {
   constructor(private models: Models) {}
 
-  public async addQuestions(
-    { questions }: GqlTypes.AddQuestionsMutationArgs,
-    { models }: ApolloContext
-  ): Promise<void> {
-    await models.question.create(questions);
+  public async addQuestions({
+    questions
+  }: GqlTypes.AddQuestionsMutationArgs): Promise<void> {
+    await this.models.question.create(questions);
   }
 
   public async markNotApply(
-    { questionId },
-    { models, user }: ApolloContext
+    questionId: string,
+    userId: string
   ): Promise<DbTypes.Question> {
     // old way
     // await User.findByIdAndUpdate(
@@ -27,10 +26,10 @@ class QuestionService {
     //   { new: true, upsert: true }
     // );
 
-    return (await models.question
+    return (await this.models.question
       .findByIdAndUpdate(
         questionId,
-        { $push: { notApplyToUsers: user!.id } },
+        { $push: { notApplyToUsers: userId } },
         { new: true, upsert: true }
       )
       .lean()) as DbTypes.Question;
@@ -38,8 +37,8 @@ class QuestionService {
     // return Question.findById(questionId).lean();
   }
 
-  public async getAllTags({ models }: ApolloContext): Promise<string[]> {
-    const questions = (await models.question
+  public async getAllTags(): Promise<string[]> {
+    const questions = (await this.models.question
       .find()
       .lean()) as DbTypes.Question[];
     const reducer = (allTags: string[], currentQuestion: DbTypes.Question) => {
@@ -65,24 +64,18 @@ class QuestionService {
   //   return answeredQuestion;
   // };
 
-  public async getQuestion(
-    { questionId }: { questionId: string },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Question> {
-    return (await models.question.findById(questionId))!.toObject();
+  public async getQuestion({
+    questionId
+  }: {
+    questionId: string;
+  }): Promise<DbTypes.Question> {
+    return (await this.models.question.findById(questionId))!.toObject();
   }
 
   public async getAnsweredQuestions(
-    {
-      answers,
-      answeredQuestionsIds,
-      tags
-    }: {
-      answers: DbTypes.Answer[];
-      answeredQuestionsIds: string[];
-      tags?: string[] | null;
-    },
-    { models }: ApolloContext
+    answers: DbTypes.Answer[],
+    answeredQuestionsIds: string[],
+    tags?: string[] | null
   ): Promise<DbTypes.AnsweredQuestion[]> {
     const query: any = { _id: { $in: answeredQuestionsIds } };
 
@@ -90,7 +83,7 @@ class QuestionService {
       query.tags = { $in: tags };
     }
 
-    const questions = (await models.question
+    const questions = (await this.models.question
       .find(query)
       .lean()) as DbTypes.Question[];
     // ordering is done because the $in query returns in random order
@@ -100,32 +93,43 @@ class QuestionService {
   }
 
   public async getUnansweredQuestions(
-    {
-      answeredQuestionsIds,
-      tags
-    }: { answeredQuestionsIds: string[]; tags?: string[] | null },
-    { models, user }: ApolloContext
+    userId: string,
+    answeredQuestionsIds: string[] | null,
+    tags?: string[] | null
   ): Promise<DbTypes.Question[]> {
-    const query: any = {
-      _id: { $nin: answeredQuestionsIds }
-    };
+    const { questionsNotApply } = (await this.models.user.findById(
+      userId
+    ))!.toObject();
 
+    const ignoreQuestions: string[] = [];
+
+    if (answeredQuestionsIds && answeredQuestionsIds.length) {
+      ignoreQuestions.concat(answeredQuestionsIds);
+    }
+    if (questionsNotApply && questionsNotApply.length) {
+      ignoreQuestions.concat(questionsNotApply);
+    }
+
+    const query: any = {};
+
+    if (ignoreQuestions.length) {
+      query._id = { $nin: ignoreQuestions };
+    }
     if (tags && tags.length) {
       query.tags = { $in: tags };
     }
 
-    const questions = await models.question.find(query).lean();
+    const questions = (await this.models.question
+      .find(query)
+      .lean()) as DbTypes.Question[];
 
-    return questions.filter(q => {
-      if (!q.notApplyToUsers) return true;
-      return !q.notApplyToUsers.includes(user!.id);
-    });
+    return questions;
   }
 
   public async getUserQuestions(
+    userId: string,
     answers: DbTypes.Answer[],
     answered: boolean,
-    context: ApolloContext,
     tags?: string[] | null
   ): Promise<DbTypes.Question[]> {
     const answeredQuestionsIds = await this.getQuestionsIds(answers);
@@ -133,16 +137,15 @@ class QuestionService {
 
     if (answered) {
       questions = await this.getAnsweredQuestions(
-        { answeredQuestionsIds, tags, answers },
-        context
+        answers,
+        answeredQuestionsIds,
+        tags
       );
     } else {
       questions = await this.getUnansweredQuestions(
-        {
-          answeredQuestionsIds,
-          tags
-        },
-        context
+        userId,
+        answeredQuestionsIds,
+        tags
       );
     }
 
