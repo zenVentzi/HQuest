@@ -1,8 +1,11 @@
 import { Mutation } from "./types";
 import { mapComment, mapComments } from "./gqlMapper";
+import { authMiddleware } from "../../../middlewares";
 
 const Mutation: Mutation = {
   async commentAnswer(_, { answerId, comment }, { services, user }) {
+    authMiddleware(user);
+
     const dbAnswer = await services.answer.getAnswerById(answerId);
     const dbComment = await services.comment.addCommentToAnswer(
       user!.id,
@@ -30,6 +33,8 @@ const Mutation: Mutation = {
     { answerId, commentId, commentValue },
     { services, user }
   ) {
+    authMiddleware(user);
+
     const dbComment = await services.comment.editComment(
       answerId,
       commentId,
@@ -48,8 +53,9 @@ const Mutation: Mutation = {
   },
 
   async removeComment(_, { answerId, commentId }, { services, user }) {
-    const dbComment = await services.comment.removeComment(answerId, commentId);
+    authMiddleware(user);
 
+    const dbComment = await services.comment.removeComment(answerId, commentId);
     return mapComment({
       dbComment,
       loggedUserId: user!.id

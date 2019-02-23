@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ApolloContext, User } from "gqlContext";
+import { ApolloContext, ContextUser } from "gqlContext";
 import { Types } from "mongoose";
 import path from "path";
 import * as DbTypes from "../dbTypes";

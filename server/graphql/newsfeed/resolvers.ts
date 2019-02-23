@@ -1,9 +1,12 @@
 import { Query } from "./types";
 import { mapNewsfeed } from "./gqlMapper";
 import { ApolloContext } from "gqlContext";
+import { authMiddleware } from "../middlewares";
 
 const NewsBase = {
   __resolveType(obj, context: ApolloContext, info) {
+    authMiddleware(context.user);
+
     switch (obj.type) {
       case "NEW_ANSWER":
       case "NEW_ANSWER_EDITION":
@@ -23,6 +26,8 @@ const NewsBase = {
 
 const News = {
   __resolveType(obj, context, info) {
+    authMiddleware(context.user);
+
     switch (obj.type) {
       case "NEW_ANSWER":
       case "NEW_ANSWER_EDITION":
@@ -42,6 +47,8 @@ const News = {
 
 const Query: Query = {
   async newsfeed(_, __, { services, user }) {
+    authMiddleware(user);
+
     const newsfeedDb = await services.newsfeed.getNewsfeed(user!.id);
     const newsfeedQuestions = await services.newsfeed.getNewsFeedQuestions(
       newsfeedDb

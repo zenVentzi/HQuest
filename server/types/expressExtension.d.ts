@@ -1,9 +1,9 @@
-import { User } from "./gqlContext";
+import { ContextUser } from "./gqlContext";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User;
+      user?: ContextUser;
     }
   }
 }

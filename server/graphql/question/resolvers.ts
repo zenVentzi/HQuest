@@ -1,6 +1,7 @@
 import { Query, Mutation } from "./types";
 import { mapQuestion, mapQuestions } from "./gqlMapper";
 import { createConnection } from "../relayConnection/functions";
+import { authMiddleware } from "../middlewares";
 
 const Query: Query = {
   async questions(
@@ -8,6 +9,8 @@ const Query: Query = {
     { after, answered, first, tags, userId },
     { services, user }
   ) {
+    authMiddleware(user);
+
     const dbAnswers = await services.answer.getUserAnswers(userId);
 
     const dbQuestions = await services.question.getUserQuestions(
@@ -27,10 +30,14 @@ const Query: Query = {
   },
 
   async questionsTags(_, __, { services, user }) {
+    authMiddleware(user);
+
     return await services.question.getAllTags();
   },
 
   async answeredQuestion(_, { userId, questionId }, { services, user }) {
+    authMiddleware(user);
+
     const dbQuestion = await services.question.getQuestion(questionId);
     const dbAnswer = await services.answer.getUserAnswer(userId, questionId);
     const res = mapQuestion(user!.id, dbQuestion, dbAnswer);
@@ -41,10 +48,14 @@ const Query: Query = {
 
 const Mutation: Mutation = {
   async addQuestions(_, { questions }, { services, user }) {
+    authMiddleware(user);
+
     return services.question.addQuestions(questions!) as any;
   },
 
   async questionNotApply(_, { questionId }, { services, user }) {
+    authMiddleware(user);
+
     const dbQuestion = await services.question.markNotApply(
       questionId,
       user!.id

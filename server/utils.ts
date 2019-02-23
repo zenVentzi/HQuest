@@ -1,6 +1,6 @@
 import { Request } from "express";
 import fs from "fs";
-import { User } from "gqlContext";
+import { ContextUser } from "gqlContext";
 import { ApolloContext } from "gqlContext";
 import jwt from "jsonwebtoken";
 import { USERS_CONTENT } from "./constants";
@@ -36,7 +36,7 @@ const getAvatarSrcAsync: GetAvatarSrcAsync = async userId => {
   return src;
 };
 
-type GetVerifiedUser = (authToken: string) => Promise<null | User>;
+type GetVerifiedUser = (authToken: string) => Promise<null | ContextUser>;
 
 const getVerifiedUser: GetVerifiedUser = async authToken => {
   let token = authToken;
@@ -54,7 +54,7 @@ const getVerifiedUser: GetVerifiedUser = async authToken => {
         // reject(err);
         resolve(null);
       } else {
-        resolve(decoded as User);
+        resolve(decoded as ContextUser);
         // jwt typings do not allow me to give type to decoded
       }
     });

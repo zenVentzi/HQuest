@@ -1,9 +1,12 @@
 import jsonwebtoken from "jsonwebtoken";
 import { Query, Mutation } from "./types";
 import { mapUser, mapUsers } from "./gqlMapper";
+import { authMiddleware } from "../middlewares";
 
 const Query: Query = {
   async user(_, { id }, { services, user }) {
+    authMiddleware(user);
+
     const dbUser = await services.user.getUser(id);
 
     if (!dbUser) {
@@ -14,6 +17,8 @@ const Query: Query = {
     return gqlUser;
   },
   async users(_, { match }, { services, user }) {
+    authMiddleware(user);
+
     const dbUsers = await services.user.getUsers(match!);
     const gqlUsers = mapUsers({
       dbUsers,
@@ -23,6 +28,8 @@ const Query: Query = {
     return gqlUsers;
   },
   async followers(_, { userId }, { services, user }) {
+    authMiddleware(user);
+
     const dbFollowers = await services.user.getFollowers(userId);
     return mapUsers({
       dbUsers: dbFollowers,
@@ -58,6 +65,8 @@ const Mutation: Mutation = {
   },
 
   async editUser(_, { input }, { services, user }) {
+    authMiddleware(user);
+
     const editedUser = await services.user.editUser(
       user!.id,
       input!.fullName,
@@ -68,6 +77,8 @@ const Mutation: Mutation = {
     return gqlUser;
   },
   async follow(_, { follow, userId }, { services, user }) {
+    authMiddleware(user);
+
     if (follow) {
       await services.user.follow(user!.id, userId);
       await services.newsfeed.onFollowUser(userId, user!.id);
@@ -79,6 +90,8 @@ const Mutation: Mutation = {
     return follow; // fix: this is not needed
   },
   async uploadAvatar(_, { base64Img }, { services, user }) {
+    authMiddleware(user);
+
     const avatarSrc = await services.user.uploadAvatar(base64Img, user!.id);
     return avatarSrc;
   }
