@@ -27,6 +27,7 @@ const UserSchema = new Schema({
   email: { type: String, required: true },
   intro: { type: String, required: true },
   avatarSrc: { type: String, required: true },
+  questionsNotApply: [String],
   followers: [{ type: Schema.Types.ObjectId, required: true, ref: "User" }],
   following: [{ type: Schema.Types.ObjectId, required: true, ref: "User" }],
   notifications: [NotificationSchema],
