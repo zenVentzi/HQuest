@@ -2,118 +2,119 @@ import { Types as GooseTypes, model } from "mongoose";
 import * as DbTypes from "../dbTypes";
 import * as GqlTypes from "../generated/gqltypes";
 import { ApolloContext } from "../types/gqlContext";
+import { Models } from "../models";
 
 const { ObjectId } = GooseTypes;
 
-async function addCommentToAnswer(
-  { comment, answerId }: GqlTypes.CommentAnswerMutationArgs,
-  context: ApolloContext
-) {
-  const { models, user } = context;
-  const performerId = user!.id;
+class CommentService {
+  constructor(private models: Models) {}
 
-  const performer = (await models.user.findById(performerId))!.toObject();
+  public async addCommentToAnswer(
+    { comment, answerId }: GqlTypes.CommentAnswerMutationArgs,
+    context: ApolloContext
+  ) {
+    const { models, user } = context;
+    const performerId = user!.id;
 
-  const dbAnswer = (await models.answer
-    .findByIdAndUpdate(
-      answerId,
-      {
-        $push: {
-          comments: { _id: ObjectId(), value: comment, user: performer!._id }
-        }
-      },
-      { new: true }
-      // { new: true, fields: "comments -_id" }
-    )
-    .populate("comments.user"))!.toObject();
+    const performer = (await models.user.findById(performerId))!.toObject();
 
-  const dbComments = dbAnswer!.comments;
+    const dbAnswer = (await models.answer
+      .findByIdAndUpdate(
+        answerId,
+        {
+          $push: {
+            comments: { _id: ObjectId(), value: comment, user: performer!._id }
+          }
+        },
+        { new: true }
+        // { new: true, fields: "comments -_id" }
+      )
+      .populate("comments.user"))!.toObject();
 
-  const addedComment = dbComments![dbComments!.length - 1];
-  return addedComment;
-}
+    const dbComments = dbAnswer!.comments;
 
-// async function editComment({
-//   answerId,
-//   commentId,
-//   commentValue,
-//   context
-// }: {
-//   answerId: string;
-//   commentId: string;
-//   commentValue: string;
-//   context: ApolloContext;
-// }) {
-//   const { models } = context;
+    const addedComment = dbComments![dbComments!.length - 1];
+    return addedComment;
+  }
 
-//   const answerDoc = await models.answer
-//     .findById(answerId)
-//     .populate("comments.user");
+  // public async editComment({
+  //   answerId,
+  //   commentId,
+  //   commentValue,
+  //   context
+  // }: {
+  //   answerId: string;
+  //   commentId: string;
+  //   commentValue: string;
+  //   context: ApolloContext;
+  // }) {
+  //   const { models } = context;
 
-//   if (answerDoc) {
-//     answerDoc.comments!.forEach(c => (c.value = "fdf"));
-//     await answerDoc.save();
-//     return answerDoc.comments!.find(c => c._id.toHexString() === commentId);
-//   }
+  //   const answerDoc = await models.answer
+  //     .findById(answerId)
+  //     .populate("comments.user");
 
-//   throw Error("Failed to edit comment");
-// }
-async function editComment(
-  { answerId, commentId, commentValue }: GqlTypes.EditCommentMutationArgs,
-  context: ApolloContext
-) {
-  const { models } = context;
+  //   if (answerDoc) {
+  //     answerDoc.comments!.forEach(c => (c.value = "fdf"));
+  //     await answerDoc.save();
+  //     return answerDoc.comments!.find(c => c._id.toHexString() === commentId);
+  //   }
 
-  const { comments: oldComments } = (await models.answer
-    .findById(answerId)
-    .populate("user"))!.toObject();
-  const newComments: DbTypes.Comment[] = [];
-  let editedComment: DbTypes.Comment | undefined;
+  //   throw Error("Failed to edit comment");
+  // }
+  public async editComment(
+    { answerId, commentId, commentValue }: GqlTypes.EditCommentMutationArgs,
+    context: ApolloContext
+  ) {
+    const { models } = context;
 
-  oldComments!.forEach(oldC => {
-    const newComment = oldC;
+    const { comments: oldComments } = (await models.answer
+      .findById(answerId)
+      .populate("user"))!.toObject();
+    const newComments: DbTypes.Comment[] = [];
+    let editedComment: DbTypes.Comment | undefined;
 
-    if (oldC._id.toString() === commentId) {
-      newComment.value = commentValue;
-      editedComment = newComment;
-    }
+    oldComments!.forEach(oldC => {
+      const newComment = oldC;
 
-    newComments.push(newComment);
-  });
-
-  await models.answer.findByIdAndUpdate(answerId, {
-    $set: { comments: newComments }
-  });
-
-  // console.log(editedComment);
-
-  return editedComment;
-}
-
-async function removeComment(
-  { answerId, commentId }: GqlTypes.RemoveCommentMutationArgs,
-  context: ApolloContext
-): Promise<DbTypes.Comment> {
-  const { models } = context;
-
-  const answer = (await models.answer
-    .findByIdAndUpdate(answerId, {
-      $pull: {
-        comments: { _id: ObjectId(commentId) }
+      if (oldC._id.toString() === commentId) {
+        newComment.value = commentValue;
+        editedComment = newComment;
       }
-    })
-    .populate("comments.user"))!.toObject();
 
-  const { comments } = answer!;
+      newComments.push(newComment);
+    });
 
-  const removedComment = comments!.find(
-    com => com._id.toString() === commentId
-  );
-  return removedComment!;
+    await models.answer.findByIdAndUpdate(answerId, {
+      $set: { comments: newComments }
+    });
+
+    // console.log(editedComment);
+
+    return editedComment;
+  }
+
+  public async removeComment(
+    { answerId, commentId }: GqlTypes.RemoveCommentMutationArgs,
+    context: ApolloContext
+  ): Promise<DbTypes.Comment> {
+    const { models } = context;
+
+    const answer = (await models.answer
+      .findByIdAndUpdate(answerId, {
+        $pull: {
+          comments: { _id: ObjectId(commentId) }
+        }
+      })
+      .populate("comments.user"))!.toObject();
+
+    const { comments } = answer!;
+
+    const removedComment = comments!.find(
+      com => com._id.toString() === commentId
+    );
+    return removedComment!;
+  }
 }
 
-export const commentService = {
-  addCommentToAnswer,
-  editComment,
-  removeComment
-};
+export { CommentService };
