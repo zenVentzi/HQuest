@@ -1,51 +1,46 @@
 import jsonwebtoken from "jsonwebtoken";
 import { Query, Mutation } from "./types";
 import { mapUser, mapUsers } from "./gqlMapper";
-import {
-  userService,
-  newsfeedService,
-  notificationService
-} from "../../services";
 
 const Query: Query = {
-  async user(_, args, context) {
-    const dbUser = await userService.getUser(args, context);
+  async user(_, { id }, { services, user }) {
+    const dbUser = await services.user.getUser(id);
 
     if (!dbUser) {
       return null;
     }
 
-    const gqlUser = mapUser(dbUser, context.user!.id);
+    const gqlUser = mapUser(dbUser, user!.id);
     return gqlUser;
   },
-  async users(_, args, context) {
-    const dbUsers = await userService.getUsers(args, context);
+  async users(_, { match }, { services, user }) {
+    const dbUsers = await services.user.getUsers(match!);
     const gqlUsers = mapUsers({
       dbUsers,
-      loggedUserId: context.user!.id
+      loggedUserId: user!.id
     });
 
     return gqlUsers;
   },
-  async followers(_, { userId }, context) {
-    const dbFollowers = await userService.getFollowers({ userId }, context);
+  async followers(_, { userId }, { services, user }) {
+    const dbFollowers = await services.user.getFollowers(userId);
     return mapUsers({
       dbUsers: dbFollowers,
-      loggedUserId: context.user!.id
+      loggedUserId: user!.id
     });
   },
-  async following(_, { userId }, context) {
-    const dbFollowing = await userService.getFollowing({ userId }, context);
+  async following(_, { userId }, { services, user }) {
+    const dbFollowing = await services.user.getFollowing(userId);
     return mapUsers({
       dbUsers: dbFollowing,
-      loggedUserId: context.user!.id
+      loggedUserId: user!.id
     });
   }
 };
 
 const Mutation: Mutation = {
-  async login(_, args, context) {
-    const dbUser = await userService.login(args, context);
+  async login(_, { email, name }, { services, user }) {
+    const dbUser = await services.user.login(email, name);
 
     const authToken = jsonwebtoken.sign(
       { id: dbUser._id.toString(), email: dbUser.email },
@@ -61,31 +56,30 @@ const Mutation: Mutation = {
 
     return result;
   },
-  async editUser(_, args, context) {
-    const editedUser = await userService.editUser(args.input!, context);
-    const gqlUser = mapUser(editedUser, context.user!.id);
+
+  async editUser(_, { input }, { services, user }) {
+    const editedUser = await services.user.editUser(
+      user!.id,
+      input!.fullName,
+      input!.intro,
+      input!.socialMediaLinks
+    );
+    const gqlUser = mapUser(editedUser, user!.id);
     return gqlUser;
   },
-  async follow(_, args, context) {
-    if (args.follow) {
-      await userService.follow(args, context);
-      await newsfeedService.onFollowUser(
-        args.userId,
-        context.user!.id,
-        context
-      );
-      await notificationService.newFollower(
-        { receiverId: args.userId },
-        context
-      );
+  async follow(_, { follow, userId }, { services, user }) {
+    if (follow) {
+      await services.user.follow(user!.id, userId);
+      await services.newsfeed.onFollowUser(userId, user!.id);
+      await services.notification.newFollower(userId, user!.id);
     } else {
-      await userService.unfollow(args, context);
+      await services.user.unfollow(user!.id, userId);
     }
 
-    return args.follow; // fix: this is not needed
+    return follow; // fix: this is not needed
   },
-  async uploadAvatar(_, args, context) {
-    const avatarSrc = await userService.uploadAvatar(args, context);
+  async uploadAvatar(_, { base64Img }, { services, user }) {
+    const avatarSrc = await services.user.uploadAvatar(base64Img, user!.id);
     return avatarSrc;
   }
 };

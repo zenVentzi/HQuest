@@ -1,64 +1,58 @@
 import { Mutation } from "./types";
 import { mapComment, mapComments } from "./gqlMapper";
-import {
-  newsfeedService,
-  answerService,
-  notificationService,
-  commentService
-} from "../../../../services";
 
 const Mutation: Mutation = {
-  async commentAnswer(_, { answerId, comment }, context) {
-    const dbAnswer = await answerService.getAnswerById(answerId, context);
-    const dbComment = await commentService.addCommentToAnswer(
-      {
-        comment,
-        answerId
-      },
-      context
+  async commentAnswer(_, { answerId, comment }, { services, user }) {
+    const dbAnswer = await services.answer.getAnswerById(answerId);
+    const dbComment = await services.comment.addCommentToAnswer(
+      user!.id,
+      comment,
+      answerId
     );
 
     if (!dbComment) throw Error("Failed to add comment");
 
-    await newsfeedService.onNewComment(
+    await services.newsfeed.onNewComment(
       dbAnswer,
       dbComment._id.toString(),
-      context.user!.id,
-      context
+      user!.id
     );
-    await notificationService.newComment(
-      {
-        answerId,
-        dbComment
-      },
-      context
-    );
+    await services.notification.newComment(user!.id, answerId, dbComment);
 
     return mapComment({
       dbComment,
-      loggedUserId: context.user!.id
+      loggedUserId: user!.id
     });
   },
 
-  async editComment(_, args, context) {
-    const dbComment = await commentService.editComment(args, context);
+  async editComment(
+    _,
+    { answerId, commentId, commentValue },
+    { services, user }
+  ) {
+    const dbComment = await services.comment.editComment(
+      answerId,
+      commentId,
+      commentValue
+    );
 
     if (dbComment) {
       return mapComment({
         dbComment,
-        loggedUserId: context.user!.id
+        loggedUserId: user!.id
       });
     }
 
+    // this should happen inside the service
     throw Error("Failed to edit comment");
   },
 
-  async removeComment(_, args, context) {
-    const dbComment = await commentService.removeComment(args, context);
+  async removeComment(_, { answerId, commentId }, { services, user }) {
+    const dbComment = await services.comment.removeComment(answerId, commentId);
 
     return mapComment({
       dbComment,
-      loggedUserId: context.user!.id
+      loggedUserId: user!.id
     });
   }
 };

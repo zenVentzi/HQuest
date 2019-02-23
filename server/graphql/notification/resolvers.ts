@@ -1,6 +1,5 @@
 import { Query, Mutation } from "./types";
 import { mapNotifications } from "./gqlMapper";
-import { notificationService } from "../../services";
 
 const Notification = {
   __resolveType(obj, context, info) {
@@ -13,16 +12,18 @@ const Notification = {
 };
 
 const Query: Query = {
-  async notifications(_, __, context) {
-    const dbNotifications = await notificationService.getNotifications(context);
+  async notifications(_, __, { services, user }) {
+    const dbNotifications = await services.notification.getNotifications(
+      user!.id
+    );
 
     const gqlNotifications = mapNotifications(dbNotifications);
     return gqlNotifications;
   }
 };
 const Mutation: Mutation = {
-  async notifsMarkSeen(_, __, context) {
-    await notificationService.markSeen(context);
+  async notifsMarkSeen(_, __, { services, user }) {
+    await services.notification.markSeen(user!.id);
     return true; // fix: remove that
   }
 };

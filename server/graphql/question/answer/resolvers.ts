@@ -1,51 +1,36 @@
 import { Mutation } from "./types";
 import { mapAnswer } from "./gqlMapper";
-import { newsfeedService, answerService, userService } from "../../../services";
 
 const Mutation: Mutation = {
-  async editAnswer(_, args, context) {
-    const dbAnswer = await answerService.edit(args, context);
+  async editAnswer(_, { answerId, answerValue }, { services, user }) {
+    const dbAnswer = await services.answer.edit(answerId, answerValue);
+    await services.newsfeed.onEditAnswer(answerId, user!.id);
+    return mapAnswer({ dbAnswer, loggedUserId: user!.id });
+  },
 
-    await newsfeedService.onEditAnswer(
-      args.answerId,
-      context.user!.id,
-      context
+  async addAnswer(_, { answerValue, questionId }, { services, user }) {
+    const dbAnswer = await services.answer.add(
+      user!.id,
+      questionId,
+      answerValue
     );
 
-    return mapAnswer({ dbAnswer, loggedUserId: context.user!.id });
+    await services.newsfeed.onNewAnswer(dbAnswer._id.toHexString(), user!.id);
+    return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
 
-  async addAnswer(_, args, context) {
-    const dbAnswer = await answerService.add(args, context);
-
-    await newsfeedService.onNewAnswer(
-      dbAnswer._id.toHexString(),
-      context.user!.id,
-      context
-    );
-
-    return mapAnswer({ dbAnswer, loggedUserId: context.user!.id });
+  async removeAnswer(_, { answerId }, { services, user }) {
+    const dbAnswer = await services.answer.remove(answerId);
+    return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
 
-  async removeAnswer(_, args, context) {
-    const dbAnswer = await answerService.remove(args, context);
-
-    return mapAnswer({ dbAnswer, loggedUserId: context.user!.id });
+  async likeAnswer(_, { answerId, userLikes }, { services, user }) {
+    const dbAnswer = await services.answer.like(answerId, user!.id, userLikes);
+    await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
+    return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
-  async likeAnswer(_, args, context) {
-    const dbUserLiker = (await userService.getUser(
-      { id: context.user!.id },
-      context
-    ))!;
-    const dbAnswer = await answerService.like(
-      { ...args, dbUserLiker },
-      context
-    );
-    await newsfeedService.onLikeAnswer(dbAnswer, context.user!.id, context);
-    return mapAnswer({ dbAnswer, loggedUserId: context.user!.id });
-  },
-  async moveAnswerPosition(_, args, context) {
-    return answerService.movePosition(args, context);
+  async moveAnswerPosition(_, { answerId, position }, { services, user }) {
+    return services.answer.movePosition(answerId, position);
   }
 };
 
