@@ -75,7 +75,7 @@ test("notifsMarkSeen() should mark user notifications as seen", async done => {
         _id: ObjectId(),
         type: DbTypes.NotificationType.NewFollower,
         performerId: follower._id.toHexString(),
-        performerAvatarSrc: "",
+        performerAvatarSrc: "srcc",
         seen: false,
         text: "comment new notif"
       }
@@ -96,39 +96,3 @@ test("notifsMarkSeen() should mark user notifications as seen", async done => {
   expect(actual).toEqual(expected);
   done();
 });
-
-// test("notifsMarkSeen() should mark user notifications as seen", async done => {
-//   const follower = (await new models.user({
-//     email: "fdf@",
-//     firstName: "Pesho123",
-//     surName: "Goeshev",
-//     intro: "blaIntro",
-//     avatarSrc: "test"
-//   } as DbTypes.User).save())!.toObject();
-//   const followerContext = { ...context };
-//   followerContext.user = {
-//     email: follower.email,
-//     id: follower._id.toHexString()
-//   };
-
-//   const followed = (await new models.user(contextUser).save())!.toObject();
-//   const followedContext = context;
-
-//   const args: GqlTypes.FollowMutationArgs = {
-//     follow: true,
-//     userId: followed._id.toHexString()
-//   };
-
-//   // this has to be replaced with models
-//   await Mutation.follow({}, args, followerContext, {} as any);
-
-//   await Mutation.notifsMarkSeen({}, {}, followedContext, {} as any);
-//   const followedUpdated = (await models.user.findById(
-//     followed._id
-//   ))!.toObject();
-
-//   const actual = followedUpdated.notifications![0].seen;
-//   const expected = true;
-//   expect(actual).toEqual(expected);
-//   done();
-// });

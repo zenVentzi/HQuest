@@ -7,7 +7,7 @@ import { mapUser } from "../../../user/gqlMapper";
 
 const { ObjectId } = Types;
 
-test("map comment", () => {
+test("mapComment() should map db comment to gql", () => {
   const dbUser = new models.user({
     firstName: "Pesho",
     surName: "Goshev",
@@ -25,7 +25,6 @@ test("map comment", () => {
   };
 
   const gqlUser = mapUser(dbUser, ObjectId().toHexString());
-
   const expected: gqlTypes.Comment = {
     id: dbComment._id.toHexString(),
     user: gqlUser,
