@@ -61,11 +61,11 @@ class CommentService {
 
   //   throw Error("Failed to edit comment");
   // }
-  public async editComment({
-    answerId,
-    commentId,
-    commentValue
-  }: GqlTypes.EditCommentMutationArgs) {
+  public async editComment(
+    answerId: string,
+    commentId: string,
+    commentValue: string
+  ) {
     const { comments: oldComments } = (await this.models.answer
       .findById(answerId)
       .populate("user"))!.toObject();
@@ -92,10 +92,10 @@ class CommentService {
     return editedComment;
   }
 
-  public async removeComment({
-    answerId,
-    commentId
-  }: GqlTypes.RemoveCommentMutationArgs): Promise<DbTypes.Comment> {
+  public async removeComment(
+    answerId: string,
+    commentId: string
+  ): Promise<DbTypes.Comment> {
     const answer = (await this.models.answer
       .findByIdAndUpdate(answerId, {
         $pull: {

@@ -8,11 +8,7 @@ const { ObjectId } = GooseTypes;
 class AnswerService {
   constructor(private models: Models) {}
 
-  public async getUserAnswers({
-    userId
-  }: {
-    userId: string;
-  }): Promise<DbTypes.Answer[]> {
+  public async getUserAnswers(userId: string): Promise<DbTypes.Answer[]> {
     const userAnswers = (await this.models.answer
       .find({
         userId: ObjectId(userId),
@@ -25,13 +21,10 @@ class AnswerService {
     return userAnswers;
   }
 
-  public async getUserAnswer({
-    userId,
-    questionId
-  }: {
-    userId: string;
-    questionId: string;
-  }): Promise<DbTypes.Answer> {
+  public async getUserAnswer(
+    userId: string,
+    questionId: string
+  ): Promise<DbTypes.Answer> {
     const userIdObj = typeof userId === "string" ? ObjectId(userId) : userId;
     const questionIdObj =
       typeof questionId === "string" ? ObjectId(questionId) : questionId;
@@ -123,11 +116,7 @@ class AnswerService {
     return addedAnswer;
   }
 
-  public async remove({
-    answerId
-  }: {
-    answerId: string;
-  }): Promise<DbTypes.Answer> {
+  public async remove(answerId: string): Promise<DbTypes.Answer> {
     const removedAnswer = (await this.models.answer
       .findByIdAndUpdate(
         answerId,
@@ -146,15 +135,11 @@ class AnswerService {
     return removedAnswer;
   }
 
-  public async like({
-    answerId,
-    dbUserLiker,
-    userLikes
-  }: {
-    answerId: string;
-    dbUserLiker: DbTypes.User;
-    userLikes: number;
-  }): Promise<DbTypes.Answer> {
+  public async like(
+    answerId: string,
+    likerId: string,
+    userLikes: number
+  ): Promise<DbTypes.Answer> {
     /* 
 
   likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
@@ -163,18 +148,20 @@ class AnswerService {
     const { likes } = await this.models.answer.findById(answerId).lean();
     let updatedLikes: DbTypes.Likes = { total: 0, likers: [] };
 
+    const liker = (await this.models.user.findById(likerId))!.toObject();
+
     if (!likes) {
       updatedLikes = {
         total: userLikes,
-        likers: [{ user: dbUserLiker, numOfLikes: userLikes }]
+        likers: [{ user: liker, numOfLikes: userLikes }]
       };
     } else {
       // clear prev num of likes before adding the new ones
       updatedLikes.likers = likes.likers.filter(
-        liker => !liker.user._id.equals(dbUserLiker._id)
+        liker => !liker.user._id.equals(liker._id)
       );
 
-      updatedLikes.likers.push({ user: dbUserLiker, numOfLikes: userLikes });
+      updatedLikes.likers.push({ user: liker, numOfLikes: userLikes });
       updatedLikes.total = updatedLikes.likers.reduce((total, liker) => {
         const res = total + liker.numOfLikes;
         return res;
@@ -194,13 +181,10 @@ class AnswerService {
     return likedAnswer.toObject();
   }
 
-  public async movePosition({
-    answerId,
-    position
-  }: {
-    answerId: string;
-    position: number;
-  }): Promise<number> {
+  public async movePosition(
+    answerId: string,
+    position: number
+  ): Promise<number> {
     const currentAnswer = await this.models.answer.findById(answerId).lean();
     await this.models.answer.findOneAndUpdate(
       { position },

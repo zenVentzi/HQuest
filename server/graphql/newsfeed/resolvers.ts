@@ -1,9 +1,9 @@
 import { Query } from "./types";
 import { mapNewsfeed } from "./gqlMapper";
-import { newsfeedService } from "../../services";
+import { ApolloContext } from "gqlContext";
 
 const NewsBase = {
-  __resolveType(obj, context, info) {
+  __resolveType(obj, context: ApolloContext, info) {
     switch (obj.type) {
       case "NEW_ANSWER":
       case "NEW_ANSWER_EDITION":
@@ -41,22 +41,18 @@ const News = {
 };
 
 const Query: Query = {
-  async newsfeed(_, __, context) {
-    const newsfeedDb = await newsfeedService.getNewsfeed(context);
-    const newsfeedQuestions = await newsfeedService.getNewsFeedQuestions(
-      newsfeedDb,
-      context
+  async newsfeed(_, __, { services, user }) {
+    const newsfeedDb = await services.newsfeed.getNewsfeed(user!.id);
+    const newsfeedQuestions = await services.newsfeed.getNewsFeedQuestions(
+      newsfeedDb
     );
-    const newsfeedUsers = await newsfeedService.getNewsFeedUsers(
-      newsfeedDb,
-      context
-    );
+    const newsfeedUsers = await services.newsfeed.getNewsFeedUsers(newsfeedDb);
 
     const gqlNewsfeed = mapNewsfeed(
       newsfeedDb,
       newsfeedUsers,
       newsfeedQuestions,
-      context.user!.id
+      user!.id
     );
 
     return gqlNewsfeed;

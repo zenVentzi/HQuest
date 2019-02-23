@@ -80,21 +80,17 @@ const getCurrentPageEdges: GetCurrentPageEdges = (
   return res;
 };
 
-type CreateConnection = <NodeT extends Node>({
-  nodes,
-  first,
-  after
-}: {
-  nodes: NodeT[] | null;
-  first: number;
-  after?: string | null;
-}) => {
+type CreateConnection = <NodeT extends Node>(
+  nodes: NodeT[] | null,
+  first: number,
+  after?: string | null
+) => {
   pageInfo: PageInfo;
   edges: Array<Edge<NodeT>>;
   totalCount: number;
 } | null;
 
-const createConnection: CreateConnection = ({ nodes, first, after }) => {
+const createConnection: CreateConnection = (nodes, first, after) => {
   if (!nodes || !nodes.length) return null;
 
   const allEdges = getAllEdges(nodes);

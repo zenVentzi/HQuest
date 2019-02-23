@@ -9,9 +9,9 @@ const { ObjectId } = mongoose.Types;
 class QuestionService {
   constructor(private models: Models) {}
 
-  public async addQuestions({
-    questions
-  }: GqlTypes.AddQuestionsMutationArgs): Promise<void> {
+  public async addQuestions(
+    questions: GqlTypes.InputQuestion[]
+  ): Promise<void> {
     await this.models.question.create(questions);
   }
 
@@ -64,11 +64,7 @@ class QuestionService {
   //   return answeredQuestion;
   // };
 
-  public async getQuestion({
-    questionId
-  }: {
-    questionId: string;
-  }): Promise<DbTypes.Question> {
+  public async getQuestion(questionId: string): Promise<DbTypes.Question> {
     return (await this.models.question.findById(questionId))!.toObject();
   }
 

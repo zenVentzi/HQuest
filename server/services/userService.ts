@@ -11,10 +11,7 @@ const { ObjectId } = Types;
 class UserService {
   constructor(private models: Models) {}
 
-  public async login({
-    email,
-    name
-  }: GqlTypes.LoginMutationArgs): Promise<DbTypes.User> {
+  public async login(email: string, name: string): Promise<DbTypes.User> {
     const user = await this.models.user
       .findOne({
         email
@@ -36,9 +33,7 @@ class UserService {
     await this.followBaseFunc(followerId, followedId, false);
   }
 
-  public async getFollowers({
-    userId
-  }: GqlTypes.FollowersQueryArgs): Promise<DbTypes.User[] | null> {
+  public async getFollowers(userId: string): Promise<DbTypes.User[] | null> {
     const userDoc = await this.models.user
       .findById(userId)
       .populate("followers");
@@ -49,9 +44,7 @@ class UserService {
     return followers && followers.length ? followers : null;
   }
 
-  public async getFollowing({
-    userId
-  }: GqlTypes.FollowingQueryArgs): Promise<DbTypes.User[] | null> {
+  public async getFollowing(userId: string): Promise<DbTypes.User[] | null> {
     const userDoc = await this.models.user
       .findById(userId)
       .populate("following");
@@ -62,17 +55,12 @@ class UserService {
     return following && following.length ? following : null;
   }
 
-  public async editUser({
-    userId,
-    fullName,
-    intro,
-    socialMediaLinks
-  }: {
-    userId: string;
-    fullName: string;
-    intro: string;
-    socialMediaLinks: GqlTypes.SocialMediaLinksInput;
-  }): Promise<DbTypes.User> {
+  public async editUser(
+    userId: string,
+    fullName: string,
+    intro: string,
+    socialMediaLinks: GqlTypes.SocialMediaLinksInput
+  ): Promise<DbTypes.User> {
     const [firstName, surName] = fullName.split(" ");
     const update = { $set: { firstName, surName, intro, socialMediaLinks } };
     const editedUser = await this.models.user.findByIdAndUpdate(
@@ -87,11 +75,9 @@ class UserService {
     return editedUser.toObject();
   }
 
-  public async getUser({
-    id
-  }: GqlTypes.UserQueryArgs): Promise<DbTypes.User<
-    "noPopulatedFields"
-  > | null> {
+  public async getUser(
+    id: string
+  ): Promise<DbTypes.User<"noPopulatedFields"> | null> {
     const user = await this.models.user.findById(id);
     return user ? user.toObject() : null;
   }
@@ -105,9 +91,7 @@ class UserService {
     return users;
   }
 
-  public async getUsers({
-    match
-  }: GqlTypes.UsersQueryArgs): Promise<DbTypes.User[] | null> {
+  public async getUsers(match: string): Promise<DbTypes.User[] | null> {
     const matchWords = match!.split(" ");
 
     let matchedUsers: DbTypes.User[];
