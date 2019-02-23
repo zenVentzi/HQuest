@@ -1,8 +1,9 @@
 overwrite: true
-schema: "./server/schema.graphql"
+schema: "./server/graphql/**/*.graphql"
 documents: null
 generates:
   ./server/generated/gqltypes.ts:
+    schema: "./server/graphql/**/*.graphql"
     config:
       contextType: ../types/gqlContext#ApolloContext
     plugins:

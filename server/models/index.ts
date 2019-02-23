@@ -3,7 +3,14 @@ import { NewsfeedModel } from "./newsfeed";
 import { QuestionModel } from "./question";
 import { UserModel } from "./user";
 
-export const models = {
+export interface Models {
+  answer: AnswerModel;
+  newsfeed: NewsfeedModel;
+  question: QuestionModel;
+  user: UserModel;
+}
+
+export const models: Models = {
   answer: AnswerModel,
   newsfeed: NewsfeedModel,
   question: QuestionModel,
