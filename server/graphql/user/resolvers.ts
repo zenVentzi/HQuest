@@ -84,4 +84,4 @@ const Mutation: Mutation = {
   }
 };
 
-export default { Query, Mutation };
+export { Query, Mutation };
