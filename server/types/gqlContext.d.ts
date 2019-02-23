@@ -4,21 +4,14 @@ import { AnswerModel } from "../models/answer";
 import { NewsfeedModel } from "../models/newsfeed";
 import { Services } from "../services";
 
-interface User {
+interface ContextUser {
   id: string;
   email: string;
 }
 
 interface ApolloContext {
-  user?: User;
-  // models: {
-  //   // models will be removed
-  //   user: UserModel;
-  //   question: QuestionModel;
-  //   answer: AnswerModel;
-  //   newsfeed: NewsfeedModel;
-  // };
+  user?: ContextUser;
   services: Services;
 }
 
-export { User, ApolloContext };
+export { ContextUser, ApolloContext };

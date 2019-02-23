@@ -23,6 +23,10 @@ const context: ApolloContext = {
   services
 };
 
+// function bla() {
+
+// }
+
 test("notifications() should return notifications if found", async done => {
   const dbNotif: DbTypes.NewFollower = {
     _id: ObjectId(),
