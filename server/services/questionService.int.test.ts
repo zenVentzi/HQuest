@@ -3,12 +3,13 @@ import { AnswerModel } from "../models/answer";
 import { NewsfeedModel } from "../models/newsfeed";
 import { QuestionModel } from "../models/question";
 import { UserModel } from "../models/user";
-import { questionService } from "./questionService";
+import { services } from "./index";
 
 import * as DbTypes from "../dbTypes";
 import { ApolloContext } from "../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
+const { question: questionService } = services;
 
 const contextUser = {
   _id: ObjectId("5c652bcbbe436f0108224888"),
@@ -21,12 +22,7 @@ const contextUser = {
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
-  models: {
-    answer: AnswerModel,
-    newsfeed: NewsfeedModel,
-    question: QuestionModel,
-    user: UserModel
-  }
+  services
 };
 
 test("getAnsweredQuestions() should return answered questions with tags", async done => {
@@ -41,9 +37,9 @@ test("getAnsweredQuestions() should return answered questions with tags", async 
     value: "answerVal"
   } as DbTypes.Answer).save()).toObject();
   const answeredQuestions = await questionService.getUserQuestions(
+    context.user!.id,
     [answer],
     true,
-    context,
     ["tag1", "tag2"]
   );
   const actual = answeredQuestions[0].value;

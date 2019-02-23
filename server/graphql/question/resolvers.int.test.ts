@@ -235,3 +235,23 @@ test("answeredQuestion() should return answered question", async done => {
   expect(answeredQuestion.answer!.value).toEqual(answer.value);
   done();
 });
+
+test("addQuestions() should add questions to db", async done => {
+  await Mutation.addQuestions(
+    {},
+    { questions: [{ tags: ["tag1"], value: "Question?" }] },
+    context,
+    {} as any
+  );
+  const dbQuestions = (await models.question.find()).map(q => q.toObject());
+  const actual = dbQuestions[0];
+  const expected: DbTypes.Question = {
+    _id: actual._id,
+    tags: ["tag1"],
+    value: "Question?"
+  };
+  expect(actual._id).toEqual(expected._id);
+  expect(actual.tags).toEqual(expected.tags);
+  expect(actual.value).toEqual(expected.value);
+  done();
+});
