@@ -1,117 +1,120 @@
 import { ApolloContext } from "gqlContext";
 import mongoose from "mongoose";
 import * as DbTypes from "../dbTypes";
-import { gqlMapper } from "../gqlMapper";
+// import { gqlMapper } from "../gqlMapper";
 import { NEW_NOTIFICATION, pubsub } from "../PubSub";
+import { Models } from "../models";
 
 const { ObjectId } = mongoose.Types;
 
-async function notify(
-  { receiverId, notif },
-  { models }: ApolloContext
-): Promise<void> {
-  await models.user.findByIdAndUpdate(
-    receiverId,
-    { $push: { notifications: notif } },
-    { upsert: true }
-  );
+class NotificationService {
+  constructor(private models: Models) {}
 
-  const payload = {
-    receiverId: receiverId.toString(),
-    notif: gqlMapper.getNotification(notif)
-  };
+  public async newComment(
+    { answerId, dbComment }: { answerId: string; dbComment: DbTypes.Comment },
+    context: ApolloContext
+  ): Promise<void> {
+    const { models, user } = context;
+    const { questionId, userId: receiverId } = (await models.answer.findById(
+      answerId
+    ))!;
 
-  pubsub.publish(NEW_NOTIFICATION, payload);
-}
+    const performerId = user!.id;
+    const performer = await models.user.findById(performerId).lean();
 
-async function newComment(
-  { answerId, dbComment }: { answerId: string; dbComment: DbTypes.Comment },
-  context: ApolloContext
-): Promise<void> {
-  const { models, user } = context;
-  const { questionId, userId: receiverId } = (await models.answer.findById(
-    answerId
-  ))!;
+    if (performer._id.equals(receiverId)) return;
+    const performerName = `${performer.firstName} ${performer.surName}`;
+    const notif: DbTypes.Notification = {
+      _id: ObjectId(),
+      type: DbTypes.NotificationType.NewComment,
+      questionId: questionId.toHexString(),
+      commentId: dbComment._id.toString(),
+      performerId,
+      performerAvatarSrc: performer.avatarSrc,
+      text: `${performerName} commented: "${dbComment.value} "`,
+      seen: false
+    };
 
-  const performerId = user!.id;
-  const performer = await models.user.findById(performerId).lean();
+    await this.notify(
+      {
+        receiverId: receiverId.toHexString(),
+        notif
+      },
+      context
+    );
+  }
 
-  if (performer._id.equals(receiverId)) return;
-  const performerName = `${performer.firstName} ${performer.surName}`;
-  const notif: DbTypes.Notification = {
-    _id: ObjectId(),
-    type: DbTypes.NotificationType.NewComment,
-    questionId: questionId.toHexString(),
-    commentId: dbComment._id.toString(),
-    performerId,
-    performerAvatarSrc: performer.avatarSrc,
-    text: `${performerName} commented: "${dbComment.value} "`,
-    seen: false
-  };
+  public async newFollower(
+    { receiverId }: { receiverId: string },
+    context: ApolloContext
+  ): Promise<void> {
+    const { models, user } = context;
+    const followerId = user!.id;
 
-  await notify(
-    {
-      receiverId: receiverId.toHexString(),
+    const follower = await models.user.findById(followerId).lean();
+
+    const followerName = `${follower.firstName} ${follower.surName}`;
+    const notif: DbTypes.Notification = {
+      _id: ObjectId(),
+      type: DbTypes.NotificationType.NewFollower,
+      performerId: followerId,
+      performerAvatarSrc: follower.avatarSrc,
+      text: `${followerName} is following you`,
+      seen: false
+    };
+
+    await this.notify({ receiverId, notif }, context);
+  }
+
+  public async markSeen({ models, user }: ApolloContext): Promise<void> {
+    const searchQuery = {
+      _id: ObjectId(user!.id)
+      // "notifications.seen": false
+    };
+
+    const userDoc = await models.user.findOne(searchQuery);
+
+    userDoc!.notifications!.forEach(notif => {
+      notif.seen = true;
+    });
+
+    await userDoc!.save();
+
+    // await models.user.update(searchQuery, {
+    //   $set: { "notifications.$[].seen": true }
+    // });
+  }
+
+  public async getNotifications({
+    models,
+    user
+  }: ApolloContext): Promise<DbTypes.Notification[] | null> {
+    const dbUser = (await models.user.findById(user!.id))!.toObject();
+    const { notifications } = dbUser;
+
+    return notifications && notifications.length
+      ? notifications.reverse()
+      : null;
+  }
+
+  private async notify(
+    { receiverId, notif },
+    { models }: ApolloContext
+  ): Promise<void> {
+    await models.user.findByIdAndUpdate(
+      receiverId,
+      { $push: { notifications: notif } },
+      { upsert: true }
+    );
+
+    const payload = {
+      receiverId: receiverId.toString(),
       notif
-    },
-    context
-  );
+      // notif: gqlMapper.getNotification(notif)
+    };
+
+    pubsub.publish(NEW_NOTIFICATION, payload);
+  }
 }
 
-async function newFollower(
-  { receiverId }: { receiverId: string },
-  context: ApolloContext
-): Promise<void> {
-  const { models, user } = context;
-  const followerId = user!.id;
-
-  const follower = await models.user.findById(followerId).lean();
-
-  const followerName = `${follower.firstName} ${follower.surName}`;
-  const notif: DbTypes.Notification = {
-    _id: ObjectId(),
-    type: DbTypes.NotificationType.NewFollower,
-    performerId: followerId,
-    performerAvatarSrc: follower.avatarSrc,
-    text: `${followerName} is following you`,
-    seen: false
-  };
-
-  await notify({ receiverId, notif }, context);
-}
-
-async function markSeen({ models, user }: ApolloContext): Promise<void> {
-  const searchQuery = {
-    _id: ObjectId(user!.id)
-    // "notifications.seen": false
-  };
-
-  const userDoc = await models.user.findOne(searchQuery);
-
-  userDoc!.notifications!.forEach(notif => {
-    notif.seen = true;
-  });
-
-  await userDoc!.save();
-
-  // await models.user.update(searchQuery, {
-  //   $set: { "notifications.$[].seen": true }
-  // });
-}
-
-async function getNotifications({
-  models,
-  user
-}: ApolloContext): Promise<DbTypes.Notification[] | null> {
-  const dbUser = (await models.user.findById(user!.id))!.toObject();
-  const { notifications } = dbUser;
-
-  return notifications && notifications.length ? notifications.reverse() : null;
-}
-
-export const notificationService = {
-  newFollower,
-  newComment,
-  getNotifications,
-  markSeen
-};
+export { NotificationService };

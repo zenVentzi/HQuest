@@ -264,15 +264,3 @@ class AnswerService {
 }
 
 export { AnswerService };
-
-// export const answerService = {
-//   add,
-//   edit,
-//   remove,
-//   like,
-//   movePosition,
-//   getUserAnswer,
-//   getAnswerById,
-//   getAnswersById,
-//   getUserAnswers
-// };
