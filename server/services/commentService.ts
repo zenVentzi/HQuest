@@ -1,7 +1,6 @@
 import { Types as GooseTypes, model } from "mongoose";
 import * as DbTypes from "../dbTypes";
 import * as GqlTypes from "../generated/gqltypes";
-import { ApolloContext } from "../types/gqlContext";
 import { Models } from "../models";
 
 const { ObjectId } = GooseTypes;
@@ -10,15 +9,15 @@ class CommentService {
   constructor(private models: Models) {}
 
   public async addCommentToAnswer(
-    { comment, answerId }: GqlTypes.CommentAnswerMutationArgs,
-    context: ApolloContext
+    performerId: string,
+    comment: string,
+    answerId: string
   ) {
-    const { models, user } = context;
-    const performerId = user!.id;
+    const performer = (await this.models.user.findById(
+      performerId
+    ))!.toObject();
 
-    const performer = (await models.user.findById(performerId))!.toObject();
-
-    const dbAnswer = (await models.answer
+    const dbAnswer = (await this.models.answer
       .findByIdAndUpdate(
         answerId,
         {
@@ -62,13 +61,12 @@ class CommentService {
 
   //   throw Error("Failed to edit comment");
   // }
-  public async editComment(
-    { answerId, commentId, commentValue }: GqlTypes.EditCommentMutationArgs,
-    context: ApolloContext
-  ) {
-    const { models } = context;
-
-    const { comments: oldComments } = (await models.answer
+  public async editComment({
+    answerId,
+    commentId,
+    commentValue
+  }: GqlTypes.EditCommentMutationArgs) {
+    const { comments: oldComments } = (await this.models.answer
       .findById(answerId)
       .populate("user"))!.toObject();
     const newComments: DbTypes.Comment[] = [];
@@ -85,7 +83,7 @@ class CommentService {
       newComments.push(newComment);
     });
 
-    await models.answer.findByIdAndUpdate(answerId, {
+    await this.models.answer.findByIdAndUpdate(answerId, {
       $set: { comments: newComments }
     });
 
@@ -94,13 +92,11 @@ class CommentService {
     return editedComment;
   }
 
-  public async removeComment(
-    { answerId, commentId }: GqlTypes.RemoveCommentMutationArgs,
-    context: ApolloContext
-  ): Promise<DbTypes.Comment> {
-    const { models } = context;
-
-    const answer = (await models.answer
+  public async removeComment({
+    answerId,
+    commentId
+  }: GqlTypes.RemoveCommentMutationArgs): Promise<DbTypes.Comment> {
+    const answer = (await this.models.answer
       .findByIdAndUpdate(answerId, {
         $pull: {
           comments: { _id: ObjectId(commentId) }

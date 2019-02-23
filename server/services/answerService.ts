@@ -1,7 +1,6 @@
 import { Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
 import * as GqlTypes from "../generated/gqltypes";
-import { ApolloContext } from "../types/gqlContext";
 import { Models } from "../models";
 
 const { ObjectId } = GooseTypes;
@@ -9,11 +8,12 @@ const { ObjectId } = GooseTypes;
 class AnswerService {
   constructor(private models: Models) {}
 
-  public async getUserAnswers(
-    { userId }: { userId: string },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer[]> {
-    const userAnswers = (await models.answer
+  public async getUserAnswers({
+    userId
+  }: {
+    userId: string;
+  }): Promise<DbTypes.Answer[]> {
+    const userAnswers = (await this.models.answer
       .find({
         userId: ObjectId(userId),
         $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }]
@@ -25,21 +25,18 @@ class AnswerService {
     return userAnswers;
   }
 
-  public async getUserAnswer(
-    {
-      userId,
-      questionId
-    }: {
-      userId: string;
-      questionId: string;
-    },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer> {
+  public async getUserAnswer({
+    userId,
+    questionId
+  }: {
+    userId: string;
+    questionId: string;
+  }): Promise<DbTypes.Answer> {
     const userIdObj = typeof userId === "string" ? ObjectId(userId) : userId;
     const questionIdObj =
       typeof questionId === "string" ? ObjectId(questionId) : questionId;
 
-    const answer = await models.answer
+    const answer = await this.models.answer
       .findOne({
         userId: userIdObj,
         questionId: questionIdObj
@@ -49,25 +46,19 @@ class AnswerService {
     return answer!.toObject();
   }
 
-  public async getAnswerById(
-    answerId: string,
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer> {
-    const answer = await models.answer
+  public async getAnswerById(answerId: string): Promise<DbTypes.Answer> {
+    const answer = await this.models.answer
       .findById(answerId)
       .populate("comments.user");
     return answer!.toObject();
   }
 
-  public async getAnswersById(
-    {
-      answerIds
-    }: {
-      answerIds: string[];
-    },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer[]> {
-    const answers = (await models.answer
+  public async getAnswersById({
+    answerIds
+  }: {
+    answerIds: string[];
+  }): Promise<DbTypes.Answer[]> {
+    const answers = (await this.models.answer
       .find({ _id: { $in: answerIds } })
       .populate("comments.user")
       .lean()) as DbTypes.Answer[];
@@ -76,15 +67,12 @@ class AnswerService {
   }
 
   public async edit(
-    { answerId, answerValue }: GqlTypes.EditAnswerMutationArgs,
-    context: ApolloContext
+    answerId: string,
+    answerValue: string
   ): Promise<DbTypes.Answer> {
-    const edition = await this.createEdition(
-      { answerId, answerValue },
-      context
-    );
+    const edition = await this.createEdition(answerId, answerValue);
 
-    const updatedAnswer = await context.models.answer
+    const updatedAnswer = await this.models.answer
       .findByIdAndUpdate(
         answerId,
         {
@@ -99,55 +87,48 @@ class AnswerService {
   }
 
   public async add(
-    { questionId, answerValue }: GqlTypes.AddAnswerMutationArgs,
-    context: ApolloContext
+    userId: string,
+    questionId: string,
+    answerValue: string
   ): Promise<DbTypes.Answer> {
-    const { user, models } = context;
-
-    await models.answer.updateMany({}, { $inc: { position: 1 } });
+    await this.models.answer.updateMany({}, { $inc: { position: 1 } });
     let addedAnswer: DbTypes.Answer;
 
-    const deletedAnswer = await models.answer
+    const deletedAnswer = await this.models.answer
       .findOne({
         questionId: ObjectId(questionId),
-        userId: ObjectId(user!.id)
+        userId: ObjectId(userId)
       })
       .lean();
 
     if (deletedAnswer) {
-      await this.edit(
+      await this.edit(deletedAnswer._id.toString(), answerValue);
+      addedAnswer = (await this.models.answer.findByIdAndUpdate(
+        deletedAnswer._id,
         {
-          answerId: deletedAnswer._id.toString(),
-          answerValue
-        },
-        context
-      );
-      addedAnswer = (await models.answer.findByIdAndUpdate(deletedAnswer._id, {
-        $set: { isRemoved: false, position: 1 }
-      }))!.toObject();
+          $set: { isRemoved: false, position: 1 }
+        }
+      ))!.toObject();
     } else {
       const newAnswer = {
-        userId: ObjectId(user!.id),
+        userId: ObjectId(userId),
         questionId: ObjectId(questionId),
         value: answerValue,
         position: 1
       };
 
-      addedAnswer = (await models.answer.create(newAnswer)).toObject();
+      addedAnswer = (await this.models.answer.create(newAnswer)).toObject();
     }
 
     return addedAnswer;
   }
 
-  public async remove(
-    {
-      answerId
-    }: {
-      answerId: string;
-    },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer> {
-    const removedAnswer = (await models.answer
+  public async remove({
+    answerId
+  }: {
+    answerId: string;
+  }): Promise<DbTypes.Answer> {
+    const removedAnswer = (await this.models.answer
       .findByIdAndUpdate(
         answerId,
         {
@@ -157,7 +138,7 @@ class AnswerService {
       )
       .populate("comments.user")).toObject();
 
-    await models.answer.updateMany(
+    await this.models.answer.updateMany(
       { position: { $gt: removedAnswer.position } },
       { $inc: { position: -1 } }
     );
@@ -165,24 +146,21 @@ class AnswerService {
     return removedAnswer;
   }
 
-  public async like(
-    {
-      answerId,
-      dbUserLiker,
-      userLikes
-    }: {
-      answerId: string;
-      dbUserLiker: DbTypes.User;
-      userLikes: number;
-    },
-    { models }: ApolloContext
-  ): Promise<DbTypes.Answer> {
+  public async like({
+    answerId,
+    dbUserLiker,
+    userLikes
+  }: {
+    answerId: string;
+    dbUserLiker: DbTypes.User;
+    userLikes: number;
+  }): Promise<DbTypes.Answer> {
     /* 
 
   likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
 */
 
-    const { likes } = await models.answer.findById(answerId).lean();
+    const { likes } = await this.models.answer.findById(answerId).lean();
     let updatedLikes: DbTypes.Likes = { total: 0, likers: [] };
 
     if (!likes) {
@@ -203,7 +181,7 @@ class AnswerService {
       }, 0);
     }
 
-    const likedAnswer = await models.answer
+    const likedAnswer = await this.models.answer
       .findByIdAndUpdate(
         answerId,
         {
@@ -216,23 +194,20 @@ class AnswerService {
     return likedAnswer.toObject();
   }
 
-  public async movePosition(
-    {
-      answerId,
-      position
-    }: {
-      answerId: string;
-      position: number;
-    },
-    { models }: ApolloContext
-  ): Promise<number> {
-    const currentAnswer = await models.answer.findById(answerId).lean();
-    await models.answer.findOneAndUpdate(
+  public async movePosition({
+    answerId,
+    position
+  }: {
+    answerId: string;
+    position: number;
+  }): Promise<number> {
+    const currentAnswer = await this.models.answer.findById(answerId).lean();
+    await this.models.answer.findOneAndUpdate(
       { position },
       { $set: { position: currentAnswer.position } }
     );
 
-    await models.answer.findByIdAndUpdate(answerId, {
+    await this.models.answer.findByIdAndUpdate(answerId, {
       $set: { position }
     });
 
@@ -240,16 +215,10 @@ class AnswerService {
   }
 
   private async createEdition(
-    {
-      answerId,
-      answerValue
-    }: {
-      answerId: string;
-      answerValue: string;
-    },
-    { models }: ApolloContext
+    answerId: string,
+    answerValue: string
   ): Promise<DbTypes.Edition> {
-    const oldAnswer = await models.answer.findById(answerId).lean();
+    const oldAnswer = await this.models.answer.findById(answerId).lean();
 
     const before = oldAnswer.value;
     const after = answerValue;
