@@ -72,7 +72,7 @@ class UserService {
       }
     );
 
-    return editedUser.value!.toObject();
+    return editedUser.toObject();
   }
 
   public async getUser(
