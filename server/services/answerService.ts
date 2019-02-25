@@ -76,7 +76,7 @@ class AnswerService {
       )
       .populate("comments.user");
 
-    return updatedAnswer.toObject();
+    return updatedAnswer.value!.toObject();
   }
 
   public async add(
@@ -125,7 +125,7 @@ class AnswerService {
         },
         { new: true, upsert: true }
       )
-      .populate("comments.user")).toObject();
+      .populate("comments.user")).value!.toObject();
 
     await this.models.answer.updateMany(
       { position: { $gt: removedAnswer.position } },
@@ -178,7 +178,7 @@ class AnswerService {
       )
       .populate("comments.user");
 
-    return likedAnswer.toObject();
+    return likedAnswer.value!.toObject();
   }
 
   public async movePosition(
