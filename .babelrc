@@ -1,10 +1,5 @@
 {
-  "presets": ["env", "react", "stage-0", "stage-2", "stage-3"],
-  "env": {
-    "test": {
-      "plugins": ["transform-es2015-modules-commonjs"]
-    }
-  },
+  "presets": ["env", "react"],
   "plugins": [
     [
       "babel-plugin-styled-components",
