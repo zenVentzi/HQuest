@@ -91,6 +91,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
+    "@types/apollo-upload-client": "^8.1.1",
     "@types/deep-equal": "^1.0.1",
     "@types/dotenv": "^6.1.0",
     "@types/express": "^4.16.0",

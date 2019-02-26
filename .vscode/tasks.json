@@ -20,6 +20,17 @@
       "problemMatcher": ["$tsc"]
     },
     {
+      "label": "client-build",
+      "type": "typescript",
+      "tsconfig": "src\\tsconfig.json",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
       "label": "BuildServer",
       "dependsOn": ["copy-schemas", "server-build"]
     },
