@@ -7,8 +7,8 @@ const path = require('path');
 
 module.exports = {
   entry: [
-    'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
-    'babel-polyfill',
+    // 'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
+    // 'babel-polyfill',
     './src/index.jsx',
   ],
   mode: 'development',
@@ -16,6 +16,7 @@ module.exports = {
     // path: path.resolve(process.cwd(), 'public'),
     publicPath: '/public',
     filename: 'bundle.js',
+    libraryTarget: 'umd',
   },
   devtool: 'cheap-module-eval-source-map',
   devServer: {
@@ -31,10 +32,15 @@ module.exports = {
   cache: true,
   module: {
     rules: [
+      // {
+      //   test: /\.(js|jsx)$/,
+      //   exclude: /node_modules/,
+      //   use: ['babel-loader', 'eslint-loader'],
+      // },
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|tsx|ts)$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader'],
+        loader: 'babel-loader',
       },
       {
         test: /\.css$/,
@@ -60,6 +66,21 @@ module.exports = {
       Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
       Reusable: path.resolve(process.cwd(), './src/components/reusable'),
     },
-    extensions: ['*', '.js', '.jsx', '.css', 'png', 'jpg', 'gif'],
+    extensions: [
+      '*',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.css',
+      'png',
+      'jpg',
+      'gif',
+    ],
+  },
+  externals: {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    // 'react-router': 'ReactRouter',
   },
 };
