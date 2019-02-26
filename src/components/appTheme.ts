@@ -1,6 +1,6 @@
-import { inverseTheme } from 'Utils';
-import reset from 'styled-reset';
-import { createGlobalStyle } from 'styled-components';
+// import { inverseTheme } from 'Utils';
+import reset from "styled-reset";
+import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -71,7 +71,7 @@ export const GlobalStyle = createGlobalStyle`
 
   ::-webkit-scrollbar {
     width: 0.8em;
-    ${'' /* display:none; */}
+    ${"" /* display:none; */}
     background: white;
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
