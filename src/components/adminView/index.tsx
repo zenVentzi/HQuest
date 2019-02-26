@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from 'react';
-import styled from 'styled-components';
-import { Formik, Form, ErrorMessage } from 'formik';
-import { Mutation } from 'react-apollo';
-import { ADD_QUESTIONS } from 'Mutations';
+import React, { Component, Fragment } from "react";
+import styled from "styled-components";
+import { Formik, Form, ErrorMessage } from "formik";
+import { Mutation } from "react-apollo";
+import { ADD_QUESTIONS } from "Mutations";
 // import StyledView from '../reusable/StyledView';
-import TextBtn from 'Reusable/TextBtn';
+import TextBtn from "Reusable/TextBtn";
 
 const TextArea = styled.textarea`
   margin-bottom: 1em;
@@ -25,25 +25,25 @@ const StyledView = styled.div`
 `;
 
 const AdminView = () => {
-  const getTags = ({ tagsText }) => {
-    const init = tagsText.indexOf('(');
-    const fin = tagsText.indexOf(')');
+  const getTags = (tagsText: string) => {
+    const init = tagsText.indexOf("(");
+    const fin = tagsText.indexOf(")");
     const commaSeparated = tagsText.substring(init + 1, fin);
-    const tagsArr = commaSeparated.split(',');
+    const tagsArr = commaSeparated.split(",");
     return tagsArr;
   };
 
-  const getFormattedQuestions = ({ questionsText }) => {
-    const rawQuestions = questionsText.split(';NEW_QUESTION;');
+  const getFormattedQuestions = (questionsText: string) => {
+    const rawQuestions = questionsText.split(";NEW_QUESTION;");
 
     // raw question = How do you...?;TAGS(tag1,tag2,..);;NEW_QUESTION;
 
     const questions = rawQuestions.map(rawQuestion => {
       let question;
       try {
-        const value = rawQuestion.split(';')[0];
-        const tagsText = rawQuestion.split(';')[1];
-        const tags = getTags({ tagsText });
+        const value = rawQuestion.split(";")[0];
+        const tagsText = rawQuestion.split(";")[1];
+        const tags = getTags(tagsText);
         question = { value, tags };
       } catch (error) {
         throw new Error(`Incorrect format: ${rawQuestion}`);
@@ -61,7 +61,7 @@ const AdminView = () => {
         {addQuestions => {
           return (
             <Formik
-              initialValues={{ questionsText: '' }}
+              initialValues={{ questionsText: "" }}
               validateOnBlur={false}
               validate={values => {
                 const errors = {};
@@ -70,9 +70,7 @@ const AdminView = () => {
               onSubmit={async (values, { setSubmitting, resetForm }) => {
                 const { questionsText } = values;
 
-                const questions = getFormattedQuestions({
-                  questionsText,
-                });
+                const questions = getFormattedQuestions(questionsText);
                 const variables = { questions };
                 await addQuestions({ variables });
 
@@ -86,16 +84,16 @@ const AdminView = () => {
                 errors,
                 handleChange,
                 submitForm,
-                isSubmitting,
+                isSubmitting
               }) => (
-                <Form style={{ width: '100%', textAlign: 'center' }}>
+                <Form style={{ width: "100%", textAlign: "center" }}>
                   <TextArea
                     name="questionsText"
                     onChange={handleChange}
-                    value={values.questionsText || ''}
+                    value={values.questionsText || ""}
                     disabled={isSubmitting}
                     onKeyPress={e => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
+                      if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         if (!isSubmitting) submitForm();
                       }

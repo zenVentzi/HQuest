@@ -2,10 +2,27 @@
   "compilerOptions": {
     // "outDir": "./dist/",
     "sourceMap": true,
+    "noEmit": true,
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
-    "jsx": "react"
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "diagnostics": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      // all matching webpack aliases
+      "Constants": ["constants"],
+      "Utils": ["utils"],
+      "Queries": ["gqlQueries"],
+      "Mutations": ["gqlMutations"],
+      "Fragments": ["gqlFragments"],
+      "Subscriptions": ["gqlSubscriptions"],
+      "Reusable/*": ["components/reusable/*"]
+    }
   },
   "include": ["./**/*"]
+  // "exclude": ["../server/**/*"]
 }
