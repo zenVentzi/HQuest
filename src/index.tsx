@@ -1,9 +1,9 @@
-import '@babel/polyfill';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import "@babel/polyfill";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import App from './components/App';
-import TestApp from './components/TestApp';
+import App from "./components/App";
+// import TestApp from "./components/TestApp";
 
 if (module.hot) {
   module.hot.accept();
@@ -26,4 +26,4 @@ if (module.hot) {
   /* eslint-enable */
 }
 
-ReactDOM.render(<App />, document.getElementById('app-root'));
+ReactDOM.render(<App />, document.getElementById("app-root"));
