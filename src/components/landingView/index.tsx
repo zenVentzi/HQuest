@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
-import StyledViewRaw from '../reusable/StyledView';
-import LoginBtn from './LoginBtn';
+import React, { Component } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import styled from "styled-components";
+import StyledViewRaw from "../reusable/StyledView";
+import LoginBtn from "./LoginBtn";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -18,10 +18,12 @@ const Intro = styled.div`
   margin-bottom: 2em;
 `;
 
-class LandingView extends Component {
+interface Props extends RouteComponentProps {}
+
+class LandingView extends Component<Props> {
   onLoggedIn = () => {
     const { history } = this.props;
-    history.push('/help');
+    history.push("/help");
   };
 
   render() {
@@ -49,13 +51,13 @@ class LandingView extends Component {
           </Row>
           <Row>
             <LoginBtn
-              testUser={{ name: 'Test John', email: 'testjohn@gmail.com' }}
+              testUser={{ name: "Test John", email: "testjohn@gmail.com" }}
               onLoggedIn={this.onLoggedIn}
             />
           </Row>
           <Row>
             <LoginBtn
-              testUser={{ name: 'Test Sarah', email: 'testsarah@gmail.com' }}
+              testUser={{ name: "Test Sarah", email: "testsarah@gmail.com" }}
               onLoggedIn={this.onLoggedIn}
             />
           </Row>

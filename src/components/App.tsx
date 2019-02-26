@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ThemeProvider } from "styled-components";
