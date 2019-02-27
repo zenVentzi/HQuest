@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react';
-import { Query } from 'react-apollo';
-import styled from 'styled-components';
-import { GET_USERS } from 'Queries';
-import User from 'Reusable/UserRow';
-import StyledView from '../reusable/StyledView';
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import styled from "styled-components";
+import { GET_USERS } from "Queries";
+import User from "Reusable/UserRow";
+import StyledView from "../reusable/StyledView";
+import { History, Location } from "history";
 
 const Row = styled.div`
   width: 60%;
@@ -13,11 +14,15 @@ const Row = styled.div`
   }
 `;
 
+interface SearchViewProps {
+  location: Location;
+}
+
 const SearchView = ({
   location: {
-    state: { username },
-  },
-}) => {
+    state: { username }
+  }
+}: SearchViewProps) => {
   return (
     <StyledView>
       fdfd
@@ -31,7 +36,7 @@ const SearchView = ({
 
           return (
             <Fragment>
-              {users.map(user => (
+              {users.map((user: any) => (
                 <Row key={user.id}>
                   <User user={user} />
                 </Row>
