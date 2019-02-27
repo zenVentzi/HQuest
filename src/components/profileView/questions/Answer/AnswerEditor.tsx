@@ -1,8 +1,8 @@
-import React, { Component, Fragment } from 'react';
-import { Formik, Form, ErrorMessage } from 'formik';
-import Textarea from 'react-textarea-autosize';
-import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
+import React, { Component, Fragment } from "react";
+import { Formik, Form, ErrorMessage } from "formik";
+import Textarea from "react-textarea-autosize";
+import styled from "styled-components";
+import TextBtn from "Reusable/TextBtn";
 
 const TextArea = styled(Textarea)`
   display: block;
@@ -35,35 +35,33 @@ const LeftBtn = styled(TextBtn)`
 `;
 const RightBtn = styled(TextBtn)``;
 
-class AnswerEditor extends Component {
-  checkLastCharsEqual = ({ text, last, equalChar }) => {
+interface AnswerEditorProps {
+  onClickDoesNotApply: () => void;
+  onClickSave: (answerValue: string) => void;
+  answer: any;
+}
+
+class AnswerEditor extends Component<AnswerEditorProps, any> {
+  checkLastCharsEqual = (text: string, last: number, equalChar: string) => {
     if (text.length < last) {
       return false;
     }
 
-    const lastChars = text.slice(-last).split('');
+    const lastChars = text.slice(-last).split("");
     return lastChars.filter(ch => ch === equalChar).length === last;
   };
 
-  minimizeNewlines = ({ newValue, oldValue }) => {
-    // const oldValue = this.state.answerValue;
-
-    if (
-      this.checkLastCharsEqual({ text: newValue, last: 3, equalChar: '\n' })
-    ) {
+  minimizeNewlines = (newValue: string, oldValue: string) => {
+    if (this.checkLastCharsEqual(newValue, 3, "\n")) {
       return oldValue;
     }
 
     return newValue;
   };
 
-  onDoesNotApply = () => {
-    this.props.onClickDoesNotApply();
-  };
-
   render() {
     const isNew = !this.props.answer;
-    const initialValues = { answer: '' };
+    const initialValues = { answer: "" };
     if (!isNew) {
       initialValues.answer = this.props.answer.value;
     }
@@ -73,32 +71,32 @@ class AnswerEditor extends Component {
         initialValues={initialValues}
         validateOnBlur={false}
         validate={values => {
-          const errors = {};
+          const errors: any = {};
           if (values.answer.length < 10)
-            errors.answer = 'Answer must be at least 10 characters';
+            errors.answer = "Answer must be at least 10 characters";
 
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const answerValue = values.answer.trim();
-          await this.props.onClickSave({ answerValue });
+          await this.props.onClickSave(answerValue);
           // resetForm(initialValues);
           // setSubmitting(false);
         }}
       >
         {({ values, handleChange, submitForm, isSubmitting }) => (
-          <Form style={{ width: '100%', textAlign: 'center' }}>
+          <Form style={{ width: "100%", textAlign: "center" }}>
             <TextArea
               name="answer"
               placeholder="Answer..."
               onChange={e => {
-                e.target.value = this.minimizeNewlines({
-                  newValue: e.target.value,
-                  oldValue: values.answer,
-                });
+                e.target.value = this.minimizeNewlines(
+                  e.target.value,
+                  values.answer
+                );
                 handleChange(e);
               }}
-              value={values.answer || ''}
+              value={values.answer || ""}
               disabled={isSubmitting}
             />
             <ErrorMessage
@@ -108,7 +106,7 @@ class AnswerEditor extends Component {
             <Buttons>
               <LeftBtn onClick={submitForm}>Save</LeftBtn>
               {isNew && (
-                <RightBtn onClick={this.onClickDoesNotApply}>
+                <RightBtn onClick={this.props.onClickDoesNotApply}>
                   Does not apply
                 </RightBtn>
               )}

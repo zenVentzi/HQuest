@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
-import styled from 'styled-components';
-import shortid from 'shortid';
+import React, { Component, Fragment } from "react";
+import styled from "styled-components";
+import shortid from "shortid";
 
 const Viewer = styled.div`
   background: black;
@@ -20,17 +20,22 @@ const Viewer = styled.div`
   }
 `;
 
-// could be made stateless
-class AnswerViewer extends Component {
+interface AnswerViewerProps {
+  answer: any;
+}
+
+class AnswerViewer extends Component<AnswerViewerProps> {
   render() {
     const { answer } = this.props;
 
-    const answerWithParagraphs = answer.value.split('\n').map(paragraph => (
-      <span key={shortid.generate()}>
-        {paragraph}
-        <br />
-      </span>
-    ));
+    const answerWithParagraphs = answer.value
+      .split("\n")
+      .map((paragraph: string) => (
+        <span key={shortid.generate()}>
+          {paragraph}
+          <br />
+        </span>
+      ));
 
     return <Viewer>- {answerWithParagraphs}</Viewer>;
   }
