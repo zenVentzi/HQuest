@@ -1,11 +1,11 @@
-import React, { PureComponent, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { Query } from 'react-apollo';
-import { GET_QUESTIONS_TAGS } from 'Queries';
-import Anchor from 'Reusable/Anchor';
-import AllTags from './AllTags';
-import MatchingTags from './MatchingTags';
+import React, { PureComponent, Fragment } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import { Query } from "react-apollo";
+import { GET_QUESTIONS_TAGS } from "Queries";
+import Anchor from "Reusable/Anchor";
+import AllTags from "./AllTags";
+import MatchingTags from "./MatchingTags";
 
 const InvalidText = styled.div`
   color: red;
@@ -43,30 +43,33 @@ const TagsWrapper = styled.div`
   }
 `;
 
-class QuestionTags extends PureComponent {
-  static propTypes = {};
-  state = {
+interface QuestionTagsProps {
+  onSelected: (selectedTags: string[]) => void;
+}
+
+class QuestionTags extends PureComponent<QuestionTagsProps, any> {
+  state: any = {
     showAllTags: false,
     selectedTags: [],
     matchingTags: [],
-    invalidTag: null,
+    invalidTag: null
   };
-  inputRef = React.createRef();
+  inputRef = React.createRef<HTMLInputElement>();
 
   hideAllTagsWindow = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       return { ...prevState, showAllTags: false };
     });
   };
 
-  onSelectFromAllTags = selectedTags => {
+  onSelectFromAllTags = (selectedTags: string[]) => {
     this.hideAllTagsWindow();
     this.inputRef.current.focus();
 
     if (!selectedTags || !selectedTags.length) return;
 
     this.setState(
-      prevState => {
+      (prevState: any) => {
         return { ...prevState, selectedTags };
       },
       () => {
@@ -74,15 +77,15 @@ class QuestionTags extends PureComponent {
       }
     );
 
-    this.inputRef.current.value = `${selectedTags.join(',')},`;
+    this.inputRef.current.value = `${selectedTags.join(",")},`;
   };
 
-  onSelectFromMatchingTags = selectedTag => {
+  onSelectFromMatchingTags = (selectedTag: string) => {
     const { selectedTags } = this.state;
     selectedTags.push(selectedTag);
-    this.inputRef.current.value = `${selectedTags.join(',')},`;
+    this.inputRef.current.value = `${selectedTags.join(",")},`;
     this.setState(
-      prevState => {
+      (prevState: any) => {
         return { ...prevState, selectedTags, matchingTags: [] };
       },
       () => {
@@ -92,21 +95,21 @@ class QuestionTags extends PureComponent {
     this.inputRef.current.focus();
   };
 
-  setInvalidTag = msg => {
-    this.setState(prevState => {
+  setInvalidTag = (msg: string) => {
+    this.setState((prevState: any) => {
       return { ...prevState, invalidTagMsg: msg };
     });
   };
 
   clearInvalidTag = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       return { ...prevState, invalidTagMsg: null };
     });
   };
 
-  addToSelected = tag => {
+  addToSelected = (tag: string) => {
     this.setState(
-      prevState => {
+      (prevState: any) => {
         const { selectedTags } = prevState;
         return { ...prevState, selectedTags: [...selectedTags, tag] };
       },
@@ -118,7 +121,7 @@ class QuestionTags extends PureComponent {
 
   removeLastSelectedTag = () => {
     this.setState(
-      prevState => {
+      (prevState: any) => {
         const selectedTags = [...prevState.selectedTags];
         selectedTags.pop();
         return { ...prevState, selectedTags };
@@ -130,14 +133,14 @@ class QuestionTags extends PureComponent {
   };
 
   clearSelectedTags = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       return { ...prevState, selectedTags: [] };
     });
   };
 
   setInputToSelected = () => {
     const { selectedTags } = this.state;
-    this.inputRef.current.value = `${selectedTags.join(',')},`;
+    this.inputRef.current.value = `${selectedTags.join(",")},`;
     this.clearMatchingTags();
     this.clearInvalidTag();
   };
@@ -147,25 +150,25 @@ class QuestionTags extends PureComponent {
     this.props.onSelected(selectedTags);
   };
 
-  updateMatchingTags = matchingTags => {
-    this.setState(prevState => {
+  updateMatchingTags = (matchingTags: string[]) => {
+    this.setState((prevState: any) => {
       return { ...prevState, matchingTags };
     });
   };
 
   clearMatchingTags = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       return { ...prevState, matchingTags: [] };
     });
   };
 
-  getInputSelection = node => {
-    const startPos = node.selectionStart;
-    const endPos = node.selectionEnd;
-    return { startPos, endPos };
-  };
+  // getInputSelection = (node: any) => {
+  //   const startPos = node.selectionStart;
+  //   const endPos = node.selectionEnd;
+  //   return { startPos, endPos };
+  // };
 
-  handleBackspaceOrDelete = e => {
+  handleBackspaceOrDelete = (e: any) => {
     const key = e.keyCode || e.charCode;
 
     if (key === 8 || key === 46) {
@@ -189,34 +192,34 @@ class QuestionTags extends PureComponent {
     this.moveCursorToEnd();
   };
 
-  onKeyDownInput = event => {
+  onKeyDownInput = (event: any) => {
     this.moveCursorToEnd();
     this.handleBackspaceOrDelete(event);
   };
 
-  checkTagSelected = tag => {
+  checkTagSelected = (tag: string) => {
     const { selectedTags } = this.state;
     return selectedTags.includes(tag);
   };
 
-  onChangeInput = e => {
+  onChangeInput = (e: any) => {
     const {
-      target: { value },
+      target: { value }
     } = e;
     const trimmed = value.trim();
-    if (value.charAt(value.length - 1) === ' ') {
+    if (value.charAt(value.length - 1) === " ") {
       this.inputRef.current.value = trimmed;
       return;
-    } else if (trimmed.includes(',,')) {
+    } else if (trimmed.includes(",,")) {
       this.inputRef.current.value = trimmed.slice(0, -1);
       return;
     }
 
-    const enteredTags = trimmed.split(',').filter(t => !!t);
+    const enteredTags = trimmed.split(",").filter((t: string) => !!t);
     const lastTag = enteredTags[enteredTags.length - 1];
 
     const lastChar = trimmed.charAt(trimmed.length - 1);
-    if (lastChar === ',') {
+    if (lastChar === ",") {
       const lastTagExists = this.allTags.includes(lastTag);
       if (!lastTagExists) {
         this.setInvalidTag(`Tag ${lastTag} does not exist`);
@@ -232,7 +235,9 @@ class QuestionTags extends PureComponent {
       this.addToSelected(lastTag);
       this.clearMatchingTags();
     } else {
-      const matchingTags = this.allTags.filter(t => t.includes(lastTag));
+      const matchingTags = this.allTags.filter((t: string) =>
+        t.includes(lastTag)
+      );
       this.updateMatchingTags(matchingTags);
     }
 
@@ -242,11 +247,12 @@ class QuestionTags extends PureComponent {
     */
   };
 
-  toggleAllTags = show => () => {
-    this.setState(prevState => {
+  toggleAllTags = (show: boolean) => () => {
+    this.setState((prevState: any) => {
       return { ...prevState, showAllTags: show };
     });
   };
+  allTags: any;
 
   render() {
     const { showAllTags, matchingTags, invalidTagMsg } = this.state;

@@ -24,7 +24,7 @@ export const clickableIcon = css<ClickableIconProps>`
 `;
 
 interface ClickableTextProps {
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export const clickableText = css<ClickableTextProps>`
