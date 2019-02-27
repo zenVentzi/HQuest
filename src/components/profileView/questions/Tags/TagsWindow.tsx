@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import shortid from 'shortid';
-import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
+import React, { Component } from "react";
+import shortid from "shortid";
+import styled from "styled-components";
+import TextBtn from "Reusable/TextBtn";
 
 const StyledDropdown = styled.div`
   position: absolute;
@@ -29,31 +29,40 @@ const Bottom = styled.div`
   background: black;
 `;
 
-const TagBtn = styled(TextBtn)`
+interface TagBtnProps {
+  selected: boolean;
+}
+
+const TagBtn = styled(TextBtn)<TagBtnProps>`
   border: 0px;
   margin: 0.2em;
   background: white;
   color: black;
   /* stylelint-disable */
-  border: 1px solid ${props => (props.selected ? 'black' : 'white')};
+  border: 1px solid ${props => (props.selected ? "black" : "white")};
   /* stylelint-enable */
 `;
 
-export default class TagsWindow extends Component {
-  static propTypes = {};
-  state = { selectedTags: [] };
+interface TagsWindowProps {
+  tags: string[];
+  onSearch: (selectedTags: string[]) => void;
+}
 
-  isSelected = tag => {
+export default class TagsWindow extends Component<TagsWindowProps, any> {
+  static propTypes = {};
+  state: any = { selectedTags: [] };
+
+  isSelected = (tag: string) => {
     return this.state.selectedTags.includes(tag);
   };
 
-  onClickTag = tag => {
+  onClickTag = (tag: string) => {
     const isSelected = this.state.selectedTags.includes(tag);
 
     let selectedTags;
 
     if (isSelected) {
-      selectedTags = this.state.selectedTags.filter(t => t !== tag);
+      selectedTags = this.state.selectedTags.filter((t: string) => t !== tag);
     } else {
       selectedTags = [...this.state.selectedTags, tag];
     }
@@ -61,7 +70,7 @@ export default class TagsWindow extends Component {
   };
 
   render() {
-    const { tags, onSearch, onClose } = this.props;
+    const { tags, onSearch } = this.props;
     const { selectedTags } = this.state;
 
     return (

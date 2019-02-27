@@ -1,34 +1,44 @@
-import React, { Component, Fragment } from 'react';
-import shortid from 'shortid';
-import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
-import TagsDropdown from './TagsDropdown';
+import React, { Component, Fragment } from "react";
+import shortid from "shortid";
+import styled from "styled-components";
+import TextBtn from "Reusable/TextBtn";
+import TagsDropdown from "./TagsDropdown";
 
-const TagBtn = styled(TextBtn)`
+interface TagBtnProps {
+  selected: boolean;
+}
+
+const TagBtn = styled(TextBtn)<TagBtnProps>`
   border: 0px;
   margin: 0.2em;
   background: white;
   color: black;
   /* stylelint-disable */
-  border: 1px solid ${props => (props.selected ? 'black' : 'white')};
+  border: 1px solid ${props => (props.selected ? "black" : "white")};
   /* stylelint-enable */
 `;
 
-export default class TagsWindow extends Component {
-  static propTypes = {};
-  state = { selectedTags: [] };
+interface TagsWindowProps {
+  tags: string[];
+  onSelect: (selectedTags: string[]) => void;
+  onClose: () => void;
+}
 
-  isSelected = tag => {
+export default class TagsWindow extends Component<TagsWindowProps> {
+  static propTypes = {};
+  state: any = { selectedTags: [] };
+
+  isSelected = (tag: string) => {
     return this.state.selectedTags.includes(tag);
   };
 
-  onClickTag = tag => {
+  onClickTag = (tag: string) => {
     const isSelected = this.state.selectedTags.includes(tag);
 
     let selectedTags;
 
     if (isSelected) {
-      selectedTags = this.state.selectedTags.filter(t => t !== tag);
+      selectedTags = this.state.selectedTags.filter((t: string) => t !== tag);
     } else {
       selectedTags = [...this.state.selectedTags, tag];
     }
@@ -63,7 +73,7 @@ export default class TagsWindow extends Component {
               onClick={() => {
                 onSelect(selectedTags);
               }}
-              style={{ marginRight: '1em' }}
+              style={{ marginRight: "1em" }}
             >
               Select
             </TextBtn>

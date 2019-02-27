@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const StyledDropdown = styled.div`
   position: absolute;
@@ -27,7 +27,12 @@ const Bottom = styled.div`
   background: black;
 `;
 
-const TagsDropdown = ({ topComponent, bottomComponent }) => {
+interface TagsDropdownProps {
+  topComponent: any;
+  bottomComponent?: any;
+}
+
+const TagsDropdown = ({ topComponent, bottomComponent }: TagsDropdownProps) => {
   return (
     <StyledDropdown>
       <Top>{topComponent}</Top>
