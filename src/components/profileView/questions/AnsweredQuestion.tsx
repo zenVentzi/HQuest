@@ -1,18 +1,19 @@
-import React, { Component, Fragment } from 'react';
-import styled from 'styled-components';
-import { toast } from 'react-toastify';
-import { getLoggedUserId } from 'Utils';
-import Anchor from 'Reusable/Anchor';
-import LikeBtn from './Answer/LikeBtn';
-import Question from './Question';
-import Comments from './Answer/Comments';
-import Likes from './Answer/Likes';
-import Editions from './Answer/Editions';
-import OptionsDropdown from './Answer/Options';
-import AnswerEditor from './Answer/AnswerEditor';
-import AnswerViewer from './Answer/AnswerViewer';
-import PositionEditor from './Answer/PositionEditor';
-import AnsweredQuestionGql from './AnsweredQuestionGql';
+import React, { Component, Fragment, CSSProperties } from "react";
+import styled from "styled-components";
+import { toast } from "react-toastify";
+import { getLoggedUserId } from "Utils";
+import Anchor from "Reusable/Anchor";
+import LikeBtn from "./Answer/LikeBtn";
+import Question from "./Question";
+import Comments from "./Answer/Comments";
+import Likes from "./Answer/Likes";
+import Editions from "./Answer/Editions";
+import OptionsDropdown from "./Answer/Options";
+import AnswerEditor from "./Answer/AnswerEditor";
+import AnswerViewer from "./Answer/AnswerViewer";
+import PositionEditor from "./Answer/PositionEditor";
+import AnsweredQuestionGql from "./AnsweredQuestionGql";
+import { MutationFn } from "react-apollo";
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -23,10 +24,14 @@ const StyledQuestion = styled.div`
   align-items: center;
 `;
 
-const Row = styled.div`
+interface RowProps {
+  hide?: boolean;
+}
+
+const Row = styled.div<RowProps>`
   display: flex;
   width: 100%;
-  visibility: ${props => (props.hide ? 'hidden' : 'visible')};
+  visibility: ${props => (props.hide ? "hidden" : "visible")};
   justify-content: center;
 `;
 
@@ -34,8 +39,19 @@ const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
 `;
 
-class AnsweredQuestion extends Component {
-  constructor(props) {
+interface AnsweredQuestionProps {
+  question: any;
+  showComments: boolean;
+  // onRemove: () => Promise<void>;
+  scrollToComment?: string;
+  totalQuestionsCount: number;
+  isPersonal: boolean;
+  style: CSSProperties;
+}
+
+class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {
+  timeoutIndex: number;
+  constructor(props: AnsweredQuestionProps) {
     super(props);
 
     const { answer } = this.props.question;
@@ -45,7 +61,7 @@ class AnsweredQuestion extends Component {
     if (answer.likes) {
       totalLikes = answer.likes.total;
       const currentUserLikesObj = answer.likes.likers.find(
-        liker => liker.user.id === getLoggedUserId()
+        (liker: any) => liker.user.id === getLoggedUserId()
       );
 
       if (currentUserLikesObj) {
@@ -66,7 +82,7 @@ class AnsweredQuestion extends Component {
       totalLikes,
       userLikes,
       numOfComments,
-      numOfEditions,
+      numOfEditions
     };
   }
 
@@ -79,35 +95,35 @@ class AnsweredQuestion extends Component {
     this.toggleHovered(false);
   };
 
-  onRemove = ({ mutation }) => async () => {
+  onRemove = (mutation: MutationFn) => async () => {
     const answerId = this.props.question.answer.id;
     const variables = { answerId };
     await mutation({ variables });
-    toast.success('Answer removed!');
-    await this.props.onRemove();
+    toast.success("Answer removed!");
+    // await this.props.onRemove();
   };
 
   incrementNumOfComments = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       const numOfComments = prevState.numOfComments + 1;
       return {
         ...prevState,
-        numOfComments,
+        numOfComments
       };
     });
   };
 
   decrementNumOfComments = () => {
-    this.setState(prevState => {
+    this.setState((prevState: any) => {
       const numOfComments = prevState.numOfComments - 1;
       return {
         ...prevState,
-        numOfComments,
+        numOfComments
       };
     });
   };
 
-  toggleHovered = value => {
+  toggleHovered = (value: boolean) => {
     this.setState({ ...this.state, hovered: value });
   };
 
@@ -115,14 +131,14 @@ class AnsweredQuestion extends Component {
     this.setState({
       ...this.state,
       showAnswerEditor: true,
-      showPositionEditor: false,
+      showPositionEditor: false
     });
   };
 
   closeAnswerEditor = () => {
     this.setState({
       ...this.state,
-      showAnswerEditor: false,
+      showAnswerEditor: false
     });
   };
 
@@ -130,18 +146,18 @@ class AnsweredQuestion extends Component {
     this.setState({
       ...this.state,
       showPositionEditor: true,
-      showAnswerEditor: false,
+      showAnswerEditor: false
     });
   };
 
   closePositionEditor = () => {
     this.setState({
       ...this.state,
-      showPositionEditor: false,
+      showPositionEditor: false
     });
   };
 
-  onSaveAnswer = ({ mutation }) => async ({ answerValue }) => {
+  onSaveAnswer = (mutation: MutationFn) => async (answerValue: string) => {
     const isTheSame = this.props.question.answer.value === answerValue;
 
     if (isTheSame) {
@@ -153,7 +169,7 @@ class AnsweredQuestion extends Component {
     const answerId = this.props.question.answer.id;
     const variables = { answerId, answerValue };
     await mutation({ variables });
-    toast.success('Answer edited!');
+    toast.success("Answer edited!");
 
     const numOfEditions = this.state.numOfEditions + 1;
     this.setState({ ...this.state, numOfEditions });
@@ -161,42 +177,44 @@ class AnsweredQuestion extends Component {
   };
 
   toggleComments = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: any) => ({
       ...prevState,
       showComments: !prevState.showComments,
       showLikes: false,
-      showEditions: false,
+      showEditions: false
     }));
   };
 
+  onEditComment: any;
+
   toggleLikes = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: any) => ({
       ...prevState,
       showLikes: !prevState.showLikes,
       showComments: false,
-      showEditions: false,
+      showEditions: false
     }));
   };
 
   toggleEditions = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: any) => ({
       ...prevState,
       showEditions: !prevState.showEditions,
       showComments: false,
-      showLikes: false,
+      showLikes: false
     }));
   };
 
-  onMovePosition = ({ mutation }) => async ({ newPosition }) => {
+  onMovePosition = (mutation: MutationFn) => async (newPosition: number) => {
     const answerId = this.props.question.answer.id;
     const variables = { answerId, position: newPosition };
     await mutation({ variables });
     // await this.props.onClickMove({ newPosition });
-    toast.success('Question moved!');
+    toast.success("Question moved!");
     this.closePositionEditor();
   };
 
-  wait = async ({ milliseconds }) => {
+  wait = async (milliseconds: number) => {
     return new Promise(resolve => {
       this.timeoutIndex = setTimeout(resolve, milliseconds);
     });
@@ -210,20 +228,20 @@ class AnsweredQuestion extends Component {
     }
   };
 
-  onClickLike = ({ mutation }) => async () => {
+  onClickLike = (mutation: MutationFn) => async () => {
     const userLikes = this.state.userLikes + 1;
     const totalLikes = this.state.totalLikes + 1;
 
     if (userLikes > 20) {
-      toast.error('20 likes is the limit');
+      toast.error("20 likes is the limit");
       return;
     }
 
     this.setState({ ...this.state, userLikes, totalLikes });
 
     this.cancelPrevWait();
-    await this.wait({ milliseconds: 500 });
-    /* because the user can click multiple times in a row */
+    await this.wait(500);
+    /* because the user can click multiple times in a row, creating too many sequential requests to the server */
     const answerId = this.props.question.answer.id;
     const variables = { answerId, userLikes };
     await mutation({ variables });
@@ -239,21 +257,21 @@ class AnsweredQuestion extends Component {
       showAnswerEditor,
       totalLikes,
       numOfComments,
-      numOfEditions,
+      numOfEditions
     } = this.state;
     const {
       question,
       scrollToComment,
       totalQuestionsCount,
       isPersonal,
-      style,
+      style
     } = this.props;
 
     // console.log(this.state);
 
     const { comments } = question.answer;
 
-    const likeBtnText = totalLikes === 1 ? '1 Like' : `${totalLikes} Likes`;
+    const likeBtnText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
     const commentBtnText =
       numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
     const editionsBtnText =
@@ -275,7 +293,7 @@ class AnsweredQuestion extends Component {
                 <OptionsDropdown
                   visible={isPersonal && hovered}
                   onClickEdit={this.openAnswerEditor}
-                  onClickRemove={this.onRemove({ mutation: removeAnswer })}
+                  onClickRemove={this.onRemove(removeAnswer)}
                   onClickMove={this.openPositionEditor}
                 />
               </Row>
@@ -284,7 +302,7 @@ class AnsweredQuestion extends Component {
                   questionType={question.type}
                   answer={question.answer}
                   possibleAnswers={question.possibleAnswers}
-                  onClickSave={this.onSaveAnswer({ mutation: editAnswer })}
+                  onClickSave={this.onSaveAnswer(editAnswer)}
                 />
               ) : (
                 <AnswerViewer
@@ -297,15 +315,13 @@ class AnsweredQuestion extends Component {
                 <PositionEditor
                   position={question.answer.position}
                   maxPosition={totalQuestionsCount}
-                  onClickMove={this.onMovePosition({
-                    mutation: moveAnswerPosition,
-                  })}
+                  onClickMove={this.onMovePosition(moveAnswerPosition)}
                   onClickClose={this.closePositionEditor}
                 />
               )}
               <Row hide={!hovered}>
                 <LikeBtn
-                  onClick={this.onClickLike({ mutation: likeAnswer })}
+                  onClick={this.onClickLike(likeAnswer)}
                   isLiked={question.answer.isLiked}
                 />
                 <SmallBtn onClick={this.toggleLikes}>{likeBtnText}</SmallBtn>
