@@ -1,22 +1,34 @@
-import React, { Component, Fragment } from 'react';
-import { Query } from 'react-apollo';
-import { GET_QUESTIONS } from 'Queries';
-import styled from 'styled-components';
-import AnsweredQuestions from './AnsweredQuestions';
-import QuestionTags from './Tags';
-import UnansweredQuestions from './UnansweredQuestions';
-import ToggleQuestions from './ToggleQuestions';
+import React, { Component, Fragment } from "react";
+import { Query } from "react-apollo";
+import { GET_QUESTIONS } from "Queries";
+import styled from "styled-components";
+import AnsweredQuestions from "./AnsweredQuestions";
+import QuestionTags from "./Tags";
+import UnansweredQuestions from "./UnansweredQuestions";
+import ToggleQuestions from "./ToggleQuestions";
 
-class QuestionsContainer extends Component {
-  state = { showAnswered: true, selectedTags: [] };
+interface QuestionsContainerProps {
+  user: any;
+}
+
+class QuestionsContainer extends Component<QuestionsContainerProps, any> {
+  private isFetching: boolean;
+  private hasNextPage: boolean;
+  private fetchMore: any;
+  private fetchAfter: string;
+  private isFetchingInitial: boolean;
+  private isFetchingMore: boolean;
+  private isRefetching: boolean;
+
+  state = { showAnswered: true, selectedTags: [""] };
   firstRenderResetScroll = true;
 
   componentDidMount() {
-    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener("scroll", this.onScroll);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener("scroll", this.onScroll);
   }
 
   onScroll = () => {
@@ -30,45 +42,45 @@ class QuestionsContainer extends Component {
     if (shouldFetchMore) {
       this.fetchMore({
         variables: {
-          after: this.fetchAfter,
+          after: this.fetchAfter
         },
-        updateQuery: (prev, { fetchMoreResult }) => {
+        updateQuery: (prev: any, { fetchMoreResult }: any) => {
           if (!fetchMoreResult) return prev;
           const res = {
             ...prev,
-            ...fetchMoreResult,
+            ...fetchMoreResult
           };
           res.questions.pageInfo.startCursor =
             prev.questions.pageInfo.startCursor;
           res.questions.edges = [
             ...prev.questions.edges,
-            ...fetchMoreResult.questions.edges,
+            ...fetchMoreResult.questions.edges
           ];
 
           return res;
-        },
+        }
       });
     }
   };
 
-  onToggleQuestions = e => {
+  onToggleQuestions = (e: any) => {
     const isOn = e.target.checked;
     this.setState({ showAnswered: !isOn });
   };
 
-  onSelectedTags = tags => {
-    this.setState(prev => {
+  onSelectedTags = (tags: string[]) => {
+    this.setState((prev: any) => {
       return { ...prev, selectedTags: tags };
     });
   };
 
-  renderQuestions = (questions, refetch) => {
+  renderQuestions = (questions: any, refetch: any) => {
     if (!questions) return null;
 
     const { user } = this.props;
     const { showAnswered } = this.state;
 
-    const questionNodes = questions.edges.map(e => e.node);
+    const questionNodes = questions.edges.map((e: any) => e.node);
 
     return showAnswered ? (
       <AnsweredQuestions
@@ -78,7 +90,10 @@ class QuestionsContainer extends Component {
         refetch={refetch}
       />
     ) : (
-      <UnansweredQuestions questions={questionNodes} refetch={refetch} />
+      <UnansweredQuestions
+        questions={questionNodes}
+        refetchQuestions={refetch}
+      />
     );
   };
 
@@ -89,7 +104,7 @@ class QuestionsContainer extends Component {
       answered: showAnswered,
       userId: user.id,
       tags: selectedTags,
-      first: 20,
+      first: 20
     };
 
     return (
@@ -108,7 +123,7 @@ class QuestionsContainer extends Component {
             data: { questions },
             fetchMore,
             refetch,
-            networkStatus,
+            networkStatus
           }) => {
             if (error) return <div> {`Error ${error}`}</div>;
 

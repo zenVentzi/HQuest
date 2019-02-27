@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import styled from "styled-components";
 
 const Text = styled.div`
   width: 100%;
@@ -17,7 +17,11 @@ const Text = styled.div`
   }
 `;
 
-class Question extends Component {
+interface QuestionProps {
+  question: string;
+}
+
+class Question extends Component<QuestionProps> {
   render() {
     const { question } = this.props;
     return <Text> {question} </Text>;

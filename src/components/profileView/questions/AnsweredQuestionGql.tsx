@@ -1,13 +1,22 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
+import React, { Component } from "react";
+import { Mutation, MutationFn } from "react-apollo";
 import {
   EDIT_ANSWER,
   REMOVE_ANSWER,
   MOVE_ANSWER_POSITION,
-  LIKE_ANSWER,
-} from 'Mutations';
+  LIKE_ANSWER
+} from "Mutations";
 
-class AnsweredQuestionGql extends Component {
+interface AnsweredQuestionGqlProps {
+  children: (
+    editAnswer: MutationFn,
+    removeAnswer: MutationFn,
+    moveAnswerPosition: MutationFn,
+    likeAnswer: MutationFn
+  ) => any;
+}
+
+class AnsweredQuestionGql extends Component<AnsweredQuestionGqlProps> {
   render() {
     const { children } = this.props;
 

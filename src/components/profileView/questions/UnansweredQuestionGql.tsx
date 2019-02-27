@@ -1,8 +1,12 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import { ADD_ANSWER, QUESTION_NOT_APPLY } from 'Mutations';
+import React, { Component } from "react";
+import { Mutation, MutationFn } from "react-apollo";
+import { ADD_ANSWER, QUESTION_NOT_APPLY } from "Mutations";
 
-class AnsweredQuestionsGql extends Component {
+interface UnansweredQuestionGqlProps {
+  children: (addAnswer: MutationFn, questionNotApply: MutationFn) => any;
+}
+
+class UnansweredQuestionGql extends Component<UnansweredQuestionGqlProps> {
   render() {
     const { children } = this.props;
 
@@ -22,4 +26,4 @@ class AnsweredQuestionsGql extends Component {
   }
 }
 
-export default AnsweredQuestionsGql;
+export default UnansweredQuestionGql;
