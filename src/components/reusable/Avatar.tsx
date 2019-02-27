@@ -1,9 +1,15 @@
-import React, { Component, Fragment } from 'react';
-import Img from 'react-image';
-import styled from 'styled-components';
-import Editor from './AvatarEditor';
+import React, { Component, Fragment } from "react";
+import Img from "react-image";
+import styled from "styled-components";
+import Editor from "./AvatarEditor";
 
-const Wrapper = styled.div`
+interface WrapperProps {
+  editable: boolean;
+  theme: any;
+  invertColors: boolean;
+}
+
+const Wrapper = styled.div<WrapperProps>`
   position: relative;
   font-size: 20px;
   text-align: center;
@@ -16,7 +22,7 @@ const Wrapper = styled.div`
   border: 2px solid ${props => props.theme.foregroundColor};
 
   &:hover {
-    cursor: ${props => (props.editable ? 'pointer' : 'inherit')};
+    cursor: ${props => (props.editable ? "pointer" : "inherit")};
   }
 `;
 
@@ -41,12 +47,20 @@ const UpdateOverlay = styled.div`
   line-height: 150px;
 `;
 
-class Avatar extends Component {
-  state = {
+interface AvatarProps {
+  src: string;
+  editable?: boolean;
+  className?: string;
+  invertColors?: any;
+}
+
+class Avatar extends Component<AvatarProps> {
+  private upload: HTMLInputElement;
+  state: any = {
     hovered: false,
     src: this.props.src,
     inputImg: null,
-    fileInputKey: 0,
+    fileInputKey: 0
   };
 
   onMouseOver = () => {
@@ -62,7 +76,7 @@ class Avatar extends Component {
     this.upload.click();
   };
 
-  onCloseEditor = src => {
+  onCloseEditor = (src: string) => {
     const newState = { ...this.state };
 
     if (src) {
@@ -74,11 +88,11 @@ class Avatar extends Component {
     this.setState(newState);
   };
 
-  onChangeFile = event => {
+  onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.stopPropagation();
     event.preventDefault();
 
-    const incorrectType = event.target.files[0].type.indexOf('image') === -1;
+    const incorrectType = event.target.files[0].type.indexOf("image") === -1;
 
     if (incorrectType) {
       // do sth
@@ -86,7 +100,7 @@ class Avatar extends Component {
     }
 
     const newState = { ...this.state };
-    [newState.inputImg] = event.target.files;
+    newState.inputImg = event.target.files[0];
 
     this.setState(newState);
   };
@@ -114,8 +128,9 @@ class Avatar extends Component {
             onClick={this.onClick}
           >
             <StyledImg src={src} />
-            {editable &&
-              this.state.hovered && <UpdateOverlay>Upload</UpdateOverlay>}
+            {editable && this.state.hovered && (
+              <UpdateOverlay>Upload</UpdateOverlay>
+            )}
             <input
               id="myInput"
               key={fileInputKey}
@@ -124,7 +139,7 @@ class Avatar extends Component {
               ref={ref => {
                 this.upload = ref;
               }}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               onChange={this.onChangeFile}
             />
           </Wrapper>
@@ -133,9 +148,5 @@ class Avatar extends Component {
     );
   }
 }
-
-// export { Wrapper, Img };
-
-// export default styled(Avatar)``;
 
 export default Avatar;

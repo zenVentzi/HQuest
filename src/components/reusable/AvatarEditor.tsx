@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Editor from 'react-avatar-editor';
-import gql from 'graphql-tag';
-import { Mutation } from 'react-apollo';
-import TextBtn from 'Reusable/TextBtn';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Editor from "react-avatar-editor";
+import gql from "graphql-tag";
+import { Mutation, MutationFn } from "react-apollo";
+import TextBtn from "Reusable/TextBtn";
 
 const UPLOAD_AVATAR = gql`
   mutation uploadAvatar($base64Img: String!) {
@@ -12,8 +12,8 @@ const UPLOAD_AVATAR = gql`
 `;
 
 const Wrapper = styled.div`
-  ${'' /* position: fixed; */} z-index: 1;
-  ${'' /* top: 30px; */} padding: 3px 3px 3px 3px;
+  ${"" /* position: fixed; */} z-index: 1;
+  ${"" /* top: 30px; */} padding: 3px 3px 3px 3px;
   background-color: white;
   border: 1px solid black;
   border-radius: 8px;
@@ -24,15 +24,25 @@ const Hint = styled.div`
   color: black;
 `;
 
-class AvatarEditor extends Component {
-  onClickSave = uploadAvatar => async () => {
+interface AvatarEditorProps {
+  image: string | File;
+  onCloseEditor: (src?: string) => void; // split that into onSave and onClose
+}
+
+class AvatarEditor extends Component<AvatarEditorProps> {
+  private editor: Editor;
+  onClickSave = (uploadAvatar: MutationFn) => async () => {
     if (this.editor) {
       const canvasScaled = this.editor.getImageScaledToCanvas();
-      const base64Img = canvasScaled.toDataURL('image/jpeg').split(',')[1];
+      const base64Img = canvasScaled.toDataURL("image/jpeg").split(",")[1];
       const variables = { base64Img };
       // show loading/uploading
-      const { data } = await uploadAvatar({ variables });
-      const src = data.uploadAvatar;
+      const res = await uploadAvatar({ variables });
+      if (!res) {
+        throw Error("Upload avatar mutation failed");
+      }
+
+      const src = res.data.uploadAvatar;
 
       this.props.onCloseEditor(src);
     }
@@ -40,10 +50,6 @@ class AvatarEditor extends Component {
 
   onClickCancel = () => {
     this.props.onCloseEditor();
-  };
-
-  setEditorRef = editor => {
-    this.editor = editor;
   };
 
   render() {
@@ -55,7 +61,9 @@ class AvatarEditor extends Component {
           return (
             <Wrapper>
               <Editor
-                ref={this.setEditorRef}
+                ref={editor => {
+                  this.editor = editor;
+                }}
                 image={image}
                 width={150}
                 height={150}

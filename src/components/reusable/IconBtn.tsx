@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import StyledIcon from 'Reusable/StyledIcon';
-import { clickableIcon } from 'Reusable/css';
+import React from "react";
+import styled from "styled-components";
+import StyledIcon from "Reusable/StyledIcon";
+import { clickableIcon } from "Reusable/css";
 
 const StyledBtn = styled.div`
   ${clickableIcon};
@@ -9,7 +9,15 @@ const StyledBtn = styled.div`
 
 StyledBtn.defaultProps = {};
 
-const Btn = React.forwardRef(
+interface BtnProps {
+  icon: any;
+  size: string;
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  reverseColor?: boolean;
+  visible?: boolean;
+}
+
+const Btn = React.forwardRef<HTMLDivElement, BtnProps>(
   ({ icon, size, onClick, reverseColor = false, visible = true }, ref) => {
     return (
       <StyledBtn

@@ -1,8 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
-import IconBtn from 'Reusable/IconBtn';
-import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
-import Modal from 'Reusable/Modal';
+import React from "react";
+import styled from "styled-components";
+import IconBtn from "Reusable/IconBtn";
+import { WindowClose } from "styled-icons/fa-solid/WindowClose";
+import Modal from "Reusable/Modal";
 
 const BackgroundShade = styled.div`
   position: fixed;
@@ -73,7 +73,12 @@ const TopRightCorner = styled.span`
   margin-bottom: 1em;
 `;
 
-const Panel = ({ onClose, children }) => (
+interface PanelProps {
+  onClose: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  children: any;
+}
+
+const Panel = ({ onClose, children }: PanelProps) => (
   <Modal>
     <BackgroundShade onClick={onClose}>
       <StyledPanel>
@@ -83,7 +88,7 @@ const Panel = ({ onClose, children }) => (
             size="1.4em"
             onClick={e => {
               e.stopPropagation();
-              onClose();
+              onClose(e);
             }}
           />
         </TopRightCorner>
