@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
-import styled from 'styled-components';
-import { Formik, Form } from 'formik';
-import { withRouter } from 'react-router-dom';
-import Anchor from 'Reusable/Anchor';
-import UsersDataList from './UsersDataList';
+import React, { Component } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import styled from "styled-components";
+import { Formik, Form } from "formik";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import Anchor from "Reusable/Anchor";
+import UsersDataList from "./UsersDataList";
 
 const GET_USERS = gql`
   query GetUsers($match: String) {
@@ -30,29 +30,34 @@ const CustomTextInput = styled(TextInput)`
   margin-top: 0.3em;
 `;
 
-class CustomSearch extends Component {
-  constructor(props) {
+interface CustomSearchProps extends RouteComponentProps {}
+interface CustomSearchState {}
+
+class CustomSearch extends Component<CustomSearchProps, CustomSearchState> {
+  private datalistRef: React.RefObject<HTMLDataListElement>;
+  constructor(props: CustomSearchProps) {
     super(props);
     this.datalistRef = React.createRef();
   }
 
-  search = ({ username }) => {
+  search = (username: string) => {
     const { history } = this.props;
-    history.push('/search', { username });
+    history.push("/search", { username });
   };
 
   /* 
   problem: when click enter over a result, it doesn't submit the form
   */
 
-  isDatalistSelected = ({ inputValue }) => {
+  isDatalistSelected = (inputValue: string) => {
     // FIXME: it returns true incorrectly when the input is typed from user
     // possible not so hacky solution is to create my own dropdown
     let res = false;
     if (this.datalistRef.current) {
       const options = this.datalistRef.current.childNodes;
       options.forEach(opt => {
-        if (opt.value === inputValue) {
+        // used to be opt.value before typescript, possibly incorrect typings
+        if (opt.nodeValue === inputValue) {
           res = true;
         }
       });
@@ -61,12 +66,12 @@ class CustomSearch extends Component {
     return res;
   };
 
-  canShowDatalist = ({ inputValue }) => {
+  canShowDatalist = (inputValue: string) => {
     // console.log(this.isOptionSelected({ inputValue }));
     return (
       inputValue &&
       inputValue.length > 1 &&
-      !this.isDatalistSelected({ inputValue })
+      !this.isDatalistSelected(inputValue)
     );
   };
 
@@ -84,14 +89,14 @@ class CustomSearch extends Component {
   render() {
     return (
       <Formik
-        initialValues={{ username: '' }}
+        initialValues={{ username: "" }}
         validateOnBlur={false}
         validate={values => {
           const errors = {};
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          this.search({ username: values.username });
+          this.search(values.username);
           setSubmitting(false);
           resetForm({});
         }}
@@ -102,7 +107,7 @@ class CustomSearch extends Component {
           errors,
           handleChange,
           submitForm,
-          isSubmitting,
+          isSubmitting
         }) => (
           <Form action="/search">
             <SearchRow>
@@ -113,11 +118,11 @@ class CustomSearch extends Component {
                 placeholder="Search users.."
                 onChange={e => {
                   handleChange(e);
-                  if (this.isDatalistSelected({ inputValue: e.target.value })) {
+                  if (this.isDatalistSelected(e.target.value)) {
                     submitForm();
                   }
                 }}
-                value={values.username || ''}
+                value={values.username || ""}
                 // onChange={e => {
                 //   const val = e.target.value;
                 //   this.optionWasSelected = this.isOptionSelected(val);
@@ -127,14 +132,14 @@ class CustomSearch extends Component {
               <Anchor
                 onClick={() => {
                   if (isSubmitting) return;
-                  this.search({ username: '' });
+                  this.search("");
                 }}
               >
                 all
               </Anchor>
             </SearchRow>
 
-            {this.canShowDatalist({ inputValue: values.username }) && (
+            {this.canShowDatalist(values.username) && (
               <Query
                 query={GET_USERS}
                 variables={{ match: values.username }}
