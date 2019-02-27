@@ -1,20 +1,22 @@
-import React, { Fragment } from 'react';
-import { Query } from 'react-apollo';
-import styled from 'styled-components';
-import shortid from 'shortid';
-import { Route, Switch } from 'react-router-dom';
-import { GET_USER } from 'Queries';
-import StyledViewRaw from '../reusable/StyledView';
-import ProfileViewer from './ProfileViewer';
-import ProfileEditor from './ProfileEditor';
-import QuestionPin from './QuestionPin';
-import NotFoundView from '../notFoundView';
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import styled from "styled-components";
+import shortid from "shortid";
+import { Route, Switch, RouteComponentProps } from "react-router-dom";
+import { GET_USER } from "Queries";
+import StyledViewRaw from "../reusable/StyledView";
+import ProfileViewer from "./ProfileViewer";
+import ProfileEditor from "./ProfileEditor";
+import QuestionPin from "./QuestionPin";
+import NotFoundView from "../notFoundView";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
 
-const ProfileView = ({ match }) => {
+interface ProfileViewProps extends RouteComponentProps<{ id: string }> {}
+
+const ProfileView = ({ match }: ProfileViewProps) => {
   const { id } = match.params;
   const vars = { id };
 

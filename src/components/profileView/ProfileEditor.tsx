@@ -1,13 +1,17 @@
-import { Mutation } from 'react-apollo';
-import React, { Fragment } from 'react';
-import { Formik, Form, ErrorMessage } from 'formik';
-import Field from 'Reusable/Field';
-import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
-import { EDIT_USER } from 'Mutations';
-import { GET_USER } from 'Queries';
-import { toast } from 'react-toastify';
-import TextBtn from 'Reusable/TextBtn';
+import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+// import Field from 'Reusable/Field';
+import styled from "styled-components";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import { EDIT_USER } from "Mutations";
+import { GET_USER } from "Queries";
+import { toast } from "react-toastify";
+import TextBtn from "Reusable/TextBtn";
+
+interface ProfileEditorProps extends RouteComponentProps {
+  user: any;
+}
 
 const ProfileEditor = ({
   user: {
@@ -15,15 +19,10 @@ const ProfileEditor = ({
     me,
     fullName,
     intro,
-    socialMediaLinks: {
-      facebookLink,
-      twitterLink,
-      instagramLink,
-      linkedInLink,
-    },
+    socialMediaLinks: { facebookLink, twitterLink, instagramLink, linkedInLink }
   },
-  history,
-}) => {
+  history
+}: ProfileEditorProps) => {
   if (!me) {
     return (
       <div>
@@ -43,7 +42,7 @@ const ProfileEditor = ({
             facebookLink,
             twitterLink,
             instagramLink,
-            linkedInLink,
+            linkedInLink
           }}
           validate={values => {
             const errors = {};
@@ -72,9 +71,9 @@ const ProfileEditor = ({
                   facebookLink: values.facebookLink,
                   twitterLink: values.twitterLink,
                   instagramLink: values.instagramLink,
-                  linkedInLink: values.linkedInLink,
-                },
-              },
+                  linkedInLink: values.linkedInLink
+                }
+              }
             };
 
             await editUser({
@@ -82,13 +81,13 @@ const ProfileEditor = ({
               refetchQueries: [
                 {
                   query: GET_USER,
-                  variables: { id },
-                },
-              ],
+                  variables: { id }
+                }
+              ]
             });
             setSubmitting(false);
             history.goBack();
-            toast.success('🦄 Answer edited!');
+            toast.success("🦄 Answer edited!");
             // onSaved();
             // TODO redirect to either help page or profile depending on whether the user is new. Define if user is new by whether they have any answered questions
           }}
@@ -132,7 +131,12 @@ const ProfileEditor = ({
                   name="linkedInLink"
                   placeholder="LinkedIn link..."
                 />
-                <TextBtn onClick={handleSubmit} disabled={isSubmitting}>
+                <TextBtn
+                  onClick={e => {
+                    handleSubmit();
+                  }}
+                  disabled={isSubmitting}
+                >
                   Submit
                 </TextBtn>
               </div>

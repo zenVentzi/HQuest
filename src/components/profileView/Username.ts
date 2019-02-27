@@ -1,4 +1,4 @@
-import styled from '../../../node_modules/styled-components';
+import styled from "styled-components";
 
 const StyledUsername = styled.div`
   font-size: 1.5em;
