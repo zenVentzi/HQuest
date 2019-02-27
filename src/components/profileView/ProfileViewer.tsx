@@ -1,33 +1,40 @@
-import React, { Component, Fragment } from 'react';
-import { ThemeProvider } from 'styled-components';
-import { getLoggedUserId, overrideTheme } from 'Utils';
-import Avatar from '../reusable/Avatar';
-import Username from './Username';
-import Intro from './Intro';
-import FollowBtn from './FollowBtn';
-import FollowingBtn from './FollowingBtn';
-import FollowersBtn from './FollowersBtn';
-import Followers from './Followers';
-import Following from './Following';
-import Links from './Links';
-import QuestionsContainer from './questions';
-import Search from './Search';
-import ToggleQuestions from './questions/ToggleQuestions';
+import React, { Component, Fragment } from "react";
+import { ThemeProvider } from "styled-components";
+import { getLoggedUserId, overrideTheme } from "Utils";
+import Avatar from "../reusable/Avatar";
+import Username from "./Username";
+import Intro from "./Intro";
+import FollowBtn from "./FollowBtn";
+import FollowingBtn from "./FollowingBtn";
+import FollowersBtn from "./FollowersBtn";
+import Followers from "./Followers";
+import Following from "./Following";
+import Links from "./Links";
+import QuestionsContainer from "./questions";
+import Search from "./Search";
+import ToggleQuestions from "./questions/ToggleQuestions";
 
-class ProfileViewer extends Component {
-  state = { showFollowers: false, showFollowing: false };
+interface ProfileViewerProps {
+  user: any;
+}
+
+class ProfileViewer extends Component<ProfileViewerProps, any> {
+  state = {
+    showFollowers: false,
+    showFollowing: false
+  };
 
   toggleFollowers = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: any) => ({
       ...prevState,
-      showFollowers: !prevState.showFollowers,
+      showFollowers: !prevState.showFollowers
     }));
   };
 
   toggleFollowing = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: any) => ({
       ...prevState,
-      showFollowing: !prevState.showFollowing,
+      showFollowing: !prevState.showFollowing
     }));
   };
 
@@ -37,7 +44,7 @@ class ProfileViewer extends Component {
     const isFollowed =
       user.followers && user.followers.includes(getLoggedUserId());
     const theme = {
-      avatarSize: '150px',
+      avatarSize: "150px"
     };
 
     return (

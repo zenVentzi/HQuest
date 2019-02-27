@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import TextBtn from 'Reusable/TextBtn';
-import gql from 'graphql-tag';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import { Mutation, MutationFn } from "react-apollo";
+import TextBtn from "Reusable/TextBtn";
+import gql from "graphql-tag";
+import styled from "styled-components";
 
 const FOLLOW = gql`
   mutation follow($userId: ID!, $follow: Boolean!) {
@@ -14,7 +14,12 @@ const Btn = styled(TextBtn)`
   margin-bottom: 0.5em;
 `;
 
-class FollowBtn extends Component {
+interface FollowBtnProps {
+  isFollowed: boolean;
+  userId: string;
+}
+
+class FollowBtn extends Component<FollowBtnProps> {
   state = { hovered: false, isFollowed: this.props.isFollowed };
 
   onMouseEnter = () => {
@@ -25,7 +30,7 @@ class FollowBtn extends Component {
     this.setState({ hovered: false });
   };
 
-  onClick = mutation => async () => {
+  onClick = (mutation: MutationFn) => async () => {
     const { userId } = this.props;
     const follow = !this.state.isFollowed;
     await mutation({ variables: { userId, follow } });

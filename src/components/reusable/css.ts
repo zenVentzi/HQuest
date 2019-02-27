@@ -23,7 +23,11 @@ export const clickableIcon = css<ClickableIconProps>`
   }
 `;
 
-export const clickableText = css`
+interface ClickableTextProps {
+  disabled: boolean;
+}
+
+export const clickableText = css<ClickableTextProps>`
   display: inline-block;
   background: black;
   color: white;

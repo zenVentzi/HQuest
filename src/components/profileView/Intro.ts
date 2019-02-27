@@ -1,4 +1,4 @@
-import styled from '../../../node_modules/styled-components';
+import styled from "styled-components";
 
 const StyledIntro = styled.div`
   margin-bottom: 0.6em;
