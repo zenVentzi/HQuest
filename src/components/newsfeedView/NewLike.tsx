@@ -22,12 +22,12 @@ props: { performer, receiver, question, commentId}
 
 */
 
-import React, { Fragment } from 'react';
-import distanceInWords from 'date-fns/distance_in_words';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
-import { getLoggedUserId } from 'Utils';
-import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
+import React, { Fragment } from "react";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
+import { getLoggedUserId } from "Utils";
+import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
+import { getTime } from ".";
 
 // this file is duplication of NewComment. To be fixed.
 const NewLikeWrapper = styled.div`
@@ -49,18 +49,13 @@ const HeaderText = styled.div`
 `;
 const Body = styled.div``;
 
-const getTime = createdOn => {
-  const startDate = new Date(createdOn).getTime();
-  const dateTimeNow = new Date().getTime();
+interface NewLikeProps {
+  news: any;
+}
 
-  const res = distanceInWords(startDate, dateTimeNow, {
-    includeSeconds: true,
-  });
-
-  return `${res} ago`;
-};
-
-const NewLike = ({ news: { performer, answerOwner, question, createdOn } }) => {
+const NewLike = ({
+  news: { performer, answerOwner, question, createdOn }
+}: NewLikeProps) => {
   let topText;
   let bottomText;
   // improve the 2 names below
@@ -83,13 +78,12 @@ const NewLike = ({ news: { performer, answerOwner, question, createdOn } }) => {
       <Header>
         <User user={performer} size={1.5} />
         <HeaderText>{topText}</HeaderText>
-        {!isPerformerOwnAnswer &&
-          !isLoggedUserAnwer && (
-            <Fragment>
-              <User user={answerOwner} size={1.5} />
-              <HeaderText>{bottomText}</HeaderText>
-            </Fragment>
-          )}
+        {!isPerformerOwnAnswer && !isLoggedUserAnwer && (
+          <Fragment>
+            <User user={answerOwner} size={1.5} />
+            <HeaderText>{bottomText}</HeaderText>
+          </Fragment>
+        )}
       </Header>
       <Body>
         <AnsweredQuestion question={question} />

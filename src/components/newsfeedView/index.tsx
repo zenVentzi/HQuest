@@ -1,14 +1,26 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Query } from 'react-apollo';
-import shortid from 'shortid';
-import { GET_NEWSFEED } from 'Queries';
-import StyledViewRaw from '../reusable/StyledView';
-import News from './News';
+import React from "react";
+import styled from "styled-components";
+import { Query } from "react-apollo";
+import distanceInWords from "date-fns/distance_in_words";
+import shortid from "shortid";
+import { GET_NEWSFEED } from "Queries";
+import StyledViewRaw from "../reusable/StyledView";
+import News from "./News";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
 `;
+
+export const getTime = (createdOn: string) => {
+  const startDate = new Date(createdOn).getTime();
+  const dateTimeNow = new Date().getTime();
+
+  const res = distanceInWords(startDate, dateTimeNow, {
+    includeSeconds: true
+  });
+
+  return `${res} ago`;
+};
 
 const NewsfeedView = () => (
   <StyledView>
@@ -34,7 +46,7 @@ const NewsfeedView = () => (
           return <div>No activity from your following.</div>;
         }
 
-        return newsfeed.map(news => (
+        return newsfeed.map((news: any) => (
           <News key={shortid.generate()} news={news} />
         ));
       }}

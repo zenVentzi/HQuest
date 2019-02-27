@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react';
-import distanceInWords from 'date-fns/distance_in_words';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
-import { getLoggedUserId } from 'Utils';
-import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
+import React, { Fragment } from "react";
+import distanceInWords from "date-fns/distance_in_words";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
+import { getLoggedUserId } from "Utils";
+import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
+import { getTime } from ".";
 
 const NewCommentWrapper = styled.div`
   width: 100%;
@@ -24,20 +25,13 @@ const HeaderText = styled.div`
 `;
 const Body = styled.div``;
 
-const getTime = createdOn => {
-  const startDate = new Date(createdOn).getTime();
-  const dateTimeNow = new Date().getTime();
-
-  const res = distanceInWords(startDate, dateTimeNow, {
-    includeSeconds: true,
-  });
-
-  return `${res} ago`;
-};
+interface NewCommentProps {
+  news: any;
+}
 
 const NewComment = ({
-  news: { performer, answerOwner, question, commentId, createdOn },
-}) => {
+  news: { performer, answerOwner, question, commentId, createdOn }
+}: NewCommentProps) => {
   let topText;
   let bottomText;
   // improve the 2 names below
@@ -60,13 +54,12 @@ const NewComment = ({
       <Header>
         <User user={performer} size={1.5} />
         <HeaderText>{topText}</HeaderText>
-        {!doesOwnAnswer &&
-          !isLoggedUserAnwer && (
-            <Fragment>
-              <User user={answerOwner} size={1.5} />
-              <HeaderText>{bottomText}</HeaderText>
-            </Fragment>
-          )}
+        {!doesOwnAnswer && !isLoggedUserAnwer && (
+          <Fragment>
+            <User user={answerOwner} size={1.5} />
+            <HeaderText>{bottomText}</HeaderText>
+          </Fragment>
+        )}
       </Header>
       <Body>
         <AnsweredQuestion scrollToComment={commentId} question={question} />
