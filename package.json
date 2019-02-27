@@ -64,7 +64,7 @@
     "require-graphql-file": "^1.0.1",
     "shortid": "^2.2.13",
     "styled-components": "^4.0.3",
-    "styled-icons": "^2.3.2",
+    "styled-icons": "^7.2.0",
     "styled-reset": "^1.3.5",
     "subscriptions-transport-ws": "^0.9.12"
   },
