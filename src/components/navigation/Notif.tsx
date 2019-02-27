@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
-import distanceInWords from 'date-fns/distance_in_words';
-import { getLoggedUserId, overrideTheme, inverseColor } from 'Utils';
-import Avatar from '../reusable/Avatar';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import styled, { ThemeProvider } from "styled-components";
+import distanceInWords from "date-fns/distance_in_words";
+import { getLoggedUserId, overrideTheme, inverseColor } from "Utils";
+import Avatar from "../reusable/Avatar";
 
 const StyledNotif = styled(Link)`
   text-decoration: none;
@@ -47,12 +47,12 @@ const Time = styled.div`
   /* font-size: 0.5em; */
 `;
 
-const getTime = createdOn => {
+const getTime = (createdOn: string) => {
   const startDate = new Date(createdOn).getTime();
   const dateTimeNow = new Date().getTime();
 
   const res = distanceInWords(startDate, dateTimeNow, {
-    includeSeconds: true,
+    includeSeconds: true
   });
 
   return `${res} ago`;
@@ -63,9 +63,9 @@ const getLink = notif => {
   const loggedUsrId = getLoggedUserId();
 
   switch (notif.type) {
-    case 'NEW_FOLLOWER':
+    case "NEW_FOLLOWER":
       return `/userProfile/${performerId}`;
-    case 'NEW_COMMENT' /* 
+    case "NEW_COMMENT" /* 
     answerOwnerId in this case the current logged userid
     later, when we get notifications for other people's posts' comments we will upgrade that
     */:
@@ -77,13 +77,18 @@ const getLink = notif => {
   return null;
 };
 
-class Notif extends Component {
+interface NotifProps {
+  onClick: any;
+  notif: any;
+}
+
+class Notif extends Component<NotifProps> {
   state = {
     theme: {
-      backgroundColor: 'white',
-      foregroundColor: 'black',
-      avatarSize: `${2.2}em`,
-    },
+      backgroundColor: "white",
+      foregroundColor: "black",
+      avatarSize: `${2.2}em`
+    }
   };
 
   toggleTheme = () => {
@@ -120,5 +125,4 @@ class Notif extends Component {
   }
 }
 
-// export default withTheme(Notif);
 export default Notif;

@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import onClickOutside from 'react-onclickoutside';
-import styled from 'styled-components';
-import Notif from './Notif';
+import React, { Component } from "react";
+import onClickOutside, { HandleClickOutside } from "react-onclickoutside";
+import styled from "styled-components";
+import Notif from "./Notif";
+import { ApolloError } from "apollo-client";
 
 const Text = styled.div`
   color: black;
@@ -30,8 +31,16 @@ const Dropdown = styled.div`
 
 // TODO try to make this component use the Dropdown from Reusable
 
-class NotifDropdown extends Component {
-  handleClickOutside = e => {
+interface NotifDropdownProps {
+  loading: boolean;
+  error: ApolloError;
+  notifications: any[];
+  onClickNotification: any;
+  onClickOutside: any;
+}
+
+class NotifDropdown extends Component<NotifDropdownProps> {
+  handleClickOutside: (e: any) => void = e => {
     this.props.onClickOutside(e);
   };
 

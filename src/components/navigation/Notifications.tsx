@@ -1,15 +1,20 @@
-import React, { Component } from 'react';
-import NotifBtn from './NotifBtn';
-import NotifDropdown from './NotifDropdown';
-import NavItem from './NavItem';
-import NotificationsGQL from './NotificationsGQL';
+import React, { Component } from "react";
+import NotifBtn from "./NotifBtn";
+import NotifDropdown from "./NotifDropdown";
+import NavItem from "./NavItem";
+import NotificationsGQL from "./NotificationsGQL";
 
-const getNumOfSeen = notifications =>
+const getNumOfSeen = (notifications: any[]) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
-class Notifications extends Component {
+interface NotificationsProps {}
+interface NotificationsState {
+  showDropdown: boolean;
+}
+
+class Notifications extends Component<NotificationsProps, NotificationsState> {
   state = {
-    showDropdown: false,
+    showDropdown: false
   };
 
   notifBtn = React.createRef();
@@ -18,21 +23,21 @@ class Notifications extends Component {
     this.toggleDropdown();
   };
 
-  onClickOutsideDropdown = e => {
+  onClickOutsideDropdown = (e: any) => {
     const isNotifBtn = this.isTargetNotifBtn(e.target);
     if (isNotifBtn) return;
     this.toggleDropdown();
   };
 
-  onClick = markSeen => async () => {
+  onClick = (markSeen: any) => async () => {
     this.toggleDropdown();
     await markSeen();
   };
 
-  isTargetNotifBtn = target => {
+  isTargetNotifBtn = (target: any) => {
     // TODO simplify
-    const buttonWrapper = this.notifBtn.current;
-    const btnChildren = buttonWrapper.querySelectorAll('*');
+    const buttonWrapper = this.notifBtn.current as any;
+    const btnChildren = buttonWrapper.querySelectorAll("*");
 
     return target === buttonWrapper || [...btnChildren].includes(target);
   };
@@ -53,7 +58,7 @@ class Notifications extends Component {
             error,
             notifications,
             onClickOutside: this.onClickOutsideDropdown,
-            onClickNotification: this.onClickNotification,
+            onClickNotification: this.onClickNotification
           };
           const totalUnseen = getNumOfSeen(notifications);
 
