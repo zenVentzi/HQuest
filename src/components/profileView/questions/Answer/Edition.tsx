@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import distanceInWords from 'date-fns/distance_in_words';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import distanceInWords from "date-fns/distance_in_words";
+import styled from "styled-components";
 
 const StyledEdition = styled.div`
   width: 80%;
-  ${'' /* color: black; */} margin-bottom: 0.8em;
+  ${"" /* color: black; */} margin-bottom: 0.8em;
 `;
 
 const Text = styled.div``;
@@ -16,11 +16,14 @@ const AnswerText = styled.span`
   text-decoration: none;
 `;
 
-// can be made stateless
-class Edition extends Component {
+interface EditionProps {
+  edition: any;
+}
+
+class Edition extends Component<EditionProps> {
   render() {
     const {
-      edition: { date, before, after },
+      edition: { date, before, after }
     } = this.props;
 
     const startDate = new Date(date).getTime();
@@ -30,8 +33,8 @@ class Edition extends Component {
 
     return (
       <StyledEdition
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
+      // onMouseEnter={this.onMouseEnter}
+      // onMouseLeave={this.onMouseLeave}
       >
         <Text>Edit {editedTimeAgo} ago</Text>
         <Text>

@@ -1,11 +1,18 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
-import IconBtn from 'Reusable/IconBtn';
-import Dropdown from 'Reusable/Dropdown';
-import { CaretDown } from 'styled-icons/fa-solid';
+import React, { Component } from "react";
+import styled from "styled-components";
+import TextBtn from "Reusable/TextBtn";
+import IconBtn from "Reusable/IconBtn";
+import Dropdown from "Reusable/Dropdown";
+// import { CaretDown } from "styled-icons/fa-solid";
 
-class AnswerOptions extends Component {
+interface AnswerOptionsProps {
+  onClickEdit: any;
+  onClickRemove: any;
+  onClickMove: any;
+  visible: boolean;
+}
+
+class AnswerOptions extends Component<AnswerOptionsProps, any> {
   onClickEdit = () => {
     this.props.onClickEdit();
   };
@@ -28,13 +35,20 @@ class AnswerOptions extends Component {
       </TextBtn>,
       <TextBtn key="move" onClick={this.onClickMove}>
         Move
-      </TextBtn>,
+      </TextBtn>
     ];
 
     return (
       <Dropdown
         pivot="right"
-        dropBtn={<IconBtn icon={CaretDown} size="1em" visible={!!visible} />}
+        dropBtn={
+          <IconBtn
+            icon={CaretDown}
+            size="1em"
+            visible={!!visible}
+            onClick={() => {}}
+          />
+        }
         items={options}
       />
     );
