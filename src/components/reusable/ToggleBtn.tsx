@@ -1,5 +1,5 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React from "react";
+import styled, { css } from "styled-components";
 
 const Switch = styled.label`
   position: relative;
@@ -23,7 +23,7 @@ const Slider = styled.div`
   &:before {
     position: absolute;
     z-index: -1;
-    content: '';
+    content: "";
     height: 19px;
     width: 19px;
     left: 3px;
@@ -40,7 +40,7 @@ const common = css`
   transform: translate(-50%, -50%);
   top: 50%;
   left: 47%;
-  ${'' /* font-size: 0.7em; */};
+  ${"" /* font-size: 0.7em; */};
 `;
 
 const On = styled.span`
@@ -73,7 +73,13 @@ const Input = styled.input`
   /* stylelint-enable */
 `;
 
-const ToggleBtn = props => {
+interface ToggleBtnProps {
+  onClick: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
+  offText: string;
+  onText: string;
+}
+
+const ToggleBtn = (props: ToggleBtnProps) => {
   return (
     // eslint-disable-next-line jsx-a11y/label-has-for
     <Switch>

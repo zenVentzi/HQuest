@@ -1,13 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
-import ReactDOM from 'react-dom';
+import React from "react";
+import styled from "styled-components";
+import ReactDOM from "react-dom";
 
-const modalRoot = document.getElementById('modal-root');
+const modalRoot = document.getElementById("modal-root");
 
-class Modal extends React.Component {
-  constructor(props) {
+interface ModalProps {
+  children: any;
+}
+
+class Modal extends React.Component<ModalProps> {
+  private el: HTMLDivElement;
+  constructor(props: ModalProps) {
     super(props);
-    this.el = document.createElement('div');
+    this.el = document.createElement("div");
   }
 
   componentDidMount() {

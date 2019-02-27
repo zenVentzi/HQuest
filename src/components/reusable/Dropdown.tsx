@@ -1,19 +1,24 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
-import DropdownList from 'Reusable/DropdownList';
+import React, { Component } from "react";
+import styled from "styled-components";
+import DropdownList from "Reusable/DropdownList";
 
 const StyledDropdown = styled.div`
   display: inline-block;
   position: relative;
 `;
 
-class Dropdown extends Component {
-  state = {
-    showDropdown: false,
+interface DropdownProps {
+  dropBtn: any;
+  pivot: "left" | "right";
+  items: any[];
+}
+
+class Dropdown extends Component<DropdownProps> {
+  state: any = {
+    showDropdown: false
   };
 
-  btnRef = React.createRef();
+  btnRef = React.createRef<any>();
 
   componentDidMount() {
     const buttonHeight = this.btnRef.current.clientHeight;
@@ -22,7 +27,7 @@ class Dropdown extends Component {
     /* eslint-enable  */
   }
 
-  onClickOutside = e => {
+  onClickOutside = (e: any) => {
     if (this.isDropdownBtnClicked(e)) return;
     this.toggleDropdown();
   };
@@ -31,7 +36,7 @@ class Dropdown extends Component {
     this.toggleDropdown();
   };
 
-  isDropdownBtnClicked = event => {
+  isDropdownBtnClicked = (event: any) => {
     return (
       event.target === this.btnRef.current ||
       event.target === this.btnRef.current.children[0]
@@ -54,7 +59,7 @@ class Dropdown extends Component {
         }
 
         this.toggleDropdown();
-      },
+      }
     });
   };
 
@@ -65,16 +70,15 @@ class Dropdown extends Component {
     return (
       <StyledDropdown>
         {this.renderDropdownBtn()}
-        {showDropdown &&
-          buttonHeight && (
-            <DropdownList
-              items={items}
-              pivot={pivot}
-              marginTop={buttonHeight}
-              onItemClicked={this.onDropdownItemClicked}
-              onClickOutside={this.onClickOutside}
-            />
-          )}
+        {showDropdown && buttonHeight && (
+          <DropdownList
+            items={items}
+            pivot={pivot}
+            marginTop={buttonHeight}
+            onItemClicked={this.onDropdownItemClicked}
+            onClickOutside={this.onClickOutside}
+          />
+        )}
       </StyledDropdown>
     );
   }

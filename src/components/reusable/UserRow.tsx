@@ -1,10 +1,14 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
-import { overrideTheme, inverseTheme } from 'Utils';
-import Avatar from './Avatar';
+import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
+import styled, { ThemeProvider } from "styled-components";
+import { overrideTheme, inverseTheme } from "Utils";
+import Avatar from "./Avatar";
 
-const StyledUserName = styled.div`
+interface StyledUserNameProps {
+  size: number;
+}
+
+const StyledUserName = styled.div<StyledUserNameProps>`
   color: ${props => props.theme.foregroundColor};
   text-align: left;
   font-size: ${props => `${1 * props.size}em`};
@@ -18,7 +22,11 @@ const StyledUserName = styled.div`
   }
 `;
 
-const StyledIntro = styled.div`
+interface StyledIntroProps {
+  size: number;
+}
+
+const StyledIntro = styled.div<StyledIntroProps>`
   font-size: ${props => `${0.7 * props.size}em`};
   font-style: oblique;
   max-width: 100%;
@@ -33,7 +41,11 @@ const StyledIntro = styled.div`
   }
 `;
 
-const TextContainer = styled.div`
+interface StyledContainerProps {
+  size: number;
+}
+
+const TextContainer = styled.div<StyledContainerProps>`
   display: flex;
   align-self: stretch;
   max-width: 80%;
@@ -57,14 +69,21 @@ const StyledUser = styled.div`
   }
 `;
 
-class UserRow extends Component {
-  static defaultProps = { size: 2 };
+interface UserRowProps {
+  size: number;
+  inversedColors?: boolean;
+  user: any;
+}
 
-  constructor(props) {
+class UserRow extends Component<UserRowProps> {
+  static defaultProps = { size: 2 };
+  state: any;
+
+  constructor(props: UserRowProps) {
     super(props);
 
     const avatarSize = `${1.5 * props.size}em`;
-    const normalColors = { backgroundColor: 'black', foregroundColor: 'white' };
+    const normalColors = { backgroundColor: "black", foregroundColor: "white" };
     const inversedColors = inverseTheme(normalColors);
     const themeColors = props.inversedColors ? inversedColors : normalColors;
 
@@ -72,8 +91,8 @@ class UserRow extends Component {
       redirect: false,
       theme: {
         avatarSize,
-        ...themeColors,
-      },
+        ...themeColors
+      }
     };
   }
 
@@ -94,7 +113,7 @@ class UserRow extends Component {
   render() {
     const {
       user: { id, fullName, intro, avatarSrc },
-      size,
+      size
     } = this.props;
 
     if (this.state.redirect) {
@@ -117,10 +136,10 @@ class UserRow extends Component {
     return (
       <ThemeProvider theme={overrideTheme(theme)}>
         <StyledUser
-          onMouseEnter={this.onMouseEnter}
-          onFocus={this.onMouseEnter}
-          onMouseLeave={this.onMouseLeave}
-          onBlur={this.onMouseLeave}
+          // onMouseEnter={this.onMouseEnter}
+          // onFocus={this.onMouseEnter}
+          // onMouseLeave={this.onMouseLeave}
+          // onBlur={this.onMouseLeave}
           onClick={() => {
             this.setState({ redirect: true });
           }}

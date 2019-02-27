@@ -1,8 +1,8 @@
 /* TODO replace this file with Modal.jsx OR delete entirely */
-import React from 'react';
-import styled from 'styled-components';
-import IconBtn from 'Reusable/IconBtn';
-import { WindowClose } from 'styled-icons/fa-solid/WindowClose';
+import React from "react";
+import styled from "styled-components";
+import IconBtn from "Reusable/IconBtn";
+import { WindowClose } from "styled-icons/fa-solid/WindowClose";
 
 const BackgroundShade = styled.div`
   position: fixed;
@@ -40,7 +40,13 @@ const TopRightCorner = styled.span`
   margin-bottom: 1em;
 `;
 
-const Window = ({ onClose, children }) => (
+interface WindowProps {
+  onClose: () => void;
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  children: any;
+}
+
+const Window = ({ onClose, children }: WindowProps) => (
   <BackgroundShade onClick={onClose}>
     <StyledWindow>
       {/* <CloseBtn size="1.4em" /> */}

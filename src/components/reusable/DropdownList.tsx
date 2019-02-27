@@ -1,9 +1,14 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import onClickOutside from 'react-onclickoutside';
+import React, { Component, Fragment } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import onClickOutside from "react-onclickoutside";
 
-const StyledDropdown = styled.div`
+interface StyledDropdownProps {
+  marginTop: number;
+  pivot: "left" | "right";
+}
+
+const StyledDropdown = styled.div<StyledDropdownProps>`
   display: flex;
   background: white;
   border-radius: 0.2em;
@@ -22,12 +27,20 @@ const StyledDropdown = styled.div`
   }
 `;
 
-class DropdownList extends Component {
+interface DropdownListProps {
+  onClickOutside: (e: any) => void;
+  items: any[];
+  onItemClicked: () => void;
+  pivot: "left" | "right";
+  marginTop: number;
+}
+
+class DropdownList extends Component<DropdownListProps> {
   static propTypes = {
-    pivot: PropTypes.oneOf(['left', 'right']),
+    pivot: PropTypes.oneOf(["left", "right"])
   };
 
-  handleClickOutside = e => {
+  handleClickOutside = (e: any) => {
     this.props.onClickOutside(e);
   };
 
@@ -40,7 +53,7 @@ class DropdownList extends Component {
             item.props.onClick();
           }
           onItemClicked();
-        },
+        }
       });
     });
     return modifiedItems;
@@ -58,4 +71,5 @@ class DropdownList extends Component {
   }
 }
 
+//@ts-ignore
 export default onClickOutside(DropdownList);
