@@ -1,10 +1,10 @@
-import React from 'react';
-import distanceInWords from 'date-fns/distance_in_words';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
-import { NewsType } from '../../constants';
+import React from "react";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
+import { NewsType } from "../../constants";
+import { getTime } from ".";
 // import { NewsType } from 'Constants';
-import AnsweredQuestion from '../profileView/questions/AnsweredQuestion';
+import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 
 const { NEW_ANSWER_EDITION, NEW_ANSWER } = NewsType;
 
@@ -29,20 +29,13 @@ const HeaderBottom = styled.div`
 `;
 const Body = styled.div``;
 
-const getTime = createdOn => {
-  const startDate = new Date(createdOn).getTime();
-  const dateTimeNow = new Date().getTime();
-
-  const res = distanceInWords(startDate, dateTimeNow, {
-    includeSeconds: true,
-  });
-
-  return `${res} ago`;
-};
+interface NewAnswerEditionProps {
+  news: any;
+}
 
 const NewAnswerEdition = ({
-  news: { type, performer, question, createdOn },
-}) => {
+  news: { type, performer, question, createdOn }
+}: NewAnswerEditionProps) => {
   let text;
 
   switch (type) {

@@ -4,11 +4,10 @@ do we implement "Got followed by" news?
 
 */
 
-import React, { Fragment } from 'react';
-import distanceInWords from 'date-fns/distance_in_words';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
-import { getLoggedUserId } from 'Utils';
+import React, { Fragment } from "react";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
+import { getTime } from ".";
 
 // this file is duplication of NewComment. To be fixed.
 const NewFollowerWrapper = styled.div`
@@ -25,18 +24,13 @@ const Text = styled.div`
   font-size: 0.8em;
 `;
 
-const getTime = createdOn => {
-  const startDate = new Date(createdOn).getTime();
-  const dateTimeNow = new Date().getTime();
+interface NewFollowerProps {
+  news: any;
+}
 
-  const res = distanceInWords(startDate, dateTimeNow, {
-    includeSeconds: true,
-  });
-
-  return `${res} ago`;
-};
-
-const NewFollower = ({ news: { performer, followedUser, createdOn } }) => {
+const NewFollower = ({
+  news: { performer, followedUser, createdOn }
+}: NewFollowerProps) => {
   const topText = `Followed, ${getTime(createdOn)},`;
 
   return (
