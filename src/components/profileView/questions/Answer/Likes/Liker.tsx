@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
+import React from "react";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
 
 const StyledLiker = styled.div`
   width: 80%;
@@ -11,9 +11,13 @@ const StyledLiker = styled.div`
   /* margin-bottom: 0.8em; */
 `;
 
+interface LikerProps {
+  liker: any;
+}
+
 /* do I store the whole user info inside the liker object? */
 
-const Liker = ({ liker }) => {
+const Liker = ({ liker }: LikerProps) => {
   return (
     <StyledLiker>
       <User size={1.5} user={liker.user} />
