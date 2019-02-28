@@ -1,20 +1,20 @@
-import { ApolloClient } from 'apollo-client';
-import { ApolloLink, split } from 'apollo-link';
-import { WebSocketLink } from 'apollo-link-ws';
-import { createUploadLink } from 'apollo-upload-client';
+import { ApolloClient } from "apollo-client";
+import { ApolloLink, split } from "apollo-link";
+import { WebSocketLink } from "apollo-link-ws";
+import { createUploadLink } from "apollo-upload-client";
 import {
   InMemoryCache,
-  IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory';
-import { setContext } from 'apollo-link-context';
-import { onError } from 'apollo-link-error';
-import { getMainDefinition } from 'apollo-utilities';
-import introspectionQueryResultData from './fragmentTypes.json';
+  IntrospectionFragmentMatcher
+} from "apollo-cache-inmemory";
+import { setContext } from "apollo-link-context";
+import { onError } from "apollo-link-error";
+import { getMainDefinition } from "apollo-utilities";
+import introspectionQueryResultData from "./fragmentTypes.json";
 
-import { getAuthToken, deleteLoggedUserData } from './utils';
+import { getAuthToken, deleteLoggedUserData } from "../utils";
 
 const uploadLink = createUploadLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql"
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -22,8 +22,8 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
+      authorization: token ? `Bearer ${token}` : ""
+    }
   };
 });
 
@@ -33,9 +33,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       // const { name, message, locations, path } = error;
       console.log(error);
 
-      if (error.extensions.code === 'UNAUTHENTICATED') {
+      if (error.extensions.code === "UNAUTHENTICATED") {
         deleteLoggedUserData();
-        window.location = '/';
+        window.location = "/";
       }
       // console.log(
       //   `[GraphQL server error]: Name: ${name} Message: ${message}, Location: ${locations}, Path: ${path}`
@@ -54,9 +54,9 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: {
-      authToken: getAuthToken(),
-    },
-  },
+      authToken: getAuthToken()
+    }
+  }
 });
 
 const httpLink = ApolloLink.from([errorLink, authLink, uploadLink]);
@@ -67,7 +67,7 @@ const link = split(
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query);
     const shouldUseFirst =
-      kind === 'OperationDefinition' && operation === 'subscription';
+      kind === "OperationDefinition" && operation === "subscription";
 
     return shouldUseFirst;
   },
@@ -76,12 +76,12 @@ const link = split(
 );
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData,
+  introspectionQueryResultData
 });
 
 const client = new ApolloClient({
   link,
-  cache: new InMemoryCache({ fragmentMatcher }),
+  cache: new InMemoryCache({ fragmentMatcher })
 });
 
 export default client;

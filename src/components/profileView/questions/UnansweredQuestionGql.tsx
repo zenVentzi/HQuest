@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Mutation, MutationFn } from "react-apollo";
-import { ADD_ANSWER, QUESTION_NOT_APPLY } from "Mutations";
+import { ADD_ANSWER, QUESTION_NOT_APPLY } from "graphql/gqlMutations";
 
 interface UnansweredQuestionGqlProps {
   children: (addAnswer: MutationFn, questionNotApply: MutationFn) => any;

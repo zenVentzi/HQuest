@@ -3,7 +3,7 @@ import React from "react";
 import { Facebook as FacebookLogo } from "styled-icons/fa-brands/Facebook";
 //@ts-ignore
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import { LOGIN_MUTATION } from "Mutations";
+import { LOGIN_MUTATION } from "graphql/gqlMutations";
 import { Mutation, MutationFunc, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 import styled from "styled-components";

@@ -4,8 +4,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 // import Field from 'Reusable/Field';
 import styled from "styled-components";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { EDIT_USER } from "Mutations";
-import { GET_USER } from "Queries";
+import { EDIT_USER } from "graphql/gqlMutations";
+import { GET_USER } from "graphql/gqlQueries";
 import { toast } from "react-toastify";
 import TextBtn from "Reusable/TextBtn";
 

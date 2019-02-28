@@ -1,8 +1,12 @@
-import gql from 'graphql-tag';
-import { QuestionFields, CommentFields, AnswerFields } from 'Fragments';
+import gql from "graphql-tag";
+import {
+  QuestionFields,
+  CommentFields,
+  AnswerFields
+} from "graphql/gqlFragments";
 
 // remember to remove
-export const AUTH_TOKEN = 'AUTH_TOKEN';
+export const AUTH_TOKEN = "AUTH_TOKEN";
 export const USER_ID = `USER_ID`;
 
 export const LOGIN_MUTATION = gql`
