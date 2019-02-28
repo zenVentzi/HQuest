@@ -6,7 +6,7 @@ import {
   CommentFields,
   UserFields,
   AnswerFields
-} from "graphql/gqlFragments";
+} from "graphql/fragments";
 
 export const GET_ANSWERED_QUESTION = gql`
   query answeredQuestion($userId: ID!, $questionId: ID!) {
@@ -25,7 +25,7 @@ export const GET_QUESTIONS = gql`
   query questions(
     $answered: Boolean!
     $userId: ID!
-    $tags: [String]
+    $tags: [String!]
     $first: Int!
     $after: String
   ) {

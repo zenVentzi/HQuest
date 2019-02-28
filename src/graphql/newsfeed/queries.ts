@@ -6,13 +6,15 @@ import {
   CommentFields,
   UserFields,
   AnswerFields
-} from "graphql/gqlFragments";
+} from "graphql/fragments";
 
 export const GET_NEWSFEED = gql`
   query newsfeed {
     newsfeed {
-      type
-      createdOn
+      ... on NewsBase {
+        type
+        createdOn
+      }
       ... on AnswerNews {
         performer {
           ...UserFields
