@@ -1,6 +1,10 @@
 overwrite: true
 schema: "./server/graphql/**/*.graphql"
-documents: null
+documents:
+  - "./src/graphql/**/*queries.ts"
+  - "./src/graphql/**/*mutations.ts"
+  - "./src/graphql/**/*subscriptions.ts"
+  - "./src/graphql/**/*fragments.ts"
 generates:
   ./server/generated/gqltypes.ts:
     schema: "./server/graphql/**/*.graphql"
@@ -11,3 +15,11 @@ generates:
       - "typescript-server"
       - "typescript-resolvers"
       # - "typescript-mongodb"
+  ./src/graphql/autoGenTypes.ts:
+    schema: "./server/graphql/**/*.graphql"
+    config:
+      noNamespaces: true
+      contextType: ../types/gqlContext#ApolloContext
+    plugins:
+      - "typescript-common"
+      - "typescript-client"

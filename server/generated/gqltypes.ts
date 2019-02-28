@@ -1,5 +1,11 @@
 export type Maybe<T> = T | null;
 
+export interface InputQuestion {
+  value: string;
+
+  tags: string[];
+}
+
 export interface EditUserInput {
   fullName: string;
 
@@ -18,23 +24,17 @@ export interface SocialMediaLinksInput {
   linkedInLink: string;
 }
 
-export interface InputQuestion {
-  value: string;
-
-  tags: string[];
-}
-
-export enum NotificationType {
-  NewFollower = "NEW_FOLLOWER",
-  NewComment = "NEW_COMMENT"
-}
-
 export enum NewsType {
   NewAnswer = "NEW_ANSWER",
   NewAnswerEdition = "NEW_ANSWER_EDITION",
   NewComment = "NEW_COMMENT",
   NewLike = "NEW_LIKE",
   NewFollower = "NEW_FOLLOWER"
+}
+
+export enum NotificationType {
+  NewFollower = "NEW_FOLLOWER",
+  NewComment = "NEW_COMMENT"
 }
 
 export type DateTime = any;
@@ -46,6 +46,18 @@ export type DateTime = any;
 // ====================================================
 // Interfaces
 // ====================================================
+
+export interface NewsBase {
+  type: NewsType;
+
+  performer: User;
+
+  createdOn: DateTime;
+}
+
+export interface Node {
+  id: string;
+}
 
 export interface Notification {
   id: string;
@@ -63,22 +75,12 @@ export interface Notification {
   createdOn: DateTime;
 }
 
-export interface NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  createdOn: DateTime;
-}
-
-export interface Node {
-  id: string;
-}
-
 export interface Connection {
   pageInfo: PageInfo;
 
   edges?: Maybe<Edge[]>;
+
+  totalCount: number;
 }
 
 export interface Edge {
@@ -92,35 +94,35 @@ export interface Edge {
 // ====================================================
 
 export interface Query {
-  books: Book[];
-
-  book?: Maybe<Book>;
+  newsfeed?: Maybe<News[]>;
 
   notifications?: Maybe<Notification[]>;
+
+  questionsTags: string[];
+
+  questions?: Maybe<QuestionConnection>;
+
+  answeredQuestion: Question;
 
   users?: Maybe<User[]>;
 
   user?: Maybe<User>;
 
-  questionsTags: string[];
-
   followers?: Maybe<User[]>;
 
   following?: Maybe<User[]>;
-
-  newsfeed?: Maybe<News[]>;
-
-  questions?: Maybe<QuestionConnection>;
-
-  answeredQuestion: Question;
 }
 
-export interface Book {
-  title: string;
+export interface AnswerNews extends NewsBase {
+  type: NewsType;
 
-  created: DateTime;
+  performer: User;
 
-  author: string;
+  answerOwner: User;
+
+  question: Question;
+
+  createdOn: DateTime;
 }
 
 export interface User {
@@ -151,18 +153,6 @@ export interface SocialMediaLinks {
   instagramLink?: Maybe<string>;
 
   linkedInLink?: Maybe<string>;
-}
-
-export interface AnswerNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  createdOn: DateTime;
 }
 
 /** question should be made an interface */
@@ -285,10 +275,6 @@ export interface QuestionEdge extends Edge {
 }
 
 export interface Mutation {
-  addBook: Book;
-
-  editUser: User;
-
   notifsMarkSeen?: Maybe<boolean>;
 
   commentAnswer: Comment;
@@ -296,14 +282,6 @@ export interface Mutation {
   editComment: Comment;
 
   removeComment: Comment;
-
-  signUp?: Maybe<string>;
-
-  login: LoginResult;
-
-  addQuestions?: Maybe<boolean>;
-
-  questionNotApply: Question;
 
   editAnswer: Answer;
 
@@ -315,7 +293,15 @@ export interface Mutation {
 
   moveAnswerPosition?: Maybe<number>;
 
-  removeQuestion: Question;
+  addQuestions?: Maybe<boolean>;
+  /** removeQuestion(questionId: ID!): Question! */
+  questionNotApply: Question;
+
+  signUp?: Maybe<string>;
+
+  login: LoginResult;
+
+  editUser: User;
 
   uploadAvatar: string;
 
@@ -329,8 +315,6 @@ export interface LoginResult {
 }
 
 export interface Subscription {
-  bookAdded: Book;
-
   newNotification: Notification;
 }
 
@@ -374,21 +358,6 @@ export interface NewFollower extends Notification {
 // Arguments
 // ====================================================
 
-export interface BookQueryArgs {
-  title?: Maybe<string>;
-}
-export interface UsersQueryArgs {
-  match?: Maybe<string>;
-}
-export interface UserQueryArgs {
-  id: string;
-}
-export interface FollowersQueryArgs {
-  userId: string;
-}
-export interface FollowingQueryArgs {
-  userId: string;
-}
 export interface QuestionsQueryArgs {
   answered: boolean;
 
@@ -405,13 +374,17 @@ export interface AnsweredQuestionQueryArgs {
 
   questionId: string;
 }
-export interface AddBookMutationArgs {
-  title: string;
-
-  author: string;
+export interface UsersQueryArgs {
+  match?: Maybe<string>;
 }
-export interface EditUserMutationArgs {
-  input?: Maybe<EditUserInput>;
+export interface UserQueryArgs {
+  id: string;
+}
+export interface FollowersQueryArgs {
+  userId: string;
+}
+export interface FollowingQueryArgs {
+  userId: string;
 }
 export interface CommentAnswerMutationArgs {
   answerId: string;
@@ -429,26 +402,6 @@ export interface RemoveCommentMutationArgs {
   answerId: string;
 
   commentId: string;
-}
-export interface SignUpMutationArgs {
-  firstName: string;
-
-  surName: string;
-
-  email: string;
-
-  password: string;
-}
-export interface LoginMutationArgs {
-  email: string;
-
-  name: string;
-}
-export interface AddQuestionsMutationArgs {
-  questions?: Maybe<InputQuestion[]>;
-}
-export interface QuestionNotApplyMutationArgs {
-  questionId: string;
 }
 export interface EditAnswerMutationArgs {
   answerId: string;
@@ -473,8 +426,28 @@ export interface MoveAnswerPositionMutationArgs {
 
   position: number;
 }
-export interface RemoveQuestionMutationArgs {
+export interface AddQuestionsMutationArgs {
+  questions?: Maybe<InputQuestion[]>;
+}
+export interface QuestionNotApplyMutationArgs {
   questionId: string;
+}
+export interface SignUpMutationArgs {
+  firstName: string;
+
+  surName: string;
+
+  email: string;
+
+  password: string;
+}
+export interface LoginMutationArgs {
+  email: string;
+
+  name: string;
+}
+export interface EditUserMutationArgs {
+  input?: Maybe<EditUserInput>;
 }
 export interface UploadAvatarMutationArgs {
   base64Img: string;
@@ -553,9 +526,7 @@ export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
 
 export namespace QueryResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    books?: BooksResolver<Book[], TypeParent, Context>;
-
-    book?: BookResolver<Maybe<Book>, TypeParent, Context>;
+    newsfeed?: NewsfeedResolver<Maybe<News[]>, TypeParent, Context>;
 
     notifications?: NotificationsResolver<
       Maybe<Notification[]>,
@@ -563,17 +534,7 @@ export namespace QueryResolvers {
       Context
     >;
 
-    users?: UsersResolver<Maybe<User[]>, TypeParent, Context>;
-
-    user?: UserResolver<Maybe<User>, TypeParent, Context>;
-
     questionsTags?: QuestionsTagsResolver<string[], TypeParent, Context>;
-
-    followers?: FollowersResolver<Maybe<User[]>, TypeParent, Context>;
-
-    following?: FollowingResolver<Maybe<User[]>, TypeParent, Context>;
-
-    newsfeed?: NewsfeedResolver<Maybe<News[]>, TypeParent, Context>;
 
     questions?: QuestionsResolver<
       Maybe<QuestionConnection>,
@@ -582,70 +543,28 @@ export namespace QueryResolvers {
     >;
 
     answeredQuestion?: AnsweredQuestionResolver<Question, TypeParent, Context>;
+
+    users?: UsersResolver<Maybe<User[]>, TypeParent, Context>;
+
+    user?: UserResolver<Maybe<User>, TypeParent, Context>;
+
+    followers?: FollowersResolver<Maybe<User[]>, TypeParent, Context>;
+
+    following?: FollowingResolver<Maybe<User[]>, TypeParent, Context>;
   }
 
-  export type BooksResolver<
-    R = Book[],
+  export type NewsfeedResolver<
+    R = Maybe<News[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type BookResolver<
-    R = Maybe<Book>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, BookArgs>;
-  export interface BookArgs {
-    title?: Maybe<string>;
-  }
-
   export type NotificationsResolver<
     R = Maybe<Notification[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type UsersResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, UsersArgs>;
-  export interface UsersArgs {
-    match?: Maybe<string>;
-  }
-
-  export type UserResolver<
-    R = Maybe<User>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, UserArgs>;
-  export interface UserArgs {
-    id: string;
-  }
-
   export type QuestionsTagsResolver<
     R = string[],
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FollowersResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, FollowersArgs>;
-  export interface FollowersArgs {
-    userId: string;
-  }
-
-  export type FollowingResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, FollowingArgs>;
-  export interface FollowingArgs {
-    userId: string;
-  }
-
-  export type NewsfeedResolver<
-    R = Maybe<News[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
@@ -676,30 +595,80 @@ export namespace QueryResolvers {
 
     questionId: string;
   }
-}
 
-export namespace BookResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Book> {
-    title?: TitleResolver<string, TypeParent, Context>;
-
-    created?: CreatedResolver<DateTime, TypeParent, Context>;
-
-    author?: AuthorResolver<string, TypeParent, Context>;
+  export type UsersResolver<
+    R = Maybe<User[]>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, UsersArgs>;
+  export interface UsersArgs {
+    match?: Maybe<string>;
   }
 
-  export type TitleResolver<
-    R = string,
-    Parent = Book,
+  export type UserResolver<
+    R = Maybe<User>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, UserArgs>;
+  export interface UserArgs {
+    id: string;
+  }
+
+  export type FollowersResolver<
+    R = Maybe<User[]>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, FollowersArgs>;
+  export interface FollowersArgs {
+    userId: string;
+  }
+
+  export type FollowingResolver<
+    R = Maybe<User[]>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, FollowingArgs>;
+  export interface FollowingArgs {
+    userId: string;
+  }
+}
+
+export namespace AnswerNewsResolvers {
+  export interface Resolvers<Context = ApolloContext, TypeParent = AnswerNews> {
+    type?: TypeResolver<NewsType, TypeParent, Context>;
+
+    performer?: PerformerResolver<User, TypeParent, Context>;
+
+    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
+
+    question?: QuestionResolver<Question, TypeParent, Context>;
+
+    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
+  }
+
+  export type TypeResolver<
+    R = NewsType,
+    Parent = AnswerNews,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type CreatedResolver<
+  export type PerformerResolver<
+    R = User,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type AnswerOwnerResolver<
+    R = User,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type QuestionResolver<
+    R = Question,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CreatedOnResolver<
     R = DateTime,
-    Parent = Book,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AuthorResolver<
-    R = string,
-    Parent = Book,
+    Parent = AnswerNews,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -808,46 +777,6 @@ export namespace SocialMediaLinksResolvers {
   export type LinkedInLinkResolver<
     R = Maybe<string>,
     Parent = SocialMediaLinks,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace AnswerNewsResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = AnswerNews> {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = AnswerNews,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -1261,10 +1190,6 @@ export namespace QuestionEdgeResolvers {
 
 export namespace MutationResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    addBook?: AddBookResolver<Book, TypeParent, Context>;
-
-    editUser?: EditUserResolver<User, TypeParent, Context>;
-
     notifsMarkSeen?: NotifsMarkSeenResolver<
       Maybe<boolean>,
       TypeParent,
@@ -1276,14 +1201,6 @@ export namespace MutationResolvers {
     editComment?: EditCommentResolver<Comment, TypeParent, Context>;
 
     removeComment?: RemoveCommentResolver<Comment, TypeParent, Context>;
-
-    signUp?: SignUpResolver<Maybe<string>, TypeParent, Context>;
-
-    login?: LoginResolver<LoginResult, TypeParent, Context>;
-
-    addQuestions?: AddQuestionsResolver<Maybe<boolean>, TypeParent, Context>;
-
-    questionNotApply?: QuestionNotApplyResolver<Question, TypeParent, Context>;
 
     editAnswer?: EditAnswerResolver<Answer, TypeParent, Context>;
 
@@ -1299,31 +1216,19 @@ export namespace MutationResolvers {
       Context
     >;
 
-    removeQuestion?: RemoveQuestionResolver<Question, TypeParent, Context>;
+    addQuestions?: AddQuestionsResolver<Maybe<boolean>, TypeParent, Context>;
+    /** removeQuestion(questionId: ID!): Question! */
+    questionNotApply?: QuestionNotApplyResolver<Question, TypeParent, Context>;
+
+    signUp?: SignUpResolver<Maybe<string>, TypeParent, Context>;
+
+    login?: LoginResolver<LoginResult, TypeParent, Context>;
+
+    editUser?: EditUserResolver<User, TypeParent, Context>;
 
     uploadAvatar?: UploadAvatarResolver<string, TypeParent, Context>;
 
     follow?: FollowResolver<Maybe<boolean>, TypeParent, Context>;
-  }
-
-  export type AddBookResolver<
-    R = Book,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, AddBookArgs>;
-  export interface AddBookArgs {
-    title: string;
-
-    author: string;
-  }
-
-  export type EditUserResolver<
-    R = User,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, EditUserArgs>;
-  export interface EditUserArgs {
-    input?: Maybe<EditUserInput>;
   }
 
   export type NotifsMarkSeenResolver<
@@ -1364,50 +1269,6 @@ export namespace MutationResolvers {
     answerId: string;
 
     commentId: string;
-  }
-
-  export type SignUpResolver<
-    R = Maybe<string>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, SignUpArgs>;
-  export interface SignUpArgs {
-    firstName: string;
-
-    surName: string;
-
-    email: string;
-
-    password: string;
-  }
-
-  export type LoginResolver<
-    R = LoginResult,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, LoginArgs>;
-  export interface LoginArgs {
-    email: string;
-
-    name: string;
-  }
-
-  export type AddQuestionsResolver<
-    R = Maybe<boolean>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, AddQuestionsArgs>;
-  export interface AddQuestionsArgs {
-    questions?: Maybe<InputQuestion[]>;
-  }
-
-  export type QuestionNotApplyResolver<
-    R = Question,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, QuestionNotApplyArgs>;
-  export interface QuestionNotApplyArgs {
-    questionId: string;
   }
 
   export type EditAnswerResolver<
@@ -1463,13 +1324,57 @@ export namespace MutationResolvers {
     position: number;
   }
 
-  export type RemoveQuestionResolver<
+  export type AddQuestionsResolver<
+    R = Maybe<boolean>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, AddQuestionsArgs>;
+  export interface AddQuestionsArgs {
+    questions?: Maybe<InputQuestion[]>;
+  }
+
+  export type QuestionNotApplyResolver<
     R = Question,
     Parent = {},
     Context = ApolloContext
-  > = Resolver<R, Parent, Context, RemoveQuestionArgs>;
-  export interface RemoveQuestionArgs {
+  > = Resolver<R, Parent, Context, QuestionNotApplyArgs>;
+  export interface QuestionNotApplyArgs {
     questionId: string;
+  }
+
+  export type SignUpResolver<
+    R = Maybe<string>,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, SignUpArgs>;
+  export interface SignUpArgs {
+    firstName: string;
+
+    surName: string;
+
+    email: string;
+
+    password: string;
+  }
+
+  export type LoginResolver<
+    R = LoginResult,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, LoginArgs>;
+  export interface LoginArgs {
+    email: string;
+
+    name: string;
+  }
+
+  export type EditUserResolver<
+    R = User,
+    Parent = {},
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context, EditUserArgs>;
+  export interface EditUserArgs {
+    input?: Maybe<EditUserInput>;
   }
 
   export type UploadAvatarResolver<
@@ -1517,8 +1422,6 @@ export namespace LoginResultResolvers {
 
 export namespace SubscriptionResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    bookAdded?: BookAddedResolver<Book, TypeParent, Context>;
-
     newNotification?: NewNotificationResolver<
       Notification,
       TypeParent,
@@ -1526,11 +1429,6 @@ export namespace SubscriptionResolvers {
     >;
   }
 
-  export type BookAddedResolver<
-    R = Book,
-    Parent = {},
-    Context = ApolloContext
-  > = SubscriptionResolver<R, Parent, Context>;
   export type NewNotificationResolver<
     R = Notification,
     Parent = {},
@@ -1674,17 +1572,6 @@ export namespace NewFollowerResolvers {
   > = Resolver<R, Parent, Context>;
 }
 
-export namespace NotificationResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "NewComment" | "NewFollower",
-    Parent = NewComment | NewFollower,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
 export namespace NewsBaseResolvers {
   export interface Resolvers {
     __resolveType: ResolveType;
@@ -1703,6 +1590,17 @@ export namespace NodeResolvers {
   export type ResolveType<
     R = "Question",
     Parent = Question,
+    Context = ApolloContext
+  > = TypeResolveFn<R, Parent, Context>;
+}
+
+export namespace NotificationResolvers {
+  export interface Resolvers {
+    __resolveType: ResolveType;
+  }
+  export type ResolveType<
+    R = "NewComment" | "NewFollower",
+    Parent = NewComment | NewFollower,
     Context = ApolloContext
   > = TypeResolveFn<R, Parent, Context>;
 }
@@ -1780,10 +1678,9 @@ export interface DateTimeScalarConfig
 
 export interface IResolvers {
   Query?: QueryResolvers.Resolvers;
-  Book?: BookResolvers.Resolvers;
+  AnswerNews?: AnswerNewsResolvers.Resolvers;
   User?: UserResolvers.Resolvers;
   SocialMediaLinks?: SocialMediaLinksResolvers.Resolvers;
-  AnswerNews?: AnswerNewsResolvers.Resolvers;
   Question?: QuestionResolvers.Resolvers;
   Answer?: AnswerResolvers.Resolvers;
   Comment?: CommentResolvers.Resolvers;
@@ -1801,9 +1698,9 @@ export interface IResolvers {
   Subscription?: SubscriptionResolvers.Resolvers;
   NewComment?: NewCommentResolvers.Resolvers;
   NewFollower?: NewFollowerResolvers.Resolvers;
-  Notification?: NotificationResolvers.Resolvers;
   NewsBase?: NewsBaseResolvers.Resolvers;
   Node?: NodeResolvers.Resolvers;
+  Notification?: NotificationResolvers.Resolvers;
   Connection?: ConnectionResolvers.Resolvers;
   Edge?: EdgeResolvers.Resolvers;
   News?: NewsResolvers.Resolvers;

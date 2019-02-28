@@ -1,9 +1,5 @@
 import gql from "graphql-tag";
-import {
-  QuestionFields,
-  CommentFields,
-  AnswerFields
-} from "graphql/gqlFragments";
+import { QuestionFields, CommentFields, AnswerFields } from "graphql/fragments";
 
 export const ADD_QUESTIONS = gql`
   mutation AddQuestionsMutation($questions: [InputQuestion!]) {
