@@ -21,7 +21,8 @@
       "Mutations": ["gqlMutations"],
       "Fragments": ["gqlFragments"],
       "Subscriptions": ["gqlSubscriptions"],
-      "Reusable/*": ["components/reusable/*"]
+      "Reusable/*": ["components/reusable/*"],
+      "GqlClient/*": ["graphql/*"]
     }
   },
   "include": ["./**/*"]

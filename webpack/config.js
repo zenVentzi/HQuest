@@ -65,6 +65,7 @@ module.exports = {
       Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
       Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
       Reusable: path.resolve(process.cwd(), './src/components/reusable'),
+      GqlClient: path.resolve(process.cwd(), './src/graphql'),
     },
     extensions: [
       '*',
