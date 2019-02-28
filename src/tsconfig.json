@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "diagnostics": true,
     "skipLibCheck": true,
-    // "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       // all matching webpack aliases

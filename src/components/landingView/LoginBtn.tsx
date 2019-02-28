@@ -8,7 +8,6 @@ import { Mutation, MutationFunc, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 import styled from "styled-components";
 import { saveLoggedUserData } from "Utils";
-import console = require("console");
 
 interface LoginBtnProps {
   onLoggedIn: () => any;

@@ -1,5 +1,9 @@
 import gql from "graphql-tag";
-import { QuestionFields, CommentFields, AnswerFields } from "graphql/fragments";
+import {
+  QuestionFields,
+  CommentFields,
+  AnswerFields
+} from "GqlClient/fragments";
 
 export const MOVE_ANSWER_POSITION = gql`
   mutation moveAnswerPosition($position: Int!, $answerId: ID!) {

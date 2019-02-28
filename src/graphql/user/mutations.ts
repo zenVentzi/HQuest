@@ -1,5 +1,9 @@
 import gql from "graphql-tag";
-import { QuestionFields, CommentFields, AnswerFields } from "graphql/fragments";
+import {
+  QuestionFields,
+  CommentFields,
+  AnswerFields
+} from "GqlClient/fragments";
 
 export const LOGIN_MUTATION = gql`
   mutation LoginMutation($email: String!, $name: String!) {
