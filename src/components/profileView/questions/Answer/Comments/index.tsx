@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Formik, Form, ErrorMessage } from 'formik';
-import Textarea from 'react-textarea-autosize';
-import { toast } from 'react-toastify';
-import Comment from './Comment';
-import CommentsGql from './CommentsGql';
-import Panel from '../Panel';
+import React, { Component } from "react";
+import styled from "styled-components";
+import { Formik, Form, ErrorMessage } from "formik";
+import Textarea from "react-textarea-autosize";
+import { toast } from "react-toastify";
+import Comment from "./Comment";
+import CommentsGql from "./CommentsGql";
+import Panel from "../Panel";
+import { MutationFn } from "react-apollo";
 
 const CommentInput = styled(Textarea)`
   /* margin-top: 2em; */
@@ -21,28 +22,43 @@ const ErrorText = styled.div`
   margin-bottom: 1em;
 `;
 
-class Comments extends Component {
-  state = { comments: this.props.comments || [] };
+interface CommentsProps {
+  comments: any[];
+  answerId: string;
+  onAddComment: () => void;
+  onRemoveComment: () => void;
+  scrollToComment?: string;
+}
 
+class Comments extends Component<CommentsProps, any> {
+  state = { comments: this.props.comments || [] };
+  highlightedComment: any;
+  panel: any;
+
+  // @ts-ignore
   componentDidMount(prevProps, prevState) {
     if (this.highlightedComment) {
       this.panel.scrollTop = this.highlightedComment.offsetTop;
     }
   }
 
-  updateComments = ({ newComment, removedComment, editedComment }) => {
+  updateComments = (
+    newComment?: any,
+    removedComment?: any,
+    editedComment?: any
+  ) => {
     if (newComment) {
-      let comments = [];
+      let comments: any[] = [];
       [...comments] = this.state.comments;
       comments.push(newComment);
-      this.setState(prevState => ({ ...prevState, comments }));
+      this.setState((prevState: any) => ({ ...prevState, comments }));
     } else if (removedComment) {
       const [...comments] = this.state.comments.filter(
         c => c.id !== removedComment.id
       );
-      this.setState(prevState => ({
+      this.setState((prevState: any) => ({
         ...prevState,
-        comments,
+        comments
       }));
     } else if (editedComment) {
       const [...comments] = this.state.comments;
@@ -51,60 +67,76 @@ class Comments extends Component {
           comments[i] = editedComment;
         }
       }
-      this.setState(prevState => ({ ...prevState, comments }));
+      this.setState((prevState: any) => ({ ...prevState, comments }));
     }
   };
 
-  validateForm = values => {
-    const errors = {};
+  validateForm = (values: any) => {
+    const errors: any = {};
     if (values.comment.length < 7)
-      errors.comment = 'Comment must be at least 7 characters';
+      errors.comment = "Comment must be at least 7 characters";
 
     return errors;
   };
 
-  onSubmitForm = commentAnswerMutation => async (
-    values,
-    { setSubmitting, resetForm }
+  onSubmitForm = (commentAnswerMutation: MutationFn) => async (
+    values: any,
+    { setSubmitting, resetForm }: any
   ) => {
     // console.log(commentAnswerMutation);
     const { answerId, onAddComment } = this.props;
     const variables = {
       answerId,
-      comment: values.comment,
+      comment: values.comment
     };
-    const { data } = await commentAnswerMutation({ variables });
-    const newComment = data.commentAnswer;
-    this.updateComments({ newComment });
-    toast.success('Comment added!');
+    const res = await commentAnswerMutation({ variables });
+    if (!res) {
+      throw Error("Comment answer mutation failed");
+    }
+    const newComment = res.data.commentAnswer;
+    this.updateComments(newComment);
+    toast.success("Comment added!");
     onAddComment();
     setSubmitting(false);
-    resetForm({ comment: '' });
+    resetForm({ comment: "" });
   };
 
-  onEditComment = ({ editCommentMutation }) => async ({
-    commentId,
-    commentValue,
-  }) => {
+  onEditComment = (editCommentMutation: MutationFn) => async (
+    commentId: string,
+    commentValue: string
+  ) => {
     const { answerId } = this.props;
     const variables = { answerId, commentId, commentValue };
-    const { data } = await editCommentMutation({ variables });
-    const editedComment = data.editComment;
+    const res = await editCommentMutation({ variables });
+    if (!res) {
+      throw Error("Failed edit comment mutation");
+    }
+
+    const editedComment = res.data.editComment;
     this.updateComments({ editedComment });
-    toast.success('Comment edited!');
+    toast.success("Comment edited!");
   };
 
-  onRemoveComment = ({ removeCommentMutation }) => async ({ commentId }) => {
+  onRemoveComment = (removeCommentMutation: MutationFn) => async (
+    commentId: string
+  ) => {
     const { answerId, onRemoveComment } = this.props;
     const variables = { answerId, commentId };
-    const { data } = await removeCommentMutation({ variables });
-    const removedComment = data.removeComment;
+    const res = await removeCommentMutation({ variables });
+    if (!res) {
+      throw Error("removeCommentMutation failed");
+    }
+
+    const removedComment = res.data.removeComment;
     this.updateComments({ removedComment });
     onRemoveComment();
-    toast.success('Comment removed!');
+    toast.success("Comment removed!");
   };
 
-  renderComments = ({ editCommentMutation, removeCommentMutation }) => {
+  renderComments = (
+    editCommentMutation: MutationFn,
+    removeCommentMutation: MutationFn
+  ) => {
     const { scrollToComment } = this.props;
     const { comments } = this.state;
 
@@ -117,15 +149,15 @@ class Comments extends Component {
 
       while (copy.length) {
         const com = copy.pop();
-        const commentProps = {
+        const commentProps: any = {
           key: com.id,
           comment: com,
-          onEdit: this.onEditComment({ editCommentMutation }),
-          onRemove: this.onRemoveComment({ removeCommentMutation }),
+          onEdit: this.onEditComment(editCommentMutation),
+          onRemove: this.onRemoveComment(removeCommentMutation)
         };
 
         if (scrollToComment && scrollToComment === com.id) {
-          commentProps.ref = ref => {
+          commentProps.ref = (ref: any) => {
             this.highlightedComment = ref;
           };
         }
@@ -149,7 +181,7 @@ class Comments extends Component {
               }}
             >
               <Formik
-                initialValues={{ comment: '' }}
+                initialValues={{ comment: "" }}
                 validateOnBlur={false}
                 validate={this.validateForm}
                 // validate={this.validateForm}
@@ -160,18 +192,18 @@ class Comments extends Component {
                   handleChange,
                   submitForm,
                   handleBlur,
-                  isSubmitting,
+                  isSubmitting
                 }) => (
-                  <Form style={{ width: '100%', textAlign: 'center' }}>
+                  <Form style={{ width: "100%", textAlign: "center" }}>
                     <CommentInput
                       name="comment"
                       placeholder="Add a comment..."
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      value={values.comment || ''}
+                      value={values.comment || ""}
                       disabled={isSubmitting}
                       onKeyPress={e => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
+                        if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
                           if (!isSubmitting) submitForm();
                         }
@@ -184,10 +216,7 @@ class Comments extends Component {
                   </Form>
                 )}
               </Formik>
-              {this.renderComments({
-                editCommentMutation: editComment,
-                removeCommentMutation: removeComment,
-              })}
+              {this.renderComments(editComment, removeComment)}
             </Panel>
           );
         }}

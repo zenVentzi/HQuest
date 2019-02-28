@@ -1,8 +1,16 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import { COMMENT_ANSWER, EDIT_COMMENT, REMOVE_COMMENT } from 'Mutations';
+import React, { Component } from "react";
+import { Mutation, MutationFn } from "react-apollo";
+import { COMMENT_ANSWER, EDIT_COMMENT, REMOVE_COMMENT } from "Mutations";
 
-class CommentsGql extends Component {
+interface CommentsGqlProps {
+  children: (
+    commentAnswer: MutationFn,
+    editComment: MutationFn,
+    removeComment: MutationFn
+  ) => any;
+}
+
+class CommentsGql extends Component<CommentsGqlProps> {
   render() {
     const { children } = this.props;
 

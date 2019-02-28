@@ -40,13 +40,19 @@
 
 // export default onClickOutside(CommentOptions);
 
-import React, { Component } from 'react';
-import TextBtn from 'Reusable/TextBtn';
-import IconBtn from 'Reusable/IconBtn';
-import Dropdown from 'Reusable/Dropdown';
-import { CaretDown } from 'styled-icons/fa-solid';
+import React, { Component } from "react";
+import TextBtn from "Reusable/TextBtn";
+import IconBtn from "Reusable/IconBtn";
+import Dropdown from "Reusable/Dropdown";
+import { CaretDown } from "styled-icons/fa-solid";
 
-class CommentOptions extends Component {
+interface CommentOptionsProps {
+  onClickEdit: () => void;
+  onClickRemove: () => void;
+  visible: boolean;
+}
+
+class CommentOptions extends Component<CommentOptionsProps, any> {
   onClickEdit = () => {
     this.props.onClickEdit();
   };
@@ -63,7 +69,7 @@ class CommentOptions extends Component {
       </TextBtn>,
       <TextBtn key="remove" onClick={this.onClickRemove}>
         Remove
-      </TextBtn>,
+      </TextBtn>
     ];
 
     return (
