@@ -9,7 +9,7 @@ module.exports = {
   entry: [
     // 'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
     // 'babel-polyfill',
-    './src/index.jsx',
+    './src/index.tsx',
   ],
   mode: 'development',
   output: {
@@ -32,11 +32,6 @@ module.exports = {
   cache: true,
   module: {
     rules: [
-      // {
-      //   test: /\.(js|jsx)$/,
-      //   exclude: /node_modules/,
-      //   use: ['babel-loader', 'eslint-loader'],
-      // },
       {
         test: /\.(js|jsx|tsx|ts)$/,
         exclude: /node_modules/,
@@ -58,13 +53,13 @@ module.exports = {
   },
   resolve: {
     alias: {
-      Constants: path.resolve(process.cwd(), './src/constants'),
-      Utils: path.resolve(process.cwd(), './src/utils'),
-      Queries: path.resolve(process.cwd(), './src/gqlQueries'),
-      Mutations: path.resolve(process.cwd(), './src/gqlMutations'),
-      Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
-      Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
-      Reusable: path.resolve(process.cwd(), './src/components/reusable'),
+      // Constants: path.resolve(process.cwd(), './src/constants'),
+      // Utils: path.resolve(process.cwd(), './src/utils'),
+      // Queries: path.resolve(process.cwd(), './src/gqlQueries'),
+      // Mutations: path.resolve(process.cwd(), './src/gqlMutations'),
+      // Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
+      // Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
+      // Reusable: path.resolve(process.cwd(), './src/components/reusable'),
       GqlClient: path.resolve(process.cwd(), './src/graphql'),
     },
     extensions: [

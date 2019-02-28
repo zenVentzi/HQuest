@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Query } from "react-apollo";
-import { GET_QUESTIONS } from "graphql/gqlQueries";
+import { GET_QUESTIONS } from "GqlClient/question/queries";
 import styled from "styled-components";
 import AnsweredQuestions from "./AnsweredQuestions";
 import QuestionTags from "./Tags";

@@ -4,6 +4,7 @@ import IconBtn from "Reusable/IconBtn";
 import StyledIcon from "Reusable/StyledIcon";
 
 interface LikeBtnProps {
+  isLiked: boolean;
   onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 

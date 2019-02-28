@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { Mutation, MutationFn } from "react-apollo";
-import { ADD_ANSWER, QUESTION_NOT_APPLY } from "graphql/gqlMutations";
+import { QUESTION_NOT_APPLY } from "GqlClient/question/mutations";
+import { ADD_ANSWER } from "GqlClient/question/answer/mutations";
+import {
+  QuestionNotApplyMutation,
+  QuestionNotApplyVariables,
+  AddAnswerMutation,
+  AddAnswerVariables
+} from "GqlClient/autoGenTypes";
 
 interface UnansweredQuestionGqlProps {
   children: (addAnswer: MutationFn, questionNotApply: MutationFn) => any;
@@ -11,10 +18,12 @@ class UnansweredQuestionGql extends Component<UnansweredQuestionGqlProps> {
     const { children } = this.props;
 
     return (
-      <Mutation mutation={ADD_ANSWER}>
+      <Mutation<AddAnswerMutation, AddAnswerVariables> mutation={ADD_ANSWER}>
         {addAnswer => {
           return (
-            <Mutation mutation={QUESTION_NOT_APPLY}>
+            <Mutation<QuestionNotApplyMutation, QuestionNotApplyVariables>
+              mutation={QUESTION_NOT_APPLY}
+            >
               {questionNotApply => {
                 return children(addAnswer, questionNotApply);
               }}
