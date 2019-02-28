@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import Textarea from 'react-textarea-autosize';
-import { Formik, Form, ErrorMessage } from 'formik';
-import styled from 'styled-components';
-import TextBtn from 'Reusable/TextBtn';
+import React, { Component } from "react";
+import Textarea from "react-textarea-autosize";
+import { Formik, Form, ErrorMessage } from "formik";
+import styled from "styled-components";
+import TextBtn from "Reusable/TextBtn";
 
 const StyledEditor = styled(Textarea)`
   /* min-height: min-content; */
@@ -29,9 +29,15 @@ const LeftBtn = styled(TextBtn)`
 `;
 const RightBtn = styled(TextBtn)``;
 
+interface CommentEditorProps {
+  comment: any;
+  onEdit: (newComment: string) => Promise<void>;
+  onCancel: () => void;
+}
+
 /* this component is pretty much the same as AnswerEditor and CommentInput. DRY fix */
 
-class CommentEditor extends Component {
+class CommentEditor extends Component<CommentEditorProps, any> {
   render() {
     const formInitialValues = { comment: this.props.comment };
 
@@ -40,20 +46,20 @@ class CommentEditor extends Component {
         initialValues={formInitialValues}
         validateOnBlur={false}
         validate={values => {
-          const errors = {};
+          const errors: any = {};
           if (values.comment.length < 7)
-            errors.comment = 'Comment must be at least 7 characters';
+            errors.comment = "Comment must be at least 7 characters";
 
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          await this.props.onEdit({ newComment: values.comment });
+          await this.props.onEdit(values.comment);
           // setSubmitting(false);
           // resetForm(formInitialValues);
         }}
       >
         {({ values, handleChange, submitForm, handleBlur, isSubmitting }) => (
-          <Form style={{ width: '100%', textAlign: 'center' }}>
+          <Form style={{ width: "100%", textAlign: "center" }}>
             <StyledEditor
               name="comment"
               onChange={handleChange}
@@ -61,7 +67,7 @@ class CommentEditor extends Component {
               value={values.comment}
               disabled={isSubmitting}
               onKeyPress={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   if (!isSubmitting) submitForm();
                 }

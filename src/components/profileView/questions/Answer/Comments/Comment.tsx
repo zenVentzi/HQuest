@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import User from 'Reusable/UserRow';
-import CommentOptions from './CommentOptions';
-import CommentViewer from './CommentViewer';
-import CommentEditor from './CommentEditor';
+import React, { Component } from "react";
+import styled from "styled-components";
+import User from "Reusable/UserRow";
+import CommentOptions from "./CommentOptions";
+import CommentViewer from "./CommentViewer";
+import CommentEditor from "./CommentEditor";
 
 // const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
 //   cursor: pointer;
@@ -22,27 +22,40 @@ const Header = styled.div`
   width: 100%;
   margin-bottom: 0.5em;
 `;
-class Comment extends Component {
+
+interface CommentPropsPrivate {
+  comment: any;
+  onRemove: (commentId: string) => Promise<void>;
+  onEdit: (commentId: string, commentValue: string) => Promise<void>;
+  size: number;
+  innerRef: any;
+}
+
+class Comment extends Component<CommentPropsPrivate, any> {
   static defaultProps = { size: 1.5 };
   state = { commentHovered: false, viewMode: true };
 
-  onClickOutsideOptions = e => {
-    const isOptionsBtn =
-      e.target === this.optionsBtn || e.target === this.optionsBtn.children[0];
+  onClickOutsideOptions = (e: any) => {
+    const isOptionsBtn = false;
+    // const isOptionsBtn =
+    //   e.target === this.optionsBtn || e.target === this.optionsBtn.children[0];
     if (isOptionsBtn) return;
     this.toggleOptionsDropdown();
   };
 
   onMouseEnter = () => {
-    this.setState(prevState => ({ ...prevState, commentHovered: true }));
+    this.setState((prevState: any) => ({ ...prevState, commentHovered: true }));
   };
 
   onMouseLeave = () => {
-    this.setState(prevState => ({ ...prevState, commentHovered: false }));
+    this.setState((prevState: any) => ({
+      ...prevState,
+      commentHovered: false
+    }));
   };
 
   onRemove = async () => {
-    await this.props.onRemove({ commentId: this.props.comment.id });
+    await this.props.onRemove(this.props.comment.id);
   };
 
   onClickEdit = () => {
@@ -53,17 +66,14 @@ class Comment extends Component {
     this.setState({ ...this.state, viewMode: true });
   };
 
-  onEdit = async ({ newComment }) => {
-    await this.props.onEdit({
-      commentId: this.props.comment.id,
-      commentValue: newComment,
-    });
+  onEdit = async (newComment: string) => {
+    await this.props.onEdit(this.props.comment.id, newComment);
     this.setState({ ...this.state, viewMode: true });
   };
 
   toggleOptionsDropdown = () => {
-    this.setState(prevState => ({
-      showOptionsDropdown: !prevState.showOptionsDropdown,
+    this.setState((prevState: any) => ({
+      showOptionsDropdown: !prevState.showOptionsDropdown
     }));
   };
 
@@ -71,7 +81,7 @@ class Comment extends Component {
     const {
       comment: { user, value },
       size,
-      innerRef,
+      innerRef
     } = this.props;
 
     const { commentHovered, viewMode } = this.state;
@@ -104,6 +114,10 @@ class Comment extends Component {
   }
 }
 
-export default React.forwardRef((props, ref) => (
+// export interface CommentProps extends CommentPropsPrivate {
+//   ref: React.Ref<HTMLDivElement>;
+// }
+
+export default React.forwardRef((props: any, ref) => (
   <Comment innerRef={ref} {...props} />
 ));
