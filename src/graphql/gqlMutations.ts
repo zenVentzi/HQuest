@@ -9,33 +9,12 @@ import {
 export const AUTH_TOKEN = "AUTH_TOKEN";
 export const USER_ID = `USER_ID`;
 
-export const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: String!, $name: String!) {
-    login(email: $email, name: $name) {
-      authToken
-      userId
-    }
-  }
-`;
 export const NOTIFS_MARK_SEEN = gql`
   mutation notifsMarkSeen {
     notifsMarkSeen
   }
 `;
 
-export const EDIT_USER = gql`
-  mutation editUser($input: EditUserInput) {
-    editUser(input: $input) {
-      id
-    }
-  }
-`;
-
-export const ADD_QUESTIONS = gql`
-  mutation AddQuestionsMutation($questions: [InputQuestion!]) {
-    addQuestions(questions: $questions)
-  }
-`;
 export const MOVE_ANSWER_POSITION = gql`
   mutation moveAnswerPosition($position: Int!, $answerId: ID!) {
     moveAnswerPosition(position: $position, answerId: $answerId)
@@ -113,13 +92,4 @@ export const ADD_ANSWER = gql`
     }
   }
   ${AnswerFields}
-`;
-
-export const QUESTION_NOT_APPLY = gql`
-  mutation questionNotApply($questionId: ID!) {
-    questionNotApply(questionId: $questionId) {
-      ...QuestionFields
-    }
-  }
-  ${QuestionFields}
 `;
