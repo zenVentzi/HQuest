@@ -5,7 +5,7 @@ import { ThemeProvider } from "styled-components";
 import { ToastContainer, Zoom, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import ApolloClient from "../ApolloClient";
+import ApolloClient from "../graphql/ApolloClient";
 import ProtectedRoute from "./reusable/ProtectedRoute";
 import Navbar from "./navigation";
 import AdminView from "./adminView";

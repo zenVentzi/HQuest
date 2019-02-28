@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import { Formik, Form, ErrorMessage } from "formik";
 import { Mutation } from "react-apollo";
-import { ADD_QUESTIONS } from "Mutations";
+import { ADD_QUESTIONS } from "graphql/gqlMutations";
 // import StyledView from '../reusable/StyledView';
 import TextBtn from "Reusable/TextBtn";
 

@@ -1,12 +1,12 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 import {
   NotificationFields,
   QuestionFields,
   QuestionConnectionFields,
   CommentFields,
   UserFields,
-  AnswerFields,
-} from 'Fragments';
+  AnswerFields
+} from "graphql/gqlFragments";
 
 export const GET_NEWSFEED = gql`
   query newsfeed {
@@ -56,41 +56,6 @@ export const GET_NEWSFEED = gql`
   }
   ${UserFields}
   ${QuestionFields}
-`;
-
-export const GET_USER = gql`
-  query user($id: ID!) {
-    user(id: $id) {
-      ...UserFields
-    }
-  }
-  ${UserFields}
-`;
-
-export const GET_USERS = gql`
-  query users($match: String) {
-    users(match: $match) {
-      ...UserFields
-    }
-  }
-  ${UserFields}
-`;
-
-export const GET_FOLLOWERS = gql`
-  query followers($userId: ID!) {
-    followers(userId: $userId) {
-      ...UserFields
-    }
-  }
-  ${UserFields}
-`;
-export const GET_FOLLOWING = gql`
-  query following($userId: ID!) {
-    following(userId: $userId) {
-      ...UserFields
-    }
-  }
-  ${UserFields}
 `;
 
 export const GET_ANSWERED_QUESTION = gql`

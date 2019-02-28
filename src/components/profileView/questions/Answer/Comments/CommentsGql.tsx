@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Mutation, MutationFn } from "react-apollo";
-import { COMMENT_ANSWER, EDIT_COMMENT, REMOVE_COMMENT } from "Mutations";
+import {
+  COMMENT_ANSWER,
+  EDIT_COMMENT,
+  REMOVE_COMMENT
+} from "graphql/gqlMutations";
 
 interface CommentsGqlProps {
   children: (

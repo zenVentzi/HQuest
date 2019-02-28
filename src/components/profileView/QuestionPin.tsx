@@ -1,6 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
-import { GET_ANSWERED_QUESTION } from "Queries";
+import { GET_ANSWERED_QUESTION } from "graphql/gqlQueries";
 import AnsweredQuestion from "./questions/AnsweredQuestion";
 import { RouteComponentProps } from "react-router";
 

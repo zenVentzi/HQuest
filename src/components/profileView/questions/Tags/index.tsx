@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Query } from "react-apollo";
-import { GET_QUESTIONS_TAGS } from "Queries";
+import { GET_QUESTIONS_TAGS } from "graphql/gqlQueries";
 import Anchor from "Reusable/Anchor";
 import AllTags from "./AllTags";
 import MatchingTags from "./MatchingTags";
