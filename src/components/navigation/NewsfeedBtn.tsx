@@ -3,7 +3,7 @@ import IconLink from "Reusable/IconLink";
 import { Home } from "styled-icons/material/Home";
 
 const NewsfeedBtn = () => {
-  return <IconLink icon={Home} to="/newsfeed" />;
+  return <IconLink icon={Home} size="2em" to="/newsfeed" />;
 };
 
 export default NewsfeedBtn;

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Query } from "react-apollo";
 import distanceInWords from "date-fns/distance_in_words";
 import shortid from "shortid";
-import { GET_NEWSFEED } from "graphql/gqlQueries";
+import { GET_NEWSFEED } from "GqlClient/newsfeed/queries";
 import StyledViewRaw from "../reusable/StyledView";
 import News from "./News";
 

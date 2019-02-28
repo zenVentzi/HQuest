@@ -46,7 +46,7 @@ interface AnsweredQuestionProps {
   scrollToComment?: string;
   totalQuestionsCount: number;
   isPersonal: boolean;
-  style: CSSProperties;
+  style?: CSSProperties;
 }
 
 class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {

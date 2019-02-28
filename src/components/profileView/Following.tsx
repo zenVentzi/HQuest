@@ -1,7 +1,7 @@
 import React from "react";
 import { Query } from "react-apollo";
 import User from "Reusable/UserRow";
-import { GET_FOLLOWING } from "graphql/gqlQueries";
+import { GET_FOLLOWING } from "GqlClient/user/queries";
 import WhitePanel from "Reusable/WhitePanel";
 
 interface FollowingProps {

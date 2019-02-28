@@ -57,7 +57,13 @@ const NewAnswerEdition = ({
         <HeaderBottom>{text}</HeaderBottom>
       </Header>
       <Body>
-        <AnsweredQuestion collapseComments question={question} />
+        <AnsweredQuestion
+          question={question}
+          showComments={false}
+          isPersonal={false}
+          totalQuestionsCount={0}
+          //TODO fix hardcoded values
+        />
       </Body>
     </NewAnswerWrapper>
   );

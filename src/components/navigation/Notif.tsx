@@ -58,7 +58,7 @@ const getTime = (createdOn: string) => {
   return `${res} ago`;
 };
 
-const getLink = notif => {
+const getLink = (notif: any) => {
   const { performerId, questionId, commentId } = notif;
   const loggedUsrId = getLoggedUserId();
 

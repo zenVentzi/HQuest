@@ -10,9 +10,9 @@ const StyledLink = styled(UndecoratedLink)`
 `;
 
 interface TextLinkProps {
-  children: React.ReactChildren;
+  children: any;
   to: History.LocationDescriptor;
-  onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
 
 // TODO remove ref if not needed

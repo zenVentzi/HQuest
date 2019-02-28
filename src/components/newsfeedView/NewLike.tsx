@@ -86,7 +86,12 @@ const NewLike = ({
         )}
       </Header>
       <Body>
-        <AnsweredQuestion question={question} />
+        <AnsweredQuestion
+          question={question}
+          isPersonal={false}
+          showComments={false}
+          totalQuestionsCount={0} /* TODO: Fix the hardcoded values */
+        />
       </Body>
     </NewLikeWrapper>
   );
