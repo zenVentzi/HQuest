@@ -1,5 +1,9 @@
 import gql from "graphql-tag";
-import { QuestionFields, CommentFields, AnswerFields } from "graphql/fragments";
+import {
+  QuestionFields,
+  CommentFields,
+  AnswerFields
+} from "GqlClient/fragments";
 
 // TODO return either Answer or Comment
 export const COMMENT_ANSWER = gql`

@@ -6,7 +6,7 @@ import {
   CommentFields,
   UserFields,
   AnswerFields
-} from "graphql/fragments";
+} from "GqlClient/fragments";
 
 export const GET_USER = gql`
   query user($id: ID!) {

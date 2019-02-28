@@ -12,6 +12,7 @@ import { getMainDefinition } from "apollo-utilities";
 import introspectionQueryResultData from "./fragmentTypes.json";
 
 import { getAuthToken, deleteLoggedUserData } from "../utils";
+import console = require("console");
 
 const uploadLink = createUploadLink({
   uri: "http://localhost:4000/graphql"
@@ -19,6 +20,7 @@ const uploadLink = createUploadLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = getAuthToken();
+  console.log(`apollo client ${token}`);
   return {
     headers: {
       ...headers,
@@ -34,9 +36,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       console.log(error);
 
       if (error.extensions.code === "UNAUTHENTICATED") {
-        deleteLoggedUserData();
+        // deleteLoggedUserData();
         // @ts-ignore
-        window.location = "/";
+        // window.location = "/";
       }
     });
   }

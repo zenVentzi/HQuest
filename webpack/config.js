@@ -53,13 +53,13 @@ module.exports = {
   },
   resolve: {
     alias: {
-      // Constants: path.resolve(process.cwd(), './src/constants'),
-      // Utils: path.resolve(process.cwd(), './src/utils'),
+      Constants: path.resolve(process.cwd(), './src/constants'),
+      Utils: path.resolve(process.cwd(), './src/utils'),
       // Queries: path.resolve(process.cwd(), './src/gqlQueries'),
       // Mutations: path.resolve(process.cwd(), './src/gqlMutations'),
       // Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
       // Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
-      // Reusable: path.resolve(process.cwd(), './src/components/reusable'),
+      Reusable: path.resolve(process.cwd(), './src/components/reusable'),
       GqlClient: path.resolve(process.cwd(), './src/graphql'),
     },
     extensions: [
