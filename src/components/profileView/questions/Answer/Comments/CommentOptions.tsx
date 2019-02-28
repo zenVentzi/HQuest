@@ -75,7 +75,14 @@ class CommentOptions extends Component<CommentOptionsProps, any> {
     return (
       <Dropdown
         pivot="right"
-        dropBtn={<IconBtn icon={CaretDown} size="0.8em" visible={visible} />}
+        dropBtn={
+          <IconBtn
+            icon={CaretDown}
+            size="0.8em"
+            visible={visible}
+            onClick={() => {}}
+          />
+        }
         items={options}
       />
     );

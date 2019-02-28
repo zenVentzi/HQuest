@@ -62,7 +62,14 @@ const NewComment = ({
         )}
       </Header>
       <Body>
-        <AnsweredQuestion scrollToComment={commentId} question={question} />
+        <AnsweredQuestion
+          scrollToComment={commentId}
+          question={question}
+          totalQuestionsCount={0}
+          isPersonal={false}
+          showComments={false}
+          // TODO fix hardcoded values
+        />
       </Body>
     </NewCommentWrapper>
   );

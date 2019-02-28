@@ -1,6 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
-import { GET_ANSWERED_QUESTION } from "graphql/gqlQueries";
+import { GET_ANSWERED_QUESTION } from "GqlClient/question/queries";
 import AnsweredQuestion from "./questions/AnsweredQuestion";
 import { RouteComponentProps } from "react-router";
 
@@ -29,7 +29,12 @@ const QuestionPin = ({
         }
 
         return (
-          <AnsweredQuestion showComments editable={editable} question={q} />
+          <AnsweredQuestion
+            showComments
+            isPersonal={editable}
+            totalQuestionsCount={0} // FIXME: fix that shit
+            question={q}
+          />
         );
       }}
     </Query>

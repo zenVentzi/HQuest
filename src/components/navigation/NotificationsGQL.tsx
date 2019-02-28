@@ -1,8 +1,8 @@
 import React from "react";
 import { Query, Mutation, MutationFn } from "react-apollo";
-import { GET_NOTIFICATIONS } from "graphql/gqlQueries";
-import { NOTIFS_MARK_SEEN } from "graphql/gqlMutations";
-import { NEW_NOTIFICATION } from "graphql/gqlSubscriptions";
+import { GET_NOTIFICATIONS } from "GqlClient/notification/queries";
+import { NOTIFS_MARK_SEEN } from "GqlClient/notification/mutations";
+import { NEW_NOTIFICATION } from "GqlClient/notification/subscriptions";
 import { getLoggedUserId } from "Utils";
 import { ApolloError } from "apollo-client";
 

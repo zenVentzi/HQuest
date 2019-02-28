@@ -4,7 +4,7 @@ import {
   COMMENT_ANSWER,
   EDIT_COMMENT,
   REMOVE_COMMENT
-} from "graphql/gqlMutations";
+} from "GqlClient/question/answer/comment/mutations";
 
 interface CommentsGqlProps {
   children: (

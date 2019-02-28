@@ -17,7 +17,7 @@ class Notifications extends Component<NotificationsProps, NotificationsState> {
     showDropdown: false
   };
 
-  notifBtn = React.createRef();
+  notifBtn = React.createRef<HTMLDivElement>();
 
   onClickNotification = () => {
     this.toggleDropdown();
