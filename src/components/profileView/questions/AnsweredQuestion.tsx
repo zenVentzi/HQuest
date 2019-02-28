@@ -185,7 +185,7 @@ class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {
     }));
   };
 
-  onEditComment: any;
+  // onEditComment: any;
 
   toggleLikes = () => {
     this.setState((prevState: any) => ({
@@ -299,17 +299,12 @@ class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {
               </Row>
               {showAnswerEditor ? (
                 <AnswerEditor
-                  questionType={question.type}
                   answer={question.answer}
-                  possibleAnswers={question.possibleAnswers}
+                  onClickDoesNotApply={() => {}}
                   onClickSave={this.onSaveAnswer(editAnswer)}
                 />
               ) : (
-                <AnswerViewer
-                  questionType={question.type}
-                  answer={question.answer}
-                  possibleAnswers={question.possibleAnswers}
-                />
+                <AnswerViewer answer={question.answer} />
               )}
               {showPositionEditor && (
                 <PositionEditor
@@ -352,7 +347,7 @@ class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {
                   answerId={question.answer.id}
                   scrollToComment={scrollToComment}
                   onAddComment={this.incrementNumOfComments}
-                  onEditComment={this.onEditComment}
+                  // onEditComment={this.onEditComment}
                   onRemoveComment={this.decrementNumOfComments}
                 />
               )}

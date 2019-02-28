@@ -59,8 +59,9 @@ class UnansweredQuestion extends Component<UnansweredQuestionProps> {
           <StyledQuestion style={style}>
             <Question question={question.value} />
             <AnswerEditor
-              onClickSave={this.onClickSave}
-              onClickDoesNotApply={this.onClickDoesNotApply}
+              onClickSave={this.onClickSave(addAnswer)}
+              onClickDoesNotApply={this.onClickDoesNotApply(questionNotApply)}
+              answer={question.answer}
             />
           </StyledQuestion>
         )}

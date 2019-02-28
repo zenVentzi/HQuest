@@ -4,6 +4,7 @@ import Liker from "./Liker";
 
 interface LikesProps {
   likes: any;
+  onClose: () => void;
 }
 
 const Likes = ({ likes }: LikesProps) => {

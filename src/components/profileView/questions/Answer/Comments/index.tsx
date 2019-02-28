@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import styled from "styled-components";
 import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
@@ -26,21 +26,24 @@ interface CommentsProps {
   comments: any[];
   answerId: string;
   onAddComment: () => void;
+  // onEditComment: () => void;
   onRemoveComment: () => void;
   scrollToComment?: string;
 }
 
-class Comments extends Component<CommentsProps, any> {
+class Comments extends React.Component<CommentsProps, {}> {
   state = { comments: this.props.comments || [] };
   highlightedComment: any;
   panel: any;
 
-  // @ts-ignore
-  componentDidMount(prevProps, prevState) {
-    if (this.highlightedComment) {
-      this.panel.scrollTop = this.highlightedComment.offsetTop;
-    }
-  }
+  // TODO: IMPORTANT. This is commented out because of bad react typings
+  // it should NOT be
+
+  // componentDidMount(prevProps, prevState) {
+  //   if (this.highlightedComment) {
+  //     this.panel.scrollTop = this.highlightedComment.offsetTop;
+  //   }
+  // }
 
   updateComments = (
     newComment?: any,

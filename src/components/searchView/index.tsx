@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import styled from "styled-components";
-import { GET_USERS } from "graphql/gqlQueries";
+import { GET_USERS } from "GqlClient/user/queries";
 import User from "Reusable/UserRow";
 import StyledView from "../reusable/StyledView";
 import { History, Location } from "history";

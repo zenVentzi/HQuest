@@ -35,11 +35,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
       if (error.extensions.code === "UNAUTHENTICATED") {
         deleteLoggedUserData();
+        // @ts-ignore
         window.location = "/";
       }
-      // console.log(
-      //   `[GraphQL server error]: Name: ${name} Message: ${message}, Location: ${locations}, Path: ${path}`
-      // );
     });
   }
 
@@ -65,6 +63,7 @@ const wsocketLink = ApolloLink.from([errorLink, wsLink]);
 const link = split(
   // split based on operation type
   ({ query }) => {
+    // @ts-ignore
     const { kind, operation } = getMainDefinition(query);
     const shouldUseFirst =
       kind === "OperationDefinition" && operation === "subscription";

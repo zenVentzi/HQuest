@@ -5,7 +5,7 @@ import {
   REMOVE_ANSWER,
   MOVE_ANSWER_POSITION,
   LIKE_ANSWER
-} from "graphql/gqlMutations";
+} from "GqlClient/question/answer/mutations";
 
 interface AnsweredQuestionGqlProps {
   children: (

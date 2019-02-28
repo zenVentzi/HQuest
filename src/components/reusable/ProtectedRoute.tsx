@@ -5,6 +5,7 @@ import { ComponentConstructor } from "react-onclickoutside";
 
 interface ProtectedRouteProps {
   component: ComponentConstructor<any>;
+  path: string;
 }
 
 const ProtectedRoute = ({
