@@ -3,7 +3,7 @@ import { Query } from "react-apollo";
 import styled from "styled-components";
 import shortid from "shortid";
 import { Route, Switch, RouteComponentProps } from "react-router-dom";
-import { GET_USER } from "graphql/gqlQueries";
+import { GET_USER } from "GqlClient/user/queries";
 import StyledViewRaw from "../reusable/StyledView";
 import ProfileViewer from "./ProfileViewer";
 import ProfileEditor from "./ProfileEditor";
