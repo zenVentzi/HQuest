@@ -14,10 +14,26 @@ const overrideTheme = (neww: any) => (current: any) => {
   const res = { ...current, ...neww };
   return res;
 };
+class UserLoginEvent extends EventTarget {
+  login(authToken: string, userId: string) {
+    this.dispatchEvent(
+      new CustomEvent("login", { detail: { authToken, userId } })
+    );
+  }
+
+  onLogin(listener: (authToken: string, userId: string) => void) {
+    this.addEventListener("login", (event: CustomEvent) => {
+      listener(event.detail.authToken, event.detail.userId);
+    });
+  }
+}
+
+const loginEvent = new UserLoginEvent();
 
 const saveLoggedUserData = (userId: string, authToken: string) => {
   localStorage.setItem(USER_ID, userId);
   localStorage.setItem(AUTH_TOKEN, authToken);
+  loginEvent.login(authToken, userId);
 };
 
 const deleteLoggedUserData = () => {
@@ -38,9 +54,10 @@ const inverseTheme = (theme: any) => {
 export {
   getAuthToken,
   getLoggedUserId,
+  saveLoggedUserData,
+  deleteLoggedUserData,
+  loginEvent,
   overrideTheme,
   inverseColor,
-  inverseTheme,
-  saveLoggedUserData,
-  deleteLoggedUserData
+  inverseTheme
 };

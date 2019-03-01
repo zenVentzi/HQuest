@@ -11,8 +11,8 @@ import { onError } from "apollo-link-error";
 import { getMainDefinition } from "apollo-utilities";
 import introspectionQueryResultData from "./fragmentTypes.json";
 
-import { getAuthToken, deleteLoggedUserData } from "../utils";
-import console = require("console");
+import { getAuthToken, deleteLoggedUserData, loginEvent } from "../utils";
+import { Middleware, SubscriptionClient } from "subscriptions-transport-ws";
 
 const uploadLink = createUploadLink({
   uri: "http://localhost:4000/graphql"
@@ -20,7 +20,6 @@ const uploadLink = createUploadLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = getAuthToken();
-  console.log(`apollo client ${token}`);
   return {
     headers: {
       ...headers,
@@ -49,14 +48,31 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000/graphql`,
-  options: {
-    reconnect: true,
-    connectionParams: {
-      authToken: getAuthToken()
-    }
+const wsMiddlewares: Middleware[] = [];
+
+const subscriptionMiddleware: Middleware = {
+  applyMiddleware: async (options, next) => {
+    console.log("middlware used");
+    options.authToken = getAuthToken();
+    next();
   }
+};
+
+wsMiddlewares.push(subscriptionMiddleware);
+
+const subClient = new SubscriptionClient(`ws://localhost:4000/graphql`, {
+  reconnect: true,
+  connectionParams: () => ({
+    authToken: getAuthToken()
+  })
+});
+
+subClient.use([subscriptionMiddleware]);
+const wsLink = new WebSocketLink(subClient);
+
+loginEvent.onLogin((authToken, userId) => {
+  subClient.close(true);
+  console.log(`onlogin apollo client`);
 });
 
 const httpLink = ApolloLink.from([errorLink, authLink, uploadLink]);
