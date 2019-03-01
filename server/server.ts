@@ -6,7 +6,7 @@ import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
 import path from "path";
 import app from "./App";
 import { connect as mongooseConnect } from "./db";
-import { createContext, onWebScoketConnect } from "./utils";
+import { createContext } from "./utils";
 dotenv.config();
 
 const typesArray = fileLoader(path.join(__dirname, "./graphql/**/*.graphql"));
@@ -26,9 +26,6 @@ mongooseConnect(() => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    subscriptions: {
-      // onConnect: onWebScoketConnect
-    },
     context: createContext
   });
   server.applyMiddleware({ app });

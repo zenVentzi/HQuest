@@ -73,14 +73,14 @@ type OnWebScoketConnect = (
   connectionParams: ConnectionParams
 ) => Promise<ApolloContext>;
 
-const onWebScoketConnect: OnWebScoketConnect = async connectionParams => {
-  const context: ApolloContext = { services };
+// const onWebScoketConnect: OnWebScoketConnect = async connectionParams => {
+//   const context: ApolloContext = { services };
 
-  if (!connectionParams.authToken) return context;
-  const verifiedUser = await getVerifiedUser(connectionParams.authToken);
-  context.user = verifiedUser!; // do not use ! refactor
-  return context;
-};
+//   if (!connectionParams.authToken) return context;
+//   const verifiedUser = await getVerifiedUser(connectionParams.authToken);
+//   context.user = verifiedUser!; // do not use ! refactor
+//   return context;
+// };
 
 type CreateContext = ({
   req,
@@ -109,6 +109,6 @@ const createContext: CreateContext = async ({ req, connection }) => {
 export {
   getAvatarSrcAsync,
   getVerifiedUser,
-  onWebScoketConnect,
+  // onWebScoketConnect,
   createContext
 };
