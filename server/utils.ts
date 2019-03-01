@@ -36,9 +36,13 @@ const getAvatarSrcAsync: GetAvatarSrcAsync = async userId => {
   return src;
 };
 
-type GetVerifiedUser = (authToken: string) => Promise<null | ContextUser>;
+type GetVerifiedUser = (
+  authToken: string | undefined
+) => Promise<undefined | ContextUser>;
 
 const getVerifiedUser: GetVerifiedUser = async authToken => {
+  if (!authToken) return undefined;
+
   let token = authToken;
   if (token.startsWith("Bearer ")) {
     // Remove Bearer from string
@@ -52,7 +56,7 @@ const getVerifiedUser: GetVerifiedUser = async authToken => {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
         // reject(err);
-        resolve(null);
+        resolve(undefined);
       } else {
         resolve(decoded as ContextUser);
         // jwt typings do not allow me to give type to decoded
@@ -83,17 +87,21 @@ type CreateContext = ({
   connection
 }: {
   req: Request;
-  connection: { context: ApolloContext };
-}) => ApolloContext;
+  connection: any;
+}) => Promise<ApolloContext>;
 
-const createContext: CreateContext = ({ req, connection }) => {
+const createContext: CreateContext = async ({ req, connection }) => {
   if (connection) {
-    return connection.context;
+    const context: ApolloContext = {
+      services,
+      user: await getVerifiedUser(connection.context.authToken)
+    };
+    return context;
   }
 
   const context: ApolloContext = {
     services,
-    user: req.user
+    user: await getVerifiedUser(req.headers.authorization)
   };
   return context;
 };

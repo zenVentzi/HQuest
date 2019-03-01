@@ -11,21 +11,21 @@ interface AuthMiddleware {
   (req: Request, res: Response, next: NextFunction): void;
 }
 
-const auth: AuthMiddleware = async (req, res, next) => {
-  const authToken = req.headers.authorization;
-  if (authToken) {
-    const user = await getVerifiedUser(authToken);
-    if (user) {
-      req.user = user;
-    }
-  }
+// const auth: AuthMiddleware = async (req, res, next) => {
+//   const authToken = req.headers.authorization;
+//   if (authToken) {
+//     const user = await getVerifiedUser(authToken);
+//     if (user) {
+//       req.user = user;
+//     }
+//   }
 
-  next();
-};
+//   next();
+// };
 
 const app = express();
 
-app.use(bodyParser.json(), auth);
+// app.use(bodyParser.json(), auth);
 app.use("/public", express.static("public"));
 app.use(
   require("webpack-dev-middleware")(compiler, {

@@ -27,7 +27,7 @@ mongooseConnect(() => {
     typeDefs,
     resolvers,
     subscriptions: {
-      onConnect: onWebScoketConnect
+      // onConnect: onWebScoketConnect
     },
     context: createContext
   });
