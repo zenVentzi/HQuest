@@ -1,27 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
-const path = require("path");
-const bodyParser = require("body-parser");
-const webpack = require("webpack");
-const { getVerifiedUser } = require("./utils");
+import path from "path";
+import bodyParser from "body-parser";
+import webpack from "webpack";
+import { getVerifiedUser } from "./utils";
 const webpackConfig = require(process.cwd() + "/webpack/config.js");
 
 const compiler = webpack(webpackConfig);
-
-interface AuthMiddleware {
-  (req: Request, res: Response, next: NextFunction): void;
-}
-
-// const auth: AuthMiddleware = async (req, res, next) => {
-//   const authToken = req.headers.authorization;
-//   if (authToken) {
-//     const user = await getVerifiedUser(authToken);
-//     if (user) {
-//       req.user = user;
-//     }
-//   }
-
-//   next();
-// };
 
 const app = express();
 
