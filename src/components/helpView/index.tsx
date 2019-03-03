@@ -1,9 +1,7 @@
-import React, { Component } from 'react';
+import React from "react";
 
-class HelpView extends Component {
-  render() {
-    return <div>help page</div>;
-  }
-}
+const HelpView = () => {
+  return <div>help page</div>;
+};
 
 export default HelpView;

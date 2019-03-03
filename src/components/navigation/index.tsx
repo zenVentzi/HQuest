@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { getLoggedUserId } from "Utils";
 import NavContainer from "./NavContainer";
 import NavLeft from "./NavLeft";
@@ -16,47 +16,44 @@ interface NavbarState {
   isHidden: boolean;
 }
 
-class Navbar extends Component<NavbarProps, NavbarState> {
-  private prevScrollY: number;
-  state = { isHidden: false };
+const Navbar = (props: NavbarProps) => {
+  let prevScrollY: number;
+  // state = { isHidden: false };
 
-  componentDidMount() {
-    window.addEventListener("scroll", this.hideBar);
-  }
+  const [isHidden, setIsHidden] = useState(false);
 
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.hideBar);
-  }
+  useEffect(() => {
+    const onScroll = () => {
+      window.scrollY > prevScrollY
+        ? !isHidden && setIsHidden(true)
+        : isHidden && setIsHidden(false);
 
-  hideBar = () => {
-    const { isHidden } = this.state;
+      prevScrollY = window.scrollY;
+    };
 
-    window.scrollY > this.prevScrollY
-      ? !isHidden && this.setState({ isHidden: true })
-      : isHidden && this.setState({ isHidden: false });
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  });
 
-    this.prevScrollY = window.scrollY;
-  };
-  render() {
-    const isUserLogged = !!getLoggedUserId();
-    const { isHidden } = this.state;
+  const isUserLogged = !!getLoggedUserId();
 
-    return isHidden ? null : (
-      <NavContainer>
-        <NavLeft>{isUserLogged && <Search />}</NavLeft>
-        <NavRight>
-          {isUserLogged && (
-            <Fragment>
-              <NewsfeedBtn />
-              <Profile />
-              <Notifications />
-              <Menu />
-            </Fragment>
-          )}
-        </NavRight>
-      </NavContainer>
-    );
-  }
-}
+  return isHidden ? null : (
+    <NavContainer>
+      <NavLeft>{isUserLogged && <Search />}</NavLeft>
+      <NavRight>
+        {isUserLogged && (
+          <>
+            <NewsfeedBtn />
+            <Profile />
+            <Notifications />
+            <Menu />
+          </>
+        )}
+      </NavRight>
+    </NavContainer>
+  );
+};
 
 export default Navbar;
