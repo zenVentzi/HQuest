@@ -18,7 +18,6 @@ interface NavbarState {
 
 const Navbar = (props: NavbarProps) => {
   let prevScrollY: number;
-  // state = { isHidden: false };
 
   const [isHidden, setIsHidden] = useState(false);
 
@@ -35,7 +34,7 @@ const Navbar = (props: NavbarProps) => {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  });
+  }, []);
 
   const isUserLogged = !!getLoggedUserId();
 
