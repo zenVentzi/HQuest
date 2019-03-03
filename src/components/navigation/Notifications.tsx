@@ -1,81 +1,72 @@
-import React, { Component } from "react";
+import React, { useState, useRef } from "react";
 import NotifBtn from "./NotifBtn";
 import NotifDropdown from "./NotifDropdown";
 import NavItem from "./NavItem";
 import NotificationsGQL from "./NotificationsGQL";
+import { MutationFn } from "react-apollo";
 
 const getNumOfSeen = (notifications: any[]) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 interface NotificationsProps {}
-interface NotificationsState {
-  showDropdown: boolean;
-}
+const Notifications = (props: NotificationsProps) => {
+  const [showDropdown, setShowDroddown] = useState(false);
+  const notifBtn = useRef<HTMLDivElement>(null);
+  // notifBtn = React.createRef<HTMLDivElement>();
 
-class Notifications extends Component<NotificationsProps, NotificationsState> {
-  state = {
-    showDropdown: false
+  const onClickNotification = () => {
+    toggleDropdown();
   };
 
-  notifBtn = React.createRef<HTMLDivElement>();
-
-  onClickNotification = () => {
-    this.toggleDropdown();
-  };
-
-  onClickOutsideDropdown = (e: any) => {
-    const isNotifBtn = this.isTargetNotifBtn(e.target);
+  const onClickOutsideDropdown = (e: MouseEvent) => {
+    const isNotifBtn = isTargetNotifBtn(e.target);
     if (isNotifBtn) return;
-    this.toggleDropdown();
+    toggleDropdown();
   };
 
-  onClick = (markSeen: any) => async () => {
-    this.toggleDropdown();
+  const onClick = (markSeen: MutationFn) => async () => {
+    toggleDropdown();
     await markSeen();
   };
 
-  isTargetNotifBtn = (target: any) => {
+  const isTargetNotifBtn = (target: EventTarget) => {
     // TODO simplify
-    const buttonWrapper = this.notifBtn.current as any;
+    const buttonWrapper = notifBtn.current;
     const btnChildren = buttonWrapper.querySelectorAll("*");
 
+    //@ts-ignore
     return target === buttonWrapper || [...btnChildren].includes(target);
   };
 
-  toggleDropdown = () => {
-    const current = this.state.showDropdown;
-    this.setState({ showDropdown: !current });
+  const toggleDropdown = () => {
+    setShowDroddown(!showDropdown);
   };
 
-  render() {
-    const { showDropdown } = this.state;
+  return (
+    <NotificationsGQL>
+      {(loading, error, notifications, markSeen) => {
+        const dropdownProps = {
+          loading,
+          error,
+          notifications,
+          onClickOutside: onClickOutsideDropdown,
+          onClickNotification: onClickNotification
+        };
+        const totalUnseen = getNumOfSeen(notifications);
 
-    return (
-      <NotificationsGQL>
-        {(loading, error, notifications, markSeen) => {
-          const dropdownProps = {
-            loading,
-            error,
-            notifications,
-            onClickOutside: this.onClickOutsideDropdown,
-            onClickNotification: this.onClickNotification
-          };
-          const totalUnseen = getNumOfSeen(notifications);
-
-          return (
-            <NavItem>
-              <NotifBtn
-                ref={this.notifBtn}
-                onClick={this.onClick(markSeen)}
-                totalUnseen={totalUnseen}
-              />
-              {showDropdown && <NotifDropdown {...dropdownProps} />}
-            </NavItem>
-          );
-        }}
-      </NotificationsGQL>
-    );
-  }
-}
+        return (
+          <NavItem>
+            <NotifBtn
+              ref={notifBtn}
+              onClick={onClick(markSeen)}
+              totalUnseen={totalUnseen}
+            />
+            {showDropdown && <NotifDropdown {...dropdownProps} />}
+          </NavItem>
+        );
+      }}
+    </NotificationsGQL>
+  );
+};
 
 export default Notifications;
