@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useRef } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -31,17 +31,12 @@ const CustomTextInput = styled(TextInput)`
 `;
 
 interface CustomSearchProps extends RouteComponentProps {}
-interface CustomSearchState {}
 
-class CustomSearch extends Component<CustomSearchProps, CustomSearchState> {
-  private datalistRef: React.RefObject<HTMLDataListElement>;
-  constructor(props: CustomSearchProps) {
-    super(props);
-    this.datalistRef = React.createRef();
-  }
+const CustomSearch = (props: CustomSearchProps) => {
+  const datalistRef = useRef<HTMLDataListElement>();
 
-  search = (username: string) => {
-    const { history } = this.props;
+  const search = (username: string) => {
+    const { history } = props;
     history.push("/search", { username });
   };
 
@@ -49,12 +44,12 @@ class CustomSearch extends Component<CustomSearchProps, CustomSearchState> {
   problem: when click enter over a result, it doesn't submit the form
   */
 
-  isDatalistSelected = (inputValue: string) => {
+  const isDatalistSelected = (inputValue: string) => {
     // FIXME: it returns true incorrectly when the input is typed from user
     // possible not so hacky solution is to create my own dropdown
     let res = false;
-    if (this.datalistRef.current) {
-      const options = this.datalistRef.current.childNodes;
+    if (datalistRef.current) {
+      const options = datalistRef.current.childNodes;
       options.forEach(opt => {
         // used to be opt.value before typescript, possibly incorrect typings
         if (opt.nodeValue === inputValue) {
@@ -66,12 +61,10 @@ class CustomSearch extends Component<CustomSearchProps, CustomSearchState> {
     return res;
   };
 
-  canShowDatalist = (inputValue: string) => {
-    // console.log(this.isOptionSelected({ inputValue }));
+  const canShowDatalist = (inputValue: string) => {
+    // console.log(isOptionSelected({ inputValue }));
     return (
-      inputValue &&
-      inputValue.length > 1 &&
-      !this.isDatalistSelected(inputValue)
+      inputValue && inputValue.length > 1 && !isDatalistSelected(inputValue)
     );
   };
 
@@ -86,82 +79,80 @@ class CustomSearch extends Component<CustomSearchProps, CustomSearchState> {
   2) Try to make Formik rerender only once on inputchange
   3) at onChange, check if the selection is from dropdown and if yes, submit the form */
 
-  render() {
-    return (
-      <Formik
-        initialValues={{ username: "" }}
-        validateOnBlur={false}
-        validate={values => {
-          const errors = {};
-          return errors;
-        }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          this.search(values.username);
-          setSubmitting(false);
-          resetForm({});
-        }}
-      >
-        {({
-          touched,
-          values,
-          errors,
-          handleChange,
-          submitForm,
-          isSubmitting
-        }) => (
-          <Form action="/search">
-            <SearchRow>
-              <CustomTextInput
-                list="users"
-                name="username"
-                autoComplete="off"
-                placeholder="Search users.."
-                onChange={e => {
-                  handleChange(e);
-                  if (this.isDatalistSelected(e.target.value)) {
-                    submitForm();
-                  }
-                }}
-                value={values.username || ""}
-                // onChange={e => {
-                //   const val = e.target.value;
-                //   this.optionWasSelected = this.isOptionSelected(val);
-                //   this.setState({ input: val });
-                // }}
-              />
-              <Anchor
-                onClick={() => {
-                  if (isSubmitting) return;
-                  this.search("");
-                }}
-              >
-                all
-              </Anchor>
-            </SearchRow>
+  return (
+    <Formik
+      initialValues={{ username: "" }}
+      validateOnBlur={false}
+      validate={values => {
+        const errors = {};
+        return errors;
+      }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        search(values.username);
+        setSubmitting(false);
+        resetForm({});
+      }}
+    >
+      {({
+        touched,
+        values,
+        errors,
+        handleChange,
+        submitForm,
+        isSubmitting
+      }) => (
+        <Form action="/search">
+          <SearchRow>
+            <CustomTextInput
+              list="users"
+              name="username"
+              autoComplete="off"
+              placeholder="Search users.."
+              onChange={e => {
+                handleChange(e);
+                if (isDatalistSelected(e.target.value)) {
+                  submitForm();
+                }
+              }}
+              value={values.username || ""}
+              // onChange={e => {
+              //   const val = e.target.value;
+              //   optionWasSelected = isOptionSelected(val);
+              //   setState({ input: val });
+              // }}
+            />
+            <Anchor
+              onClick={() => {
+                if (isSubmitting) return;
+                search("");
+              }}
+            >
+              all
+            </Anchor>
+          </SearchRow>
 
-            {this.canShowDatalist(values.username) && (
-              <Query
-                query={GET_USERS}
-                variables={{ match: values.username }}
-                fetchPolicy="network-only"
-              >
-                {({ loading, error, data: { users } }) => {
-                  if (loading) return <div> loading users </div>;
-                  if (error) return <div> {error} </div>;
+          {canShowDatalist(values.username) && (
+            <Query
+              query={GET_USERS}
+              variables={{ match: values.username }}
+              fetchPolicy="network-only"
+            >
+              {({ loading, error, data: { users } }) => {
+                if (loading) return <div> loading users </div>;
+                if (error) return <div> {error} </div>;
 
-                  if (!users.length) {
-                    return <div> No matches found </div>;
-                  }
+                if (!users.length) {
+                  return <div> No matches found </div>;
+                }
 
-                  return <UsersDataList users={users} ref={this.datalistRef} />;
-                }}
-              </Query>
-            )}
-          </Form>
-        )}
-      </Formik>
-    );
-  }
-}
+                return <UsersDataList users={users} ref={datalistRef} />;
+              }}
+            </Query>
+          )}
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
 export default withRouter(CustomSearch);
