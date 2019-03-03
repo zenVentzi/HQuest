@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
+import { useClickOutside } from "use-events";
 import onClickOutside, { HandleClickOutside } from "react-onclickoutside";
 import styled from "styled-components";
 import Notif from "./Notif";
@@ -39,28 +40,31 @@ interface NotifDropdownProps {
   onClickOutside: any;
 }
 
-class NotifDropdown extends Component<NotifDropdownProps> {
-  handleClickOutside: (e: any) => void = e => {
-    this.props.onClickOutside(e);
-  };
+const NotifDropdown = (props: NotifDropdownProps) => {
+  const ref = useRef();
+  const [isActive] = useClickOutside(ref, event => {
+    props.onClickOutside(e);
+  });
 
-  render() {
-    const { loading, error, notifications, onClickNotification } = this.props;
-    if (loading) return <div> loading questions.. </div>;
-    if (error) return <div> {`Error ${error}`}</div>;
+  const { loading, error, notifications, onClickNotification } = props;
+  if (loading) return <div> loading questions.. </div>;
+  if (error) return <div> {`Error ${error}`}</div>;
 
-    return (
-      <Dropdown>
-        {notifications && notifications.length ? (
-          notifications.map(n => (
-            <Notif key={n.id} notif={n} onClick={onClickNotification} />
-          ))
-        ) : (
-          <Text>No notifications yet</Text>
-        )}
-      </Dropdown>
-    );
-  }
-}
+  return (
+    <Dropdown ref={ref}>
+      {notifications && notifications.length ? (
+        notifications.map(n => (
+          <Notif key={n.id} notif={n} onClick={onClickNotification} />
+        ))
+      ) : (
+        <Text>No notifications yet</Text>
+      )}
+    </Dropdown>
+  );
+};
+
+const clickOutsideConfig = {
+  handleClickOutside: () => Menu.handleClickOutside
+};
 
 export default onClickOutside(NotifDropdown);
