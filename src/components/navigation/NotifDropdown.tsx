@@ -1,6 +1,5 @@
 import React, { Component, useRef } from "react";
 import { useClickOutside } from "use-events";
-import onClickOutside, { HandleClickOutside } from "react-onclickoutside";
 import styled from "styled-components";
 import Notif from "./Notif";
 import { ApolloError } from "apollo-client";
@@ -42,8 +41,8 @@ interface NotifDropdownProps {
 
 const NotifDropdown = (props: NotifDropdownProps) => {
   const ref = useRef();
-  const [isActive] = useClickOutside(ref, event => {
-    props.onClickOutside(e);
+  const [isClickingOutside] = useClickOutside(ref, event => {
+    props.onClickOutside(event);
   });
 
   const { loading, error, notifications, onClickNotification } = props;
@@ -63,8 +62,4 @@ const NotifDropdown = (props: NotifDropdownProps) => {
   );
 };
 
-const clickOutsideConfig = {
-  handleClickOutside: () => Menu.handleClickOutside
-};
-
-export default onClickOutside(NotifDropdown);
+export default NotifDropdown;
