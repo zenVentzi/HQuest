@@ -3,7 +3,8 @@ import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
 import IconBtn from "Reusable/IconBtn";
 import Dropdown from "Reusable/Dropdown";
-import { CaretDown } from "styled-icons/fa-solid";
+import { CaretDown } from "styled-icons/fa-solid/CaretDown";
+// import { WindowClose as CaretDown } from "styled-icons/fa-solid/WindowClose";
 
 interface AnswerOptionsProps {
   onClickEdit: any;

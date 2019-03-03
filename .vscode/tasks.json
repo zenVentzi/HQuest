@@ -9,7 +9,7 @@
       "script": "copy-schemas"
     },
     {
-      "label": "server-build",
+      "label": "server-build-partial",
       "type": "typescript",
       "tsconfig": "server\\tsconfig.json",
       "options": {
@@ -18,6 +18,10 @@
         }
       },
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "BuildServerFull",
+      "dependsOn": ["copy-schemas", "server-build-partial"]
     },
     {
       "label": "client-build",
@@ -29,21 +33,6 @@
         }
       },
       "problemMatcher": ["$tsc"]
-    },
-    {
-      "label": "BuildServer",
-      "dependsOn": ["copy-schemas", "server-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "server\\tsconfig.json",
-      "option": "watch",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      },
-      "problemMatcher": ["$tsc-watch"]
     }
   ]
 }
