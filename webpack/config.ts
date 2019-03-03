@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as webpack from "webpack";
 import * as bundleAnalyzer from "webpack-bundle-analyzer";
-import * as Visualizer from "webpack-visualizer-plugin";
 
 const { BundleAnalyzerPlugin } = bundleAnalyzer;
 
@@ -9,6 +8,7 @@ const config: webpack.Configuration = {
   entry: [
     // 'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
     // 'babel-polyfill',
+    // "./foo.ts"
     "./src/index.tsx"
   ],
   mode: "development",
@@ -18,6 +18,11 @@ const config: webpack.Configuration = {
     filename: "bundle.js",
     libraryTarget: "umd"
   },
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false
+  },
   devtool: "cheap-module-eval-source-map",
   // devServer: {
   //   // contentBase: '/',
@@ -26,8 +31,7 @@ const config: webpack.Configuration = {
   // },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    // new BundleAnalyzerPlugin(),
-    new Visualizer()
+    new BundleAnalyzerPlugin({})
   ],
   cache: true,
   module: {
@@ -62,7 +66,18 @@ const config: webpack.Configuration = {
       Reusable: path.resolve(process.cwd(), "./src/components/reusable"),
       GqlClient: path.resolve(process.cwd(), "./src/graphql")
     },
-    extensions: ["*", ".js", ".jsx", ".ts", ".tsx", ".css", "png", "jpg", "gif"]
+    extensions: [
+      "*",
+      ".mjs",
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".css",
+      "png",
+      "jpg",
+      "gif"
+    ]
   },
   externals: {
     react: "React",

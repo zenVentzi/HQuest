@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
-    // "outDir": "./dist/",
+    // "outDir": "./dist/client",
     "sourceMap": true,
     "noEmit": true,
     "noImplicitAny": true,
-    "module": "commonjs",
-    "target": "es5",
+    "module": "esnext",
+    "target": "esnext",
     "jsx": "react",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "diagnostics": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       // all matching webpack aliases
-      "Constants": ["constants"],
+      // "Constants": ["constants"],
       "Utils": ["utils"],
       "Queries": ["gqlQueries"],
       "Mutations": ["gqlMutations"],
