@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import distanceInWords from "date-fns/distance_in_words";
@@ -82,47 +82,50 @@ interface NotifProps {
   notif: any;
 }
 
-class Notif extends Component<NotifProps> {
-  state = {
-    theme: {
-      backgroundColor: "white",
-      foregroundColor: "black",
-      avatarSize: `${2.2}em`
-    }
-  };
+interface NotifTheme {
+  backgroundColor: "black" | "white";
+  foregroundColor: "black" | "white";
+  avatarSize: string;
+}
 
-  toggleTheme = () => {
-    const old = this.state.theme;
+const Notif = (props: NotifProps) => {
+  const [theme, setTheme] = useState<NotifTheme>({
+    avatarSize: "2.2em",
+    backgroundColor: "white",
+    foregroundColor: "black"
+  });
+
+  useEffect(() => {});
+
+  const toggleTheme = () => {
+    const old = theme;
     const neww = { ...old };
     neww.backgroundColor = inverseColor(old.backgroundColor);
     neww.foregroundColor = inverseColor(old.foregroundColor);
-    this.setState({ theme: neww });
+    setTheme(neww);
   };
 
-  render() {
-    const { theme } = this.state;
-    const { notif, onClick } = this.props;
-    const redirectLink = getLink(notif);
+  const { notif, onClick } = this.props;
+  const redirectLink = getLink(notif);
 
-    return (
-      <ThemeProvider theme={overrideTheme(theme)}>
-        <StyledNotif
-          to={redirectLink}
-          onClick={onClick}
-          onMouseEnter={this.toggleTheme}
-          onMouseLeave={this.toggleTheme}
-        >
-          <Left>
-            <Avatar src={notif.performerAvatarSrc} invertColors />
-          </Left>
-          <Right>
-            <Text>{notif.text}</Text>
-            <Time>{getTime(notif.createdOn)}</Time>
-          </Right>
-        </StyledNotif>
-      </ThemeProvider>
-    );
-  }
-}
+  return (
+    <ThemeProvider theme={overrideTheme(theme)}>
+      <StyledNotif
+        to={redirectLink}
+        onClick={onClick}
+        onMouseEnter={this.toggleTheme}
+        onMouseLeave={this.toggleTheme}
+      >
+        <Left>
+          <Avatar src={notif.performerAvatarSrc} invertColors />
+        </Left>
+        <Right>
+          <Text>{notif.text}</Text>
+          <Time>{getTime(notif.createdOn)}</Time>
+        </Right>
+      </StyledNotif>
+    </ThemeProvider>
+  );
+};
 
 export default Notif;
