@@ -35,9 +35,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       console.log(error);
 
       if (error.extensions.code === "UNAUTHENTICATED") {
-        // deleteLoggedUserData();
+        deleteLoggedUserData();
         // @ts-ignore
-        // window.location = "/";
+        window.location = "/";
       }
     });
   }
@@ -52,7 +52,7 @@ const wsMiddlewares: Middleware[] = [];
 
 const subscriptionMiddleware: Middleware = {
   applyMiddleware: async (options, next) => {
-    console.log("middlware used");
+    // console.log("middlware used");
     options.authToken = getAuthToken();
     next();
   }
@@ -71,8 +71,9 @@ subClient.use([subscriptionMiddleware]);
 const wsLink = new WebSocketLink(subClient);
 
 loginEvent.onLogin((authToken, userId) => {
+  // forces the ws link to reconnect
   subClient.close(true);
-  console.log(`onlogin apollo client`);
+  // console.log(`onlogin apollo client`);
 });
 
 const httpLink = ApolloLink.from([errorLink, authLink, uploadLink]);

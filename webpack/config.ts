@@ -6,10 +6,10 @@ const { BundleAnalyzerPlugin } = bundleAnalyzer;
 
 const config: webpack.Configuration = {
   entry: [
-    // 'webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true',
-    // 'babel-polyfill',
-    // "./foo.ts"
+    "webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true",
+    // "babel-polyfill",
     "./src/index.tsx"
+    // "./foo.ts"
   ],
   mode: "development",
   output: {
@@ -24,11 +24,7 @@ const config: webpack.Configuration = {
     splitChunks: false
   },
   devtool: "cheap-module-eval-source-map",
-  // devServer: {
-  //   // contentBase: '/',
-  //   overlay: true,
-  //   hot: true
-  // },
+
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new BundleAnalyzerPlugin({})
