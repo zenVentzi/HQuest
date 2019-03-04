@@ -11,10 +11,12 @@ import {
 export const GET_NEWSFEED = gql`
   query newsfeed {
     newsfeed {
-      ... on NewsBase {
-        type
-        createdOn
-      }
+      type
+      createdOn
+      # ... on NewsBase {
+      #   type
+      #   createdOn
+      # } # use this for union return type
       ... on AnswerNews {
         performer {
           ...UserFields

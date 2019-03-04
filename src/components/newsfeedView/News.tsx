@@ -1,43 +1,37 @@
 import React from "react";
-import { NewsType } from "Constants";
+// import { NewsType } from "Constants";
 import Answer from "./Answer";
 import NewComment from "./NewComment";
 import NewFollower from "./NewFollower";
 import NewLike from "./NewLike";
-
-const {
-  NEW_ANSWER_EDITION,
-  NEW_ANSWER,
-  NEW_COMMENT,
-  NEW_LIKE,
-  NEW_FOLLOWER
-} = NewsType;
+import { NewsfeedNewsfeed, NewsType } from "GqlClient/autoGenTypes";
 
 interface NewsProps {
-  news: any;
+  news: NewsfeedNewsfeed;
 }
 
 const News = ({ news }: NewsProps) => {
   let NewsComponent;
 
   switch (news.type) {
-    case NEW_ANSWER:
-    case NEW_ANSWER_EDITION:
+    case NewsType.NewAnswer:
+    case NewsType.NewAnswerEdition:
       NewsComponent = Answer;
       break;
-    case NEW_COMMENT:
+    case NewsType.NewComment:
       NewsComponent = NewComment;
       break;
-    case NEW_FOLLOWER:
+    case NewsType.NewFollower:
       NewsComponent = NewFollower;
       break;
-    case NEW_LIKE:
+    case NewsType.NewLike:
       NewsComponent = NewLike;
       break;
     default:
       break;
   }
 
+  //@ts-ignore // due to ts and typegen limitations, otherwise correct
   return <NewsComponent news={news} />;
 };
 

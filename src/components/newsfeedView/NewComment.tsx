@@ -5,6 +5,7 @@ import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
+import { NewsfeedCommentNewsInlineFragment } from "GqlClient/autoGenTypes";
 
 const NewCommentWrapper = styled.div`
   width: 100%;
@@ -26,10 +27,11 @@ const HeaderText = styled.div`
 const Body = styled.div``;
 
 interface NewCommentProps {
-  news: any;
+  news: NewsfeedCommentNewsInlineFragment;
 }
 
 const NewComment = ({
+  //@ts-ignore
   news: { performer, answerOwner, question, commentId, createdOn }
 }: NewCommentProps) => {
   let topText;

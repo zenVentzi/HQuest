@@ -6,6 +6,7 @@ import shortid from "shortid";
 import { GET_NEWSFEED } from "GqlClient/newsfeed/queries";
 import StyledViewRaw from "../reusable/StyledView";
 import News from "./News";
+import { NewsfeedQuery, NewsfeedVariables } from "GqlClient/autoGenTypes";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -24,7 +25,7 @@ export const getTime = (createdOn: string) => {
 
 const NewsfeedView = () => (
   <StyledView>
-    <Query
+    <Query<NewsfeedQuery, NewsfeedVariables>
       query={GET_NEWSFEED}
       // variables={vars}
       fetchPolicy="no-cache"
@@ -46,7 +47,7 @@ const NewsfeedView = () => (
           return <div>No activity from your following.</div>;
         }
 
-        return newsfeed.map((news: any) => (
+        return newsfeed.map(news => (
           <News key={shortid.generate()} news={news} />
         ));
       }}
