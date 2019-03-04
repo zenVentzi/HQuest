@@ -6,6 +6,7 @@ import { Formik, Form } from "formik";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Anchor from "Reusable/Anchor";
 import UsersDataList from "./UsersDataList";
+import { UsersQuery, UsersVariables } from "GqlClient/autoGenTypes";
 
 const GET_USERS = gql`
   query GetUsers($match: String) {
@@ -132,7 +133,7 @@ const CustomSearch = (props: CustomSearchProps) => {
           </SearchRow>
 
           {canShowDatalist(values.username) && (
-            <Query
+            <Query<UsersQuery, UsersVariables>
               query={GET_USERS}
               variables={{ match: values.username }}
               fetchPolicy="network-only"
