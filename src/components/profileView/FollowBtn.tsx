@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 import gql from "graphql-tag";
@@ -19,45 +19,42 @@ interface FollowBtnProps {
   userId: string;
 }
 
-class FollowBtn extends Component<FollowBtnProps> {
-  state = { hovered: false, isFollowed: this.props.isFollowed };
+const FollowBtn = (props: FollowBtnProps) => {
+  const [hovered, setHovered] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(props.isFollowed);
 
-  onMouseEnter = () => {
-    this.setState({ hovered: true });
+  const onMouseEnter = () => {
+    setHovered(true);
   };
 
-  onMouseLeave = () => {
-    this.setState({ hovered: false });
+  const onMouseLeave = () => {
+    setHovered(false);
   };
 
-  onClick = (mutation: MutationFn) => async () => {
-    const { userId } = this.props;
-    const follow = !this.state.isFollowed;
+  const onClick = (mutation: MutationFn) => async () => {
+    const { userId } = props;
+    const follow = !isFollowed;
     await mutation({ variables: { userId, follow } });
-    const newState = { ...this.state, isFollowed: !this.state.isFollowed };
-    this.setState(newState);
+    setIsFollowed(!isFollowed);
   };
 
-  render() {
-    const { hovered, isFollowed } = this.state;
-    const normalText = isFollowed ? `Following` : `Follow`;
-    const hoverText = isFollowed ? `Unfollow` : `Follow`;
-    const text = hovered ? hoverText : normalText;
+  const normalText = isFollowed ? `Following` : `Follow`;
+  const hoverText = isFollowed ? `Unfollow` : `Follow`;
+  const text = hovered ? hoverText : normalText;
 
-    return (
-      <Mutation mutation={FOLLOW}>
-        {follow => (
-          <Btn
-            onMouseEnter={this.onMouseEnter}
-            onMouseLeave={this.onMouseLeave}
-            onClick={this.onClick(follow)}
-          >
-            {text}
-          </Btn>
-        )}
-      </Mutation>
-    );
-  }
-}
+  return (
+    <Mutation mutation={FOLLOW}>
+      {follow => (
+        <Btn
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+          onClick={onClick(follow)}
+        >
+          {text}
+        </Btn>
+      )}
+    </Mutation>
+  );
+};
 
 export default FollowBtn;
