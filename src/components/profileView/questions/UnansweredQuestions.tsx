@@ -16,14 +16,18 @@ const UnansweredQuestions = (props: UnansweredQuestionsProps) => {
     return <div style={style}> All questions are answered </div>;
   }
 
-  return questions.map(q => (
-    <UnansweredQuestion
-      key={q.id}
-      style={style}
-      question={q}
-      refetchQuestions={refetchQuestions}
-    />
-  ));
+  return (
+    <>
+      {questions.map(q => (
+        <UnansweredQuestion
+          key={q.id}
+          style={style}
+          question={q}
+          refetchQuestions={refetchQuestions}
+        />
+      ))}
+    </>
+  );
 };
 
 export default UnansweredQuestions;
