@@ -22,7 +22,7 @@ interface LandingViewProps extends RouteComponentProps {}
 
 const LandingView = (props: LandingViewProps) => {
   const onLoggedIn = () => {
-    const { history } = this.props;
+    const { history } = props;
     history.push("/help");
   };
 
@@ -46,18 +46,18 @@ const LandingView = (props: LandingViewProps) => {
       <div>
         <Row>Log in with: </Row>
         <Row>
-          <LoginBtn onLoggedIn={this.onLoggedIn} />
+          <LoginBtn onLoggedIn={onLoggedIn} />
         </Row>
         <Row>
           <LoginBtn
             testUser={{ name: "Test John", email: "testjohn@gmail.com" }}
-            onLoggedIn={this.onLoggedIn}
+            onLoggedIn={onLoggedIn}
           />
         </Row>
         <Row>
           <LoginBtn
             testUser={{ name: "Test Sarah", email: "testsarah@gmail.com" }}
-            onLoggedIn={this.onLoggedIn}
+            onLoggedIn={onLoggedIn}
           />
         </Row>
       </div>

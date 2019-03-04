@@ -13,9 +13,9 @@ const LikeBtn = (props: LikeBtnProps) => {
     /* how do we display the number of likes and personal likes?
 
     like in medium? */
-    this.props.onClick(e);
+    props.onClick(e);
   };
-  return <IconBtn icon={LikeIcon} size="1.2em" onClick={this.onClick} />;
+  return <IconBtn icon={LikeIcon} size="1.2em" onClick={onClick} />;
 };
 
 export default LikeBtn;

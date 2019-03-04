@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { useRef, useState } from "react";
 import Img from "react-image";
 import styled from "styled-components";
 import Editor from "./AvatarEditor";
@@ -54,41 +54,35 @@ interface AvatarProps {
   invertColors?: any;
 }
 
-class Avatar extends Component<AvatarProps> {
-  private upload: HTMLInputElement;
-  state: any = {
-    hovered: false,
-    src: this.props.src,
-    inputImg: null,
-    fileInputKey: 0
+const Avatar = (props: AvatarProps) => {
+  const upload = useRef<HTMLInputElement>();
+  const [hovered, setHovered] = useState(false);
+  const [src, setSrc] = useState(props.src);
+  const [inputImg, setInputImg] = useState<File>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
+  const onMouseOver = () => {
+    setHovered(true);
   };
 
-  onMouseOver = () => {
-    this.setState(prevState => ({ ...prevState, hovered: true }));
+  const onMouseOut = () => {
+    setHovered(false);
   };
 
-  onMouseOut = () => {
-    this.setState(prevState => ({ ...prevState, hovered: false }));
+  const onClick = () => {
+    if (!props.editable) return;
+    upload.current.click();
   };
 
-  onClick = () => {
-    if (!this.props.editable) return;
-    this.upload.click();
-  };
-
-  onCloseEditor = (src: string) => {
-    const newState = { ...this.state };
-
+  const onCloseEditor = (src: string) => {
     if (src) {
-      newState.src = `${src}?time=${new Date().valueOf()}`;
+      setSrc(`${src}?time=${new Date().valueOf()}`);
     }
-
-    newState.inputImg = null;
-    newState.fileInputKey = this.state.fileInputKey + 1;
-    this.setState(newState);
+    setInputImg(null);
+    setFileInputKey(fileInputKey + 1);
   };
 
-  onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.stopPropagation();
     event.preventDefault();
 
@@ -99,54 +93,41 @@ class Avatar extends Component<AvatarProps> {
       return;
     }
 
-    const newState = { ...this.state };
-    newState.inputImg = event.target.files[0];
-
-    this.setState(newState);
+    setInputImg(event.target.files[0]);
   };
 
-  render() {
-    const { editable, className, invertColors } = this.props;
-    const { src, fileInputKey } = this.state;
+  const { editable, className, invertColors } = props;
 
-    return (
-      <Fragment>
-        {this.state.inputImg ? (
-          <Editor
-            image={this.state.inputImg}
-            onCloseEditor={this.onCloseEditor}
+  return (
+    <>
+      {inputImg ? (
+        <Editor image={inputImg} onCloseEditor={onCloseEditor} />
+      ) : (
+        <Wrapper
+          className={className}
+          invertColors={invertColors}
+          editable={editable}
+          onMouseOver={onMouseOver}
+          onFocus={onMouseOver}
+          onMouseOut={onMouseOut}
+          onBlur={onMouseOut}
+          onClick={onClick}
+        >
+          <StyledImg src={src} />
+          {editable && hovered && <UpdateOverlay>Upload</UpdateOverlay>}
+          <input
+            id="myInput"
+            key={fileInputKey}
+            type="file"
+            accept="image/*"
+            ref={upload}
+            style={{ display: "none" }}
+            onChange={onChangeFile}
           />
-        ) : (
-          <Wrapper
-            className={className}
-            invertColors={invertColors}
-            editable={editable}
-            onMouseOver={this.onMouseOver}
-            onFocus={this.onMouseOver}
-            onMouseOut={this.onMouseOut}
-            onBlur={this.onMouseOut}
-            onClick={this.onClick}
-          >
-            <StyledImg src={src} />
-            {editable && this.state.hovered && (
-              <UpdateOverlay>Upload</UpdateOverlay>
-            )}
-            <input
-              id="myInput"
-              key={fileInputKey}
-              type="file"
-              accept="image/*"
-              ref={ref => {
-                this.upload = ref;
-              }}
-              style={{ display: "none" }}
-              onChange={this.onChangeFile}
-            />
-          </Wrapper>
-        )}
-      </Fragment>
-    );
-  }
-}
+        </Wrapper>
+      )}
+    </>
+  );
+};
 
 export default Avatar;

@@ -25,7 +25,7 @@
 
 // class CommentOptions extends Component {
 //   handleClickOutside = e => {
-//     this.props.onClickOutside(e);
+//     props.onClickOutside(e);
 //   };
 
 //   render() {
@@ -40,7 +40,7 @@
 
 // export default onClickOutside(CommentOptions);
 
-import React, { Component } from "react";
+import React from "react";
 import TextBtn from "Reusable/TextBtn";
 import IconBtn from "Reusable/IconBtn";
 import Dropdown from "Reusable/Dropdown";
@@ -52,41 +52,39 @@ interface CommentOptionsProps {
   visible: boolean;
 }
 
-class CommentOptions extends Component<CommentOptionsProps, any> {
-  onClickEdit = () => {
-    this.props.onClickEdit();
+const CommentOptions = (props: CommentOptionsProps) => {
+  const onClickEdit = () => {
+    props.onClickEdit();
   };
-  onClickRemove = () => {
-    this.props.onClickRemove();
+  const onClickRemove = () => {
+    props.onClickRemove();
   };
 
-  render() {
-    const { visible } = this.props;
+  const { visible } = props;
 
-    const options = [
-      <TextBtn key="edit" onClick={this.onClickEdit}>
-        Edit
-      </TextBtn>,
-      <TextBtn key="remove" onClick={this.onClickRemove}>
-        Remove
-      </TextBtn>
-    ];
+  const options = [
+    <TextBtn key="edit" onClick={onClickEdit}>
+      Edit
+    </TextBtn>,
+    <TextBtn key="remove" onClick={onClickRemove}>
+      Remove
+    </TextBtn>
+  ];
 
-    return (
-      <Dropdown
-        pivot="right"
-        dropBtn={
-          <IconBtn
-            icon={CaretDown}
-            size="0.8em"
-            visible={visible}
-            onClick={() => {}}
-          />
-        }
-        items={options}
-      />
-    );
-  }
-}
+  return (
+    <Dropdown
+      pivot="right"
+      dropBtn={
+        <IconBtn
+          icon={CaretDown}
+          size="0.8em"
+          visible={visible}
+          onClick={() => {}}
+        />
+      }
+      items={options}
+    />
+  );
+};
 
 export default CommentOptions;
