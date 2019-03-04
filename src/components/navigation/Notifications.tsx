@@ -1,11 +1,16 @@
 import React, { useState, useRef } from "react";
 import NotifBtn from "./NotifBtn";
-import NotifDropdown from "./NotifDropdown";
+import NotifDropdown, { NotifDropdownProps } from "./NotifDropdown";
 import NavItem from "./NavItem";
 import NotificationsGQL from "./NotificationsGQL";
 import { MutationFn } from "react-apollo";
+import {
+  NotifsMarkSeenVariables,
+  NotifsMarkSeenMutation,
+  NotificationsNotifications
+} from "GqlClient/autoGenTypes";
 
-const getNumOfSeen = (notifications: any[]) =>
+const getNumOfSeen = (notifications: NotificationsNotifications[]) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 interface NotificationsProps {}
@@ -24,7 +29,9 @@ const Notifications = (props: NotificationsProps) => {
     toggleDropdown();
   };
 
-  const onClick = (markSeen: MutationFn) => async () => {
+  const onClick = (
+    markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+  ) => async () => {
     toggleDropdown();
     await markSeen();
   };
@@ -45,7 +52,7 @@ const Notifications = (props: NotificationsProps) => {
   return (
     <NotificationsGQL>
       {(loading, error, notifications, markSeen) => {
-        const dropdownProps = {
+        const dropdownProps: NotifDropdownProps = {
           loading,
           error,
           notifications,
