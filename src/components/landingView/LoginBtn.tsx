@@ -1,5 +1,4 @@
 import React from "react";
-// import FacebookLogin from 'react-facebook-login';
 import { Facebook as FacebookLogo } from "styled-icons/fa-brands/Facebook";
 //@ts-ignore
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -8,14 +7,17 @@ import { Mutation, MutationFunc, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 import styled from "styled-components";
 import { saveLoggedUserData } from "Utils";
+import { LoginMutation, LoginVariables } from "GqlClient/autoGenTypes";
 
 interface LoginBtnProps {
   onLoggedIn: () => any;
-  testUser?: any;
+  testUser?: LoginVariables;
 }
 
 const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
-  const responseFacebook = (mutation: MutationFn) => async (response: any) => {
+  const responseFacebook = (
+    mutation: MutationFn<LoginMutation, LoginVariables>
+  ) => async (response: any) => {
     if (response.email) {
       const variables = {
         email: response.email,
@@ -31,7 +33,9 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
     }
   };
 
-  const testLogin = (mutation: MutationFn) => async () => {
+  const testLogin = (
+    mutation: MutationFn<LoginMutation, LoginVariables>
+  ) => async () => {
     const variables = {
       email: testUser.email,
       name: testUser.name
@@ -47,12 +51,7 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
   };
 
   return (
-    <Mutation
-      mutation={LOGIN_MUTATION}
-      onError={error => {
-        console.log();
-      }}
-    >
+    <Mutation<LoginMutation, LoginVariables> mutation={LOGIN_MUTATION}>
       {login =>
         testUser ? (
           <TextBtn onClick={testLogin(login)}>{testUser.name}</TextBtn>

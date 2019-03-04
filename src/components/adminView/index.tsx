@@ -5,6 +5,10 @@ import { Mutation } from "react-apollo";
 import { ADD_QUESTIONS } from "GqlClient/question/mutations";
 // import StyledView from '../reusable/StyledView';
 import TextBtn from "Reusable/TextBtn";
+import {
+  AddQuestionsMutation,
+  AddQuestionsVariables
+} from "GqlClient/autoGenTypes";
 
 const TextArea = styled.textarea`
   margin-bottom: 1em;
@@ -57,7 +61,9 @@ const AdminView = () => {
 
   return (
     <StyledView>
-      <Mutation mutation={ADD_QUESTIONS}>
+      <Mutation<AddQuestionsMutation, AddQuestionsVariables>
+        mutation={ADD_QUESTIONS}
+      >
         {addQuestions => {
           return (
             <Formik

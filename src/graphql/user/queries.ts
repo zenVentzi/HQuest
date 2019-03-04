@@ -9,7 +9,7 @@ import {
 } from "GqlClient/fragments";
 
 export const GET_USER = gql`
-  query user($id: ID!) {
+  query User($id: ID!) {
     user(id: $id) {
       ...UserFields
     }
@@ -18,7 +18,7 @@ export const GET_USER = gql`
 `;
 
 export const GET_USERS = gql`
-  query users($match: String) {
+  query Users($match: String) {
     users(match: $match) {
       ...UserFields
     }

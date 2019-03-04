@@ -6,7 +6,7 @@ import {
 } from "GqlClient/fragments";
 
 export const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: String!, $name: String!) {
+  mutation Login($email: String!, $name: String!) {
     login(email: $email, name: $name) {
       authToken
       userId
@@ -15,7 +15,7 @@ export const LOGIN_MUTATION = gql`
 `;
 
 export const EDIT_USER = gql`
-  mutation editUser($input: EditUserInput) {
+  mutation EditUser($input: EditUserInput) {
     editUser(input: $input) {
       id
     }
