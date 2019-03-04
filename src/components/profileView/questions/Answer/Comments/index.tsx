@@ -1,9 +1,9 @@
-import * as React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
 import { toast } from "react-toastify";
-import Comment from "./Comment";
+import Comment, { CommentProps, CommentRef } from "./Comment";
 import CommentsGql from "./CommentsGql";
 import Panel from "../Panel";
 import { MutationFn } from "react-apollo";
@@ -31,50 +31,47 @@ interface CommentsProps {
   scrollToComment?: string;
 }
 
-class Comments extends React.Component<CommentsProps, {}> {
-  state = { comments: this.props.comments || [] };
-  highlightedComment: any;
-  panel: any;
+const Comments = (props: CommentsProps) => {
+  const [comments, setComments] = useState(props.comments || []);
+  const highlightedComment = useRef(null);
+  const panel = useRef<HTMLDivElement>();
 
   // TODO: IMPORTANT. This is commented out because of bad react typings
   // it should NOT be
 
-  // componentDidMount(prevProps, prevState) {
-  //   if (this.highlightedComment) {
-  //     this.panel.scrollTop = this.highlightedComment.offsetTop;
-  //   }
-  // }
+  useEffect(() => {
+    if (highlightedComment.current) {
+      const a = highlightedComment.current.bla;
+      // panel.current.scrollTop = highlightedComment.current.offsetTop;
+    }
+  }, []);
 
-  updateComments = (
+  const updateComments = (
     newComment?: any,
     removedComment?: any,
     editedComment?: any
   ) => {
     if (newComment) {
-      let comments: any[] = [];
-      [...comments] = this.state.comments;
-      comments.push(newComment);
-      this.setState((prevState: any) => ({ ...prevState, comments }));
+      setComments([...comments, newComment]);
     } else if (removedComment) {
-      const [...comments] = this.state.comments.filter(
-        c => c.id !== removedComment.id
-      );
-      this.setState((prevState: any) => ({
-        ...prevState,
-        comments
-      }));
+      setComments(comments.filter(c => c.id !== removedComment.id));
     } else if (editedComment) {
-      const [...comments] = this.state.comments;
-      for (let i = 0; i < comments.length; i++) {
-        if (comments[i].id === editedComment.id) {
-          comments[i] = editedComment;
+      // @ts-ignore // ebaa sa s mene, ke go vidim posle
+      setComments(() => {
+        // const [...updatedComments] = comments;
+        const updatedComments: any[] = [...comments];
+        for (let i = 0; i < updatedComments.length; i++) {
+          if (updatedComments[i].id === editedComment.id) {
+            updatedComments[i] = editedComment;
+          }
         }
-      }
-      this.setState((prevState: any) => ({ ...prevState, comments }));
+
+        return updateComments;
+      });
     }
   };
 
-  validateForm = (values: any) => {
+  const validateForm = (values: any) => {
     const errors: any = {};
     if (values.comment.length < 7)
       errors.comment = "Comment must be at least 7 characters";
@@ -82,12 +79,12 @@ class Comments extends React.Component<CommentsProps, {}> {
     return errors;
   };
 
-  onSubmitForm = (commentAnswerMutation: MutationFn) => async (
+  const onSubmitForm = (commentAnswerMutation: MutationFn) => async (
     values: any,
     { setSubmitting, resetForm }: any
   ) => {
     // console.log(commentAnswerMutation);
-    const { answerId, onAddComment } = this.props;
+    const { answerId, onAddComment } = props;
     const variables = {
       answerId,
       comment: values.comment
@@ -97,18 +94,18 @@ class Comments extends React.Component<CommentsProps, {}> {
       throw Error("Comment answer mutation failed");
     }
     const newComment = res.data.commentAnswer;
-    this.updateComments(newComment);
+    updateComments(newComment);
     toast.success("Comment added!");
     onAddComment();
     setSubmitting(false);
     resetForm({ comment: "" });
   };
 
-  onEditComment = (editCommentMutation: MutationFn) => async (
+  const onEditComment = (editCommentMutation: MutationFn) => async (
     commentId: string,
     commentValue: string
   ) => {
-    const { answerId } = this.props;
+    const { answerId } = props;
     const variables = { answerId, commentId, commentValue };
     const res = await editCommentMutation({ variables });
     if (!res) {
@@ -116,14 +113,14 @@ class Comments extends React.Component<CommentsProps, {}> {
     }
 
     const editedComment = res.data.editComment;
-    this.updateComments({ editedComment });
+    updateComments({ editedComment });
     toast.success("Comment edited!");
   };
 
-  onRemoveComment = (removeCommentMutation: MutationFn) => async (
+  const onRemoveComment = (removeCommentMutation: MutationFn) => async (
     commentId: string
   ) => {
-    const { answerId, onRemoveComment } = this.props;
+    const { answerId, onRemoveComment } = props;
     const variables = { answerId, commentId };
     const res = await removeCommentMutation({ variables });
     if (!res) {
@@ -131,17 +128,16 @@ class Comments extends React.Component<CommentsProps, {}> {
     }
 
     const removedComment = res.data.removeComment;
-    this.updateComments({ removedComment });
+    updateComments({ removedComment });
     onRemoveComment();
     toast.success("Comment removed!");
   };
 
-  renderComments = (
+  const renderComments = (
     editCommentMutation: MutationFn,
     removeCommentMutation: MutationFn
   ) => {
-    const { scrollToComment } = this.props;
-    const { comments } = this.state;
+    const { scrollToComment } = props;
 
     if (!comments || !comments.length)
       return <div> Be the first to add a comment </div>;
@@ -152,16 +148,16 @@ class Comments extends React.Component<CommentsProps, {}> {
 
       while (copy.length) {
         const com = copy.pop();
-        const commentProps: any = {
+        const commentProps = {
           key: com.id,
           comment: com,
-          onEdit: this.onEditComment(editCommentMutation),
-          onRemove: this.onRemoveComment(removeCommentMutation)
-        };
+          onEdit: onEditComment(editCommentMutation),
+          onRemove: onRemoveComment(removeCommentMutation)
+        } as CommentProps & { key: string; ref: CommentRef };
 
         if (scrollToComment && scrollToComment === com.id) {
           commentProps.ref = (ref: any) => {
-            this.highlightedComment = ref;
+            highlightedComment.current = ref;
           };
         }
 
@@ -173,59 +169,52 @@ class Comments extends React.Component<CommentsProps, {}> {
     return renderReversedComments();
   };
 
-  render() {
-    return (
-      <CommentsGql>
-        {(commentAnswer, editComment, removeComment) => {
-          return (
-            <Panel
-              ref={ref => {
-                this.panel = ref;
-              }}
+  return (
+    <CommentsGql>
+      {(commentAnswer, editComment, removeComment) => {
+        return (
+          <Panel ref={panel}>
+            <Formik
+              initialValues={{ comment: "" }}
+              validateOnBlur={false}
+              validate={validateForm}
+              onSubmit={onSubmitForm(commentAnswer)}
             >
-              <Formik
-                initialValues={{ comment: "" }}
-                validateOnBlur={false}
-                validate={this.validateForm}
-                // validate={this.validateForm}
-                onSubmit={this.onSubmitForm(commentAnswer)}
-              >
-                {({
-                  values,
-                  handleChange,
-                  submitForm,
-                  handleBlur,
-                  isSubmitting
-                }) => (
-                  <Form style={{ width: "100%", textAlign: "center" }}>
-                    <CommentInput
-                      name="comment"
-                      placeholder="Add a comment..."
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.comment || ""}
-                      disabled={isSubmitting}
-                      onKeyPress={e => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          if (!isSubmitting) submitForm();
-                        }
-                      }}
-                    />
-                    <ErrorMessage
-                      name="comment"
-                      render={msg => <ErrorText>{msg}</ErrorText>}
-                    />
-                  </Form>
-                )}
-              </Formik>
-              {this.renderComments(editComment, removeComment)}
-            </Panel>
-          );
-        }}
-      </CommentsGql>
-    );
-  }
-}
+              {({
+                values,
+                handleChange,
+                submitForm,
+                handleBlur,
+                isSubmitting
+              }) => (
+                <Form style={{ width: "100%", textAlign: "center" }}>
+                  <CommentInput
+                    name="comment"
+                    placeholder="Add a comment..."
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.comment || ""}
+                    disabled={isSubmitting}
+                    onKeyPress={e => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!isSubmitting) submitForm();
+                      }
+                    }}
+                  />
+                  <ErrorMessage
+                    name="comment"
+                    render={msg => <ErrorText>{msg}</ErrorText>}
+                  />
+                </Form>
+              )}
+            </Formik>
+            {renderComments(editComment, removeComment)}
+          </Panel>
+        );
+      }}
+    </CommentsGql>
+  );
+};
 
 export default Comments;
