@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import shortid from "shortid";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
@@ -48,57 +48,50 @@ interface TagsWindowProps {
   onSearch: (selectedTags: string[]) => void;
 }
 
-export default class TagsWindow extends Component<TagsWindowProps, any> {
-  static propTypes = {};
-  state: any = { selectedTags: [] };
+const TagsWindow = (props: TagsWindowProps) => {
+  const [selectedTags, setSelectedTags] = useState<string[]>();
 
-  isSelected = (tag: string) => {
-    return this.state.selectedTags.includes(tag);
+  const isSelected = (tag: string) => {
+    return selectedTags.includes(tag);
   };
 
-  onClickTag = (tag: string) => {
-    const isSelected = this.state.selectedTags.includes(tag);
-
-    let selectedTags;
-
-    if (isSelected) {
-      selectedTags = this.state.selectedTags.filter((t: string) => t !== tag);
+  const onClickTag = (tag: string) => {
+    if (isSelected(tag)) {
+      setSelectedTags(selectedTags.filter((t: string) => t !== tag));
     } else {
-      selectedTags = [...this.state.selectedTags, tag];
+      setSelectedTags([...selectedTags, tag]);
     }
-    this.setState({ selectedTags });
   };
 
-  render() {
-    const { tags, onSearch } = this.props;
-    const { selectedTags } = this.state;
+  const { tags, onSearch } = props;
 
-    return (
-      <StyledDropdown>
-        <Top>
-          {tags.map(t => (
-            <TagBtn
-              key={t}
-              onClick={e => {
-                e.stopPropagation();
-                this.onClickTag(t);
-              }}
-              selected={this.isSelected(t)}
-            >
-              {t}
-            </TagBtn>
-          ))}
-        </Top>
-        <Bottom>
-          <TextBtn
-            onClick={() => {
-              onSearch(selectedTags);
+  return (
+    <StyledDropdown>
+      <Top>
+        {tags.map((t: string) => (
+          <TagBtn
+            key={t}
+            onClick={e => {
+              e.stopPropagation();
+              onClickTag(t);
             }}
+            selected={isSelected(t)}
           >
-            Search
-          </TextBtn>
-        </Bottom>
-      </StyledDropdown>
-    );
-  }
-}
+            {t}
+          </TagBtn>
+        ))}
+      </Top>
+      <Bottom>
+        <TextBtn
+          onClick={() => {
+            onSearch(selectedTags);
+          }}
+        >
+          Search
+        </TextBtn>
+      </Bottom>
+    </StyledDropdown>
+  );
+};
+
+export default TagsWindow;
