@@ -414,6 +414,16 @@ export type FollowMutation = {
   follow: Maybe<boolean>;
 };
 
+export type UploadAvatarVariables = {
+  base64Img: string;
+};
+
+export type UploadAvatarMutation = {
+  __typename?: "Mutation";
+
+  uploadAvatar: string;
+};
+
 export type NewNotificationVariables = {
   userId: string;
 };
