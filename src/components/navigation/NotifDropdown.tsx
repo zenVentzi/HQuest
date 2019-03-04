@@ -3,6 +3,7 @@ import { useClickOutside } from "use-events";
 import styled from "styled-components";
 import Notif from "./Notif";
 import { ApolloError } from "apollo-client";
+import { NotificationsNotifications } from "GqlClient/autoGenTypes";
 
 const Text = styled.div`
   color: black;
@@ -34,14 +35,14 @@ const Dropdown = styled.div`
 export interface NotifDropdownProps {
   loading: boolean;
   error: ApolloError;
-  notifications: any[];
+  notifications: NotificationsNotifications[];
   onClickNotification: any;
   onClickOutside: any;
 }
 
 const NotifDropdown = (props: NotifDropdownProps) => {
   const ref = useRef();
-  const [isClickingOutside] = useClickOutside(ref, event => {
+  useClickOutside(ref, event => {
     props.onClickOutside(event);
   });
 
