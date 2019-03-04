@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
 import IconBtn from "Reusable/IconBtn";
@@ -13,47 +13,45 @@ interface AnswerOptionsProps {
   visible: boolean;
 }
 
-class AnswerOptions extends Component<AnswerOptionsProps, any> {
-  onClickEdit = () => {
-    this.props.onClickEdit();
+const AnswerOptions = (props: AnswerOptionsProps) => {
+  const onClickEdit = () => {
+    props.onClickEdit();
   };
-  onClickRemove = () => {
-    this.props.onClickRemove();
+  const onClickRemove = () => {
+    props.onClickRemove();
   };
-  onClickMove = () => {
-    this.props.onClickMove();
+  const onClickMove = () => {
+    props.onClickMove();
   };
 
-  render() {
-    const { visible } = this.props;
+  const { visible } = props;
 
-    const options = [
-      <TextBtn key="edit" onClick={this.onClickEdit}>
-        Edit
-      </TextBtn>,
-      <TextBtn key="remove" onClick={this.onClickRemove}>
-        Remove
-      </TextBtn>,
-      <TextBtn key="move" onClick={this.onClickMove}>
-        Move
-      </TextBtn>
-    ];
+  const options = [
+    <TextBtn key="edit" onClick={onClickEdit}>
+      Edit
+    </TextBtn>,
+    <TextBtn key="remove" onClick={onClickRemove}>
+      Remove
+    </TextBtn>,
+    <TextBtn key="move" onClick={onClickMove}>
+      Move
+    </TextBtn>
+  ];
 
-    return (
-      <Dropdown
-        pivot="right"
-        dropBtn={
-          <IconBtn
-            icon={CaretDown}
-            size="1em"
-            visible={!!visible}
-            onClick={() => {}}
-          />
-        }
-        items={options}
-      />
-    );
-  }
-}
+  return (
+    <Dropdown
+      pivot="right"
+      dropBtn={
+        <IconBtn
+          icon={CaretDown}
+          size="1em"
+          visible={!!visible}
+          onClick={() => {}}
+        />
+      }
+      items={options}
+    />
+  );
+};
 
 export default AnswerOptions;

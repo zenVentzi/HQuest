@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
 import styled from "styled-components";
 import shortid from "shortid";
 
@@ -24,21 +24,19 @@ interface AnswerViewerProps {
   answer: any;
 }
 
-class AnswerViewer extends Component<AnswerViewerProps> {
-  render() {
-    const { answer } = this.props;
+const AnswerViewer = (props: AnswerViewerProps) => {
+  const { answer } = props;
 
-    const answerWithParagraphs = answer.value
-      .split("\n")
-      .map((paragraph: string) => (
-        <span key={shortid.generate()}>
-          {paragraph}
-          <br />
-        </span>
-      ));
+  const answerWithParagraphs = answer.value
+    .split("\n")
+    .map((paragraph: string) => (
+      <span key={shortid.generate()}>
+        {paragraph}
+        <br />
+      </span>
+    ));
 
-    return <Viewer>- {answerWithParagraphs}</Viewer>;
-  }
-}
+  return <Viewer>- {answerWithParagraphs}</Viewer>;
+};
 
 export default AnswerViewer;

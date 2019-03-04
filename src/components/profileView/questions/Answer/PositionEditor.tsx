@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from "react";
+import React from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";

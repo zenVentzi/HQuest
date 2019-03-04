@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 import Panel from "./Panel";
 import Edition from "./Edition";
@@ -8,18 +8,16 @@ interface EditionsProps {
   onClose: () => void;
 }
 
-class Editions extends Component<EditionsProps> {
-  render() {
-    const { editions, onClose } = this.props;
+const Editions = (props: EditionsProps) => {
+  const { editions, onClose } = props;
 
-    return (
-      <Panel /* onClose={onClose} */>
-        {editions.map(e => (
-          <Edition key={e.id} edition={e} />
-        ))}
-      </Panel>
-    );
-  }
-}
+  return (
+    <Panel /* onClose={onClose} */>
+      {editions.map(e => (
+        <Edition key={e.id} edition={e} />
+      ))}
+    </Panel>
+  );
+};
 
 export default Editions;

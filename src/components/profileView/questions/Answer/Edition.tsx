@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import distanceInWords from "date-fns/distance_in_words";
 import styled from "styled-components";
 
@@ -20,32 +20,30 @@ interface EditionProps {
   edition: any;
 }
 
-class Edition extends Component<EditionProps> {
-  render() {
-    const {
-      edition: { date, before, after }
-    } = this.props;
+const Edition = (props: EditionProps) => {
+  const {
+    edition: { date, before, after }
+  } = props;
 
-    const startDate = new Date(date).getTime();
-    const dateTimeNow = new Date().getTime();
+  const editDate = new Date(date).getTime();
+  const dateTimeNow = new Date().getTime();
 
-    const editedTimeAgo = distanceInWords(startDate, dateTimeNow);
+  const editedTimeAgo = distanceInWords(editDate, dateTimeNow);
 
-    return (
-      <StyledEdition
-      // onMouseEnter={this.onMouseEnter}
-      // onMouseLeave={this.onMouseLeave}
-      >
-        <Text>Edit {editedTimeAgo} ago</Text>
-        <Text>
-          Before: <AnswerText>{before}</AnswerText>
-        </Text>
-        <Text>
-          After: <AnswerText>{after}</AnswerText>
-        </Text>
-      </StyledEdition>
-    );
-  }
-}
+  return (
+    <StyledEdition
+    // onMouseEnter={onMouseEnter}
+    // onMouseLeave={onMouseLeave}
+    >
+      <Text>Edit {editedTimeAgo} ago</Text>
+      <Text>
+        Before: <AnswerText>{before}</AnswerText>
+      </Text>
+      <Text>
+        After: <AnswerText>{after}</AnswerText>
+      </Text>
+    </StyledEdition>
+  );
+};
 
 export default Edition;
