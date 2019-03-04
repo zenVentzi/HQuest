@@ -1,15 +1,13 @@
-import React, { Component } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import Editor from "react-avatar-editor";
-import gql from "graphql-tag";
 import { Mutation, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
-
-const UPLOAD_AVATAR = gql`
-  mutation uploadAvatar($base64Img: String!) {
-    uploadAvatar(base64Img: $base64Img)
-  }
-`;
+import { UPLOAD_AVATAR } from "GqlClient/user/mutations";
+import {
+  UploadAvatarMutation,
+  UploadAvatarVariables
+} from "GqlClient/autoGenTypes";
 
 const Wrapper = styled.div`
   ${"" /* position: fixed; */} z-index: 1;
@@ -26,14 +24,14 @@ const Hint = styled.div`
 
 interface AvatarEditorProps {
   image: string | File;
-  onCloseEditor: (src?: string) => void; // split that into onSave and onClose
+  onClickCancel: (src?: string) => void; // split that into onSave and onClose
 }
 
-class AvatarEditor extends Component<AvatarEditorProps> {
-  private editor: Editor;
-  onClickSave = (uploadAvatar: MutationFn) => async () => {
-    if (this.editor) {
-      const canvasScaled = this.editor.getImageScaledToCanvas();
+const AvatarEditor = (props: AvatarEditorProps) => {
+  const editor = useRef<Editor>();
+  const onClickSave = (uploadAvatar: MutationFn) => async () => {
+    if (editor) {
+      const canvasScaled = editor.current.getImageScaledToCanvas();
       const base64Img = canvasScaled.toDataURL("image/jpeg").split(",")[1];
       const variables = { base64Img };
       // show loading/uploading
@@ -44,45 +42,45 @@ class AvatarEditor extends Component<AvatarEditorProps> {
 
       const src = res.data.uploadAvatar;
 
-      this.props.onCloseEditor(src);
+      props.onClickCancel(src);
     }
   };
 
-  onClickCancel = () => {
-    this.props.onCloseEditor();
+  const onClickCancel = () => {
+    props.onClickCancel();
   };
 
-  render() {
-    return (
-      <Mutation mutation={UPLOAD_AVATAR}>
-        {uploadAvatar => {
-          const { image } = this.props;
+  return (
+    <Mutation<UploadAvatarMutation, UploadAvatarVariables>
+      mutation={UPLOAD_AVATAR}
+    >
+      {uploadAvatar => {
+        const { image } = props;
 
-          return (
-            <Wrapper>
-              <Editor
-                ref={editor => {
-                  this.editor = editor;
-                }}
-                image={image}
-                width={150}
-                height={150}
-                border={50}
-                scale={1.2}
-                borderRadius={150}
-                color={[1, 1, 1, 1]}
-              />
-              <Hint>Drag to adjust</Hint>
-              <div>
-                <TextBtn onClick={this.onClickSave(uploadAvatar)}>Save</TextBtn>
-                <TextBtn onClick={this.onClickCancel}>Cancel</TextBtn>
-              </div>
-            </Wrapper>
-          );
-        }}
-      </Mutation>
-    );
-  }
-}
+        return (
+          <Wrapper>
+            <Editor
+              ref={editor => {
+                editor = editor;
+              }}
+              image={image}
+              width={150}
+              height={150}
+              border={50}
+              scale={1.2}
+              borderRadius={150}
+              color={[1, 1, 1, 1]}
+            />
+            <Hint>Drag to adjust</Hint>
+            <div>
+              <TextBtn onClick={onClickSave(uploadAvatar)}>Save</TextBtn>
+              <TextBtn onClick={onClickCancel}>Cancel</TextBtn>
+            </div>
+          </Wrapper>
+        );
+      }}
+    </Mutation>
+  );
+};
 
 export default AvatarEditor;

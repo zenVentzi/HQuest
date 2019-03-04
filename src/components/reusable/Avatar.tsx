@@ -101,7 +101,7 @@ const Avatar = (props: AvatarProps) => {
   return (
     <>
       {inputImg ? (
-        <Editor image={inputImg} onCloseEditor={onCloseEditor} />
+        <Editor image={inputImg} onClickCancel={onCloseEditor} />
       ) : (
         <Wrapper
           className={className}

@@ -27,3 +27,9 @@ export const FOLLOW = gql`
     follow(userId: $userId, follow: $follow)
   }
 `;
+
+export const UPLOAD_AVATAR = gql`
+  mutation UploadAvatar($base64Img: String!) {
+    uploadAvatar(base64Img: $base64Img)
+  }
+`;
