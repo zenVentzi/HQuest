@@ -55,10 +55,6 @@ export interface NewsBase {
   createdOn: DateTime;
 }
 
-export interface Node {
-  id: string;
-}
-
 export interface Notification {
   id: string;
 
@@ -89,12 +85,16 @@ export interface Edge {
   node: Node;
 }
 
+export interface Node {
+  id: string;
+}
+
 // ====================================================
 // Types
 // ====================================================
 
 export interface Query {
-  newsfeed?: Maybe<News[]>;
+  newsfeed?: Maybe<NewsBase[]>;
 
   notifications?: Maybe<Notification[]>;
 
@@ -111,18 +111,6 @@ export interface Query {
   followers?: Maybe<User[]>;
 
   following?: Maybe<User[]>;
-}
-
-export interface AnswerNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  createdOn: DateTime;
 }
 
 export interface User {
@@ -153,6 +141,30 @@ export interface SocialMediaLinks {
   instagramLink?: Maybe<string>;
 
   linkedInLink?: Maybe<string>;
+}
+
+export interface QuestionConnection extends Connection {
+  pageInfo: PageInfo;
+
+  edges?: Maybe<QuestionEdge[]>;
+
+  totalCount: number;
+}
+
+export interface PageInfo {
+  startCursor?: Maybe<string>;
+
+  endCursor?: Maybe<string>;
+
+  hasNextPage: boolean;
+
+  hasPreviousPage: boolean;
+}
+
+export interface QuestionEdge extends Edge {
+  cursor: string;
+
+  node: Question;
 }
 
 /** question should be made an interface */
@@ -214,66 +226,6 @@ export interface AnswerEdition {
   after: string;
 }
 
-export interface CommentNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  commentId: string;
-
-  createdOn: DateTime;
-}
-
-export interface NewFollowerNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  followedUser: User;
-
-  createdOn: DateTime;
-}
-
-export interface NewLikeNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  createdOn: DateTime;
-}
-
-export interface QuestionConnection extends Connection {
-  pageInfo: PageInfo;
-
-  edges?: Maybe<QuestionEdge[]>;
-
-  totalCount: number;
-}
-
-export interface PageInfo {
-  startCursor?: Maybe<string>;
-
-  endCursor?: Maybe<string>;
-
-  hasNextPage: boolean;
-
-  hasPreviousPage: boolean;
-}
-
-export interface QuestionEdge extends Edge {
-  cursor: string;
-
-  node: Question;
-}
-
 export interface Mutation {
   notifsMarkSeen?: Maybe<boolean>;
 
@@ -316,6 +268,54 @@ export interface LoginResult {
 
 export interface Subscription {
   newNotification: Notification;
+}
+
+export interface AnswerNews extends NewsBase {
+  type: NewsType;
+
+  performer: User;
+
+  answerOwner: User;
+
+  question: Question;
+
+  createdOn: DateTime;
+}
+
+export interface CommentNews extends NewsBase {
+  type: NewsType;
+
+  performer: User;
+
+  answerOwner: User;
+
+  question: Question;
+
+  commentId: string;
+
+  createdOn: DateTime;
+}
+
+export interface NewFollowerNews extends NewsBase {
+  type: NewsType;
+
+  performer: User;
+
+  followedUser: User;
+
+  createdOn: DateTime;
+}
+
+export interface NewLikeNews extends NewsBase {
+  type: NewsType;
+
+  performer: User;
+
+  answerOwner: User;
+
+  question: Question;
+
+  createdOn: DateTime;
 }
 
 export interface NewComment extends Notification {
@@ -526,7 +526,7 @@ export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
 
 export namespace QueryResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    newsfeed?: NewsfeedResolver<Maybe<News[]>, TypeParent, Context>;
+    newsfeed?: NewsfeedResolver<Maybe<NewsBase[]>, TypeParent, Context>;
 
     notifications?: NotificationsResolver<
       Maybe<Notification[]>,
@@ -554,7 +554,7 @@ export namespace QueryResolvers {
   }
 
   export type NewsfeedResolver<
-    R = Maybe<News[]>,
+    R = Maybe<NewsBase[]>,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
@@ -631,46 +631,6 @@ export namespace QueryResolvers {
   export interface FollowingArgs {
     userId: string;
   }
-}
-
-export namespace AnswerNewsResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = AnswerNews> {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
 }
 
 export namespace UserResolvers {
@@ -777,6 +737,90 @@ export namespace SocialMediaLinksResolvers {
   export type LinkedInLinkResolver<
     R = Maybe<string>,
     Parent = SocialMediaLinks,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace QuestionConnectionResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = QuestionConnection
+  > {
+    pageInfo?: PageInfoResolver<PageInfo, TypeParent, Context>;
+
+    edges?: EdgesResolver<Maybe<QuestionEdge[]>, TypeParent, Context>;
+
+    totalCount?: TotalCountResolver<number, TypeParent, Context>;
+  }
+
+  export type PageInfoResolver<
+    R = PageInfo,
+    Parent = QuestionConnection,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type EdgesResolver<
+    R = Maybe<QuestionEdge[]>,
+    Parent = QuestionConnection,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type TotalCountResolver<
+    R = number,
+    Parent = QuestionConnection,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace PageInfoResolvers {
+  export interface Resolvers<Context = ApolloContext, TypeParent = PageInfo> {
+    startCursor?: StartCursorResolver<Maybe<string>, TypeParent, Context>;
+
+    endCursor?: EndCursorResolver<Maybe<string>, TypeParent, Context>;
+
+    hasNextPage?: HasNextPageResolver<boolean, TypeParent, Context>;
+
+    hasPreviousPage?: HasPreviousPageResolver<boolean, TypeParent, Context>;
+  }
+
+  export type StartCursorResolver<
+    R = Maybe<string>,
+    Parent = PageInfo,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type EndCursorResolver<
+    R = Maybe<string>,
+    Parent = PageInfo,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type HasNextPageResolver<
+    R = boolean,
+    Parent = PageInfo,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type HasPreviousPageResolver<
+    R = boolean,
+    Parent = PageInfo,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace QuestionEdgeResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = QuestionEdge
+  > {
+    cursor?: CursorResolver<string, TypeParent, Context>;
+
+    node?: NodeResolver<Question, TypeParent, Context>;
+  }
+
+  export type CursorResolver<
+    R = string,
+    Parent = QuestionEdge,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type NodeResolver<
+    R = Question,
+    Parent = QuestionEdge,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -971,219 +1015,6 @@ export namespace AnswerEditionResolvers {
   export type AfterResolver<
     R = string,
     Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace CommentNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = CommentNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    commentId?: CommentIdResolver<string, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentIdResolver<
-    R = string,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewFollowerNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = NewFollowerNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    followedUser?: FollowedUserResolver<User, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FollowedUserResolver<
-    R = User,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewLikeNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = NewLikeNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace QuestionConnectionResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = QuestionConnection
-  > {
-    pageInfo?: PageInfoResolver<PageInfo, TypeParent, Context>;
-
-    edges?: EdgesResolver<Maybe<QuestionEdge[]>, TypeParent, Context>;
-
-    totalCount?: TotalCountResolver<number, TypeParent, Context>;
-  }
-
-  export type PageInfoResolver<
-    R = PageInfo,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EdgesResolver<
-    R = Maybe<QuestionEdge[]>,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TotalCountResolver<
-    R = number,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace PageInfoResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = PageInfo> {
-    startCursor?: StartCursorResolver<Maybe<string>, TypeParent, Context>;
-
-    endCursor?: EndCursorResolver<Maybe<string>, TypeParent, Context>;
-
-    hasNextPage?: HasNextPageResolver<boolean, TypeParent, Context>;
-
-    hasPreviousPage?: HasPreviousPageResolver<boolean, TypeParent, Context>;
-  }
-
-  export type StartCursorResolver<
-    R = Maybe<string>,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EndCursorResolver<
-    R = Maybe<string>,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type HasNextPageResolver<
-    R = boolean,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type HasPreviousPageResolver<
-    R = boolean,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace QuestionEdgeResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = QuestionEdge
-  > {
-    cursor?: CursorResolver<string, TypeParent, Context>;
-
-    node?: NodeResolver<Question, TypeParent, Context>;
-  }
-
-  export type CursorResolver<
-    R = string,
-    Parent = QuestionEdge,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type NodeResolver<
-    R = Question,
-    Parent = QuestionEdge,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -1439,6 +1270,175 @@ export namespace SubscriptionResolvers {
   }
 }
 
+export namespace AnswerNewsResolvers {
+  export interface Resolvers<Context = ApolloContext, TypeParent = AnswerNews> {
+    type?: TypeResolver<NewsType, TypeParent, Context>;
+
+    performer?: PerformerResolver<User, TypeParent, Context>;
+
+    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
+
+    question?: QuestionResolver<Question, TypeParent, Context>;
+
+    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
+  }
+
+  export type TypeResolver<
+    R = NewsType,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type PerformerResolver<
+    R = User,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type AnswerOwnerResolver<
+    R = User,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type QuestionResolver<
+    R = Question,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CreatedOnResolver<
+    R = DateTime,
+    Parent = AnswerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace CommentNewsResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = CommentNews
+  > {
+    type?: TypeResolver<NewsType, TypeParent, Context>;
+
+    performer?: PerformerResolver<User, TypeParent, Context>;
+
+    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
+
+    question?: QuestionResolver<Question, TypeParent, Context>;
+
+    commentId?: CommentIdResolver<string, TypeParent, Context>;
+
+    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
+  }
+
+  export type TypeResolver<
+    R = NewsType,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type PerformerResolver<
+    R = User,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type AnswerOwnerResolver<
+    R = User,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type QuestionResolver<
+    R = Question,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CommentIdResolver<
+    R = string,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CreatedOnResolver<
+    R = DateTime,
+    Parent = CommentNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace NewFollowerNewsResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = NewFollowerNews
+  > {
+    type?: TypeResolver<NewsType, TypeParent, Context>;
+
+    performer?: PerformerResolver<User, TypeParent, Context>;
+
+    followedUser?: FollowedUserResolver<User, TypeParent, Context>;
+
+    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
+  }
+
+  export type TypeResolver<
+    R = NewsType,
+    Parent = NewFollowerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type PerformerResolver<
+    R = User,
+    Parent = NewFollowerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type FollowedUserResolver<
+    R = User,
+    Parent = NewFollowerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CreatedOnResolver<
+    R = DateTime,
+    Parent = NewFollowerNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
+export namespace NewLikeNewsResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = NewLikeNews
+  > {
+    type?: TypeResolver<NewsType, TypeParent, Context>;
+
+    performer?: PerformerResolver<User, TypeParent, Context>;
+
+    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
+
+    question?: QuestionResolver<Question, TypeParent, Context>;
+
+    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
+  }
+
+  export type TypeResolver<
+    R = NewsType,
+    Parent = NewLikeNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type PerformerResolver<
+    R = User,
+    Parent = NewLikeNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type AnswerOwnerResolver<
+    R = User,
+    Parent = NewLikeNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type QuestionResolver<
+    R = Question,
+    Parent = NewLikeNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CreatedOnResolver<
+    R = DateTime,
+    Parent = NewLikeNews,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+}
+
 export namespace NewCommentResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = NewComment> {
     id?: IdResolver<string, TypeParent, Context>;
@@ -1583,17 +1583,6 @@ export namespace NewsBaseResolvers {
   > = TypeResolveFn<R, Parent, Context>;
 }
 
-export namespace NodeResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "Question",
-    Parent = Question,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
 export namespace NotificationResolvers {
   export interface Resolvers {
     __resolveType: ResolveType;
@@ -1623,6 +1612,17 @@ export namespace EdgeResolvers {
   export type ResolveType<
     R = "QuestionEdge",
     Parent = QuestionEdge,
+    Context = ApolloContext
+  > = TypeResolveFn<R, Parent, Context>;
+}
+
+export namespace NodeResolvers {
+  export interface Resolvers {
+    __resolveType: ResolveType;
+  }
+  export type ResolveType<
+    R = "Question",
+    Parent = Question,
     Context = ApolloContext
   > = TypeResolveFn<R, Parent, Context>;
 }
@@ -1678,31 +1678,31 @@ export interface DateTimeScalarConfig
 
 export interface IResolvers {
   Query?: QueryResolvers.Resolvers;
-  AnswerNews?: AnswerNewsResolvers.Resolvers;
   User?: UserResolvers.Resolvers;
   SocialMediaLinks?: SocialMediaLinksResolvers.Resolvers;
+  QuestionConnection?: QuestionConnectionResolvers.Resolvers;
+  PageInfo?: PageInfoResolvers.Resolvers;
+  QuestionEdge?: QuestionEdgeResolvers.Resolvers;
   Question?: QuestionResolvers.Resolvers;
   Answer?: AnswerResolvers.Resolvers;
   Comment?: CommentResolvers.Resolvers;
   Likes?: LikesResolvers.Resolvers;
   Liker?: LikerResolvers.Resolvers;
   AnswerEdition?: AnswerEditionResolvers.Resolvers;
-  CommentNews?: CommentNewsResolvers.Resolvers;
-  NewFollowerNews?: NewFollowerNewsResolvers.Resolvers;
-  NewLikeNews?: NewLikeNewsResolvers.Resolvers;
-  QuestionConnection?: QuestionConnectionResolvers.Resolvers;
-  PageInfo?: PageInfoResolvers.Resolvers;
-  QuestionEdge?: QuestionEdgeResolvers.Resolvers;
   Mutation?: MutationResolvers.Resolvers;
   LoginResult?: LoginResultResolvers.Resolvers;
   Subscription?: SubscriptionResolvers.Resolvers;
+  AnswerNews?: AnswerNewsResolvers.Resolvers;
+  CommentNews?: CommentNewsResolvers.Resolvers;
+  NewFollowerNews?: NewFollowerNewsResolvers.Resolvers;
+  NewLikeNews?: NewLikeNewsResolvers.Resolvers;
   NewComment?: NewCommentResolvers.Resolvers;
   NewFollower?: NewFollowerResolvers.Resolvers;
   NewsBase?: NewsBaseResolvers.Resolvers;
-  Node?: NodeResolvers.Resolvers;
   Notification?: NotificationResolvers.Resolvers;
   Connection?: ConnectionResolvers.Resolvers;
   Edge?: EdgeResolvers.Resolvers;
+  Node?: NodeResolvers.Resolvers;
   News?: NewsResolvers.Resolvers;
   DateTime?: GraphQLScalarType;
 }

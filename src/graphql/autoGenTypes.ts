@@ -51,20 +51,21 @@ export type NewsfeedQuery = {
   newsfeed: Maybe<NewsfeedNewsfeed[]>;
 };
 
-export type NewsfeedNewsfeed =
-  | NewsfeedNewsBaseInlineFragment
-  | NewsfeedAnswerNewsInlineFragment
-  | NewsfeedCommentNewsInlineFragment
-  | NewsfeedNewLikeNewsInlineFragment
-  | NewsfeedNewFollowerNewsInlineFragment;
-
-export type NewsfeedNewsBaseInlineFragment = {
-  __typename?: "NewsBase";
+export type NewsfeedNewsfeed = {
+  __typename?:
+    | NewsfeedAnswerNewsInlineFragment["__typename"]
+    | NewsfeedCommentNewsInlineFragment["__typename"]
+    | NewsfeedNewLikeNewsInlineFragment["__typename"]
+    | NewsfeedNewFollowerNewsInlineFragment["__typename"];
 
   type: NewsType;
 
   createdOn: DateTime;
-};
+} & (
+  | NewsfeedAnswerNewsInlineFragment
+  | NewsfeedCommentNewsInlineFragment
+  | NewsfeedNewLikeNewsInlineFragment
+  | NewsfeedNewFollowerNewsInlineFragment);
 
 export type NewsfeedAnswerNewsInlineFragment = {
   __typename?: "AnswerNews";
