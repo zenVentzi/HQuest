@@ -43,8 +43,8 @@ const FollowBtn = (props: FollowBtnProps) => {
     <Mutation<FollowMutation, FollowVariables> mutation={FOLLOW}>
       {follow => (
         <Btn
-          onMouseEnter={this.onMouseEnter}
-          onMouseLeave={this.onMouseLeave}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
           onClick={onClick(follow)}
         >
           {text}
