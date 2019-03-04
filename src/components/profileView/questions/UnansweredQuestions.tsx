@@ -10,7 +10,7 @@ interface UnansweredQuestionsProps {
 }
 
 const UnansweredQuestions = (props: UnansweredQuestionsProps) => {
-  const { style, questions, refetchQuestions } = this.props;
+  const { style, questions, refetchQuestions } = props;
 
   if (!questions.length) {
     return <div style={style}> All questions are answered </div>;
