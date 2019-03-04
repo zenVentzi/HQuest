@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { useState } from "react";
 import shortid from "shortid";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
@@ -24,63 +24,60 @@ interface TagsWindowProps {
   onClose: () => void;
 }
 
-export default class TagsWindow extends Component<TagsWindowProps> {
-  static propTypes = {};
-  state: any = { selectedTags: [] };
+const TagsWindow = (props: TagsWindowProps) => {
+  const [selectedTags, setSelectedTags] = useState([]);
 
-  isSelected = (tag: string) => {
-    return this.state.selectedTags.includes(tag);
+  const isSelected = (tag: string) => {
+    return selectedTags.includes(tag);
   };
 
-  onClickTag = (tag: string) => {
-    const isSelected = this.state.selectedTags.includes(tag);
-
-    let selectedTags;
+  const onClickTag = (tag: string) => {
+    const isSelected = selectedTags.includes(tag);
 
     if (isSelected) {
-      selectedTags = this.state.selectedTags.filter((t: string) => t !== tag);
+      setSelectedTags(() => {
+        return selectedTags.filter((t: string) => t !== tag);
+      });
     } else {
-      selectedTags = [...this.state.selectedTags, tag];
+      setSelectedTags([...selectedTags, tag]);
     }
-    this.setState({ selectedTags });
   };
 
-  render() {
-    const { tags, onSelect, onClose } = this.props;
-    const { selectedTags } = this.state;
+  const { tags, onSelect, onClose } = props;
 
-    return (
-      <TagsDropdown
-        topComponent={
-          <Fragment>
-            {tags.map(t => (
-              <TagBtn
-                key={t}
-                onClick={e => {
-                  e.stopPropagation();
-                  this.onClickTag(t);
-                }}
-                selected={this.isSelected(t)}
-              >
-                {t}
-              </TagBtn>
-            ))}
-          </Fragment>
-        }
-        bottomComponent={
-          <Fragment>
-            <TextBtn
-              onClick={() => {
-                onSelect(selectedTags);
+  return (
+    <TagsDropdown
+      topComponent={
+        <>
+          {tags.map(t => (
+            <TagBtn
+              key={t}
+              onClick={e => {
+                e.stopPropagation();
+                onClickTag(t);
               }}
-              style={{ marginRight: "1em" }}
+              selected={isSelected(t)}
             >
-              Select
-            </TextBtn>
-            <TextBtn onClick={onClose}>Close</TextBtn>
-          </Fragment>
-        }
-      />
-    );
-  }
-}
+              {t}
+            </TagBtn>
+          ))}
+        </>
+      }
+      bottomComponent={
+        <>
+          <TextBtn
+            onClick={() => {
+              onSelect(selectedTags);
+            }}
+            style={{ marginRight: "1em" }}
+          >
+            Select
+          </TextBtn>
+          <TextBtn onClick={onClose}>Close</TextBtn>
+        </>
+      }
+    />
+  );
+};
+
+export default TagsWindow;
