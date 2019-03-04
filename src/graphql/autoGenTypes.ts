@@ -345,11 +345,11 @@ export type LikeAnswerMutation = {
 
 export type LikeAnswerLikeAnswer = AnswerFieldsFragment;
 
-export type AddQuestionsMutationVariables = {
+export type AddQuestionsVariables = {
   questions?: Maybe<InputQuestion[]>;
 };
 
-export type AddQuestionsMutationMutation = {
+export type AddQuestionsMutation = {
   __typename?: "Mutation";
 
   addQuestions: Maybe<boolean>;
@@ -367,18 +367,18 @@ export type QuestionNotApplyMutation = {
 
 export type QuestionNotApplyQuestionNotApply = QuestionFieldsFragment;
 
-export type LoginMutationVariables = {
+export type LoginVariables = {
   email: string;
   name: string;
 };
 
-export type LoginMutationMutation = {
+export type LoginMutation = {
   __typename?: "Mutation";
 
-  login: LoginMutationLogin;
+  login: LoginLogin;
 };
 
-export type LoginMutationLogin = {
+export type LoginLogin = {
   __typename?: "LoginResult";
 
   authToken: string;
