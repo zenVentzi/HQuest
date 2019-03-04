@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Query } from "react-apollo";
 import { GET_QUESTIONS } from "GqlClient/question/queries";
 import styled from "styled-components";
@@ -11,74 +11,70 @@ interface QuestionsContainerProps {
   user: any;
 }
 
-class QuestionsContainer extends Component<QuestionsContainerProps, any> {
-  private isFetching: boolean;
-  private hasNextPage: boolean;
-  private fetchMore: any;
-  private fetchAfter: string;
-  private isFetchingInitial: boolean;
-  private isFetchingMore: boolean;
-  private isRefetching: boolean;
+const QuestionsContainer = (props: QuestionsContainerProps) => {
+  const isFetching = useRef(false);
+  const hasNextPage = useRef(false);
+  const fetchMoreFn = useRef(undefined);
+  const fetchAfter = useRef(null);
+  const isFetchingInitial = useRef(false); // or true?
+  const isFetchingMore = useRef(false);
+  const isRefetching = useRef(false);
+  const firstRenderResetScroll = useRef(true);
 
-  state = { showAnswered: true, selectedTags: [""] };
-  firstRenderResetScroll = true;
+  const [showAnswered, setShowAnswered] = useState(true);
+  const [selectedTags, setSelectedTags] = useState([""]);
 
-  componentDidMount() {
-    window.addEventListener("scroll", this.onScroll);
-  }
+  useEffect(() => {
+    const onScroll = () => {
+      const bottomMarginPx = 0;
+      const offsetBottom =
+        window.innerHeight + window.pageYOffset - bottomMarginPx;
+      const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
+      const shouldFetchMore = isCloseToBottom && !isFetching && hasNextPage;
 
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.onScroll);
-  }
+      if (shouldFetchMore) {
+        fetchMoreFn.current({
+          variables: {
+            after: fetchAfter
+          },
+          updateQuery: (prev: any, { fetchMoreResult }: any) => {
+            if (!fetchMoreResult) return prev;
+            const res = {
+              ...prev,
+              ...fetchMoreResult
+            };
+            res.questions.pageInfo.startCursor =
+              prev.questions.pageInfo.startCursor;
+            res.questions.edges = [
+              ...prev.questions.edges,
+              ...fetchMoreResult.questions.edges
+            ];
 
-  onScroll = () => {
-    const bottomMarginPx = 0;
-    const offsetBottom =
-      window.innerHeight + window.pageYOffset - bottomMarginPx;
-    const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
-    const shouldFetchMore =
-      isCloseToBottom && !this.isFetching && this.hasNextPage;
+            return res;
+          }
+        });
+      }
+    };
 
-    if (shouldFetchMore) {
-      this.fetchMore({
-        variables: {
-          after: this.fetchAfter
-        },
-        updateQuery: (prev: any, { fetchMoreResult }: any) => {
-          if (!fetchMoreResult) return prev;
-          const res = {
-            ...prev,
-            ...fetchMoreResult
-          };
-          res.questions.pageInfo.startCursor =
-            prev.questions.pageInfo.startCursor;
-          res.questions.edges = [
-            ...prev.questions.edges,
-            ...fetchMoreResult.questions.edges
-          ];
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
-          return res;
-        }
-      });
-    }
+  const onToggleQuestions = (e: any) => {
+    const isTogglerOn = e.target.checked;
+    setShowAnswered(!isTogglerOn);
   };
 
-  onToggleQuestions = (e: any) => {
-    const isOn = e.target.checked;
-    this.setState({ showAnswered: !isOn });
+  const onSelectedTags = (tags: string[]) => {
+    setSelectedTags(tags);
   };
 
-  onSelectedTags = (tags: string[]) => {
-    this.setState((prev: any) => {
-      return { ...prev, selectedTags: tags };
-    });
-  };
-
-  renderQuestions = (questions: any, refetch: any) => {
+  const renderQuestions = (questions: any, refetch: any) => {
     if (!questions) return null;
 
-    const { user } = this.props;
-    const { showAnswered } = this.state;
+    const { user } = props;
 
     const questionNodes = questions.edges.map((e: any) => e.node);
 
@@ -97,80 +93,61 @@ class QuestionsContainer extends Component<QuestionsContainerProps, any> {
     );
   };
 
-  render() {
-    const { user } = this.props;
-    const { selectedTags, showAnswered } = this.state;
-    const queryVars = {
-      answered: showAnswered,
-      userId: user.id,
-      tags: selectedTags,
-      first: 20
-    };
+  const { user } = props;
+  const queryVars = {
+    answered: showAnswered,
+    userId: user.id,
+    tags: selectedTags,
+    first: 20
+  };
 
-    return (
-      <Fragment>
-        {user.me && <ToggleQuestions onClick={this.onToggleQuestions} />}
-        <QuestionTags onSelected={this.onSelectedTags} />
-        <Query
-          query={GET_QUESTIONS}
-          variables={queryVars}
-          fetchPolicy="network-only" // play with when not using HOT RELOAD
-          // fetchPolicy="cache-and-network"
-          notifyOnNetworkStatusChange
-        >
-          {({
-            error,
-            data: { questions },
-            fetchMore,
-            refetch,
-            networkStatus
-          }) => {
-            if (error) return <div> {`Error ${error}`}</div>;
+  return (
+    <>
+      {user.me && <ToggleQuestions onClick={onToggleQuestions} />}
+      <QuestionTags onSelected={onSelectedTags} />
+      <Query
+        query={GET_QUESTIONS}
+        variables={queryVars}
+        fetchPolicy="network-only" // play with when not using HOT RELOAD
+        // fetchPolicy="cache-and-network"
+        notifyOnNetworkStatusChange
+      >
+        {({
+          error,
+          data: { questions },
+          fetchMore,
+          refetch,
+          networkStatus
+        }) => {
+          if (error) return <div> {`Error ${error}`}</div>;
 
-            this.isFetchingInitial = networkStatus === 1;
-            this.isFetchingMore = networkStatus === 3;
-            this.isRefetching = networkStatus === 4;
+          isFetchingInitial.current = networkStatus === 1;
+          isFetchingMore.current = networkStatus === 3;
+          isRefetching.current = networkStatus === 4;
 
-            this.isFetching =
-              this.isFetchingInitial ||
-              this.isFetchingMore ||
-              this.isRefetching;
+          isFetching.current =
+            isFetchingInitial.current ||
+            isFetchingMore.current ||
+            isRefetching.current;
 
-            if (questions) {
-              this.hasNextPage = questions.pageInfo.hasNextPage;
-              this.fetchAfter = questions.pageInfo.endCursor;
-              this.fetchMore = fetchMore;
-            }
+          if (questions) {
+            hasNextPage.current = questions.pageInfo.hasNextPage;
+            fetchAfter.current = questions.pageInfo.endCursor;
+            fetchMoreFn.current = fetchMore;
+          }
 
-            return (
-              <Fragment>
-                {!this.isFetchingInitial &&
-                  this.renderQuestions(questions, refetch)}
-                {(this.isFetchingInitial || this.isFetchingMore) && (
-                  <div>loading questions..</div>
-                )}
-              </Fragment>
-            );
-          }}
-        </Query>
-      </Fragment>
-    ); // move the queries here?
-  }
-}
-
-// const TestQuestions = () => {
-//   const questions = [];
-
-//   for (let i = 0; i < 100; i++) {
-//     questions.push(
-//       <div key={i}>
-//         Question
-//         {i}
-//       </div>
-//     );
-//   }
-
-//   return questions;
-// };
+          return (
+            <>
+              {!isFetchingInitial && renderQuestions(questions, refetch)}
+              {(isFetchingInitial || isFetchingMore) && (
+                <div>loading questions..</div>
+              )}
+            </>
+          );
+        }}
+      </Query>
+    </>
+  );
+};
 
 export default QuestionsContainer;
