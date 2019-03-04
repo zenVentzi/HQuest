@@ -1,4 +1,4 @@
-import React, { Component, Fragment, CSSProperties } from "react";
+import React, { CSSProperties, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { getLoggedUserId } from "Utils";
@@ -49,314 +49,251 @@ interface AnsweredQuestionProps {
   style?: CSSProperties;
 }
 
-class AnsweredQuestion extends Component<AnsweredQuestionProps, any> {
-  timeoutIndex: number;
-  constructor(props: AnsweredQuestionProps) {
-    super(props);
+const AnsweredQuestion = (props: AnsweredQuestionProps) => {
+  // timeoutIndex: number;
+  const timeoutIndex = useRef<number>();
+  const { likes } = props.question.answer;
+  const [totalLikes, setTotalLikes] = useState(() => {
+    return likes ? likes.total : 0;
+  });
+  const [userLikes, setUserLikes] = useState(() => {
+    if (!likes) return 0;
+    const user = likes.likers.find(
+      (liker: any) => liker.user.id === getLoggedUserId()
+    );
 
-    const { answer } = this.props.question;
-    let totalLikes = 0;
-    let userLikes = 0;
+    return user ? user.numOfLikes : 0;
+  });
+  const [showLikes, setShowLikes] = useState(false);
+  const [numOfComments, setNumOfComments] = useState(() => {
+    const { comments } = props.question.answer;
+    return comments ? comments.length : 0;
+  });
+  const [showComments, setShowComments] = useState(props.showComments);
+  const [numOfEditions, setNumOfEditions] = useState(() => {
+    const { editions } = props.question.answer.editions;
+    return editions ? editions.length : 0;
+  });
+  const [showEditions, setShowEditions] = useState(false);
+  const [showAnswerEditor, setShowAnswerEditor] = useState(false);
+  const [showPositionEditor, setShowPositionEditor] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
-    if (answer.likes) {
-      totalLikes = answer.likes.total;
-      const currentUserLikesObj = answer.likes.likers.find(
-        (liker: any) => liker.user.id === getLoggedUserId()
-      );
-
-      if (currentUserLikesObj) {
-        userLikes = currentUserLikesObj.numOfLikes;
-      }
-    }
-
-    const numOfComments = answer.comments ? answer.comments.length : 0;
-    const numOfEditions = answer.editions ? answer.editions.length : 0;
-
-    this.state = {
-      hovered: false,
-      showComments: this.props.showComments,
-      showLikes: false,
-      showEditions: false,
-      showAnswerEditor: false,
-      showPositionEditor: false,
-      totalLikes,
-      userLikes,
-      numOfComments,
-      numOfEditions
-    };
-  }
-
-  onMouseEnter = () => {
-    this.toggleHovered(true);
+  const onMouseEnter = () => {
+    setHovered(true);
   };
 
-  onMouseLeave = () => {
-    // console.log(`mouseleave`);
-    this.toggleHovered(false);
+  const onMouseLeave = () => {
+    setHovered(false);
   };
 
-  onRemove = (mutation: MutationFn) => async () => {
-    const answerId = this.props.question.answer.id;
+  const onRemove = (mutation: MutationFn) => async () => {
+    const answerId = props.question.answer.id;
     const variables = { answerId };
     await mutation({ variables });
     toast.success("Answer removed!");
-    // await this.props.onRemove();
+    // await props.onRemove();
   };
 
-  incrementNumOfComments = () => {
-    this.setState((prevState: any) => {
-      const numOfComments = prevState.numOfComments + 1;
-      return {
-        ...prevState,
-        numOfComments
-      };
-    });
+  const incrementNumOfComments = () => {
+    setNumOfComments(numOfComments + 1);
   };
 
-  decrementNumOfComments = () => {
-    this.setState((prevState: any) => {
-      const numOfComments = prevState.numOfComments - 1;
-      return {
-        ...prevState,
-        numOfComments
-      };
-    });
+  const decrementNumOfComments = () => {
+    setNumOfComments(numOfComments - 1);
   };
 
-  toggleHovered = (value: boolean) => {
-    this.setState({ ...this.state, hovered: value });
+  // const toggleHovered = (value: boolean) => {
+  //   setState({ ...state, hovered: value });
+  // };
+
+  const openAnswerEditor = () => {
+    setShowAnswerEditor(true);
+    setShowPositionEditor(false);
   };
 
-  openAnswerEditor = () => {
-    this.setState({
-      ...this.state,
-      showAnswerEditor: true,
-      showPositionEditor: false
-    });
+  const closeAnswerEditor = () => {
+    setShowAnswerEditor(false);
   };
 
-  closeAnswerEditor = () => {
-    this.setState({
-      ...this.state,
-      showAnswerEditor: false
-    });
+  const openPositionEditor = () => {
+    setShowPositionEditor(true);
+    setShowAnswerEditor(false);
   };
 
-  openPositionEditor = () => {
-    this.setState({
-      ...this.state,
-      showPositionEditor: true,
-      showAnswerEditor: false
-    });
+  const closePositionEditor = () => {
+    setShowPositionEditor(false);
   };
 
-  closePositionEditor = () => {
-    this.setState({
-      ...this.state,
-      showPositionEditor: false
-    });
-  };
-
-  onSaveAnswer = (mutation: MutationFn) => async (answerValue: string) => {
-    const isTheSame = this.props.question.answer.value === answerValue;
+  const onSaveAnswer = (mutation: MutationFn) => async (
+    answerValue: string
+  ) => {
+    const isTheSame = props.question.answer.value === answerValue;
 
     if (isTheSame) {
-      this.closeAnswerEditor();
+      closeAnswerEditor();
+      toast.success("No changes");
       return;
-      // print "Nothing changed"
     }
 
-    const answerId = this.props.question.answer.id;
+    const answerId = props.question.answer.id;
     const variables = { answerId, answerValue };
     await mutation({ variables });
     toast.success("Answer edited!");
 
-    const numOfEditions = this.state.numOfEditions + 1;
-    this.setState({ ...this.state, numOfEditions });
-    this.closeAnswerEditor();
+    setNumOfEditions(numOfEditions + 1);
+    closeAnswerEditor();
   };
 
-  toggleComments = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      showComments: !prevState.showComments,
-      showLikes: false,
-      showEditions: false
-    }));
+  const toggleComments = () => {
+    setShowComments(!showComments);
+    setShowLikes(false);
+    setShowEditions(false);
   };
 
   // onEditComment: any;
 
-  toggleLikes = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      showLikes: !prevState.showLikes,
-      showComments: false,
-      showEditions: false
-    }));
+  const toggleLikes = () => {
+    setShowLikes(!showLikes);
+    setShowComments(false);
+    setShowEditions(false);
   };
 
-  toggleEditions = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      showEditions: !prevState.showEditions,
-      showComments: false,
-      showLikes: false
-    }));
+  const toggleEditions = () => {
+    setShowEditions(!showEditions);
+    setShowComments(false);
+    setShowLikes(false);
   };
 
-  onMovePosition = (mutation: MutationFn) => async (newPosition: number) => {
-    const answerId = this.props.question.answer.id;
+  const onMovePosition = (mutation: MutationFn) => async (
+    newPosition: number
+  ) => {
+    const answerId = props.question.answer.id;
     const variables = { answerId, position: newPosition };
     await mutation({ variables });
-    // await this.props.onClickMove({ newPosition });
+    // await props.onClickMove({ newPosition });
     toast.success("Question moved!");
-    this.closePositionEditor();
+    closePositionEditor();
   };
 
-  wait = async (milliseconds: number) => {
+  const wait = async (milliseconds: number) => {
     return new Promise(resolve => {
-      this.timeoutIndex = setTimeout(resolve, milliseconds);
+      timeoutIndex.current = setTimeout(resolve, milliseconds);
     });
     // return new Promise(resolve => setTimeout(resolve, milliseconds));
   };
 
-  cancelPrevWait = () => {
-    if (this.timeoutIndex) {
-      clearTimeout(this.timeoutIndex);
-      this.timeoutIndex = null;
+  const cancelPrevWait = () => {
+    if (timeoutIndex) {
+      clearTimeout(timeoutIndex.current);
+      timeoutIndex.current = null;
     }
   };
 
-  onClickLike = (mutation: MutationFn) => async () => {
-    const userLikes = this.state.userLikes + 1;
-    const totalLikes = this.state.totalLikes + 1;
-
-    if (userLikes > 20) {
+  const onClickLike = (mutation: MutationFn) => async () => {
+    if (userLikes === 20) {
       toast.error("20 likes is the limit");
       return;
     }
 
-    this.setState({ ...this.state, userLikes, totalLikes });
-
-    this.cancelPrevWait();
-    await this.wait(500);
+    setUserLikes(userLikes + 1);
+    setTotalLikes(totalLikes + 1);
+    cancelPrevWait();
+    await wait(500);
     /* because the user can click multiple times in a row, creating too many sequential requests to the server */
-    const answerId = this.props.question.answer.id;
+    const answerId = props.question.answer.id;
     const variables = { answerId, userLikes };
     await mutation({ variables });
   };
 
-  render() {
-    const {
-      hovered,
-      showLikes,
-      showComments,
-      showEditions,
-      showPositionEditor,
-      showAnswerEditor,
-      totalLikes,
-      numOfComments,
-      numOfEditions
-    } = this.state;
-    const {
-      question,
-      scrollToComment,
-      totalQuestionsCount,
-      isPersonal,
-      style
-    } = this.props;
+  const {
+    question,
+    scrollToComment,
+    totalQuestionsCount,
+    isPersonal,
+    style
+  } = props;
 
-    // console.log(this.state);
+  const { comments } = question.answer;
 
-    const { comments } = question.answer;
+  const likeBtnText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
+  const commentBtnText =
+    numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
+  const editionsBtnText =
+    numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
 
-    const likeBtnText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
-    const commentBtnText =
-      numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
-    const editionsBtnText =
-      numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
-
-    return (
-      <AnsweredQuestionGql>
-        {(editAnswer, removeAnswer, moveAnswerPosition, likeAnswer) => {
-          return (
-            <StyledQuestion
-              onMouseEnter={this.onMouseEnter}
-              onFocus={this.onMouseEnter}
-              onMouseLeave={this.onMouseLeave}
-              // onBlur={this.onMouseLeave}
-              style={style}
-            >
-              <Row>
-                <Question question={question.value} />
-                <OptionsDropdown
-                  visible={isPersonal && hovered}
-                  onClickEdit={this.openAnswerEditor}
-                  onClickRemove={this.onRemove(removeAnswer)}
-                  onClickMove={this.openPositionEditor}
-                />
-              </Row>
-              {showAnswerEditor ? (
-                <AnswerEditor
-                  answer={question.answer}
-                  onClickDoesNotApply={() => {}}
-                  onClickSave={this.onSaveAnswer(editAnswer)}
-                />
-              ) : (
-                <AnswerViewer answer={question.answer} />
+  return (
+    <AnsweredQuestionGql>
+      {(editAnswer, removeAnswer, moveAnswerPosition, likeAnswer) => {
+        return (
+          <StyledQuestion
+            onMouseEnter={onMouseEnter}
+            onFocus={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            // onBlur={onMouseLeave}
+            style={style}
+          >
+            <Row>
+              <Question question={question.value} />
+              <OptionsDropdown
+                visible={isPersonal && hovered}
+                onClickEdit={openAnswerEditor}
+                onClickRemove={onRemove(removeAnswer)}
+                onClickMove={openPositionEditor}
+              />
+            </Row>
+            {showAnswerEditor ? (
+              <AnswerEditor
+                answer={question.answer}
+                onClickDoesNotApply={() => {}}
+                onClickSave={onSaveAnswer(editAnswer)}
+              />
+            ) : (
+              <AnswerViewer answer={question.answer} />
+            )}
+            {showPositionEditor && (
+              <PositionEditor
+                position={question.answer.position}
+                maxPosition={totalQuestionsCount}
+                onClickMove={onMovePosition(moveAnswerPosition)}
+                onClickClose={closePositionEditor}
+              />
+            )}
+            <Row hide={!hovered}>
+              <LikeBtn
+                onClick={onClickLike(likeAnswer)}
+                isLiked={question.answer.isLiked}
+              />
+              <SmallBtn onClick={toggleLikes}>{likeBtnText}</SmallBtn>
+              <SmallBtn onClick={toggleComments}>{commentBtnText}</SmallBtn>
+              {!!numOfEditions && (
+                <SmallBtn onClick={toggleEditions}>{editionsBtnText}</SmallBtn>
               )}
-              {showPositionEditor && (
-                <PositionEditor
-                  position={question.answer.position}
-                  maxPosition={totalQuestionsCount}
-                  onClickMove={this.onMovePosition(moveAnswerPosition)}
-                  onClickClose={this.closePositionEditor}
-                />
-              )}
-              <Row hide={!hovered}>
-                <LikeBtn
-                  onClick={this.onClickLike(likeAnswer)}
-                  isLiked={question.answer.isLiked}
-                />
-                <SmallBtn onClick={this.toggleLikes}>{likeBtnText}</SmallBtn>
-                <SmallBtn onClick={this.toggleComments}>
-                  {commentBtnText}
-                </SmallBtn>
-                {!!numOfEditions && (
-                  <SmallBtn onClick={this.toggleEditions}>
-                    {editionsBtnText}
-                  </SmallBtn>
-                )}
-              </Row>
-              {showLikes && (
-                <Likes
-                  onClose={this.toggleLikes}
-                  likes={question.answer.likes}
-                />
-              )}
-              {showEditions && (
-                <Editions
-                  editions={question.answer.editions}
-                  onClose={this.toggleEditions}
-                />
-              )}
-              {(showComments || scrollToComment) && (
-                <Comments
-                  comments={comments}
-                  answerId={question.answer.id}
-                  scrollToComment={scrollToComment}
-                  onAddComment={this.incrementNumOfComments}
-                  // onEditComment={this.onEditComment}
-                  onRemoveComment={this.decrementNumOfComments}
-                />
-              )}
-            </StyledQuestion>
-          );
-        }}
-      </AnsweredQuestionGql>
-    );
-  }
-}
+            </Row>
+            {showLikes && (
+              <Likes onClose={toggleLikes} likes={question.answer.likes} />
+            )}
+            {showEditions && (
+              <Editions
+                editions={question.answer.editions}
+                onClose={toggleEditions}
+              />
+            )}
+            {(showComments || scrollToComment) && (
+              <Comments
+                comments={comments}
+                answerId={question.answer.id}
+                scrollToComment={scrollToComment}
+                onAddComment={incrementNumOfComments}
+                // onEditComment={onEditComment}
+                onRemoveComment={decrementNumOfComments}
+              />
+            )}
+          </StyledQuestion>
+        );
+      }}
+    </AnsweredQuestionGql>
+  );
+};
 
 export default AnsweredQuestion;
