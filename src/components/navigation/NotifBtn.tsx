@@ -25,7 +25,7 @@ const Badge = styled.span`
 
 interface NotifBtnProps {
   totalUnseen: number;
-  onClick: any;
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 const NotifBtn = React.forwardRef<HTMLDivElement, NotifBtnProps>(

@@ -4,6 +4,10 @@ import styled, { ThemeProvider } from "styled-components";
 import distanceInWords from "date-fns/distance_in_words";
 import { getLoggedUserId, overrideTheme, inverseColor } from "Utils";
 import Avatar from "../reusable/Avatar";
+import {
+  NotificationsNotifications,
+  NotificationType
+} from "GqlClient/autoGenTypes";
 
 const StyledNotif = styled(Link)`
   text-decoration: none;
@@ -58,14 +62,14 @@ const getTime = (createdOn: string) => {
   return `${res} ago`;
 };
 
-const getLink = (notif: any) => {
+const getLink = (notif: NotificationsNotifications) => {
   const { performerId, questionId, commentId } = notif;
   const loggedUsrId = getLoggedUserId();
 
   switch (notif.type) {
-    case "NEW_FOLLOWER":
+    case NotificationType.NewFollower:
       return `/userProfile/${performerId}`;
-    case "NEW_COMMENT" /* 
+    case NotificationType.NewComment /* 
     answerOwnerId in this case the current logged userid
     later, when we get notifications for other people's posts' comments we will upgrade that
     */:
@@ -78,8 +82,10 @@ const getLink = (notif: any) => {
 };
 
 interface NotifProps {
-  onClick: any;
-  notif: any;
+  onClick: () => (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => void;
+  notif: NotificationsNotifications;
 }
 
 interface NotifTheme {
@@ -88,7 +94,7 @@ interface NotifTheme {
   avatarSize: string;
 }
 
-const Notif = (props: NotifProps) => {
+const Notif = ({ onClick, notif }: NotifProps) => {
   const [theme, setTheme] = useState<NotifTheme>({
     avatarSize: "2.2em",
     backgroundColor: "white",
@@ -105,7 +111,6 @@ const Notif = (props: NotifProps) => {
     setTheme(neww);
   };
 
-  const { notif, onClick } = this.props;
   const redirectLink = getLink(notif);
 
   return (
@@ -113,8 +118,8 @@ const Notif = (props: NotifProps) => {
       <StyledNotif
         to={redirectLink}
         onClick={onClick}
-        onMouseEnter={this.toggleTheme}
-        onMouseLeave={this.toggleTheme}
+        onMouseEnter={toggleTheme}
+        onMouseLeave={toggleTheme}
       >
         <Left>
           <Avatar src={notif.performerAvatarSrc} invertColors />
