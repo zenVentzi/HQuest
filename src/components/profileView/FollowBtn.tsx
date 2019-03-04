@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
-import gql from "graphql-tag";
 import styled from "styled-components";
-
-const FOLLOW = gql`
-  mutation follow($userId: ID!, $follow: Boolean!) {
-    follow(userId: $userId, follow: $follow)
-  }
-`;
+import { FOLLOW } from "GqlClient/user/mutations";
+import { FollowMutation, FollowVariables } from "GqlClient/autoGenTypes";
 
 const Btn = styled(TextBtn)`
   margin-bottom: 0.5em;
@@ -31,7 +26,9 @@ const FollowBtn = (props: FollowBtnProps) => {
     setHovered(false);
   };
 
-  const onClick = (mutation: MutationFn) => async () => {
+  const onClick = (
+    mutation: MutationFn<FollowMutation, FollowVariables>
+  ) => async () => {
     const { userId } = props;
     const follow = !isFollowed;
     await mutation({ variables: { userId, follow } });
@@ -43,7 +40,7 @@ const FollowBtn = (props: FollowBtnProps) => {
   const text = hovered ? hoverText : normalText;
 
   return (
-    <Mutation mutation={FOLLOW}>
+    <Mutation<FollowMutation, FollowVariables> mutation={FOLLOW}>
       {follow => (
         <Btn
           onMouseEnter={this.onMouseEnter}
