@@ -1,7 +1,8 @@
-import React, { Component, Fragment } from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import onClickOutside from "react-onclickoutside";
+import { useClickOutside } from "use-events";
 
 interface StyledDropdownProps {
   marginTop: number;
@@ -28,24 +29,22 @@ const StyledDropdown = styled.div<StyledDropdownProps>`
 `;
 
 interface DropdownListProps {
-  onClickOutside: (e: any) => void;
+  onClickOutside: (e: MouseEvent) => void;
   items: any[];
   onItemClicked: () => void;
   pivot: "left" | "right";
   marginTop: number;
 }
 
-class DropdownList extends Component<DropdownListProps> {
-  static propTypes = {
-    pivot: PropTypes.oneOf(["left", "right"])
-  };
+const DropdownList = (props: DropdownListProps) => {
+  const dropdownList = useRef<HTMLDivElement>();
 
-  handleClickOutside = (e: any) => {
-    this.props.onClickOutside(e);
-  };
+  useClickOutside(dropdownList, e => {
+    props.onClickOutside(e);
+  });
 
-  getModifiedItems = () => {
-    const { items, onItemClicked } = this.props;
+  const getModifiedItems = () => {
+    const { items, onItemClicked } = props;
     const modifiedItems = items.map(item => {
       return React.cloneElement(item, {
         onClick: () => {
@@ -59,17 +58,15 @@ class DropdownList extends Component<DropdownListProps> {
     return modifiedItems;
   };
 
-  render() {
-    const { pivot, marginTop } = this.props;
-    const modifiedItems = this.getModifiedItems();
+  const { pivot, marginTop } = props;
+  const modifiedItems = getModifiedItems();
 
-    return (
-      <StyledDropdown marginTop={marginTop} pivot={pivot}>
-        <Fragment>{modifiedItems}</Fragment>
-      </StyledDropdown>
-    );
-  }
-}
+  return (
+    <StyledDropdown ref={dropdownList} marginTop={marginTop} pivot={pivot}>
+      <>{modifiedItems}</>
+    </StyledDropdown>
+  );
+};
 
 //@ts-ignore
 export default onClickOutside(DropdownList);

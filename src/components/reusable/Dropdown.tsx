@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import styled from "styled-components";
 import DropdownList from "Reusable/DropdownList";
+import { useClickOutside } from "use-events";
 
 const StyledDropdown = styled.div`
   display: inline-block;
@@ -13,75 +14,66 @@ interface DropdownProps {
   items: any[];
 }
 
-class Dropdown extends Component<DropdownProps> {
-  state: any = {
-    showDropdown: false
+const Dropdown = (props: DropdownProps) => {
+  const dropdownBtn = useRef<HTMLElement>();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [buttonHeight, setButtonHeight] = useState<number>(null);
+
+  useLayoutEffect(() => {
+    setButtonHeight(dropdownBtn.current.clientHeight);
+  }, []);
+
+  const onClickOutside = (e: MouseEvent) => {
+    if (isDropdownBtnClicked(e)) return;
+    toggleDropdown();
   };
 
-  btnRef = React.createRef<any>();
-
-  componentDidMount() {
-    const buttonHeight = this.btnRef.current.clientHeight;
-    /* eslint-disable  */
-    this.setState(prevState => ({ ...prevState, buttonHeight }));
-    /* eslint-enable  */
-  }
-
-  onClickOutside = (e: any) => {
-    if (this.isDropdownBtnClicked(e)) return;
-    this.toggleDropdown();
+  const onDropdownItemClicked = () => {
+    toggleDropdown();
   };
 
-  onDropdownItemClicked = () => {
-    this.toggleDropdown();
-  };
-
-  isDropdownBtnClicked = (event: any) => {
+  const isDropdownBtnClicked = (event: any) => {
     return (
-      event.target === this.btnRef.current ||
-      event.target === this.btnRef.current.children[0]
+      event.target === dropdownBtn.current ||
+      event.target === dropdownBtn.current.children[0]
     );
   };
 
-  toggleDropdown = () => {
-    const current = this.state.showDropdown;
-    this.setState({ showDropdown: !current });
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
   };
 
-  renderDropdownBtn = () => {
-    const { dropBtn } = this.props;
+  const renderDropdownBtn = () => {
+    const { dropBtn } = props;
 
     return React.cloneElement(dropBtn, {
-      ref: this.btnRef,
+      ref: dropdownBtn,
       onClick: () => {
         if (dropBtn.props.onClick) {
           dropBtn.props.onClick();
         }
 
-        this.toggleDropdown();
+        toggleDropdown();
       }
     });
   };
 
-  render() {
-    const { showDropdown, buttonHeight } = this.state;
-    const { items, pivot } = this.props;
+  const { items, pivot } = props;
 
-    return (
-      <StyledDropdown>
-        {this.renderDropdownBtn()}
-        {showDropdown && buttonHeight && (
-          <DropdownList
-            items={items}
-            pivot={pivot}
-            marginTop={buttonHeight}
-            onItemClicked={this.onDropdownItemClicked}
-            onClickOutside={this.onClickOutside}
-          />
-        )}
-      </StyledDropdown>
-    );
-  }
-}
+  return (
+    <StyledDropdown>
+      {renderDropdownBtn()}
+      {showDropdown && buttonHeight && (
+        <DropdownList
+          items={items}
+          pivot={pivot}
+          marginTop={buttonHeight}
+          onItemClicked={onDropdownItemClicked}
+          onClickOutside={onClickOutside}
+        />
+      )}
+    </StyledDropdown>
+  );
+};
 
 export default Dropdown;
