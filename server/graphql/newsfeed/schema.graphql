@@ -47,5 +47,5 @@ type NewLikeNews implements NewsBase {
 union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
 
 type Query {
-  newsfeed: [News!]
+  newsfeed: [NewsBase!]
 }

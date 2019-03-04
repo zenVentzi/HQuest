@@ -9,7 +9,7 @@ type MapNews = (
   news: dbTypes.News,
   newsfeedUsers: userTypes.User[],
   newsfeedQuestions: questionTypes.Question[]
-) => newsfeedTypes.News;
+) => newsfeedTypes.NewsBase;
 
 const mapNews: MapNews = (news, newsfeedUsers, newsfeedQuestions) => {
   // some repetition down there could use some refactoring
@@ -95,7 +95,7 @@ type GetNewsfeed = (
   newsFeedUsers: dbTypes.User[],
   newsFeedQuestions: dbTypes.AnsweredQuestion[] | null,
   loggedUserId: string
-) => newsfeedTypes.News[] | null;
+) => newsfeedTypes.NewsBase[] | null;
 
 const mapNewsfeed: GetNewsfeed = (
   newsfeed,
