@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import ReactDOM from "react-dom";
 
@@ -8,14 +8,11 @@ interface ModalProps {
   children: any;
 }
 
-class Modal extends React.Component<ModalProps> {
-  private el: HTMLDivElement;
-  constructor(props: ModalProps) {
-    super(props);
-    this.el = document.createElement("div");
-  }
+const Modal = (props: ModalProps) => {
+  const el = useRef<HTMLDivElement>();
 
-  componentDidMount() {
+  useEffect(() => {
+    el.current = document.createElement("div"); // this is under scrutiny(used to be in constructor)
     // The portal element is inserted in the DOM tree after
     // the Modal's children are mounted, meaning that children
     // will be mounted on a detached DOM node. If a child
@@ -24,16 +21,13 @@ class Modal extends React.Component<ModalProps> {
     // DOM node, or uses 'autoFocus' in a descendant, add
     // state to Modal and only render the children when Modal
     // is inserted in the DOM tree.
-    modalRoot.appendChild(this.el);
-  }
+    modalRoot.appendChild(el.current);
+    return () => {
+      modalRoot.removeChild(el.current);
+    };
+  }, []);
 
-  componentWillUnmount() {
-    modalRoot.removeChild(this.el);
-  }
-
-  render() {
-    return ReactDOM.createPortal(this.props.children, this.el);
-  }
-}
+  return ReactDOM.createPortal(props.children, el.current);
+};
 
 export default Modal;
