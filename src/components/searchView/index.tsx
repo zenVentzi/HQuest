@@ -5,6 +5,7 @@ import { GET_USERS } from "GqlClient/user/queries";
 import User from "Reusable/UserRow";
 import StyledView from "../reusable/StyledView";
 import { History, Location } from "history";
+import { UsersQuery, UsersVariables } from "GqlClient/autoGenTypes";
 
 const Row = styled.div`
   width: 60%;
@@ -15,7 +16,7 @@ const Row = styled.div`
 `;
 
 interface SearchViewProps {
-  location: Location;
+  location: Location<{ username: string }>;
 }
 
 const SearchView = ({
@@ -26,7 +27,10 @@ const SearchView = ({
   return (
     <StyledView>
       fdfd
-      <Query query={GET_USERS} variables={{ match: username }}>
+      <Query<UsersQuery, UsersVariables>
+        query={GET_USERS}
+        variables={{ match: username }}
+      >
         {({ loading, error, data: { users } }) => {
           if (loading) return <div> Loading..</div>;
           if (error) return <div> {error.message} </div>;
@@ -36,7 +40,7 @@ const SearchView = ({
 
           return (
             <Fragment>
-              {users.map((user: any) => (
+              {users.map(user => (
                 <Row key={user.id}>
                   <User user={user} />
                 </Row>

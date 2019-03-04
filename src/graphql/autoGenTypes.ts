@@ -403,6 +403,17 @@ export type EditUserEditUser = {
   id: string;
 };
 
+export type FollowVariables = {
+  userId: string;
+  follow: boolean;
+};
+
+export type FollowMutation = {
+  __typename?: "Mutation";
+
+  follow: Maybe<boolean>;
+};
+
 export type NewNotificationVariables = {
   userId: string;
 };

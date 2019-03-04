@@ -21,3 +21,9 @@ export const EDIT_USER = gql`
     }
   }
 `;
+
+export const FOLLOW = gql`
+  mutation Follow($userId: ID!, $follow: Boolean!) {
+    follow(userId: $userId, follow: $follow)
+  }
+`;
