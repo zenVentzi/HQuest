@@ -9,7 +9,7 @@
       "script": "copy-schemas"
     },
     {
-      "label": "server-build-partial",
+      "label": "tsc-server",
       "type": "typescript",
       "tsconfig": "server\\tsconfig.json",
       "options": {
@@ -21,10 +21,10 @@
     },
     {
       "label": "BuildServerFull",
-      "dependsOn": ["copy-schemas", "server-build-partial"]
+      "dependsOn": ["copy-schemas", "tsc-server"]
     },
     {
-      "label": "client-build",
+      "label": "tsc-client",
       "type": "typescript",
       "tsconfig": "src\\tsconfig.json",
       "options": {

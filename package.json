@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:server": "",
-    "build:client": "webpack --config webpack/config.ts",
+    "webpack:build": "webpack --config webpack/config.ts",
     "genSchema": "node introspect.js",
     "copy-schemas": "cpx server/**/*.graphql dist/server",
     "test:integration": "jest --detectOpenHandles --config server/jest.integration.config.js",
