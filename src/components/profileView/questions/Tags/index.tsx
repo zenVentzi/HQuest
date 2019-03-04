@@ -1,5 +1,4 @@
-import React, { PureComponent, Fragment } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { Query } from "react-apollo";
 import { GET_QUESTIONS_TAGS } from "GqlClient/question/queries";
@@ -47,119 +46,94 @@ interface QuestionTagsProps {
   onSelected: (selectedTags: string[]) => void;
 }
 
-class QuestionTags extends PureComponent<QuestionTagsProps, any> {
-  state: any = {
-    showAllTags: false,
-    selectedTags: [],
-    matchingTags: [],
-    invalidTag: null
-  };
-  inputRef = React.createRef<HTMLInputElement>();
+const QuestionTags = (props: QuestionTagsProps) => {
+  const allTags = useRef<string[]>();
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [matchingTags, setMatchingTags] = useState<string[]>([]);
+  const [invalidTagMsg, setInvalidTagMsg] = useState<string>(null);
+  const inputRef = useRef<HTMLInputElement>();
 
-  hideAllTagsWindow = () => {
-    this.setState((prevState: any) => {
-      return { ...prevState, showAllTags: false };
-    });
+  const hideAllTagsWindow = () => {
+    setShowAllTags(false);
   };
 
-  onSelectFromAllTags = (selectedTags: string[]) => {
-    this.hideAllTagsWindow();
-    this.inputRef.current.focus();
-
+  const onSelectFromAllTags = (selectedTags: string[]) => {
+    hideAllTagsWindow();
+    inputRef.current.focus();
     if (!selectedTags || !selectedTags.length) return;
+    setSelectedTags(selectedTags);
+    props.onSelected(selectedTags);
+    inputRef.current.value = `${selectedTags.join(",")},`;
 
-    this.setState(
-      (prevState: any) => {
-        return { ...prevState, selectedTags };
-      },
-      () => {
-        this.notifyParents();
+    // setState(
+    //   (prevState: any) => {
+    //     return { ...prevState, selectedTags };
+    //   },
+    //   () => {
+    //     notifyParents();
+    //   }
+    // );
+  };
+
+  const onSelectFromMatchingTags = (selectedTag: string) => {
+    setSelectedTags([...selectedTags, selectedTag]);
+    inputRef.current.value = `${selectedTags.join(",")},`;
+    props.onSelected(selectedTags); // this is under scrutiny
+    // setState(
+    //   (prevState: any) => {
+    //     return { ...prevState, selectedTags, matchingTags: [] };
+    //   },
+    //   () => {
+    //     notifyParents();
+    //   }
+    // );
+    inputRef.current.focus();
+  };
+
+  const setInvalidTag = (msg: string) => {
+    setInvalidTagMsg(msg);
+  };
+
+  const clearInvalidTag = () => {
+    setInvalidTagMsg(null);
+  };
+
+  const addToSelected = (tag: string) => {
+    setSelectedTags([...selectedTags, tag]);
+    props.onSelected(selectedTags); // under scrutiny
+  };
+
+  const removeLastSelectedTag = () => {
+    selectedTags.pop();
+    setSelectedTags(() => {
+      let res = [];
+      for (let i = 0; i < selectedTags.length - 1; i++) {
+        const t = selectedTags[i];
+        res.push(t);
       }
-    );
 
-    this.inputRef.current.value = `${selectedTags.join(",")},`;
-  };
-
-  onSelectFromMatchingTags = (selectedTag: string) => {
-    const { selectedTags } = this.state;
-    selectedTags.push(selectedTag);
-    this.inputRef.current.value = `${selectedTags.join(",")},`;
-    this.setState(
-      (prevState: any) => {
-        return { ...prevState, selectedTags, matchingTags: [] };
-      },
-      () => {
-        this.notifyParents();
-      }
-    );
-    this.inputRef.current.focus();
-  };
-
-  setInvalidTag = (msg: string) => {
-    this.setState((prevState: any) => {
-      return { ...prevState, invalidTagMsg: msg };
+      return res;
     });
+    props.onSelected(selectedTags); // under scrutiny
   };
 
-  clearInvalidTag = () => {
-    this.setState((prevState: any) => {
-      return { ...prevState, invalidTagMsg: null };
-    });
+  const clearSelectedTags = () => {
+    setSelectedTags(null);
   };
 
-  addToSelected = (tag: string) => {
-    this.setState(
-      (prevState: any) => {
-        const { selectedTags } = prevState;
-        return { ...prevState, selectedTags: [...selectedTags, tag] };
-      },
-      () => {
-        this.notifyParents();
-      }
-    );
+  const setInputToSelected = () => {
+    inputRef.current.value = `${selectedTags.join(",")},`;
+    clearMatchingTags();
+    clearInvalidTag();
   };
 
-  removeLastSelectedTag = () => {
-    this.setState(
-      (prevState: any) => {
-        const selectedTags = [...prevState.selectedTags];
-        selectedTags.pop();
-        return { ...prevState, selectedTags };
-      },
-      () => {
-        this.notifyParents();
-      }
-    );
+  const updateMatchingTags = (matchingTags: string[]) => {
+    setMatchingTags(matchingTags);
   };
 
-  clearSelectedTags = () => {
-    this.setState((prevState: any) => {
-      return { ...prevState, selectedTags: [] };
-    });
-  };
-
-  setInputToSelected = () => {
-    const { selectedTags } = this.state;
-    this.inputRef.current.value = `${selectedTags.join(",")},`;
-    this.clearMatchingTags();
-    this.clearInvalidTag();
-  };
-
-  notifyParents = () => {
-    const { selectedTags } = this.state;
-    this.props.onSelected(selectedTags);
-  };
-
-  updateMatchingTags = (matchingTags: string[]) => {
-    this.setState((prevState: any) => {
-      return { ...prevState, matchingTags };
-    });
-  };
-
-  clearMatchingTags = () => {
-    this.setState((prevState: any) => {
-      return { ...prevState, matchingTags: [] };
-    });
+  const clearMatchingTags = () => {
+    setMatchingTags(null);
   };
 
   // getInputSelection = (node: any) => {
@@ -168,50 +142,44 @@ class QuestionTags extends PureComponent<QuestionTagsProps, any> {
   //   return { startPos, endPos };
   // };
 
-  handleBackspaceOrDelete = (e: any) => {
+  const handleBackspaceOrDelete = (e: any) => {
     const key = e.keyCode || e.charCode;
 
     if (key === 8 || key === 46) {
-      this.removeLastSelectedTag();
-      this.setInputToSelected();
+      removeLastSelectedTag();
+      setInputToSelected();
     }
   };
 
-  moveCursorToEnd = () => {
-    if (this.inputRef.current.value) {
-      // const val = this.inputRef.current.value; // store the value of the element
-      // console.log('TCL: QuestionTags -> moveCursorToEnd -> val', val);
-      // this.inputRef.current.value = ''; // clear the value of the element
-      // this.inputRef.current.value = val; // set that value back.
-      // eslint-disable-next-line
-      this.inputRef.current.selectionStart = this.inputRef.current.selectionEnd = 100000;
+  const moveCursorToEnd = () => {
+    if (inputRef.current.value) {
+      inputRef.current.selectionStart = inputRef.current.selectionEnd = 100000;
     }
   };
 
-  onClickInput = () => {
-    this.moveCursorToEnd();
+  const onClickInput = () => {
+    moveCursorToEnd();
   };
 
-  onKeyDownInput = (event: any) => {
-    this.moveCursorToEnd();
-    this.handleBackspaceOrDelete(event);
+  const onKeyDownInput = (event: any) => {
+    moveCursorToEnd();
+    handleBackspaceOrDelete(event);
   };
 
-  checkTagSelected = (tag: string) => {
-    const { selectedTags } = this.state;
+  const checkTagSelected = (tag: string) => {
     return selectedTags.includes(tag);
   };
 
-  onChangeInput = (e: any) => {
+  const onChangeInput = (e: any) => {
     const {
       target: { value }
     } = e;
     const trimmed = value.trim();
     if (value.charAt(value.length - 1) === " ") {
-      this.inputRef.current.value = trimmed;
+      inputRef.current.value = trimmed;
       return;
     } else if (trimmed.includes(",,")) {
-      this.inputRef.current.value = trimmed.slice(0, -1);
+      inputRef.current.value = trimmed.slice(0, -1);
       return;
     }
 
@@ -220,25 +188,25 @@ class QuestionTags extends PureComponent<QuestionTagsProps, any> {
 
     const lastChar = trimmed.charAt(trimmed.length - 1);
     if (lastChar === ",") {
-      const lastTagExists = this.allTags.includes(lastTag);
+      const lastTagExists = allTags.current.includes(lastTag);
       if (!lastTagExists) {
-        this.setInvalidTag(`Tag ${lastTag} does not exist`);
+        setInvalidTagMsg(`Tag ${lastTag} does not exist`);
         return;
       }
 
-      const alreadySelected = this.checkTagSelected(lastTag);
+      const alreadySelected = checkTagSelected(lastTag);
       if (alreadySelected) {
-        this.setInputToSelected();
+        setInputToSelected();
         return;
       }
 
-      this.addToSelected(lastTag);
-      this.clearMatchingTags();
+      addToSelected(lastTag);
+      clearMatchingTags();
     } else {
-      const matchingTags = this.allTags.filter((t: string) =>
+      const matchingTags = allTags.current.filter((t: string) =>
         t.includes(lastTag)
       );
-      this.updateMatchingTags(matchingTags);
+      updateMatchingTags(matchingTags);
     }
 
     /*  
@@ -247,54 +215,47 @@ class QuestionTags extends PureComponent<QuestionTagsProps, any> {
     */
   };
 
-  toggleAllTags = (show: boolean) => () => {
-    this.setState((prevState: any) => {
-      return { ...prevState, showAllTags: show };
-    });
+  const toggleAllTags = (show: boolean) => () => {
+    setShowAllTags(show);
   };
-  allTags: any;
 
-  render() {
-    const { showAllTags, matchingTags, invalidTagMsg } = this.state;
+  return (
+    <Query query={GET_QUESTIONS_TAGS} errorPolicy="all">
+      {({ loading, error, data: { questionsTags: tags } }) => {
+        allTags.current = tags;
 
-    return (
-      <Query query={GET_QUESTIONS_TAGS} errorPolicy="all">
-        {({ loading, error, data: { questionsTags: tags } }) => {
-          this.allTags = tags;
-
-          return (
-            <TagsWrapper>
-              {showAllTags && (
-                <AllTags
-                  tags={tags}
-                  onSelect={this.onSelectFromAllTags}
-                  onClose={this.hideAllTagsWindow}
-                />
-              )}
-              <InputRow>
-                <Input
-                  ref={this.inputRef}
-                  placeholder="Search by tag..."
-                  onClick={this.onClickInput}
-                  onChange={this.onChangeInput}
-                  onKeyDown={this.onKeyDownInput}
-                  type="text"
-                />
-                <Anchor onClick={this.toggleAllTags(true)}>all</Anchor>
-              </InputRow>
-              {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
-              {matchingTags.length > 0 && (
-                <MatchingTags
-                  tags={matchingTags}
-                  onSelect={this.onSelectFromMatchingTags}
-                />
-              )}
-            </TagsWrapper>
-          );
-        }}
-      </Query>
-    );
-  }
-}
+        return (
+          <TagsWrapper>
+            {showAllTags && (
+              <AllTags
+                tags={tags}
+                onSelect={onSelectFromAllTags}
+                onClose={hideAllTagsWindow}
+              />
+            )}
+            <InputRow>
+              <Input
+                ref={inputRef}
+                placeholder="Search by tag..."
+                onClick={onClickInput}
+                onChange={onChangeInput}
+                onKeyDown={onKeyDownInput}
+                type="text"
+              />
+              <Anchor onClick={toggleAllTags(true)}>all</Anchor>
+            </InputRow>
+            {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
+            {matchingTags.length > 0 && (
+              <MatchingTags
+                tags={matchingTags}
+                onSelect={onSelectFromMatchingTags}
+              />
+            )}
+          </TagsWrapper>
+        );
+      }}
+    </Query>
+  );
+};
 
 export default QuestionTags;
