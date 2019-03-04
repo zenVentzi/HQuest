@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const Text = styled.div`
@@ -21,11 +21,9 @@ interface QuestionProps {
   question: string;
 }
 
-class Question extends Component<QuestionProps> {
-  render() {
-    const { question } = this.props;
-    return <Text> {question} </Text>;
-  }
-}
+const Question = (props: QuestionProps) => {
+  const { question } = props;
+  return <Text> {question} </Text>;
+};
 
 export default Question;
