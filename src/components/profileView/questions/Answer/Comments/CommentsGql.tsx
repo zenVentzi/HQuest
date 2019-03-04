@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import {
   COMMENT_ANSWER,
@@ -14,34 +14,28 @@ interface CommentsGqlProps {
   ) => any;
 }
 
-class CommentsGql extends Component<CommentsGqlProps> {
-  render() {
-    const { children } = this.props;
+const CommentsGql = (props: CommentsGqlProps) => {
+  const { children } = props;
 
-    return (
-      <Mutation mutation={COMMENT_ANSWER}>
-        {commentAnswer => {
-          return (
-            <Mutation mutation={EDIT_COMMENT}>
-              {editComment => {
-                return (
-                  <Mutation mutation={REMOVE_COMMENT}>
-                    {removeComment => {
-                      return children(
-                        commentAnswer,
-                        editComment,
-                        removeComment
-                      );
-                    }}
-                  </Mutation>
-                );
-              }}
-            </Mutation>
-          );
-        }}
-      </Mutation>
-    );
-  }
-}
+  return (
+    <Mutation mutation={COMMENT_ANSWER}>
+      {commentAnswer => {
+        return (
+          <Mutation mutation={EDIT_COMMENT}>
+            {editComment => {
+              return (
+                <Mutation mutation={REMOVE_COMMENT}>
+                  {removeComment => {
+                    return children(commentAnswer, editComment, removeComment);
+                  }}
+                </Mutation>
+              );
+            }}
+          </Mutation>
+        );
+      }}
+    </Mutation>
+  );
+};
 
 export default CommentsGql;

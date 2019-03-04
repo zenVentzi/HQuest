@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Textarea from "react-textarea-autosize";
 import { Formik, Form, ErrorMessage } from "formik";
 import styled from "styled-components";
@@ -37,55 +37,53 @@ interface CommentEditorProps {
 
 /* this component is pretty much the same as AnswerEditor and CommentInput. DRY fix */
 
-class CommentEditor extends Component<CommentEditorProps, any> {
-  render() {
-    const formInitialValues = { comment: this.props.comment };
+const CommentEditor = (props: CommentEditorProps) => {
+  const formInitialValues = { comment: props.comment };
 
-    return (
-      <Formik
-        initialValues={formInitialValues}
-        validateOnBlur={false}
-        validate={values => {
-          const errors: any = {};
-          if (values.comment.length < 7)
-            errors.comment = "Comment must be at least 7 characters";
+  return (
+    <Formik
+      initialValues={formInitialValues}
+      validateOnBlur={false}
+      validate={values => {
+        const errors: any = {};
+        if (values.comment.length < 7)
+          errors.comment = "Comment must be at least 7 characters";
 
-          return errors;
-        }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          await this.props.onEdit(values.comment);
-          // setSubmitting(false);
-          // resetForm(formInitialValues);
-        }}
-      >
-        {({ values, handleChange, submitForm, handleBlur, isSubmitting }) => (
-          <Form style={{ width: "100%", textAlign: "center" }}>
-            <StyledEditor
-              name="comment"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.comment}
-              disabled={isSubmitting}
-              onKeyPress={e => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  if (!isSubmitting) submitForm();
-                }
-              }}
-            />
-            <ErrorMessage
-              name="comment"
-              render={msg => <ErrorText>{msg}</ErrorText>}
-            />
-            <Buttons>
-              <LeftBtn onClick={submitForm}>Save</LeftBtn>
-              <RightBtn onClick={this.props.onCancel}>Cancel</RightBtn>
-            </Buttons>
-          </Form>
-        )}
-      </Formik>
-    );
-  }
-}
+        return errors;
+      }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        await props.onEdit(values.comment);
+        // setSubmitting(false);
+        // resetForm(formInitialValues);
+      }}
+    >
+      {({ values, handleChange, submitForm, handleBlur, isSubmitting }) => (
+        <Form style={{ width: "100%", textAlign: "center" }}>
+          <StyledEditor
+            name="comment"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.comment}
+            disabled={isSubmitting}
+            onKeyPress={e => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (!isSubmitting) submitForm();
+              }
+            }}
+          />
+          <ErrorMessage
+            name="comment"
+            render={msg => <ErrorText>{msg}</ErrorText>}
+          />
+          <Buttons>
+            <LeftBtn onClick={submitForm}>Save</LeftBtn>
+            <RightBtn onClick={props.onCancel}>Cancel</RightBtn>
+          </Buttons>
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
 export default CommentEditor;

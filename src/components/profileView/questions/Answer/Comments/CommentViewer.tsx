@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -12,11 +12,9 @@ interface CommentViewerProps {
   comment: string;
 }
 
-class CommentViewer extends Component<CommentViewerProps, any> {
-  render() {
-    const { comment } = this.props;
-    return <StyledViewer>- {comment} </StyledViewer>;
-  }
-}
+const CommentViewer = (props: CommentViewerProps) => {
+  const { comment } = props;
+  return <StyledViewer>- {comment} </StyledViewer>;
+};
 
 export default CommentViewer;

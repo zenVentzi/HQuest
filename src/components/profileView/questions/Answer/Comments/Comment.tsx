@@ -23,95 +23,95 @@ const Header = styled.div`
   margin-bottom: 0.5em;
 `;
 
-interface CommentPropsPrivate {
+export interface CommentProps {
   comment: any;
   onRemove: (commentId: string) => Promise<void>;
   onEdit: (commentId: string, commentValue: string) => Promise<void>;
-  size: number;
-  innerRef: any;
+  size?: number;
 }
 
-const Comment = ({
-  size = 1.5,
-  comment,
-  onRemove: onRemoveProp,
-  onEdit: onEditProp,
-  innerRef
-}: CommentPropsPrivate) => {
-  const [commentHovered, setCommentHovered] = useState(false);
-  const [viewMode, setViewMode] = useState(true);
-  const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
-
-  const onClickOutsideOptions = (e: any) => {
-    const isOptionsBtn = false;
-    // const isOptionsBtn =
-    //   e.target === optionsBtn || e.target === optionsBtn.children[0];
-    if (isOptionsBtn) return;
-    toggleOptionsDropdown();
-  };
-
-  const onMouseEnter = () => {
-    setCommentHovered(true);
-  };
-
-  const onMouseLeave = () => {
-    setCommentHovered(false);
-  };
-
-  const onRemove = async () => {
-    await onRemoveProp(comment.id);
-  };
-
-  const onClickEdit = () => {
-    setViewMode(false);
-  };
-
-  const onCancelEdit = () => {
-    setViewMode(true);
-  };
-
-  const onEdit = async (newComment: string) => {
-    await onEditProp(comment.id, newComment);
-    setViewMode(true);
-  };
-
-  const toggleOptionsDropdown = () => {
-    setShowOptionsDropdown(!showOptionsDropdown);
-  };
-
-  const { user, value } = comment;
-
-  return (
-    <StyledComment
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      ref={innerRef}
-    >
-      <Header>
-        <User user={user} size={size} />
-        <CommentOptions
-          visible={user.me && commentHovered}
-          onClickEdit={onClickEdit}
-          onClickRemove={onRemove}
-        />
-      </Header>
-      {viewMode ? (
-        <CommentViewer comment={value} />
-      ) : (
-        <CommentEditor
-          comment={value}
-          onEdit={onEdit}
-          onCancel={onCancelEdit}
-        />
-      )}
-    </StyledComment>
-  );
-};
+export type CommentRef = React.Ref<HTMLDivElement>;
 
 // export interface CommentProps extends CommentPropsPrivate {
 //   ref: React.Ref<HTMLDivElement>;
 // }
 
-export default React.forwardRef((props: any, ref) => (
-  <Comment innerRef={ref} {...props} />
-));
+export default React.forwardRef<HTMLDivElement, CommentProps>(
+  (
+    { size = 1.5, comment, onRemove: onRemoveProp, onEdit: onEditProp }: any,
+    ref
+  ) => {
+    const [commentHovered, setCommentHovered] = useState(false);
+    const [viewMode, setViewMode] = useState(true);
+    const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
+
+    const onClickOutsideOptions = (e: any) => {
+      const isOptionsBtn = false;
+      // const isOptionsBtn =
+      //   e.target === optionsBtn || e.target === optionsBtn.children[0];
+      if (isOptionsBtn) return;
+      toggleOptionsDropdown();
+    };
+
+    const onMouseEnter = () => {
+      setCommentHovered(true);
+    };
+
+    const onMouseLeave = () => {
+      setCommentHovered(false);
+    };
+
+    const onRemove = async () => {
+      await onRemoveProp(comment.id);
+    };
+
+    const onClickEdit = () => {
+      setViewMode(false);
+    };
+
+    const onCancelEdit = () => {
+      setViewMode(true);
+    };
+
+    const onEdit = async (newComment: string) => {
+      await onEditProp(comment.id, newComment);
+      setViewMode(true);
+    };
+
+    const toggleOptionsDropdown = () => {
+      setShowOptionsDropdown(!showOptionsDropdown);
+    };
+
+    const { user, value } = comment;
+
+    return (
+      <StyledComment
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        ref={ref}
+      >
+        <Header>
+          <User user={user} size={size} />
+          <CommentOptions
+            visible={user.me && commentHovered}
+            onClickEdit={onClickEdit}
+            onClickRemove={onRemove}
+          />
+        </Header>
+        {viewMode ? (
+          <CommentViewer comment={value} />
+        ) : (
+          <CommentEditor
+            comment={value}
+            onEdit={onEdit}
+            onCancel={onCancelEdit}
+          />
+        )}
+      </StyledComment>
+    );
+  }
+);
+
+// export default React.forwardRef((props: any, ref) => (
+//   <Comment innerRef={ref} {...props} />
+// ));
