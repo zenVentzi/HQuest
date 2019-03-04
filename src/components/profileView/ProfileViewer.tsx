@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { useState } from "react";
 import { ThemeProvider } from "styled-components";
 import { getLoggedUserId, overrideTheme } from "Utils";
 import Avatar from "../reusable/Avatar";
@@ -18,65 +18,48 @@ interface ProfileViewerProps {
   user: any;
 }
 
-class ProfileViewer extends Component<ProfileViewerProps, any> {
-  state = {
-    showFollowers: false,
-    showFollowing: false
+const ProfileViewer = (props: ProfileViewerProps) => {
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+
+  const toggleFollowers = () => {
+    setShowFollowers(!showFollowers);
   };
 
-  toggleFollowers = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      showFollowers: !prevState.showFollowers
-    }));
+  const toggleFollowing = () => {
+    setShowFollowing(!showFollowing);
   };
 
-  toggleFollowing = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      showFollowing: !prevState.showFollowing
-    }));
+  const { user } = props;
+  const isFollowed =
+    user.followers && user.followers.includes(getLoggedUserId());
+  const theme = {
+    avatarSize: "150px"
   };
 
-  render() {
-    const { user } = this.props;
-    const { showFollowers, showFollowing } = this.state;
-    const isFollowed =
-      user.followers && user.followers.includes(getLoggedUserId());
-    const theme = {
-      avatarSize: "150px"
-    };
-
-    return (
-      <ThemeProvider theme={overrideTheme(theme)}>
-        <Fragment>
-          <Avatar src={user.avatarSrc} editable={user.me} />
-          <Username>{user.fullName}</Username>
-          <Intro>{user.intro}</Intro>
-          {!user.me && <FollowBtn isFollowed={isFollowed} userId={user.id} />}
-          <div>
-            <FollowingBtn
-              following={user.following}
-              onClick={this.toggleFollowing}
-            />
-            <FollowersBtn
-              followers={user.followers}
-              onClick={this.toggleFollowers}
-            />
-          </div>
-          {showFollowers && (
-            <Followers userId={user.id} onClose={this.toggleFollowers} />
-          )}
-          {showFollowing && (
-            <Following userId={user.id} onClose={this.toggleFollowing} />
-          )}
-          <Links />
-          {/* <Search placeholder="Search questions.." onChange={() => {}} /> */}
-          <QuestionsContainer user={user} />
-        </Fragment>
-      </ThemeProvider>
-    );
-  }
-}
+  return (
+    <ThemeProvider theme={overrideTheme(theme)}>
+      <>
+        <Avatar src={user.avatarSrc} editable={user.me} />
+        <Username>{user.fullName}</Username>
+        <Intro>{user.intro}</Intro>
+        {!user.me && <FollowBtn isFollowed={isFollowed} userId={user.id} />}
+        <div>
+          <FollowingBtn following={user.following} onClick={toggleFollowing} />
+          <FollowersBtn followers={user.followers} onClick={toggleFollowers} />
+        </div>
+        {showFollowers && (
+          <Followers userId={user.id} onClose={toggleFollowers} />
+        )}
+        {showFollowing && (
+          <Following userId={user.id} onClose={toggleFollowing} />
+        )}
+        <Links />
+        {/* <Search placeholder="Search questions.." onChange={() => {}} /> */}
+        <QuestionsContainer user={user} />
+      </>
+    </ThemeProvider>
+  );
+};
 
 export default ProfileViewer;
