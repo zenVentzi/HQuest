@@ -5,6 +5,13 @@ import { NOTIFS_MARK_SEEN } from "GqlClient/notification/mutations";
 import { NEW_NOTIFICATION } from "GqlClient/notification/subscriptions";
 import { getLoggedUserId } from "Utils";
 import { ApolloError } from "apollo-client";
+import {
+  NotificationsQuery,
+  NotificationsVariables,
+  NotificationsNotifications,
+  NotifsMarkSeenMutation,
+  NotifsMarkSeenVariables
+} from "GqlClient/autoGenTypes";
 
 const getSubcriptionOptions = () => {
   const userId = getLoggedUserId();
@@ -44,13 +51,13 @@ interface NotificationsGQLProps {
   children: (
     loading: boolean,
     error: ApolloError,
-    notifications: any[],
-    markSeen: MutationFn
+    notifications: NotificationsNotifications[],
+    markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
   ) => any;
 }
 
 const NotificationsGQL = ({ children }: NotificationsGQLProps) => (
-  <Query query={GET_NOTIFICATIONS}>
+  <Query<NotificationsQuery, NotificationsVariables> query={GET_NOTIFICATIONS}>
     {({ loading, error, data, subscribeToMore }) => {
       // return null;
       if (!subscribed) {
@@ -58,15 +65,17 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => (
         subscribed = true;
       }
 
-      let notifications: any[] = null;
+      let notifications: NotificationsNotifications[] = null;
 
       if (data) {
-        // eslint-disable-next-line prefer-destructuring
         notifications = data.notifications;
       }
 
       return (
-        <Mutation mutation={NOTIFS_MARK_SEEN} update={updateSeen}>
+        <Mutation<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+          mutation={NOTIFS_MARK_SEEN}
+          update={updateSeen}
+        >
           {markSeen => children(loading, error, notifications, markSeen)}
         </Mutation>
       );

@@ -31,7 +31,7 @@ const Dropdown = styled.div`
 
 // TODO try to make this component use the Dropdown from Reusable
 
-interface NotifDropdownProps {
+export interface NotifDropdownProps {
   loading: boolean;
   error: ApolloError;
   notifications: any[];
