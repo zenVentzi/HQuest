@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
 import styled from "styled-components";
@@ -41,8 +41,12 @@ interface AnswerEditorProps {
   answer: any;
 }
 
-class AnswerEditor extends Component<AnswerEditorProps, any> {
-  checkLastCharsEqual = (text: string, last: number, equalChar: string) => {
+const AnswerEditor = (props: AnswerEditorProps) => {
+  const checkLastCharsEqual = (
+    text: string,
+    last: number,
+    equalChar: string
+  ) => {
     if (text.length < last) {
       return false;
     }
@@ -51,71 +55,66 @@ class AnswerEditor extends Component<AnswerEditorProps, any> {
     return lastChars.filter(ch => ch === equalChar).length === last;
   };
 
-  minimizeNewlines = (newValue: string, oldValue: string) => {
-    if (this.checkLastCharsEqual(newValue, 3, "\n")) {
+  const minimizeNewlines = (newValue: string, oldValue: string) => {
+    if (checkLastCharsEqual(newValue, 3, "\n")) {
       return oldValue;
     }
 
     return newValue;
   };
 
-  render() {
-    const isNew = !this.props.answer;
-    const initialValues = { answer: "" };
-    if (!isNew) {
-      initialValues.answer = this.props.answer.value;
-    }
-
-    return (
-      <Formik
-        initialValues={initialValues}
-        validateOnBlur={false}
-        validate={values => {
-          const errors: any = {};
-          if (values.answer.length < 10)
-            errors.answer = "Answer must be at least 10 characters";
-
-          return errors;
-        }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          const answerValue = values.answer.trim();
-          await this.props.onClickSave(answerValue);
-          // resetForm(initialValues);
-          // setSubmitting(false);
-        }}
-      >
-        {({ values, handleChange, submitForm, isSubmitting }) => (
-          <Form style={{ width: "100%", textAlign: "center" }}>
-            <TextArea
-              name="answer"
-              placeholder="Answer..."
-              onChange={e => {
-                e.target.value = this.minimizeNewlines(
-                  e.target.value,
-                  values.answer
-                );
-                handleChange(e);
-              }}
-              value={values.answer || ""}
-              disabled={isSubmitting}
-            />
-            <ErrorMessage
-              name="answer"
-              render={msg => <ErrorText>{msg}</ErrorText>}
-            />
-            <Buttons>
-              <LeftBtn onClick={submitForm}>Save</LeftBtn>
-              {isNew && (
-                <RightBtn onClick={this.props.onClickDoesNotApply}>
-                  Does not apply
-                </RightBtn>
-              )}
-            </Buttons>
-          </Form>
-        )}
-      </Formik>
-    );
+  const isNew = !props.answer;
+  const initialValues = { answer: "" };
+  if (!isNew) {
+    initialValues.answer = props.answer.value;
   }
-}
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      validateOnBlur={false}
+      validate={values => {
+        const errors: any = {};
+        if (values.answer.length < 10)
+          errors.answer = "Answer must be at least 10 characters";
+
+        return errors;
+      }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        const answerValue = values.answer.trim();
+        await props.onClickSave(answerValue);
+        // resetForm(initialValues);
+        // setSubmitting(false);
+      }}
+    >
+      {({ values, handleChange, submitForm, isSubmitting }) => (
+        <Form style={{ width: "100%", textAlign: "center" }}>
+          <TextArea
+            name="answer"
+            placeholder="Answer..."
+            onChange={e => {
+              e.target.value = minimizeNewlines(e.target.value, values.answer);
+              handleChange(e);
+            }}
+            value={values.answer || ""}
+            disabled={isSubmitting}
+          />
+          <ErrorMessage
+            name="answer"
+            render={msg => <ErrorText>{msg}</ErrorText>}
+          />
+          <Buttons>
+            <LeftBtn onClick={submitForm}>Save</LeftBtn>
+            {isNew && (
+              <RightBtn onClick={props.onClickDoesNotApply}>
+                Does not apply
+              </RightBtn>
+            )}
+          </Buttons>
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
 export default AnswerEditor;
