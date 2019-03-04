@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getLoggedUserId } from "Utils";
 import NavContainer from "./NavContainer";
 import NavLeft from "./NavLeft";
@@ -17,17 +17,17 @@ interface NavbarState {
 }
 
 const Navbar = (props: NavbarProps) => {
-  let prevScrollY: number;
+  let prevScrollY = useRef<number>();
 
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      window.scrollY > prevScrollY
+      window.scrollY > prevScrollY.current
         ? !isHidden && setIsHidden(true)
         : isHidden && setIsHidden(false);
 
-      prevScrollY = window.scrollY;
+      prevScrollY.current = window.scrollY;
     };
 
     window.addEventListener("scroll", onScroll);
