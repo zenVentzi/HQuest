@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
 import CommentOptions from "./CommentOptions";
@@ -31,88 +31,82 @@ interface CommentPropsPrivate {
   innerRef: any;
 }
 
-class Comment extends Component<CommentPropsPrivate, any> {
-  static defaultProps = { size: 1.5 };
-  state = { commentHovered: false, viewMode: true };
+const Comment = ({
+  size = 1.5,
+  comment,
+  onRemove: onRemoveProp,
+  onEdit: onEditProp,
+  innerRef
+}: CommentPropsPrivate) => {
+  const [commentHovered, setCommentHovered] = useState(false);
+  const [viewMode, setViewMode] = useState(true);
+  const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
 
-  onClickOutsideOptions = (e: any) => {
+  const onClickOutsideOptions = (e: any) => {
     const isOptionsBtn = false;
     // const isOptionsBtn =
-    //   e.target === this.optionsBtn || e.target === this.optionsBtn.children[0];
+    //   e.target === optionsBtn || e.target === optionsBtn.children[0];
     if (isOptionsBtn) return;
-    this.toggleOptionsDropdown();
+    toggleOptionsDropdown();
   };
 
-  onMouseEnter = () => {
-    this.setState((prevState: any) => ({ ...prevState, commentHovered: true }));
+  const onMouseEnter = () => {
+    setCommentHovered(true);
   };
 
-  onMouseLeave = () => {
-    this.setState((prevState: any) => ({
-      ...prevState,
-      commentHovered: false
-    }));
+  const onMouseLeave = () => {
+    setCommentHovered(false);
   };
 
-  onRemove = async () => {
-    await this.props.onRemove(this.props.comment.id);
+  const onRemove = async () => {
+    await onRemoveProp(comment.id);
   };
 
-  onClickEdit = () => {
-    this.setState({ ...this.state, viewMode: false });
+  const onClickEdit = () => {
+    setViewMode(false);
   };
 
-  onCancelEdit = () => {
-    this.setState({ ...this.state, viewMode: true });
+  const onCancelEdit = () => {
+    setViewMode(true);
   };
 
-  onEdit = async (newComment: string) => {
-    await this.props.onEdit(this.props.comment.id, newComment);
-    this.setState({ ...this.state, viewMode: true });
+  const onEdit = async (newComment: string) => {
+    await onEditProp(comment.id, newComment);
+    setViewMode(true);
   };
 
-  toggleOptionsDropdown = () => {
-    this.setState((prevState: any) => ({
-      showOptionsDropdown: !prevState.showOptionsDropdown
-    }));
+  const toggleOptionsDropdown = () => {
+    setShowOptionsDropdown(!showOptionsDropdown);
   };
 
-  render() {
-    const {
-      comment: { user, value },
-      size,
-      innerRef
-    } = this.props;
+  const { user, value } = comment;
 
-    const { commentHovered, viewMode } = this.state;
-
-    return (
-      <StyledComment
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        ref={innerRef}
-      >
-        <Header>
-          <User user={user} size={size} />
-          <CommentOptions
-            visible={user.me && commentHovered}
-            onClickEdit={this.onClickEdit}
-            onClickRemove={this.onRemove}
-          />
-        </Header>
-        {viewMode ? (
-          <CommentViewer comment={value} />
-        ) : (
-          <CommentEditor
-            comment={value}
-            onEdit={this.onEdit}
-            onCancel={this.onCancelEdit}
-          />
-        )}
-      </StyledComment>
-    );
-  }
-}
+  return (
+    <StyledComment
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      ref={innerRef}
+    >
+      <Header>
+        <User user={user} size={size} />
+        <CommentOptions
+          visible={user.me && commentHovered}
+          onClickEdit={onClickEdit}
+          onClickRemove={onRemove}
+        />
+      </Header>
+      {viewMode ? (
+        <CommentViewer comment={value} />
+      ) : (
+        <CommentEditor
+          comment={value}
+          onEdit={onEdit}
+          onCancel={onCancelEdit}
+        />
+      )}
+    </StyledComment>
+  );
+};
 
 // export interface CommentProps extends CommentPropsPrivate {
 //   ref: React.Ref<HTMLDivElement>;
