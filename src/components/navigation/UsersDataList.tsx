@@ -1,12 +1,13 @@
 import React from "react";
+import { UsersUsers } from "GqlClient/autoGenTypes";
 
 interface UsersDataListProps {
-  users: any[];
+  users: UsersUsers[];
 }
 
 const UsersDataList = React.forwardRef<HTMLDataListElement, UsersDataListProps>(
   ({ users }, ref) => {
-    const options = users.map(user => (
+    const usersOptions = users.map(user => (
       <option key={user.id}>{`${user.fullName}`}</option>
     ));
 
@@ -14,7 +15,7 @@ const UsersDataList = React.forwardRef<HTMLDataListElement, UsersDataListProps>(
 
     return (
       <datalist id="users" ref={ref}>
-        {options}
+        {usersOptions}
       </datalist>
     );
   }

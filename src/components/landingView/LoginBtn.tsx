@@ -10,7 +10,7 @@ import { saveLoggedUserData } from "Utils";
 import { LoginMutation, LoginVariables } from "GqlClient/autoGenTypes";
 
 interface LoginBtnProps {
-  onLoggedIn: () => any;
+  onLoggedIn: () => void;
   testUser?: LoginVariables;
 }
 
