@@ -17,10 +17,10 @@ interface DropdownProps {
 const Dropdown = (props: DropdownProps) => {
   const dropdownBtn = useRef<HTMLElement>();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [buttonHeight, setButtonHeight] = useState<number>(null);
+  const [buttonHeight, setButtonHeight] = useState<number>();
 
   useLayoutEffect(() => {
-    setButtonHeight(dropdownBtn.current.clientHeight);
+    setButtonHeight(dropdownBtn.current!.clientHeight);
   }, []);
 
   const onClickOutside = (e: MouseEvent) => {
@@ -32,10 +32,10 @@ const Dropdown = (props: DropdownProps) => {
     toggleDropdown();
   };
 
-  const isDropdownBtnClicked = (event: any) => {
+  const isDropdownBtnClicked = (event: MouseEvent) => {
     return (
       event.target === dropdownBtn.current ||
-      event.target === dropdownBtn.current.children[0]
+      event.target === dropdownBtn.current!.children[0]
     );
   };
 

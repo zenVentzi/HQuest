@@ -30,7 +30,7 @@ const ProfileView = ({ match }: ProfileViewProps) => {
         fetchPolicy="network-only" // this could be changed to cache-and-network, the default, if not using HOT RELOAD
         errorPolicy="all"
       >
-        {({ loading, error, data: { user } }) => {
+        {({ loading, error, data }) => {
           if (loading) return <div> Loading user profile.. </div>;
           if (error) {
             return (
@@ -42,13 +42,19 @@ const ProfileView = ({ match }: ProfileViewProps) => {
             );
           }
 
+          const { user } = data!;
+
+          if (!user) {
+            return <div>User not found</div>;
+          }
+
           return (
             <Fragment>
               <Switch>
                 <Route
                   path="/userProfile/:id/:questionId/:commentId"
                   render={props => (
-                    <QuestionPin {...props} editable={user.me} />
+                    <QuestionPin {...props} editable={!!user.me} />
                   )}
                 />
                 <Route

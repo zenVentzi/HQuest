@@ -55,10 +55,10 @@ interface AvatarProps {
 }
 
 const Avatar = (props: AvatarProps) => {
-  const upload = useRef<HTMLInputElement>();
+  const upload = useRef<HTMLInputElement>(null);
   const [hovered, setHovered] = useState(false);
   const [src, setSrc] = useState(props.src);
-  const [inputImg, setInputImg] = useState<File>(null);
+  const [inputImg, setInputImg] = useState<File>();
   const [fileInputKey, setFileInputKey] = useState(0);
 
   const onMouseOver = () => {
@@ -71,14 +71,14 @@ const Avatar = (props: AvatarProps) => {
 
   const onClick = () => {
     if (!props.editable) return;
-    upload.current.click();
+    upload.current!.click();
   };
 
-  const onCloseEditor = (src: string) => {
+  const onCloseEditor = (src?: string) => {
     if (src) {
       setSrc(`${src}?time=${new Date().valueOf()}`);
     }
-    setInputImg(null);
+    setInputImg(undefined);
     setFileInputKey(fileInputKey + 1);
   };
 
@@ -86,14 +86,14 @@ const Avatar = (props: AvatarProps) => {
     event.stopPropagation();
     event.preventDefault();
 
-    const incorrectType = event.target.files[0].type.indexOf("image") === -1;
+    const incorrectType = event.target.files![0].type.indexOf("image") === -1;
 
     if (incorrectType) {
       // do sth
       return;
     }
 
-    setInputImg(event.target.files[0]);
+    setInputImg(event.target.files![0]);
   };
 
   const { editable, className, invertColors } = props;
@@ -106,7 +106,7 @@ const Avatar = (props: AvatarProps) => {
         <Wrapper
           className={className}
           invertColors={invertColors}
-          editable={editable}
+          editable={!!editable}
           onMouseOver={onMouseOver}
           onFocus={onMouseOver}
           onMouseOut={onMouseOut}

@@ -10,7 +10,7 @@ import {
   NotificationsNotifications
 } from "GqlClient/autoGenTypes";
 
-const getNumOfSeen = (notifications: NotificationsNotifications[]) =>
+const getNumOfSeen = (notifications: NotificationsNotifications[] | null) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 interface NotificationsProps {}
@@ -57,7 +57,7 @@ const Notifications = (props: NotificationsProps) => {
           error,
           notifications,
           onClickOutside: onClickOutsideDropdown,
-          onClickNotification: onClickNotification
+          onClickNotification
         };
         const totalUnseen = getNumOfSeen(notifications);
 

@@ -14,7 +14,7 @@ interface QuestionsContainerProps {
 const QuestionsContainer = (props: QuestionsContainerProps) => {
   const isFetching = useRef(false);
   const hasNextPage = useRef(false);
-  const fetchMoreFn = useRef(undefined);
+  const fetchMoreFn = useRef<any>(undefined);
   const fetchAfter = useRef(null);
   const isFetchingInitial = useRef(false); // or true?
   const isFetchingMore = useRef(false);
@@ -33,7 +33,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
       const shouldFetchMore = isCloseToBottom && !isFetching && hasNextPage;
 
       if (shouldFetchMore) {
-        fetchMoreFn.current({
+        fetchMoreFn.current!({
           variables: {
             after: fetchAfter
           },

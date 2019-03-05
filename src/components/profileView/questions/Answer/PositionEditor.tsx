@@ -35,12 +35,12 @@ const PositionEditor = ({
   const inputRef = React.createRef<HTMLInputElement>();
 
   const onChange = () => {
-    const val = parseInt(inputRef.current.value, 10);
+    const val = parseInt(inputRef.current!.value, 10);
 
     if (val > maxPosition) {
-      inputRef.current.value = String(maxPosition);
+      inputRef.current!.value = String(maxPosition);
     } else if (val < 1) {
-      inputRef.current.value = "1";
+      inputRef.current!.value = "1";
     }
   };
 
@@ -60,7 +60,7 @@ const PositionEditor = ({
       <Buttons>
         <TextBtn
           onClick={() => {
-            const newPosition = parseInt(inputRef.current.value, 10);
+            const newPosition = parseInt(inputRef.current!.value, 10);
 
             if (!newPosition) {
               toast.error(`Value should be between 1 and ${maxPosition}`);

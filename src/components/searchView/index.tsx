@@ -31,9 +31,11 @@ const SearchView = ({
         query={GET_USERS}
         variables={{ match: username }}
       >
-        {({ loading, error, data: { users } }) => {
+        {({ loading, error, data }) => {
           if (loading) return <div> Loading..</div>;
           if (error) return <div> {error.message} </div>;
+
+          const { users } = data!;
           if (!users.length) {
             return <div> No matches found </div>;
           }

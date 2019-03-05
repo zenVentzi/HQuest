@@ -10,7 +10,13 @@ import {
 } from "GqlClient/autoGenTypes";
 
 interface UnansweredQuestionGqlProps {
-  children: (addAnswer: MutationFn, questionNotApply: MutationFn) => any;
+  children: (
+    addAnswer: MutationFn<AddAnswerMutation, AddAnswerVariables>,
+    questionNotApply: MutationFn<
+      QuestionNotApplyMutation,
+      QuestionNotApplyVariables
+    >
+  ) => JSX.Element;
 }
 
 const UnansweredQuestionGql = (props: UnansweredQuestionGqlProps) => {

@@ -37,7 +37,7 @@ interface DropdownListProps {
 }
 
 const DropdownList = (props: DropdownListProps) => {
-  const dropdownList = useRef<HTMLDivElement>();
+  const dropdownList = useRef<HTMLDivElement>(null);
 
   useClickOutside(dropdownList, e => {
     props.onClickOutside(e);

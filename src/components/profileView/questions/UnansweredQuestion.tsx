@@ -5,6 +5,12 @@ import AnswerEditor from "./Answer/AnswerEditor";
 import Question from "./Question";
 import UnansweredQuestionGql from "./UnansweredQuestionGql";
 import { MutationFn } from "react-apollo";
+import {
+  AddAnswerMutation,
+  AddAnswerVariables,
+  QuestionNotApplyMutation,
+  QuestionNotApplyVariables
+} from "GqlClient/autoGenTypes";
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -18,13 +24,13 @@ const StyledQuestion = styled.div`
 interface UnansweredQuestionProps {
   question: any;
   refetchQuestions: () => Promise<void>;
-  style: CSSProperties;
+  style?: CSSProperties;
 }
 
 const UnansweredQuestion = (props: UnansweredQuestionProps) => {
-  const onClickSave = (addAnswer: MutationFn) => async (
-    answerValue: string
-  ) => {
+  const onClickSave = (
+    addAnswer: MutationFn<AddAnswerMutation, AddAnswerVariables>
+  ) => async (answerValue: string) => {
     const { question } = props;
 
     if (!answerValue && !question.defaultAnswer) {
@@ -43,7 +49,12 @@ const UnansweredQuestion = (props: UnansweredQuestionProps) => {
     await props.refetchQuestions();
   };
 
-  const onClickDoesNotApply = (questionNotApply: MutationFn) => async () => {
+  const onClickDoesNotApply = (
+    questionNotApply: MutationFn<
+      QuestionNotApplyMutation,
+      QuestionNotApplyVariables
+    >
+  ) => async () => {
     const variables = {
       questionId: props.question.id
     };

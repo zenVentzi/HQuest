@@ -25,16 +25,14 @@ interface TagsWindowProps {
 }
 
 const TagsWindow = (props: TagsWindowProps) => {
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const isSelected = (tag: string) => {
     return selectedTags.includes(tag);
   };
 
   const onClickTag = (tag: string) => {
-    const isSelected = selectedTags.includes(tag);
-
-    if (isSelected) {
+    if (isSelected(tag)) {
       setSelectedTags(() => {
         return selectedTags.filter((t: string) => t !== tag);
       });

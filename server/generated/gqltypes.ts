@@ -104,7 +104,7 @@ export interface Query {
 
   answeredQuestion: Question;
 
-  users?: Maybe<User[]>;
+  users: User[];
 
   user?: Maybe<User>;
 
@@ -544,7 +544,7 @@ export namespace QueryResolvers {
 
     answeredQuestion?: AnsweredQuestionResolver<Question, TypeParent, Context>;
 
-    users?: UsersResolver<Maybe<User[]>, TypeParent, Context>;
+    users?: UsersResolver<User[], TypeParent, Context>;
 
     user?: UserResolver<Maybe<User>, TypeParent, Context>;
 
@@ -597,7 +597,7 @@ export namespace QueryResolvers {
   }
 
   export type UsersResolver<
-    R = Maybe<User[]>,
+    R = User[],
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context, UsersArgs>;
