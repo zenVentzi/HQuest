@@ -82,9 +82,7 @@ const getLink = (notif: NotificationsNotifications) => {
 };
 
 interface NotifProps {
-  onClick: () => (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => void;
+  onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
   notif: NotificationsNotifications;
 }
 
