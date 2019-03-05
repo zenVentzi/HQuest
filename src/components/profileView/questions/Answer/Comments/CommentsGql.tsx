@@ -19,7 +19,7 @@ interface CommentsGqlProps {
     commentAnswer: MutationFn<CommentAnswerMutation, CommentAnswerVariables>,
     editComment: MutationFn<EditCommentMutation, EditCommentVariables>,
     removeComment: MutationFn<RemoveCommentMutation, RemoveCommentVariables>
-  ) => any;
+  ) => JSX.Element;
 }
 
 const CommentsGql = (props: CommentsGqlProps) => {

@@ -14,7 +14,8 @@ import {
   EditCommentVariables,
   EditCommentMutation,
   RemoveCommentVariables,
-  RemoveCommentMutation
+  RemoveCommentMutation,
+  AnswerFieldsComments
 } from "GqlClient/autoGenTypes";
 
 const CommentInput = styled(Textarea)`
@@ -32,7 +33,7 @@ const ErrorText = styled.div`
 `;
 
 interface CommentsProps {
-  comments: CommentFieldsFragment[] | null;
+  comments: AnswerFieldsComments[] | null;
   answerId: string;
   onAddComment: () => void;
   // onEditComment: () => void;

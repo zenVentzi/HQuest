@@ -3,6 +3,7 @@ import Textarea from "react-textarea-autosize";
 import { Formik, Form, ErrorMessage } from "formik";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
+import { AnswerFieldsComments } from "GqlClient/autoGenTypes";
 
 const StyledEditor = styled(Textarea)`
   /* min-height: min-content; */
@@ -30,7 +31,7 @@ const LeftBtn = styled(TextBtn)`
 const RightBtn = styled(TextBtn)``;
 
 interface CommentEditorProps {
-  comment: any;
+  comment: string;
   onEdit: (newComment: string) => Promise<void>;
   onCancel: () => void;
 }
@@ -46,8 +47,9 @@ const CommentEditor = (props: CommentEditorProps) => {
       validateOnBlur={false}
       validate={values => {
         const errors: any = {};
-        if (values.comment.length < 7)
+        if (values.comment.length < 7) {
           errors.comment = "Comment must be at least 7 characters";
+        }
 
         return errors;
       }}
