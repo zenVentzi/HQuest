@@ -6,20 +6,26 @@ import AnsweredQuestions from "./AnsweredQuestions";
 import QuestionTags from "./Tags";
 import UnansweredQuestions from "./UnansweredQuestions";
 import ToggleQuestions from "./ToggleQuestions";
+import {
+  UserUser,
+  QuestionsQuery,
+  QuestionsVariables,
+  QuestionConnectionFieldsFragment
+} from "GqlClient/autoGenTypes";
 
 interface QuestionsContainerProps {
-  user: any;
+  user: UserUser;
 }
 
 const QuestionsContainer = (props: QuestionsContainerProps) => {
   const isFetching = useRef(false);
   const hasNextPage = useRef(false);
   const fetchMoreFn = useRef<any>(undefined);
-  const fetchAfter = useRef(null);
+  const fetchAfter = useRef<string | null>();
   const isFetchingInitial = useRef(false); // or true?
   const isFetchingMore = useRef(false);
   const isRefetching = useRef(false);
-  const firstRenderResetScroll = useRef(true);
+  // const firstRenderResetScroll = useRef(true);
 
   const [showAnswered, setShowAnswered] = useState(true);
   const [selectedTags, setSelectedTags] = useState([""]);
@@ -71,16 +77,19 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     setSelectedTags(tags);
   };
 
-  const renderQuestions = (questions: any, refetch: any) => {
+  const renderQuestions = (
+    questions: QuestionConnectionFieldsFragment | null,
+    refetch: any
+  ) => {
     if (!questions) return null;
 
-    const { user } = props;
-
-    const questionNodes = questions.edges.map((e: any) => e.node);
+    const questionNodes = questions.edges
+      ? questions.edges.map(edge => edge.node)
+      : [];
 
     return showAnswered ? (
       <AnsweredQuestions
-        isPersonal={user.me}
+        isPersonal={!!user.me}
         totalCount={questions.totalCount}
         questions={questionNodes}
         refetch={refetch}
@@ -94,7 +103,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
   };
 
   const { user } = props;
-  const queryVars = {
+  const queryVars: QuestionsVariables = {
     answered: showAnswered,
     userId: user.id,
     tags: selectedTags,
@@ -105,20 +114,14 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     <>
       {user.me && <ToggleQuestions onClick={onToggleQuestions} />}
       <QuestionTags onSelected={onSelectedTags} />
-      <Query
+      <Query<QuestionsQuery, QuestionsVariables>
         query={GET_QUESTIONS}
         variables={queryVars}
         fetchPolicy="network-only" // play with when not using HOT RELOAD
         // fetchPolicy="cache-and-network"
         notifyOnNetworkStatusChange
       >
-        {({
-          error,
-          data: { questions },
-          fetchMore,
-          refetch,
-          networkStatus
-        }) => {
+        {({ error, data, fetchMore, refetch, networkStatus }) => {
           if (error) return <div> {`Error ${error}`}</div>;
 
           isFetchingInitial.current = networkStatus === 1;
@@ -129,6 +132,8 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             isFetchingInitial.current ||
             isFetchingMore.current ||
             isRefetching.current;
+
+          const { questions } = data!;
 
           if (questions) {
             hasNextPage.current = questions.pageInfo.hasNextPage;

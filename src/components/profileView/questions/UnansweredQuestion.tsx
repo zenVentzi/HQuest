@@ -9,7 +9,8 @@ import {
   AddAnswerMutation,
   AddAnswerVariables,
   QuestionNotApplyMutation,
-  QuestionNotApplyVariables
+  QuestionNotApplyVariables,
+  QuestionFieldsFragment
 } from "GqlClient/autoGenTypes";
 
 const StyledQuestion = styled.div`
@@ -22,19 +23,21 @@ const StyledQuestion = styled.div`
 `;
 
 interface UnansweredQuestionProps {
-  question: any;
+  question: QuestionFieldsFragment;
   refetchQuestions: () => Promise<void>;
   style?: CSSProperties;
 }
 
-const UnansweredQuestion = (props: UnansweredQuestionProps) => {
+const UnansweredQuestion = ({
+  question,
+  refetchQuestions,
+  style
+}: UnansweredQuestionProps) => {
   const onClickSave = (
     addAnswer: MutationFn<AddAnswerMutation, AddAnswerVariables>
   ) => async (answerValue: string) => {
-    const { question } = props;
-
-    if (!answerValue && !question.defaultAnswer) {
-      toast.error("🦄 Answer not provided");
+    if (!answerValue) {
+      toast.error("Answer not provided");
       return;
     }
 
@@ -46,7 +49,7 @@ const UnansweredQuestion = (props: UnansweredQuestionProps) => {
     };
     await addAnswer({ variables });
     toast.success("🦄 Answer added!");
-    await props.refetchQuestions();
+    await refetchQuestions();
   };
 
   const onClickDoesNotApply = (
@@ -56,14 +59,12 @@ const UnansweredQuestion = (props: UnansweredQuestionProps) => {
     >
   ) => async () => {
     const variables = {
-      questionId: props.question.id
+      questionId: question.id
     };
     await questionNotApply({ variables });
     toast.success("🦄 Does not apply? Problem solved!");
-    props.refetchQuestions();
+    refetchQuestions();
   };
-
-  const { question, style } = props;
 
   return (
     <UnansweredQuestionGql>

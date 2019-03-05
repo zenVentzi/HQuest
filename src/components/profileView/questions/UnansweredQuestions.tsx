@@ -2,16 +2,19 @@ import React, { CSSProperties } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import UnansweredQuestion from "./UnansweredQuestion";
+import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 
 interface UnansweredQuestionsProps {
   style?: CSSProperties;
-  questions: any[];
+  questions: QuestionFieldsFragment[];
   refetchQuestions: () => Promise<any>;
 }
 
-const UnansweredQuestions = (props: UnansweredQuestionsProps) => {
-  const { style, questions, refetchQuestions } = props;
-
+const UnansweredQuestions = ({
+  style,
+  questions,
+  refetchQuestions
+}: UnansweredQuestionsProps) => {
   if (!questions.length) {
     return <div style={style}> All questions are answered </div>;
   }
