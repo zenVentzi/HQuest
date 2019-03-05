@@ -1,30 +1,42 @@
-import React from "react";
-import { Query, Mutation, MutationFn } from "react-apollo";
+import React, { useRef } from "react";
+import { Query, Mutation, MutationFn, MutationUpdaterFn } from "react-apollo";
 import { GET_NOTIFICATIONS } from "GqlClient/notification/queries";
 import { NOTIFS_MARK_SEEN } from "GqlClient/notification/mutations";
 import { NEW_NOTIFICATION } from "GqlClient/notification/subscriptions";
 import { getLoggedUserId } from "Utils";
-import { ApolloError } from "apollo-client";
+import { ApolloError, SubscribeToMoreOptions } from "apollo-client";
 import {
   NotificationsQuery,
   NotificationsVariables,
   NotificationsNotifications,
   NotifsMarkSeenMutation,
-  NotifsMarkSeenVariables
+  NotifsMarkSeenVariables,
+  NotificationFieldsFragment
 } from "GqlClient/autoGenTypes";
 
-const getSubcriptionOptions = () => {
+const getSubcriptionOptions = (): SubscribeToMoreOptions<
+  NotificationsQuery,
+  NotificationsVariables
+> => {
   const userId = getLoggedUserId();
   return {
     document: NEW_NOTIFICATION,
     variables: { userId },
-    updateQuery: (prev: any, { subscriptionData }: any) => {
-      if (!subscriptionData.data) return prev; // start here, check when data is received
-      const { newNotification } = subscriptionData.data;
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data || !subscriptionData.data.notifications) {
+        return prev;
+      }
+      const { notifications: oldNotifications } = prev;
+      const { notifications: newNotifications } = subscriptionData.data;
+      const updatedNotifications: NotificationFieldsFragment[] | null = [];
+      updatedNotifications.concat(newNotifications);
+      if (oldNotifications) {
+        updatedNotifications.concat(oldNotifications);
+      }
 
-      const updatedQuery = {
+      const updatedQuery: NotificationsQuery = {
         ...prev,
-        notifications: [newNotification, ...prev.notifications]
+        notifications: updatedNotifications
       };
 
       return updatedQuery;
@@ -32,12 +44,16 @@ const getSubcriptionOptions = () => {
   };
 };
 
-const updateSeen = (cache: any) => {
-  const { notifications } = cache.readQuery({ query: GET_NOTIFICATIONS });
+const updateSeen: MutationUpdaterFn<NotifsMarkSeenMutation> = cache => {
+  const cachedQuery = cache.readQuery<
+    NotificationsQuery,
+    NotificationsVariables
+  >({ query: GET_NOTIFICATIONS });
+  const { notifications } = cachedQuery!;
   if (!notifications || !notifications.length) {
     return;
   }
-  const updated = notifications.map((n: any) => ({ ...n, seen: true }));
+  const updated = notifications.map(n => ({ ...n, seen: true }));
 
   cache.writeQuery({
     query: GET_NOTIFICATIONS,
@@ -45,42 +61,46 @@ const updateSeen = (cache: any) => {
   });
 };
 
-let subscribed = false;
-
 interface NotificationsGQLProps {
   children: (
     loading: boolean,
     error: ApolloError | undefined,
     notifications: NotificationsNotifications[] | null,
     markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
-  ) => any;
+  ) => JSX.Element;
 }
 
-const NotificationsGQL = ({ children }: NotificationsGQLProps) => (
-  <Query<NotificationsQuery, NotificationsVariables> query={GET_NOTIFICATIONS}>
-    {({ loading, error, data, subscribeToMore }) => {
-      // return null;
-      if (!subscribed) {
-        subscribeToMore(getSubcriptionOptions());
-        subscribed = true;
-      }
+const NotificationsGQL = ({ children }: NotificationsGQLProps) => {
+  const subscribed = useRef(false);
 
-      let notifications: NotificationsNotifications[] | null;
+  return (
+    <Query<NotificationsQuery, NotificationsVariables>
+      query={GET_NOTIFICATIONS}
+    >
+      {({ loading, error, data, subscribeToMore }) => {
+        // return null;
+        if (!subscribed.current) {
+          subscribeToMore(getSubcriptionOptions());
+          subscribed.current = true;
+        }
 
-      if (data) {
-        notifications = data.notifications;
-      }
+        let notifications: NotificationsNotifications[] | null;
 
-      return (
-        <Mutation<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
-          mutation={NOTIFS_MARK_SEEN}
-          update={updateSeen}
-        >
-          {markSeen => children(loading, error, notifications, markSeen)}
-        </Mutation>
-      );
-    }}
-  </Query>
-);
+        if (data) {
+          notifications = data.notifications;
+        }
+
+        return (
+          <Mutation<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+            mutation={NOTIFS_MARK_SEEN}
+            update={updateSeen}
+          >
+            {markSeen => children(loading, error, notifications, markSeen)}
+          </Mutation>
+        );
+      }}
+    </Query>
+  );
+};
 
 export default NotificationsGQL;

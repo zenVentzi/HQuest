@@ -8,6 +8,10 @@ import TextBtn from "Reusable/TextBtn";
 // import styled from "styled-components";
 import { saveLoggedUserData } from "Utils";
 import { LoginMutation, LoginVariables } from "GqlClient/autoGenTypes";
+import {
+  ReactFacebookLoginInfo,
+  ReactFacebookLoginProps
+} from "react-facebook-login";
 
 interface LoginBtnProps {
   onLoggedIn: () => void;
@@ -17,11 +21,11 @@ interface LoginBtnProps {
 const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
   const responseFacebook = (
     mutation: MutationFn<LoginMutation, LoginVariables>
-  ) => async (response: any) => {
+  ) => async (response: ReactFacebookLoginInfo) => {
     if (response.email) {
-      const variables = {
+      const variables: LoginVariables = {
         email: response.email,
-        name: response.name
+        name: response.name!
       };
       const result = await mutation({ variables });
       if (!result) {
@@ -60,11 +64,11 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
             appId="765926203800350"
             fields="name,email,picture"
             callback={responseFacebook(login)}
-            render={(renderProps: any) => (
+            render={(renderProps: ReactFacebookLoginProps) => (
               <FacebookLogo
                 size="2em"
                 css="cursor: pointer"
-                onClick={renderProps.onClick}
+                onClick={renderProps.onClick as any}
               />
             )}
           />

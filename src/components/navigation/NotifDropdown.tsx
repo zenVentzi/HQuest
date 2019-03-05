@@ -36,8 +36,10 @@ export interface NotifDropdownProps {
   loading: boolean;
   error: ApolloError | undefined;
   notifications: NotificationsNotifications[] | null;
-  onClickNotification: any;
-  onClickOutside: any;
+  onClickNotification: (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => void;
+  onClickOutside: (event: MouseEvent) => void;
 }
 
 const NotifDropdown = (props: NotifDropdownProps) => {
