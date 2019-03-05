@@ -11,7 +11,7 @@ type Answer {
 
 type Likes {
   total: Int!
-  likers: [Liker!]
+  likers: [Liker!]!
 }
 
 type Liker {

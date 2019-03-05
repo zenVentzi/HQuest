@@ -14,6 +14,7 @@ import AnswerViewer from "./Answer/AnswerViewer";
 import PositionEditor from "./Answer/PositionEditor";
 import AnsweredQuestionGql from "./AnsweredQuestionGql";
 import { MutationFn } from "react-apollo";
+import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -40,7 +41,8 @@ const SmallBtn = styled(Anchor)`
 `;
 
 interface AnsweredQuestionProps {
-  question: any;
+  question: QuestionFieldsFragment;
+  // question: Required<QuestionFieldsFragment>;
   showComments: boolean;
   // onRemove: () => Promise<void>;
   scrollToComment?: string;
@@ -49,10 +51,19 @@ interface AnsweredQuestionProps {
   style?: CSSProperties;
 }
 
+// interface Mla {
+//   a?: { num: number } | null;
+// }
+
+// const mla: Mla = {};
+
+// const bol = mla.a.num > 5; // no error here had to retart vscode 3 times ftw
+
 const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   // timeoutIndex: number;
+
   const timeoutIndex = useRef<number>();
-  const { likes } = props.question.answer;
+  const { likes } = props.question.answer!;
   const [totalLikes, setTotalLikes] = useState(() => {
     return likes ? likes.total : 0;
   });
@@ -66,12 +77,12 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   });
   const [showLikes, setShowLikes] = useState(false);
   const [numOfComments, setNumOfComments] = useState(() => {
-    const { comments } = props.question.answer;
-    return comments ? comments.length : 0;
+    const { comments: cments } = props.question.answer!;
+    return cments ? cments.length : 0;
   });
   const [showComments, setShowComments] = useState(props.showComments);
   const [numOfEditions, setNumOfEditions] = useState(() => {
-    const { editions } = props.question.answer.editions;
+    const { editions } = props.question.answer!;
     return editions ? editions.length : 0;
   });
   const [showEditions, setShowEditions] = useState(false);
@@ -88,7 +99,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   };
 
   const onRemove = (mutation: MutationFn) => async () => {
-    const answerId = props.question.answer.id;
+    const answerId = props.question.answer!.id;
     const variables = { answerId };
     await mutation({ variables });
     toast.success("Answer removed!");
@@ -128,7 +139,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   const onSaveAnswer = (mutation: MutationFn) => async (
     answerValue: string
   ) => {
-    const isTheSame = props.question.answer.value === answerValue;
+    const isTheSame = props.question.answer!.value === answerValue;
 
     if (isTheSame) {
       closeAnswerEditor();
@@ -136,7 +147,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
       return;
     }
 
-    const answerId = props.question.answer.id;
+    const answerId = props.question.answer!.id;
     const variables = { answerId, answerValue };
     await mutation({ variables });
     toast.success("Answer edited!");
@@ -168,7 +179,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   const onMovePosition = (mutation: MutationFn) => async (
     newPosition: number
   ) => {
-    const answerId = props.question.answer.id;
+    const answerId = props.question.answer!.id;
     const variables = { answerId, position: newPosition };
     await mutation({ variables });
     // await props.onClickMove({ newPosition });
@@ -186,7 +197,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   const cancelPrevWait = () => {
     if (timeoutIndex) {
       clearTimeout(timeoutIndex.current);
-      timeoutIndex.current = null;
+      timeoutIndex.current = undefined;
     }
   };
 
@@ -201,7 +212,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     cancelPrevWait();
     await wait(500);
     /* because the user can click multiple times in a row, creating too many sequential requests to the server */
-    const answerId = props.question.answer.id;
+    const answerId = props.question.answer!.id;
     const variables = { answerId, userLikes };
     await mutation({ variables });
   };
@@ -214,7 +225,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     style
   } = props;
 
-  const { comments } = question.answer;
+  const { comments } = question.answer!;
 
   const likeBtnText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
   const commentBtnText =
@@ -253,7 +264,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
             )}
             {showPositionEditor && (
               <PositionEditor
-                position={question.answer.position}
+                position={question.answer!.position}
                 maxPosition={totalQuestionsCount}
                 onClickMove={onMovePosition(moveAnswerPosition)}
                 onClickClose={closePositionEditor}
@@ -262,7 +273,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
             <Row hide={!hovered}>
               <LikeBtn
                 onClick={onClickLike(likeAnswer)}
-                isLiked={question.answer.isLiked}
+                isLiked={totalLikes > 0}
               />
               <SmallBtn onClick={toggleLikes}>{likeBtnText}</SmallBtn>
               <SmallBtn onClick={toggleComments}>{commentBtnText}</SmallBtn>
@@ -271,18 +282,18 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
               )}
             </Row>
             {showLikes && (
-              <Likes onClose={toggleLikes} likes={question.answer.likes} />
+              <Likes onClose={toggleLikes} likes={question.answer!.likes} />
             )}
             {showEditions && (
               <Editions
-                editions={question.answer.editions}
+                editions={question.answer!.editions}
                 onClose={toggleEditions}
               />
             )}
-            {(showComments || scrollToComment) && (
+            {(scrollToComment || showComments) && (
               <Comments
                 comments={comments}
-                answerId={question.answer.id}
+                answerId={question.answer!.id}
                 scrollToComment={scrollToComment}
                 onAddComment={incrementNumOfComments}
                 // onEditComment={onEditComment}

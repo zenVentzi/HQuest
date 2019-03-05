@@ -36,12 +36,12 @@ const Notifications = (props: NotificationsProps) => {
     await markSeen();
   };
 
-  const isTargetNotifBtn = (target: EventTarget) => {
+  const isTargetNotifBtn = (target: EventTarget | null) => {
     // TODO simplify
-    const buttonWrapper = notifBtn.current;
+    const buttonWrapper = notifBtn.current!;
     const btnChildren = buttonWrapper.querySelectorAll("*");
 
-    //@ts-ignore
+    // @ts-ignore
     return target === buttonWrapper || [...btnChildren].includes(target);
   };
 

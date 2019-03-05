@@ -507,7 +507,7 @@ export type AnswerFieldsLikes = {
 
   total: number;
 
-  likers: Maybe<AnswerFieldsLikers[]>;
+  likers: AnswerFieldsLikers[];
 };
 
 export type AnswerFieldsLikers = {
