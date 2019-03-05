@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
+import { AnswerFieldsLikers } from "GqlClient/autoGenTypes";
 
 const StyledLiker = styled.div`
   width: 80%;
@@ -12,7 +13,7 @@ const StyledLiker = styled.div`
 `;
 
 interface LikerProps {
-  liker: any;
+  liker: AnswerFieldsLikers;
 }
 
 /* do I store the whole user info inside the liker object? */
@@ -21,7 +22,6 @@ const Liker = ({ liker }: LikerProps) => {
   return (
     <StyledLiker>
       <User size={1.5} user={liker.user} />
-      {/* {ReactionIcon && <ReactionIcon size="2em" />} */}
       <div>x{liker.numOfLikes}</div>
     </StyledLiker>
   );

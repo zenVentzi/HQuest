@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import shortid from "shortid";
+import { QuestionFieldsAnswer } from "GqlClient/autoGenTypes";
 
 const Viewer = styled.div`
   background: black;
@@ -21,12 +22,10 @@ const Viewer = styled.div`
 `;
 
 interface AnswerViewerProps {
-  answer: any;
+  answer: QuestionFieldsAnswer;
 }
 
-const AnswerViewer = (props: AnswerViewerProps) => {
-  const { answer } = props;
-
+const AnswerViewer = ({ answer }: AnswerViewerProps) => {
   const answerWithParagraphs = answer.value
     .split("\n")
     .map((paragraph: string) => (

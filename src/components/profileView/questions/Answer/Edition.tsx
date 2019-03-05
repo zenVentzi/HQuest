@@ -1,6 +1,7 @@
 import React from "react";
 import distanceInWords from "date-fns/distance_in_words";
 import styled from "styled-components";
+import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
 
 const StyledEdition = styled.div`
   width: 80%;
@@ -17,14 +18,10 @@ const AnswerText = styled.span`
 `;
 
 interface EditionProps {
-  edition: any;
+  edition: AnswerFieldsEditions;
 }
 
-const Edition = (props: EditionProps) => {
-  const {
-    edition: { date, before, after }
-  } = props;
-
+const Edition = ({ edition: { date, before, after } }: EditionProps) => {
   const editDate = new Date(date).getTime();
   const dateTimeNow = new Date().getTime();
 
