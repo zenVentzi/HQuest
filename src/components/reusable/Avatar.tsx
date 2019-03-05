@@ -48,7 +48,7 @@ const UpdateOverlay = styled.div`
 `;
 
 interface AvatarProps {
-  src: string;
+  src: string | null;
   editable?: boolean;
   className?: string;
   invertColors?: any;

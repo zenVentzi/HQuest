@@ -13,9 +13,10 @@ import Links from "./Links";
 import QuestionsContainer from "./questions";
 import Search from "./Search";
 import ToggleQuestions from "./questions/ToggleQuestions";
+import { UserFieldsFragment } from "GqlClient/autoGenTypes";
 
 interface ProfileViewerProps {
-  user: any;
+  user: UserFieldsFragment;
 }
 
 const ProfileViewer = (props: ProfileViewerProps) => {
@@ -32,7 +33,7 @@ const ProfileViewer = (props: ProfileViewerProps) => {
 
   const { user } = props;
   const isFollowed =
-    user.followers && user.followers.includes(getLoggedUserId());
+    user.followers && user.followers.includes(getLoggedUserId()!);
   const theme = {
     avatarSize: "150px"
   };
@@ -40,13 +41,19 @@ const ProfileViewer = (props: ProfileViewerProps) => {
   return (
     <ThemeProvider theme={overrideTheme(theme)}>
       <>
-        <Avatar src={user.avatarSrc} editable={user.me} />
+        <Avatar src={user.avatarSrc} editable={!!user.me} />
         <Username>{user.fullName}</Username>
         <Intro>{user.intro}</Intro>
-        {!user.me && <FollowBtn isFollowed={isFollowed} userId={user.id} />}
+        {!user.me && <FollowBtn isFollowed={!!isFollowed} userId={user.id} />}
         <div>
-          <FollowingBtn following={user.following} onClick={toggleFollowing} />
-          <FollowersBtn followers={user.followers} onClick={toggleFollowers} />
+          <FollowingBtn
+            numOfFollowing={user.following ? user.following.length : 0}
+            onClick={toggleFollowing}
+          />
+          <FollowersBtn
+            numOfFollowers={user.followers ? user.followers.length : 0}
+            onClick={toggleFollowers}
+          />
         </div>
         {showFollowers && (
           <Followers userId={user.id} onClose={toggleFollowers} />
