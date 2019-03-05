@@ -1,21 +1,12 @@
 import React, { useRef } from "react";
 import { Query } from "react-apollo";
-import gql from "graphql-tag";
 import styled from "styled-components";
 import { Formik, Form } from "formik";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Anchor from "Reusable/Anchor";
 import UsersDataList from "./UsersDataList";
 import { UsersQuery, UsersVariables } from "GqlClient/autoGenTypes";
-
-const GET_USERS = gql`
-  query GetUsers($match: String) {
-    users(match: $match) {
-      id
-      fullName
-    }
-  }
-`;
+import { GET_USERS } from "GqlClient/user/queries";
 
 const TextInput = styled.input`
   width: 20em;
