@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactChild } from "react";
 import styled from "styled-components";
 import UndecoratedLink from "Reusable/UndecoratedLink";
 import { clickableText } from "Reusable/css";
@@ -10,7 +10,7 @@ const StyledLink = styled(UndecoratedLink)`
 `;
 
 interface TextLinkProps {
-  children: any;
+  children: ReactChild;
   to: History.LocationDescriptor;
   onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }

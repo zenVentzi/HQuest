@@ -9,9 +9,9 @@ const StyledDropdown = styled.div`
 `;
 
 interface DropdownProps {
-  dropBtn: any;
+  dropBtn: JSX.Element;
   pivot: "left" | "right";
-  items: any[];
+  items: JSX.Element[];
 }
 
 const Dropdown = (props: DropdownProps) => {

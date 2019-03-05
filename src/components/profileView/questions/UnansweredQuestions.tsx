@@ -7,7 +7,7 @@ import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 interface UnansweredQuestionsProps {
   style?: CSSProperties;
   questions: QuestionFieldsFragment[];
-  refetchQuestions: () => Promise<any>;
+  refetchQuestions: () => Promise<void>;
 }
 
 const UnansweredQuestions = ({

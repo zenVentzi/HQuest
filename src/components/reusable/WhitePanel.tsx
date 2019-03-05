@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactChild } from "react";
 import styled from "styled-components";
 import IconBtn from "Reusable/IconBtn";
 import { WindowClose } from "styled-icons/fa-solid/WindowClose";
@@ -75,7 +75,7 @@ const TopRightCorner = styled.span`
 
 interface PanelProps {
   onClose: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  children: any;
+  children: ReactChild;
 }
 
 const Panel = ({ onClose, children }: PanelProps) => (

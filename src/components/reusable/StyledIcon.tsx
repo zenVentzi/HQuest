@@ -1,7 +1,7 @@
-import React from "react";
+import React, { CSSProperties, ReactElement } from "react";
 
 interface StyledIconProps {
-  icon: any;
+  icon: React.FunctionComponent<{ size: string; style: CSSProperties }>;
   visible?: boolean;
   size?: string;
 }
@@ -11,7 +11,7 @@ const StyledIcon = ({
   visible = true,
   size = "2em"
 }: StyledIconProps) => {
-  const style = {
+  const style: CSSProperties = {
     verticalAlign: "middle",
     pointerEvents: "none",
     visibility: visible ? "inherit" : "hidden"

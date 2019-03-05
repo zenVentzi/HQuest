@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, ReactChild } from "react";
 import styled from "styled-components";
 import ReactDOM from "react-dom";
 
 const modalRoot = document.getElementById("modal-root");
 
 interface ModalProps {
-  children: any;
+  children: ReactChild;
 }
 
 const Modal = (props: ModalProps) => {
