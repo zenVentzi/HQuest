@@ -31,7 +31,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
   const [selectedTags, setSelectedTags] = useState([""]);
 
   useEffect(() => {
-    const onScroll = () => {
+    const fetchOnScroll = () => {
       const bottomMarginPx = 0;
       const offsetBottom =
         window.innerHeight + window.pageYOffset - bottomMarginPx;
@@ -62,9 +62,9 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
       }
     };
 
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", fetchOnScroll);
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", fetchOnScroll);
     };
   }, []);
 

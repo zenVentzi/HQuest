@@ -22,8 +22,8 @@ const Buttons = styled.div`
 interface PositionEditorProps {
   position: number;
   maxPosition: number;
-  onClickMove: any;
-  onClickClose: any;
+  onClickMove: (newPosition: number) => void;
+  onClickClose: () => void;
 }
 
 const PositionEditor = ({
@@ -67,7 +67,7 @@ const PositionEditor = ({
               return;
             }
 
-            onClickMove({ newPosition });
+            onClickMove(newPosition);
           }}
         >
           Move

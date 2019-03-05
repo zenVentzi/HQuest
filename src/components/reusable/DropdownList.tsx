@@ -1,7 +1,5 @@
-import React, { useRef } from "react";
-import PropTypes from "prop-types";
+import React, { useRef, ReactElement } from "react";
 import styled from "styled-components";
-import onClickOutside from "react-onclickoutside";
 import { useClickOutside } from "use-events";
 
 interface StyledDropdownProps {
@@ -30,7 +28,7 @@ const StyledDropdown = styled.div<StyledDropdownProps>`
 
 interface DropdownListProps {
   onClickOutside: (e: MouseEvent) => void;
-  items: any[];
+  items: ReactElement[];
   onItemClicked: () => void;
   pivot: "left" | "right";
   marginTop: number;
@@ -68,5 +66,4 @@ const DropdownList = (props: DropdownListProps) => {
   );
 };
 
-//@ts-ignore
-export default onClickOutside(DropdownList);
+export default DropdownList;

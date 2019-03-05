@@ -43,7 +43,7 @@ interface CommentsProps {
 
 const Comments = (props: CommentsProps) => {
   const [comments, setComments] = useState(props.comments || []);
-  const highlightedComment = useRef<any>(null);
+  const highlightedComment = useRef<HTMLDivElement>(null);
   const commentsPanel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,17 +62,15 @@ const Comments = (props: CommentsProps) => {
     } else if (removedComment) {
       setComments(comments.filter(c => c.id !== removedComment.id));
     } else if (editedComment) {
-      // @ts-ignore // ebaa sa s mene, ke go vidim posle
       setComments(() => {
-        // const [...updatedComments] = comments;
-        const updatedComments: any[] = [...comments];
+        const updatedComments = [...comments];
         for (let i = 0; i < updatedComments.length; i++) {
           if (updatedComments[i].id === editedComment.id) {
             updatedComments[i] = editedComment;
           }
         }
 
-        return updateComments;
+        return updatedComments;
       });
     }
   };
@@ -171,9 +169,10 @@ const Comments = (props: CommentsProps) => {
         } as CommentProps & { key: string; ref: CommentRef };
 
         if (scrollToComment && scrollToComment === com!.id) {
-          commentProps.ref = (ref: any) => {
-            highlightedComment.current = ref;
-          };
+          commentProps.ref = highlightedComment;
+          // commentProps.ref = (ref: any) => {
+          //   highlightedComment.current = ref;
+          // };
         }
 
         res.push(<Comment {...commentProps} />);

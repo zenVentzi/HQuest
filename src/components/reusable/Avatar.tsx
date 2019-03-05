@@ -5,7 +5,7 @@ import Editor from "./AvatarEditor";
 
 interface WrapperProps {
   editable: boolean;
-  theme: any;
+  theme: "bad typings support so..";
   invertColors: boolean;
 }
 
@@ -51,7 +51,7 @@ interface AvatarProps {
   src: string | null;
   editable?: boolean;
   className?: string;
-  invertColors?: any;
+  invertColors?: boolean;
 }
 
 const Avatar = (props: AvatarProps) => {
@@ -105,7 +105,7 @@ const Avatar = (props: AvatarProps) => {
       ) : (
         <Wrapper
           className={className}
-          invertColors={invertColors}
+          invertColors={!!invertColors}
           editable={!!editable}
           onMouseOver={onMouseOver}
           onFocus={onMouseOver}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import {
   COMMENT_ANSWER,
@@ -19,7 +19,7 @@ interface CommentsGqlProps {
     commentAnswer: MutationFn<CommentAnswerMutation, CommentAnswerVariables>,
     editComment: MutationFn<EditCommentMutation, EditCommentVariables>,
     removeComment: MutationFn<RemoveCommentMutation, RemoveCommentVariables>
-  ) => JSX.Element;
+  ) => ReactNode;
 }
 
 const CommentsGql = (props: CommentsGqlProps) => {

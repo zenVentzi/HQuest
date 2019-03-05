@@ -7,9 +7,9 @@ import { CaretDown } from "styled-icons/fa-solid/CaretDown";
 // import { WindowClose as CaretDown } from "styled-icons/fa-solid/WindowClose";
 
 interface AnswerOptionsProps {
-  onClickEdit: any;
-  onClickRemove: any;
-  onClickMove: any;
+  onClickEdit: () => void;
+  onClickRemove: () => void;
+  onClickMove: () => void;
   visible: boolean;
 }
 

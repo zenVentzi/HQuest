@@ -28,8 +28,8 @@ const Bottom = styled.div`
 `;
 
 interface TagsDropdownProps {
-  topComponent: any;
-  bottomComponent?: any;
+  topComponent: JSX.Element;
+  bottomComponent?: JSX.Element;
 }
 
 const TagsDropdown = ({ topComponent, bottomComponent }: TagsDropdownProps) => {
