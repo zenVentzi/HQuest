@@ -4,6 +4,7 @@ import User from "Reusable/UserRow";
 import CommentOptions from "./CommentOptions";
 import CommentViewer from "./CommentViewer";
 import CommentEditor from "./CommentEditor";
+import { AnswerFieldsComments } from "GqlClient/autoGenTypes";
 
 // const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
 //   cursor: pointer;
@@ -24,7 +25,7 @@ const Header = styled.div`
 `;
 
 export interface CommentProps {
-  comment: any;
+  comment: AnswerFieldsComments;
   onRemove: (commentId: string) => Promise<void>;
   onEdit: (commentId: string, commentValue: string) => Promise<void>;
   size?: number;
@@ -38,14 +39,14 @@ export type CommentRef = React.Ref<HTMLDivElement>;
 
 export default React.forwardRef<HTMLDivElement, CommentProps>(
   (
-    { size = 1.5, comment, onRemove: onRemoveProp, onEdit: onEditProp }: any,
+    { size = 1.5, comment, onRemove: onRemoveProp, onEdit: onEditProp },
     ref
   ) => {
     const [commentHovered, setCommentHovered] = useState(false);
     const [viewMode, setViewMode] = useState(true);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
 
-    const onClickOutsideOptions = (e: any) => {
+    const onClickOutsideOptions = (e: MouseEvent) => {
       const isOptionsBtn = false;
       // const isOptionsBtn =
       //   e.target === optionsBtn || e.target === optionsBtn.children[0];
@@ -93,7 +94,7 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
         <Header>
           <User user={user} size={size} />
           <CommentOptions
-            visible={user.me && commentHovered}
+            visible={!!user.me && commentHovered}
             onClickEdit={onClickEdit}
             onClickRemove={onRemove}
           />
