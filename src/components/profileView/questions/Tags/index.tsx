@@ -51,8 +51,8 @@ const QuestionTags = (props: QuestionTagsProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [matchingTags, setMatchingTags] = useState<string[]>([]);
-  const [invalidTagMsg, setInvalidTagMsg] = useState<string>(null);
-  const inputRef = useRef<HTMLInputElement>();
+  const [invalidTagMsg, setInvalidTagMsg] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const hideAllTagsWindow = () => {
     setShowAllTags(false);
@@ -60,11 +60,11 @@ const QuestionTags = (props: QuestionTagsProps) => {
 
   const onSelectFromAllTags = (selectedTags: string[]) => {
     hideAllTagsWindow();
-    inputRef.current.focus();
+    inputRef.current!.focus();
     if (!selectedTags || !selectedTags.length) return;
     setSelectedTags(selectedTags);
     props.onSelected(selectedTags);
-    inputRef.current.value = `${selectedTags.join(",")},`;
+    inputRef.current!.value = `${selectedTags.join(",")},`;
 
     // setState(
     //   (prevState: any) => {
@@ -78,7 +78,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
 
   const onSelectFromMatchingTags = (selectedTag: string) => {
     setSelectedTags([...selectedTags, selectedTag]);
-    inputRef.current.value = `${selectedTags.join(",")},`;
+    inputRef.current!.value = `${selectedTags.join(",")},`;
     props.onSelected(selectedTags); // this is under scrutiny
     // setState(
     //   (prevState: any) => {
@@ -88,7 +88,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
     //     notifyParents();
     //   }
     // );
-    inputRef.current.focus();
+    inputRef.current!.focus();
   };
 
   const setInvalidTag = (msg: string) => {
@@ -107,7 +107,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
   const removeLastSelectedTag = () => {
     selectedTags.pop();
     setSelectedTags(() => {
-      let res = [];
+      const res: string[] = [];
       for (let i = 0; i < selectedTags.length - 1; i++) {
         const t = selectedTags[i];
         res.push(t);
@@ -119,11 +119,11 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const clearSelectedTags = () => {
-    setSelectedTags(null);
+    setSelectedTags([]);
   };
 
   const setInputToSelected = () => {
-    inputRef.current.value = `${selectedTags.join(",")},`;
+    inputRef.current!.value = `${selectedTags.join(",")},`;
     clearMatchingTags();
     clearInvalidTag();
   };
@@ -133,7 +133,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const clearMatchingTags = () => {
-    setMatchingTags(null);
+    setMatchingTags([]);
   };
 
   // getInputSelection = (node: any) => {
@@ -152,8 +152,8 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const moveCursorToEnd = () => {
-    if (inputRef.current.value) {
-      inputRef.current.selectionStart = inputRef.current.selectionEnd = 100000;
+    if (inputRef.current!.value) {
+      inputRef.current!.selectionStart = inputRef.current!.selectionEnd = 100000;
     }
   };
 
@@ -176,10 +176,10 @@ const QuestionTags = (props: QuestionTagsProps) => {
     } = e;
     const trimmed = value.trim();
     if (value.charAt(value.length - 1) === " ") {
-      inputRef.current.value = trimmed;
+      inputRef.current!.value = trimmed;
       return;
     } else if (trimmed.includes(",,")) {
-      inputRef.current.value = trimmed.slice(0, -1);
+      inputRef.current!.value = trimmed.slice(0, -1);
       return;
     }
 
@@ -188,7 +188,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
 
     const lastChar = trimmed.charAt(trimmed.length - 1);
     if (lastChar === ",") {
-      const lastTagExists = allTags.current.includes(lastTag);
+      const lastTagExists = allTags.current!.includes(lastTag);
       if (!lastTagExists) {
         setInvalidTagMsg(`Tag ${lastTag} does not exist`);
         return;
@@ -203,7 +203,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
       addToSelected(lastTag);
       clearMatchingTags();
     } else {
-      const matchingTags = allTags.current.filter((t: string) =>
+      const matchingTags = allTags.current!.filter((t: string) =>
         t.includes(lastTag)
       );
       updateMatchingTags(matchingTags);

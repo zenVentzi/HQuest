@@ -21,13 +21,13 @@ const Modal = (props: ModalProps) => {
     // DOM node, or uses 'autoFocus' in a descendant, add
     // state to Modal and only render the children when Modal
     // is inserted in the DOM tree.
-    modalRoot.appendChild(el.current);
+    modalRoot!.appendChild(el.current);
     return () => {
-      modalRoot.removeChild(el.current);
+      modalRoot!.removeChild(el.current!);
     };
   }, []);
 
-  return ReactDOM.createPortal(props.children, el.current);
+  return ReactDOM.createPortal(props.children, el.current!);
 };
 
 export default Modal;

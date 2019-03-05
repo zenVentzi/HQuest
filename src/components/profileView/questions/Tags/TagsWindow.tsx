@@ -49,10 +49,10 @@ interface TagsWindowProps {
 }
 
 const TagsWindow = (props: TagsWindowProps) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const isSelected = (tag: string) => {
-    return selectedTags.includes(tag);
+    return selectedTags && selectedTags.includes(tag);
   };
 
   const onClickTag = (tag: string) => {

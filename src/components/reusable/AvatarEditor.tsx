@@ -29,9 +29,11 @@ interface AvatarEditorProps {
 
 const AvatarEditor = (props: AvatarEditorProps) => {
   const editor = useRef<Editor>();
-  const onClickSave = (uploadAvatar: MutationFn) => async () => {
+  const onClickSave = (
+    uploadAvatar: MutationFn<UploadAvatarMutation, UploadAvatarVariables>
+  ) => async () => {
     if (editor) {
-      const canvasScaled = editor.current.getImageScaledToCanvas();
+      const canvasScaled = editor.current!.getImageScaledToCanvas();
       const base64Img = canvasScaled.toDataURL("image/jpeg").split(",")[1];
       const variables = { base64Img };
       // show loading/uploading
@@ -40,7 +42,7 @@ const AvatarEditor = (props: AvatarEditorProps) => {
         throw Error("Upload avatar mutation failed");
       }
 
-      const src = res.data.uploadAvatar;
+      const src = res.data!.uploadAvatar;
 
       props.onClickCancel(src);
     }

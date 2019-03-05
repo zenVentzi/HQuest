@@ -34,8 +34,8 @@ const Dropdown = styled.div`
 
 export interface NotifDropdownProps {
   loading: boolean;
-  error: ApolloError;
-  notifications: NotificationsNotifications[];
+  error: ApolloError | undefined;
+  notifications: NotificationsNotifications[] | null;
   onClickNotification: any;
   onClickOutside: any;
 }

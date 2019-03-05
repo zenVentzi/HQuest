@@ -34,7 +34,7 @@ const CustomTextInput = styled(TextInput)`
 interface CustomSearchProps extends RouteComponentProps {}
 
 const CustomSearch = (props: CustomSearchProps) => {
-  const datalistRef = useRef<HTMLDataListElement>();
+  const datalistRef = useRef<HTMLDataListElement>(null);
 
   const search = (username: string) => {
     const { history } = props;
@@ -138,9 +138,11 @@ const CustomSearch = (props: CustomSearchProps) => {
               variables={{ match: values.username }}
               fetchPolicy="network-only"
             >
-              {({ loading, error, data: { users } }) => {
+              {({ loading, error, data }) => {
                 if (loading) return <div> loading users </div>;
                 if (error) return <div> {error} </div>;
+
+                const { users } = data!;
 
                 if (!users.length) {
                   return <div> No matches found </div>;
