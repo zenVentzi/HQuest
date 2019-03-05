@@ -50,8 +50,8 @@ let subscribed = false;
 interface NotificationsGQLProps {
   children: (
     loading: boolean,
-    error: ApolloError,
-    notifications: NotificationsNotifications[],
+    error: ApolloError | undefined,
+    notifications: NotificationsNotifications[] | null,
     markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
   ) => any;
 }
@@ -65,7 +65,7 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => (
         subscribed = true;
       }
 
-      let notifications: NotificationsNotifications[] = null;
+      let notifications: NotificationsNotifications[] | null;
 
       if (data) {
         notifications = data.notifications;

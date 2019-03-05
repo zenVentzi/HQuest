@@ -34,7 +34,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       // const { name, message, locations, path } = error;
       console.log(error);
 
-      if (error.extensions.code === "UNAUTHENTICATED") {
+      if (error.extensions!.code === "UNAUTHENTICATED") {
         deleteLoggedUserData();
         // @ts-ignore
         window.location = "/";

@@ -5,12 +5,20 @@ import {
   EDIT_COMMENT,
   REMOVE_COMMENT
 } from "GqlClient/question/answer/comment/mutations";
+import {
+  CommentAnswerMutation,
+  CommentAnswerVariables,
+  EditCommentMutation,
+  EditCommentVariables,
+  RemoveCommentMutation,
+  RemoveCommentVariables
+} from "GqlClient/autoGenTypes";
 
 interface CommentsGqlProps {
   children: (
-    commentAnswer: MutationFn,
-    editComment: MutationFn,
-    removeComment: MutationFn
+    commentAnswer: MutationFn<CommentAnswerMutation, CommentAnswerVariables>,
+    editComment: MutationFn<EditCommentMutation, EditCommentVariables>,
+    removeComment: MutationFn<RemoveCommentMutation, RemoveCommentVariables>
   ) => any;
 }
 
@@ -18,13 +26,19 @@ const CommentsGql = (props: CommentsGqlProps) => {
   const { children } = props;
 
   return (
-    <Mutation mutation={COMMENT_ANSWER}>
+    <Mutation<CommentAnswerMutation, CommentAnswerVariables>
+      mutation={COMMENT_ANSWER}
+    >
       {commentAnswer => {
         return (
-          <Mutation mutation={EDIT_COMMENT}>
+          <Mutation<EditCommentMutation, EditCommentVariables>
+            mutation={EDIT_COMMENT}
+          >
             {editComment => {
               return (
-                <Mutation mutation={REMOVE_COMMENT}>
+                <Mutation<RemoveCommentMutation, RemoveCommentVariables>
+                  mutation={REMOVE_COMMENT}
+                >
                   {removeComment => {
                     return children(commentAnswer, editComment, removeComment);
                   }}

@@ -27,7 +27,7 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
       if (!result) {
         throw Error("Mutation result fail");
       }
-      const { authToken, userId } = result.data.login;
+      const { authToken, userId } = result.data!.login;
       saveLoggedUserData(userId, authToken);
       onLoggedIn();
     }
@@ -37,15 +37,15 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
     mutation: MutationFn<LoginMutation, LoginVariables>
   ) => async () => {
     const variables = {
-      email: testUser.email,
-      name: testUser.name
+      email: testUser!.email,
+      name: testUser!.name
     };
 
     const result = await mutation({ variables });
     if (!result) {
       throw Error("Mutation result fail");
     }
-    const { authToken, userId } = result.data.login;
+    const { authToken, userId } = result.data!.login;
     saveLoggedUserData(userId, authToken);
     onLoggedIn();
   };

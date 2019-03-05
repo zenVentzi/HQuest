@@ -116,6 +116,7 @@ const Notif = ({ onClick, notif }: NotifProps) => {
   return (
     <ThemeProvider theme={overrideTheme(theme)}>
       <StyledNotif
+        // @ts-ignore
         to={redirectLink}
         onClick={onClick}
         onMouseEnter={toggleTheme}

@@ -2,14 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import Panel from "./Panel";
 import Edition from "./Edition";
+import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
 
 interface EditionsProps {
-  editions: any[];
+  editions: AnswerFieldsEditions[] | null;
   onClose: () => void;
 }
 
 const Editions = (props: EditionsProps) => {
   const { editions, onClose } = props;
+
+  if (!editions) return <div>No editions</div>;
 
   return (
     <Panel /* onClose={onClose} */>

@@ -41,7 +41,7 @@ export interface NotifDropdownProps {
 }
 
 const NotifDropdown = (props: NotifDropdownProps) => {
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, event => {
     props.onClickOutside(event);
   });

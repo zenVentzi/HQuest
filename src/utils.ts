@@ -22,8 +22,9 @@ class UserLoginEvent extends EventTarget {
   }
 
   onLogin(listener: (authToken: string, userId: string) => void) {
-    this.addEventListener("login", (event: CustomEvent) => {
-      listener(event.detail.authToken, event.detail.userId);
+    this.addEventListener("login", (event: Event) => {
+      const e = event as CustomEvent;
+      listener(e.detail.authToken, e.detail.userId);
     });
   }
 }

@@ -17,15 +17,17 @@ interface NavbarState {
 }
 
 const Navbar = (props: NavbarProps) => {
-  let prevScrollY = useRef<number>();
+  const prevScrollY = useRef<number>();
 
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      window.scrollY > prevScrollY.current
-        ? !isHidden && setIsHidden(true)
-        : isHidden && setIsHidden(false);
+      if (window.scrollY > prevScrollY.current!) {
+        if (!isHidden) setIsHidden(true);
+      } else if (isHidden) {
+        setIsHidden(false);
+      }
 
       prevScrollY.current = window.scrollY;
     };

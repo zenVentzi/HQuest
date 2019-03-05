@@ -207,7 +207,7 @@ export interface Comment {
 export interface Likes {
   total: number;
 
-  likers?: Maybe<Liker[]>;
+  likers: Liker[];
 }
 
 export interface Liker {
@@ -949,7 +949,7 @@ export namespace LikesResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = Likes> {
     total?: TotalResolver<number, TypeParent, Context>;
 
-    likers?: LikersResolver<Maybe<Liker[]>, TypeParent, Context>;
+    likers?: LikersResolver<Liker[], TypeParent, Context>;
   }
 
   export type TotalResolver<
@@ -958,7 +958,7 @@ export namespace LikesResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type LikersResolver<
-    R = Maybe<Liker[]>,
+    R = Liker[],
     Parent = Likes,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;

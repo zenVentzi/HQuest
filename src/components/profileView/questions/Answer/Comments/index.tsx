@@ -7,6 +7,15 @@ import Comment, { CommentProps, CommentRef } from "./Comment";
 import CommentsGql from "./CommentsGql";
 import Panel from "../Panel";
 import { MutationFn } from "react-apollo";
+import {
+  CommentFieldsFragment,
+  CommentAnswerMutation,
+  CommentAnswerVariables,
+  EditCommentVariables,
+  EditCommentMutation,
+  RemoveCommentVariables,
+  RemoveCommentMutation
+} from "GqlClient/autoGenTypes";
 
 const CommentInput = styled(Textarea)`
   /* margin-top: 2em; */
@@ -23,7 +32,7 @@ const ErrorText = styled.div`
 `;
 
 interface CommentsProps {
-  comments: any[];
+  comments: CommentFieldsFragment[] | null;
   answerId: string;
   onAddComment: () => void;
   // onEditComment: () => void;
@@ -33,23 +42,19 @@ interface CommentsProps {
 
 const Comments = (props: CommentsProps) => {
   const [comments, setComments] = useState(props.comments || []);
-  const highlightedComment = useRef(null);
-  const panel = useRef<HTMLDivElement>();
-
-  // TODO: IMPORTANT. This is commented out because of bad react typings
-  // it should NOT be
+  const highlightedComment = useRef<any>(null);
+  const commentsPanel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (highlightedComment.current) {
-      const a = highlightedComment.current.bla;
-      // panel.current.scrollTop = highlightedComment.current.offsetTop;
+      commentsPanel.current!.scrollTop = highlightedComment.current.offsetTop;
     }
   }, []);
 
   const updateComments = (
-    newComment?: any,
-    removedComment?: any,
-    editedComment?: any
+    newComment?: CommentFieldsFragment,
+    removedComment?: CommentFieldsFragment,
+    editedComment?: CommentFieldsFragment
   ) => {
     if (newComment) {
       setComments([...comments, newComment]);
@@ -73,16 +78,19 @@ const Comments = (props: CommentsProps) => {
 
   const validateForm = (values: any) => {
     const errors: any = {};
-    if (values.comment.length < 7)
+    if (values.comment.length < 7) {
       errors.comment = "Comment must be at least 7 characters";
+    }
 
     return errors;
   };
 
-  const onSubmitForm = (commentAnswerMutation: MutationFn) => async (
-    values: any,
-    { setSubmitting, resetForm }: any
-  ) => {
+  const onSubmitForm = (
+    commentAnswerMutation: MutationFn<
+      CommentAnswerMutation,
+      CommentAnswerVariables
+    >
+  ) => async (values: any, { setSubmitting, resetForm }: any) => {
     // console.log(commentAnswerMutation);
     const { answerId, onAddComment } = props;
     const variables = {
@@ -93,7 +101,7 @@ const Comments = (props: CommentsProps) => {
     if (!res) {
       throw Error("Comment answer mutation failed");
     }
-    const newComment = res.data.commentAnswer;
+    const newComment = res.data!.commentAnswer;
     updateComments(newComment);
     toast.success("Comment added!");
     onAddComment();
@@ -101,10 +109,9 @@ const Comments = (props: CommentsProps) => {
     resetForm({ comment: "" });
   };
 
-  const onEditComment = (editCommentMutation: MutationFn) => async (
-    commentId: string,
-    commentValue: string
-  ) => {
+  const onEditComment = (
+    editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>
+  ) => async (commentId: string, commentValue: string) => {
     const { answerId } = props;
     const variables = { answerId, commentId, commentValue };
     const res = await editCommentMutation({ variables });
@@ -112,50 +119,57 @@ const Comments = (props: CommentsProps) => {
       throw Error("Failed edit comment mutation");
     }
 
-    const editedComment = res.data.editComment;
-    updateComments({ editedComment });
+    const editedComment = res.data!.editComment;
+    updateComments(undefined, undefined, editedComment);
     toast.success("Comment edited!");
   };
 
-  const onRemoveComment = (removeCommentMutation: MutationFn) => async (
-    commentId: string
-  ) => {
-    const { answerId, onRemoveComment } = props;
+  const onRemoveComment = (
+    removeCommentMutation: MutationFn<
+      RemoveCommentMutation,
+      RemoveCommentVariables
+    >
+  ) => async (commentId: string) => {
+    const { answerId, onRemoveComment: onRemoveCommentProp } = props;
     const variables = { answerId, commentId };
     const res = await removeCommentMutation({ variables });
     if (!res) {
       throw Error("removeCommentMutation failed");
     }
 
-    const removedComment = res.data.removeComment;
-    updateComments({ removedComment });
-    onRemoveComment();
+    const removedComment = res.data!.removeComment;
+    updateComments(undefined, removedComment);
+    onRemoveCommentProp();
     toast.success("Comment removed!");
   };
 
   const renderComments = (
-    editCommentMutation: MutationFn,
-    removeCommentMutation: MutationFn
+    editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>,
+    removeCommentMutation: MutationFn<
+      RemoveCommentMutation,
+      RemoveCommentVariables
+    >
   ) => {
     const { scrollToComment } = props;
 
-    if (!comments || !comments.length)
+    if (!comments || !comments.length) {
       return <div> Be the first to add a comment </div>;
+    }
 
     const renderReversedComments = () => {
-      const res = [];
+      const res: JSX.Element[] = [];
       const copy = comments.slice();
 
       while (copy.length) {
         const com = copy.pop();
         const commentProps = {
-          key: com.id,
+          key: com!.id,
           comment: com,
           onEdit: onEditComment(editCommentMutation),
           onRemove: onRemoveComment(removeCommentMutation)
         } as CommentProps & { key: string; ref: CommentRef };
 
-        if (scrollToComment && scrollToComment === com.id) {
+        if (scrollToComment && scrollToComment === com!.id) {
           commentProps.ref = (ref: any) => {
             highlightedComment.current = ref;
           };
@@ -173,7 +187,7 @@ const Comments = (props: CommentsProps) => {
     <CommentsGql>
       {(commentAnswer, editComment, removeComment) => {
         return (
-          <Panel ref={panel}>
+          <Panel ref={commentsPanel}>
             <Formik
               initialValues={{ comment: "" }}
               validateOnBlur={false}

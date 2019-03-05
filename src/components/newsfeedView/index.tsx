@@ -31,7 +31,7 @@ const NewsfeedView = () => (
       fetchPolicy="no-cache"
       errorPolicy="all"
     >
-      {({ loading, error, data: { newsfeed } }) => {
+      {({ loading, error, data }) => {
         if (loading) return <div> Loading newsfeed.. </div>;
         if (error) {
           return (
@@ -42,6 +42,7 @@ const NewsfeedView = () => (
             </pre>
           );
         }
+        const { newsfeed } = data!;
 
         if (!newsfeed || !newsfeed.length) {
           return <div>No activity from your following.</div>;
