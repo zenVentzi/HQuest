@@ -7,12 +7,12 @@ const Btn = styled(TextBtn)`
 `;
 
 interface FollowersBtnProps {
-  followers: any[];
+  numOfFollowers: number;
   onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const FollowersBtn = ({ followers, onClick }: FollowersBtnProps) => {
-  return <Btn onClick={onClick}>Followers {followers.length}</Btn>;
+const FollowersBtn = ({ numOfFollowers, onClick }: FollowersBtnProps) => {
+  return <Btn onClick={onClick}>Followers {numOfFollowers}</Btn>;
 };
 
 export default FollowersBtn;

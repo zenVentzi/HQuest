@@ -8,19 +8,18 @@ import { EDIT_USER } from "GqlClient/user/mutations";
 import { GET_USER } from "GqlClient/user/queries";
 import { toast } from "react-toastify";
 import TextBtn from "Reusable/TextBtn";
+import {
+  UserFieldsFragment,
+  EditUserMutation,
+  EditUserVariables
+} from "GqlClient/autoGenTypes";
 
 interface ProfileEditorProps extends RouteComponentProps {
-  user: any;
+  user: UserFieldsFragment;
 }
 
 const ProfileEditor = ({
-  user: {
-    id,
-    me,
-    fullName,
-    intro,
-    socialMediaLinks: { facebookLink, twitterLink, instagramLink, linkedInLink }
-  },
+  user: { id, me, fullName, intro, socialMediaLinks },
   history
 }: ProfileEditorProps) => {
   if (!me) {
@@ -32,8 +31,15 @@ const ProfileEditor = ({
     );
   }
 
+  const {
+    facebookLink,
+    twitterLink,
+    instagramLink,
+    linkedInLink
+  } = socialMediaLinks!;
+
   return (
-    <Mutation mutation={EDIT_USER}>
+    <Mutation<EditUserMutation, EditUserVariables> mutation={EDIT_USER}>
       {editUser => (
         <Formik
           initialValues={{
@@ -45,7 +51,14 @@ const ProfileEditor = ({
             linkedInLink
           }}
           validate={values => {
-            const errors = {};
+            const errors: any = {};
+
+            if (!values.fullName) {
+              errors.fullName = "Required";
+            }
+            if (!values.intro) {
+              errors.intro = "Required";
+            }
             // if (!values.email) {
             //   errors.email = 'Required';
             // } else if (
@@ -63,10 +76,10 @@ const ProfileEditor = ({
 
             /* */
 
-            const variables = {
+            const variables: EditUserVariables = {
               input: {
-                fullName: values.fullName,
-                intro: values.intro,
+                fullName: values.fullName!,
+                intro: values.intro!,
                 socialMediaLinks: {
                   facebookLink: values.facebookLink,
                   twitterLink: values.twitterLink,

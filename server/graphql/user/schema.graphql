@@ -25,10 +25,10 @@ type Query {
 }
 
 input SocialMediaLinksInput {
-  facebookLink: String!
-  twitterLink: String!
-  instagramLink: String!
-  linkedInLink: String!
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
 }
 
 input EditUserInput {

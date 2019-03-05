@@ -15,13 +15,13 @@ export interface EditUserInput {
 }
 
 export interface SocialMediaLinksInput {
-  facebookLink: string;
+  facebookLink?: Maybe<string>;
 
-  twitterLink: string;
+  twitterLink?: Maybe<string>;
 
-  instagramLink: string;
+  instagramLink?: Maybe<string>;
 
-  linkedInLink: string;
+  linkedInLink?: Maybe<string>;
 }
 
 export enum NewsType {

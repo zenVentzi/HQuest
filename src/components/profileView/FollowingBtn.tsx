@@ -8,12 +8,12 @@ const Btn = styled(TextBtn)`
 `;
 
 interface FollowingBtnProps {
-  following: any[];
+  numOfFollowing: number;
   onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const FollowingBtn = ({ following, onClick }: FollowingBtnProps) => {
-  return <Btn onClick={onClick}>Following {following.length}</Btn>;
+const FollowingBtn = ({ numOfFollowing, onClick }: FollowingBtnProps) => {
+  return <Btn onClick={onClick}>Following {numOfFollowing}</Btn>;
 };
 
 export default FollowingBtn;
