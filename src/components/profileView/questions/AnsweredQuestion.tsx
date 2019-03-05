@@ -14,7 +14,17 @@ import AnswerViewer from "./Answer/AnswerViewer";
 import PositionEditor from "./Answer/PositionEditor";
 import AnsweredQuestionGql from "./AnsweredQuestionGql";
 import { MutationFn } from "react-apollo";
-import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
+import {
+  QuestionFieldsFragment,
+  RemoveAnswerMutation,
+  RemoveAnswerVariables,
+  EditAnswerMutation,
+  EditAnswerVariables,
+  MoveAnswerPositionMutation,
+  MoveAnswerPositionVariables,
+  LikeAnswerMutation,
+  LikeAnswerVariables
+} from "GqlClient/autoGenTypes";
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -98,7 +108,9 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     setHovered(false);
   };
 
-  const onRemove = (mutation: MutationFn) => async () => {
+  const onRemove = (
+    mutation: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>
+  ) => async () => {
     const answerId = props.question.answer!.id;
     const variables = { answerId };
     await mutation({ variables });
@@ -136,9 +148,9 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     setShowPositionEditor(false);
   };
 
-  const onSaveAnswer = (mutation: MutationFn) => async (
-    answerValue: string
-  ) => {
+  const onSaveAnswer = (
+    mutation: MutationFn<EditAnswerMutation, EditAnswerVariables>
+  ) => async (answerValue: string) => {
     const isTheSame = props.question.answer!.value === answerValue;
 
     if (isTheSame) {
@@ -176,9 +188,12 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     setShowLikes(false);
   };
 
-  const onMovePosition = (mutation: MutationFn) => async (
-    newPosition: number
-  ) => {
+  const onMovePosition = (
+    mutation: MutationFn<
+      MoveAnswerPositionMutation,
+      MoveAnswerPositionVariables
+    >
+  ) => async (newPosition: number) => {
     const answerId = props.question.answer!.id;
     const variables = { answerId, position: newPosition };
     await mutation({ variables });
@@ -201,7 +216,9 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     }
   };
 
-  const onClickLike = (mutation: MutationFn) => async () => {
+  const onClickLike = (
+    mutation: MutationFn<LikeAnswerMutation, LikeAnswerVariables>
+  ) => async () => {
     if (userLikes === 20) {
       toast.error("20 likes is the limit");
       return;

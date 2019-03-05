@@ -6,13 +6,26 @@ import {
   MOVE_ANSWER_POSITION,
   LIKE_ANSWER
 } from "GqlClient/question/answer/mutations";
+import {
+  EditAnswerMutation,
+  EditAnswerVariables,
+  RemoveAnswerMutation,
+  RemoveAnswerVariables,
+  MoveAnswerPositionMutation,
+  MoveAnswerPositionVariables,
+  LikeAnswerMutation,
+  LikeAnswerVariables
+} from "GqlClient/autoGenTypes";
 
 interface AnsweredQuestionGqlProps {
   children: (
-    editAnswer: MutationFn,
-    removeAnswer: MutationFn,
-    moveAnswerPosition: MutationFn,
-    likeAnswer: MutationFn
+    editAnswer: MutationFn<EditAnswerMutation, EditAnswerVariables>,
+    removeAnswer: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>,
+    moveAnswerPosition: MutationFn<
+      MoveAnswerPositionMutation,
+      MoveAnswerPositionVariables
+    >,
+    likeAnswer: MutationFn<LikeAnswerMutation, LikeAnswerVariables>
   ) => any;
 }
 
@@ -22,16 +35,25 @@ const AnsweredQuestionGql = (props: AnsweredQuestionGqlProps) => {
   // wtf really apollo level pre-japanese
   // in bulgarian- eб* мааму
   return (
-    <Mutation mutation={EDIT_ANSWER}>
+    <Mutation<EditAnswerMutation, EditAnswerVariables> mutation={EDIT_ANSWER}>
       {editAnswer => {
         return (
-          <Mutation mutation={REMOVE_ANSWER}>
+          <Mutation<RemoveAnswerMutation, RemoveAnswerVariables>
+            mutation={REMOVE_ANSWER}
+          >
             {removeAnswer => {
               return (
-                <Mutation mutation={MOVE_ANSWER_POSITION}>
+                <Mutation<
+                  MoveAnswerPositionMutation,
+                  MoveAnswerPositionVariables
+                >
+                  mutation={MOVE_ANSWER_POSITION}
+                >
                   {moveAnswerPosition => {
                     return (
-                      <Mutation mutation={LIKE_ANSWER}>
+                      <Mutation<LikeAnswerMutation, LikeAnswerVariables>
+                        mutation={LIKE_ANSWER}
+                      >
                         {likeAnswer => {
                           return children(
                             editAnswer,

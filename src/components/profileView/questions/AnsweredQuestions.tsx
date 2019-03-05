@@ -1,6 +1,7 @@
 import React, { Fragment, CSSProperties } from "react";
 import styled from "styled-components";
 import AnsweredQuestion from "./AnsweredQuestion";
+import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 
 const Empty = styled.div`
   text-align: center;
@@ -9,7 +10,7 @@ const Empty = styled.div`
 
 interface AnsweredQuestionsProps {
   isPersonal: boolean;
-  questions: any[];
+  questions: QuestionFieldsFragment[];
   totalCount: number;
   refetch: any;
   // couldn't add the style type
