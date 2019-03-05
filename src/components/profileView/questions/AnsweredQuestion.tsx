@@ -277,7 +277,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
                 onClickSave={onSaveAnswer(editAnswer)}
               />
             ) : (
-              <AnswerViewer answer={question.answer} />
+              <AnswerViewer answer={question.answer!} />
             )}
             {showPositionEditor && (
               <PositionEditor

@@ -1,29 +1,29 @@
-import React from "react";
-import AnswerViewer from "./AnswerViewer";
-import AnswerEditor from "./AnswerEditor";
+// import React from "react";
+// import AnswerViewer from "./AnswerViewer";
+// import AnswerEditor from "./AnswerEditor";
 
-interface AnswerProps {
-  viewMode: boolean;
-  answer: any;
-}
+// interface AnswerProps {
+//   viewMode: boolean;
+//   answer: any;
+// }
 
-const Answer = (props: AnswerProps) => {
-  const { viewMode, answer } = props;
+// const Answer = (props: AnswerProps) => {
+//   const { viewMode, answer } = props;
 
-  const onClickDoesNotApply = () => {};
-  const onClickSave = (answerValue: string) => {};
+//   const onClickDoesNotApply = () => {};
+//   const onClickSave = (answerValue: string) => {};
 
-  if (viewMode) {
-    return <AnswerViewer answer={answer} />;
-  }
+//   if (viewMode) {
+//     return <AnswerViewer answer={answer} />;
+//   }
 
-  return (
-    <AnswerEditor
-      answer={answer}
-      onClickDoesNotApply={onClickDoesNotApply}
-      onClickSave={onClickSave}
-    />
-  );
-};
+//   return (
+//     <AnswerEditor
+//       answer={answer}
+//       onClickDoesNotApply={onClickDoesNotApply}
+//       onClickSave={onClickSave}
+//     />
+//   );
+// };
 
-export default Answer;
+// export default Answer;

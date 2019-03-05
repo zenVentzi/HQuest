@@ -1,26 +1,28 @@
 import React from "react";
 import Panel from "../Panel";
 import Liker from "./Liker";
+import { AnswerFieldsLikes } from "GqlClient/autoGenTypes";
 
 interface LikesProps {
-  likes: any;
+  likes: AnswerFieldsLikes | null;
   onClose: () => void;
 }
 
 const Likes = ({ likes }: LikesProps) => {
-  let likers;
-  if (likes) {
-    // eslint-disable-next-line prefer-destructuring
-    likers = likes.likers;
+  if (!likes) {
+    return (
+      <Panel>
+        <div>Be the first one to like that answer</div>
+      </Panel>
+    );
   }
+  const { likers } = likes;
 
   return (
     <Panel>
-      {likers && likers.length ? (
-        likers.map((liker: any) => <Liker key={liker.user.id} liker={liker} />)
-      ) : (
-        <div>Be the first one to like that answer</div>
-      )}
+      {likers.map(liker => (
+        <Liker key={liker.user.id} liker={liker} />
+      ))}
     </Panel>
   );
 };

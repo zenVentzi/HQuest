@@ -12,7 +12,13 @@ interface EditionsProps {
 const Editions = (props: EditionsProps) => {
   const { editions, onClose } = props;
 
-  if (!editions) return <div>No editions</div>;
+  if (!editions) {
+    return (
+      <Panel /* onClose={onClose} */>
+        <div>No editions</div>
+      </Panel>
+    );
+  }
 
   return (
     <Panel /* onClose={onClose} */>

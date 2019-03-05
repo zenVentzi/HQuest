@@ -71,7 +71,7 @@ const StyledUser = styled.div`
 `;
 
 interface UserRowProps {
-  size: number;
+  size?: number;
   inversedColors?: boolean;
   user: UsersUsers;
 }
