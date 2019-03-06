@@ -65,10 +65,10 @@ interface LoginResult {
 }
 
 interface SocialMediaLinksInput {
-  facebookLink: string;
-  twitterLink: string;
-  instagramLink: string;
-  linkedInLink: string;
+  facebookLink?: string | null;
+  twitterLink?: string | null;
+  instagramLink?: string | null;
+  linkedInLink?: string | null;
 }
 
 interface EditUserInput {

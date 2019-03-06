@@ -23,13 +23,11 @@ export interface Answer {
 
 export interface Likes {
   total: number;
-
-  likers?: Liker[] | null;
+  likers: Liker[];
 }
 
 export interface Liker {
   user: User;
-
   numOfLikes: number;
 }
 

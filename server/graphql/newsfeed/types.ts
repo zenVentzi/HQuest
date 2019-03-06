@@ -54,5 +54,5 @@ export interface NewLikeNews extends NewsBase {
 export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
 
 export interface Query {
-  newsfeed: Resolver<{}, {}, ApolloContext, News[] | null>;
+  newsfeed: Resolver<{}, {}, ApolloContext, NewsBase[] | null>;
 }
