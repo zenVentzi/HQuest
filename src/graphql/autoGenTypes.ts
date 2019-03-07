@@ -197,7 +197,7 @@ export type UsersVariables = {
 export type UsersQuery = {
   __typename?: "Query";
 
-  users: UsersUsers[];
+  users: Maybe<UsersUsers[]>;
 };
 
 export type UsersUsers = UserFieldsFragment;

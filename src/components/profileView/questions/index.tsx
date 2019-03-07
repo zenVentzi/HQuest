@@ -81,6 +81,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     questions: QuestionConnectionFieldsFragment | null,
     refetch: any
   ) => {
+    // console.log(questions);
     if (!questions) return null;
 
     const questionNodes = questions.edges
@@ -141,10 +142,13 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             fetchMoreFn.current = fetchMore;
           }
 
+          console.log(data);
+
           return (
             <>
-              {!isFetchingInitial && renderQuestions(questions, refetch)}
-              {(isFetchingInitial || isFetchingMore) && (
+              {!isFetchingInitial.current &&
+                renderQuestions(questions, refetch)}
+              {(isFetchingInitial.current || isFetchingMore.current) && (
                 <div>loading questions..</div>
               )}
             </>
