@@ -18,8 +18,7 @@ module.exports = {
   },
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest',
-    // '^.+\\.tsx?$': 'ts-jest',
+    // '^.+\\.jsx?$': 'babel-jest',
   },
   testRegex: '((\\.|/)(test|spec))\\.tsx?$',
   // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',

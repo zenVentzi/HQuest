@@ -5,12 +5,12 @@ schema {
 }
 
 type Query {
-  newsfeed: [News!]
+  newsfeed: [NewsBase!]
   notifications: [Notification!]
   questionsTags: [String!]!
   questions(answered: Boolean!, userId: ID!, tags: [String!], first: Int!, after: String): QuestionConnection
   answeredQuestion(userId: ID!, questionId: ID!): Question!
-  users(match: String): [User!]
+  users(match: String): [User!]!
   user(id: ID!): User
   followers(userId: ID!): [User!]
   following(userId: ID!): [User!]
@@ -146,7 +146,7 @@ type Answer {
 
 type Likes {
   total: Int!
-  likers: [Liker!]
+  likers: [Liker!]!
 }
 
 type Liker {
@@ -227,10 +227,10 @@ type User {
 }
 
 input SocialMediaLinksInput {
-  facebookLink: String!
-  twitterLink: String!
-  instagramLink: String!
-  linkedInLink: String!
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
 }
 
 input EditUserInput {
