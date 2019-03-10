@@ -100,6 +100,7 @@ const Comments = (props: CommentsProps) => {
     if (!res) {
       throw Error("Comment answer mutation failed");
     }
+
     const newComment = res.data!.commentAnswer;
     updateComments(newComment);
     toast.success("Comment added!");

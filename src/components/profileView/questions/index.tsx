@@ -28,7 +28,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
   // const firstRenderResetScroll = useRef(true);
 
   const [showAnswered, setShowAnswered] = useState(true);
-  const [selectedTags, setSelectedTags] = useState([""]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchOnScroll = () => {
@@ -123,7 +123,14 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
         notifyOnNetworkStatusChange
       >
         {({ error, data, fetchMore, refetch, networkStatus }) => {
-          if (error) return <div> {`Error ${error}`}</div>;
+          if (error) {
+            // console.log(error);
+            return (
+              <div>
+                {`Could not find questions. Work is being done fixing this issue`}
+              </div>
+            );
+          }
 
           isFetchingInitial.current = networkStatus === 1;
           isFetchingMore.current = networkStatus === 3;
@@ -141,8 +148,6 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             fetchAfter.current = questions.pageInfo.endCursor;
             fetchMoreFn.current = fetchMore;
           }
-
-          console.log(data);
 
           return (
             <>

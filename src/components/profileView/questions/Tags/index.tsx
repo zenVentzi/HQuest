@@ -77,9 +77,10 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const onSelectFromMatchingTags = (selectedTag: string) => {
-    setSelectedTags([...selectedTags, selectedTag]);
-    inputRef.current!.value = `${selectedTags.join(",")},`;
-    props.onSelected(selectedTags); // this is under scrutiny
+    const newSelectedTags = [...selectedTags, selectedTag];
+    setSelectedTags(newSelectedTags);
+    inputRef.current!.value = `${newSelectedTags.join(",")},`;
+    props.onSelected(newSelectedTags); // this is under scrutiny
     // setState(
     //   (prevState: any) => {
     //     return { ...prevState, selectedTags, matchingTags: [] };
@@ -89,14 +90,6 @@ const QuestionTags = (props: QuestionTagsProps) => {
     //   }
     // );
     inputRef.current!.focus();
-  };
-
-  const setInvalidTag = (msg: string) => {
-    setInvalidTagMsg(msg);
-  };
-
-  const clearInvalidTag = () => {
-    setInvalidTagMsg(null);
   };
 
   const addToSelected = (tag: string) => {
@@ -118,22 +111,10 @@ const QuestionTags = (props: QuestionTagsProps) => {
     props.onSelected(selectedTags); // under scrutiny
   };
 
-  const clearSelectedTags = () => {
-    setSelectedTags([]);
-  };
-
   const setInputToSelected = () => {
     inputRef.current!.value = `${selectedTags.join(",")},`;
-    clearMatchingTags();
-    clearInvalidTag();
-  };
-
-  const updateMatchingTags = (matchingTags: string[]) => {
-    setMatchingTags(matchingTags);
-  };
-
-  const clearMatchingTags = () => {
     setMatchingTags([]);
+    setInvalidTagMsg(null);
   };
 
   // getInputSelection = (node: any) => {
@@ -201,12 +182,12 @@ const QuestionTags = (props: QuestionTagsProps) => {
       }
 
       addToSelected(lastTag);
-      clearMatchingTags();
+      setMatchingTags([]);
     } else {
       const matchingTags = allTags.current!.filter((t: string) =>
         t.includes(lastTag)
       );
-      updateMatchingTags(matchingTags);
+      setMatchingTags(matchingTags);
     }
 
     /*  

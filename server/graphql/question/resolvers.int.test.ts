@@ -23,6 +23,29 @@ const context: ApolloContext = {
   services
 };
 
+test("questions() should return questions edges", async done => {
+  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question1 = {
+    _id: ObjectId(),
+    tags: ["bla", "shegichka_we_bonak_hihi"],
+    value: "questionValue1"
+  };
+  await new models.question(question).save();
+  await new models.question(question1).save();
+  await new models.user(contextUser).save();
+
+  const args: GqlTypes.QuestionsQueryArgs = {
+    userId: contextUser._id.toHexString(),
+    answered: false,
+    first: 5
+  };
+  const questions = await Query.questions({}, args, context, {} as any);
+  const actual = questions!.edges.length;
+  const expected = 2;
+  expect(actual).toEqual(expected);
+  done();
+});
+
 // tslint:disable-next-line: variable-name
 test("questions() should return total number of questions", async ____done____SERIOUSLY____DONE => {
   const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };

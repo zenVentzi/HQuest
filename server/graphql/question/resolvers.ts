@@ -2,6 +2,9 @@ import { Query, Mutation } from "./types";
 import { mapQuestion, mapQuestions } from "./gqlMapper";
 import { createConnection } from "../relayConnection/functions";
 import { authMiddleware } from "../middlewares";
+import { Types as GooseTypes } from "mongoose";
+
+const { ObjectId } = GooseTypes;
 
 const Query: Query = {
   async questions(
@@ -10,9 +13,17 @@ const Query: Query = {
     { services, user }
   ) {
     authMiddleware(user);
+    if (tags && tags.some(tag => tag === "")) {
+      throw Error("tags cannot have empty strings");
+    }
+    if (tags && tags.length === 0) {
+      throw Error("tags cannot have 0 elements");
+    }
+    if (!ObjectId.isValid(userId)) {
+      throw new Error("userId invalid format");
+    }
 
     const dbAnswers = await services.answer.getUserAnswers(userId);
-
     const dbQuestions = await services.question.getUserQuestions(
       userId,
       dbAnswers,
