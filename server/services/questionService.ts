@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import * as GqlTypes from "../generated/gqltypes";
 import * as DbTypes from "../dbTypes";
 import { ApolloContext } from "gqlContext";
@@ -5,6 +6,44 @@ import mongoose from "mongoose";
 import { Models } from "../models";
 
 const { ObjectId } = mongoose.Types;
+
+function RemoveEmptyStrings(params: string[]) {
+  return function(
+    target: any,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(...args1) {
+      const args = arguments;
+
+      params.forEach(param => {
+        console.log(
+          `Arguments have ${param}, ${Reflect.has(arguments, param)}`
+        );
+
+        if (!args[param] || !args[param].length) {
+          // throw Error(
+          //   `Parameter ${param} does not exist. Could be spelling error`
+          // );
+          return;
+        } else if (
+          !Array.isArray(args[param]) ||
+          !args[param].every(elem => typeof elem === "string")
+        ) {
+          throw Error(`Parameter ${param} must be an array of strings`);
+        }
+
+        const noEmpty = args[param].filter((elem: string) => elem !== "");
+        args[param] = noEmpty;
+      });
+
+      const result = originalMethod.apply(this, args);
+      return result;
+    };
+    return descriptor;
+  };
+}
 
 class QuestionService {
   constructor(private models: Models) {}
@@ -112,7 +151,7 @@ class QuestionService {
       query._id = { $nin: ignoreQuestions };
     }
     if (tags && tags.length) {
-      query.tags = { $in: tags };
+      query.tags = { $in: tags.filter(tag => tag !== "") };
     }
 
     const questions = (await this.models.question
