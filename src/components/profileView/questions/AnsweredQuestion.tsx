@@ -34,8 +34,8 @@ interface AnsweredQuestionProps {
 
 const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   const [hovered, setHovered] = useState(false);
-  const [viewMode, setViewMode] = useState(true);
   const [removeAnswer, setRemoveAnswer] = useState(false);
+  const [showAnswerEditor, setShowAnswerEditor] = useState(false);
   const [showPositionEditor, setShowPositionEditor] = useState(false);
 
   const onMouseEnter = () => {
@@ -68,20 +68,22 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
         <OptionsDropdown
           visible={isPersonal && hovered}
           onClickEdit={() => {
-            setViewMode(false);
+            if (showPositionEditor) return;
+            setShowAnswerEditor(true);
           }}
           onClickRemove={() => {
             setRemoveAnswer(true);
           }}
           onClickMove={() => {
+            if (showAnswerEditor) return;
             setShowPositionEditor(true);
           }}
         />
       </Row>
       <Answer
-        viewMode={viewMode}
+        showAnswerEditor={showAnswerEditor}
         onCloseAnswerEditor={() => {
-          setViewMode(true);
+          setShowAnswerEditor(false);
         }}
         remove={removeAnswer}
         showPositionEditor={showPositionEditor}
