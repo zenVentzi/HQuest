@@ -49,8 +49,8 @@ interface QuestionTagsProps {
 const QuestionTags = (props: QuestionTagsProps) => {
   const allTags = useRef<string[]>();
   const [showAllTags, setShowAllTags] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [matchingTags, setMatchingTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[] | null>();
+  const [matchingTags, setMatchingTags] = useState<string[] | null>();
   const [invalidTagMsg, setInvalidTagMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +77,12 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const onSelectFromMatchingTags = (selectedTag: string) => {
-    const newSelectedTags = [...selectedTags, selectedTag];
+    let newSelectedTags: string[];
+    if (selectedTags && selectedTags.length) {
+      newSelectedTags = [...selectedTags, selectedTag];
+    } else {
+      newSelectedTags = [selectedTag];
+    }
     setSelectedTags(newSelectedTags);
     inputRef.current!.value = `${newSelectedTags.join(",")},`;
     props.onSelected(newSelectedTags); // this is under scrutiny
@@ -93,27 +98,33 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const addToSelected = (tag: string) => {
-    setSelectedTags([...selectedTags, tag]);
-    props.onSelected(selectedTags); // under scrutiny
+    let newSelectedTags: string[];
+    if (selectedTags && selectedTags.length) {
+      newSelectedTags = [...selectedTags, tag];
+    } else {
+      newSelectedTags = [tag];
+    }
+    setSelectedTags(newSelectedTags);
+    props.onSelected(newSelectedTags); // under scrutiny, it used to be in setState callback
   };
 
   const removeLastSelectedTag = () => {
-    selectedTags.pop();
-    setSelectedTags(() => {
-      const res: string[] = [];
-      for (let i = 0; i < selectedTags.length - 1; i++) {
-        const t = selectedTags[i];
-        res.push(t);
-      }
-
-      return res;
-    });
-    props.onSelected(selectedTags); // under scrutiny
+    let newSelectedTags: string[];
+    if (selectedTags && selectedTags.length) {
+      newSelectedTags = [...selectedTags];
+      newSelectedTags.pop();
+      setSelectedTags(newSelectedTags);
+      props.onSelected(newSelectedTags); // under scrutiny, used to be in setState callback
+    }
   };
 
   const setInputToSelected = () => {
-    inputRef.current!.value = `${selectedTags.join(",")},`;
-    setMatchingTags([]);
+    if (selectedTags && selectedTags.length) {
+      inputRef.current!.value = `${selectedTags.join(",")},`;
+    } else {
+      inputRef.current!.value = "";
+    }
+    setMatchingTags(null);
     setInvalidTagMsg(null);
   };
 
@@ -148,7 +159,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
   };
 
   const checkTagSelected = (tag: string) => {
-    return selectedTags.includes(tag);
+    return selectedTags && selectedTags.length && selectedTags.includes(tag);
   };
 
   const onChangeInput = (e: any) => {
@@ -226,7 +237,7 @@ const QuestionTags = (props: QuestionTagsProps) => {
               <Anchor onClick={toggleAllTags(true)}>all</Anchor>
             </InputRow>
             {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
-            {matchingTags.length > 0 && (
+            {matchingTags && matchingTags.length > 0 && (
               <MatchingTags
                 tags={matchingTags}
                 onSelect={onSelectFromMatchingTags}

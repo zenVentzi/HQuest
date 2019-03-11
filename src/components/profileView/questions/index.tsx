@@ -28,7 +28,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
   // const firstRenderResetScroll = useRef(true);
 
   const [showAnswered, setShowAnswered] = useState(true);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>();
 
   useEffect(() => {
     const fetchOnScroll = () => {
