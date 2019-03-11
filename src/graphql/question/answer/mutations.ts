@@ -23,12 +23,10 @@ export const ADD_ANSWER = gql`
 export const EDIT_ANSWER = gql`
   mutation editAnswer($answerId: ID!, $answerValue: String!) {
     editAnswer(answerId: $answerId, answerValue: $answerValue) {
-      id
-      userId
-      questionId
-      value
+      ...AnswerFields
     }
   }
+  ${AnswerFields}
 `;
 
 export const REMOVE_ANSWER = gql`
@@ -39,9 +37,17 @@ export const REMOVE_ANSWER = gql`
   }
   ${AnswerFields}
 `;
-export const LIKE_ANSWER = gql`
-  mutation likeAnswer($answerId: ID!, $userLikes: Int!) {
-    likeAnswer(answerId: $answerId, userLikes: $userLikes) {
+export const LIKE_ANSWER_EDITION = gql`
+  mutation likeAnswerEdition(
+    $answerId: ID!
+    $editionId: ID!
+    $userLikes: Int!
+  ) {
+    likeAnswerEdition(
+      answerId: $answerId
+      editionId: $editionId
+      userLikes: $userLikes
+    ) {
       ...AnswerFields
     }
   }

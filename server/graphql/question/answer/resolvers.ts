@@ -1,5 +1,5 @@
 import { Mutation } from "./types";
-import { mapAnswer } from "./gqlMapper";
+import { mapAnswer, mapAnswerEditions, mapAnswerEdition } from "./gqlMapper";
 import { authMiddleware } from "../../middlewares";
 
 const Mutation: Mutation = {
@@ -31,12 +31,22 @@ const Mutation: Mutation = {
     return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
 
-  async likeAnswer(_, { answerId, userLikes }, { services, user }) {
+  async likeAnswerEdition(
+    _,
+    { answerId, editionId, userLikes },
+    { services, user }
+  ) {
     authMiddleware(user);
 
-    const dbAnswer = await services.answer.like(answerId, user!.id, userLikes);
-    await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
-    return mapAnswer({ dbAnswer, loggedUserId: user!.id });
+    const dbEdition = await services.answer.like(
+      answerId,
+      editionId,
+      user!.id,
+      userLikes
+    );
+    // FIXME  newsfeed
+    // await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
+    return mapAnswerEdition(dbEdition, user!.id);
   },
   async moveAnswerPosition(_, { answerId, position }, { services, user }) {
     authMiddleware(user);

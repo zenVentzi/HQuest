@@ -4,7 +4,7 @@ import {
   EDIT_ANSWER,
   REMOVE_ANSWER,
   MOVE_ANSWER_POSITION,
-  LIKE_ANSWER
+  LIKE_ANSWER_EDITION
 } from "GqlClient/question/answer/mutations";
 import {
   EditAnswerMutation,
@@ -13,19 +13,22 @@ import {
   RemoveAnswerVariables,
   MoveAnswerPositionMutation,
   MoveAnswerPositionVariables,
-  LikeAnswerMutation,
-  LikeAnswerVariables
+  LikeAnswerEditionMutation,
+  LikeAnswerEditionVariables
 } from "GqlClient/autoGenTypes";
 
 interface AnswerGqlProps {
   children: (
     editAnswer: MutationFn<EditAnswerMutation, EditAnswerVariables>,
-    removeAnswer: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>,
+    // removeAnswer: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>,
     moveAnswerPosition: MutationFn<
       MoveAnswerPositionMutation,
       MoveAnswerPositionVariables
     >,
-    likeAnswer: MutationFn<LikeAnswerMutation, LikeAnswerVariables>
+    likeAnswerEdition: MutationFn<
+      LikeAnswerEditionMutation,
+      LikeAnswerEditionVariables
+    >
   ) => React.ReactChild;
 }
 
@@ -51,15 +54,18 @@ const AnswerGql = (props: AnswerGqlProps) => {
                 >
                   {moveAnswerPosition => {
                     return (
-                      <Mutation<LikeAnswerMutation, LikeAnswerVariables>
-                        mutation={LIKE_ANSWER}
+                      <Mutation<
+                        LikeAnswerEditionMutation,
+                        LikeAnswerEditionVariables
                       >
-                        {likeAnswer => {
+                        mutation={LIKE_ANSWER_EDITION}
+                      >
+                        {likeAnswerEdition => {
                           return children(
                             editAnswer,
-                            removeAnswer,
+                            // removeAnswer,
                             moveAnswerPosition,
-                            likeAnswer
+                            likeAnswerEdition
                           );
                         }}
                       </Mutation>

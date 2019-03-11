@@ -1,31 +1,61 @@
-import React from "react";
-import styled from "styled-components";
-import Panel from "./Panel";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  AnswerFieldsEditions,
+  LikeAnswerEditionMutation,
+  LikeAnswerEditionVariables
+} from "GqlClient/autoGenTypes";
+import { MutationFn } from "react-apollo";
+import { toast } from "react-toastify";
+import { getLoggedUserId } from "Utils";
+import EditionPicker from "./EditionPicker";
 import Edition from "./Edition";
-import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
 
 interface EditionsProps {
-  editions: AnswerFieldsEditions[] | null;
-  onClose: () => void;
+  editions: AnswerFieldsEditions[];
+  answerId: string;
+  likeEdition: MutationFn<
+    LikeAnswerEditionMutation,
+    LikeAnswerEditionVariables
+  >;
 }
 
 const Editions = (props: EditionsProps) => {
-  const { editions, onClose } = props;
+  const latestEdition = props.editions[props.editions.length - 1];
+  const [pickedEditions, setPickedEditions] = useState<AnswerFieldsEditions[]>([
+    latestEdition
+  ]);
 
-  if (!editions) {
-    return (
-      <Panel /* onClose={onClose} */>
-        <div>No editions</div>
-      </Panel>
-    );
-  }
-
+  const onPickEdition = (all: boolean, pickedEditionId?: string) => {
+    if (all) {
+      setPickedEditions(props.editions);
+    } else {
+      const pickedEdition = props.editions.find(
+        ed => ed.id === pickedEditionId
+      );
+      if (!pickedEdition) {
+        throw Error(`Couldn't find edition with id ${pickedEditionId}`);
+      }
+      setPickedEditions([pickedEdition]);
+    }
+  };
   return (
-    <Panel /* onClose={onClose} */>
-      {editions.map(e => (
-        <Edition key={e.id} edition={e} />
+    <>
+      <EditionPicker
+        allEditions={props.editions}
+        pickedEditionId={
+          pickedEditions.length === 1 ? pickedEditions[0].id : undefined
+        }
+        onPickEdition={onPickEdition}
+      />
+      {pickedEditions.map(ed => (
+        <Edition
+          key={ed.id}
+          answerId={props.answerId}
+          edition={ed}
+          likeEdition={props.likeEdition}
+        />
       ))}
-    </Panel>
+    </>
   );
 };
 

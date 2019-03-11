@@ -103,11 +103,12 @@ class AnswerService {
         }
       ))!.toObject();
     } else {
-      const newAnswer = {
+      const newAnswer: DbTypes.Answer = {
+        _id: ObjectId(),
+        position: 1,
         userId: ObjectId(userId),
         questionId: ObjectId(questionId),
-        value: answerValue,
-        position: 1
+        editions: [{ _id: ObjectId(), date: new Date(), value: answerValue }]
       };
 
       addedAnswer = (await this.models.answer.create(newAnswer)).toObject();
@@ -135,17 +136,29 @@ class AnswerService {
     return removedAnswer;
   }
 
+  // FIXME
   public async like(
     answerId: string,
+    editionId: string,
     likerId: string,
     userLikes: number
-  ): Promise<DbTypes.Answer> {
-    /* 
-
-  likes: { total: 27, likers: [{ id: ObjectID(`user`), numOfLikes: 5, .. }]}
-*/
-
-    const { likes } = await this.models.answer.findById(answerId).lean();
+  ): Promise<DbTypes.Edition> {
+    const answer = await this.models.answer
+      .findById(answerId)
+      .populate("editions.comments.user");
+    if (!answer) {
+      throw Error(`Couldn't find answer with id ${answerId}`);
+    }
+    const edition = answer.editions.find(e => e._id.equals(editionId));
+    const editionIndex = answer.editions.findIndex(e =>
+      e._id.equals(editionId)
+    );
+    if (!edition) {
+      throw Error(
+        `Couldn't find edition. AnswerId: ${answerId} EditionId: ${editionId}`
+      );
+    }
+    const { likes } = edition;
     let updatedLikes: DbTypes.Likes = { total: 0, likers: [] };
 
     const liker = (await this.models.user.findById(likerId))!.toObject();
@@ -158,27 +171,19 @@ class AnswerService {
     } else {
       // clear prev num of likes before adding the new ones
       updatedLikes.likers = likes.likers.filter(
-        liker => !liker.user._id.equals(liker._id)
+        likerr => !likerr.user._id.equals(liker._id)
       );
 
       updatedLikes.likers.push({ user: liker, numOfLikes: userLikes });
-      updatedLikes.total = updatedLikes.likers.reduce((total, liker) => {
-        const res = total + liker.numOfLikes;
+      updatedLikes.total = updatedLikes.likers.reduce((total, likerr) => {
+        const res = total + likerr.numOfLikes;
         return res;
       }, 0);
     }
 
-    const likedAnswer = await this.models.answer
-      .findByIdAndUpdate(
-        answerId,
-        {
-          $set: { likes: updatedLikes }
-        },
-        { new: true, upsert: true }
-      )
-      .populate("comments.user");
-
-    return likedAnswer.toObject();
+    answer.editions[editionIndex].likes = updatedLikes;
+    await answer.save();
+    return answer.toObject().editions[editionIndex];
   }
 
   public async movePosition(
@@ -202,16 +207,17 @@ class AnswerService {
     answerId: string,
     answerValue: string
   ): Promise<DbTypes.Edition> {
-    const oldAnswer = await this.models.answer.findById(answerId).lean();
+    const oldAnswer: DbTypes.Answer = await this.models.answer
+      .findById(answerId)
+      .lean();
 
-    const before = oldAnswer.value;
-    const after = answerValue;
+    // const before = oldAnswer.value;
+    // const after = answerValue;
 
     return {
       _id: ObjectId(),
       date: new Date(),
-      before,
-      after
+      value: answerValue
     };
   }
 }

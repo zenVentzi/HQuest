@@ -5,20 +5,10 @@ import { ApolloContext } from "gqlContext";
 
 export interface Answer {
   id: string;
-
-  userId: string;
-
   questionId: string;
-
-  value: string;
-
-  comments?: Comment[] | null;
-
-  likes?: Likes | null;
-
-  editions?: AnswerEdition[] | null;
-
+  editions: AnswerEdition[];
   position: number;
+  userId: string;
 }
 
 export interface Likes {
@@ -33,12 +23,14 @@ export interface Liker {
 
 export interface AnswerEdition {
   id: string;
-
   date: Date;
+  value: string;
+  comments?: Comment[] | null;
+  likes?: Likes | null;
 
-  before: string;
+  // before: string;
 
-  after: string;
+  // after: string;
 }
 
 // export interface Query {}
@@ -59,6 +51,7 @@ interface RemoveAnswerArgs {
 
 interface LikeAnswerArgs {
   answerId: string;
+  editionId: string;
   userLikes: number;
 }
 
@@ -71,7 +64,7 @@ export interface Mutation {
   editAnswer: Resolver<{}, EditAnswerArgs, ApolloContext, Answer>;
   addAnswer: Resolver<{}, AddAnswerArgs, ApolloContext, Answer>;
   removeAnswer: Resolver<{}, RemoveAnswerArgs, ApolloContext, Answer>;
-  likeAnswer: Resolver<{}, LikeAnswerArgs, ApolloContext, Answer>;
+  likeAnswerEdition: Resolver<{}, LikeAnswerArgs, ApolloContext, AnswerEdition>;
   moveAnswerPosition: Resolver<
     {},
     MoveAnswerPositionArgs,

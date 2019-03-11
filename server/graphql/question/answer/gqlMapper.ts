@@ -18,10 +18,10 @@ function mapAnswer({
     id: dbAnswer._id.toString(),
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
-    comments: mapComments({ dbComments: dbAnswer.comments, loggedUserId }),
-    likes: mapLikes({ dbLikes: dbAnswer.likes, loggedUserId }),
-    editions: mapAnswerEditions({ dbEditions: dbAnswer.editions }),
-    value: dbAnswer.value,
+    editions: mapAnswerEditions({
+      dbEditions: dbAnswer.editions,
+      loggedUserId
+    }),
     position: dbAnswer.position
   };
 
@@ -29,25 +29,32 @@ function mapAnswer({
 }
 
 function mapAnswerEditions({
-  dbEditions
+  dbEditions,
+  loggedUserId
 }: {
-  dbEditions?: DbEdition[];
-}): AnswerEdition[] | null {
-  if (!dbEditions || !dbEditions.length) return null;
+  dbEditions: DbEdition[];
+  loggedUserId: string;
+}): AnswerEdition[] {
+  // if (!dbEditions || !dbEditions.length) return null;
   // console.trace();
 
   return dbEditions.map(dbE => {
-    const gqlEdition: AnswerEdition = {
-      id: dbE._id.toString(),
-      after: dbE.after,
-      before: dbE.before,
-      date: dbE.date
-    };
-
-    // console.log(typeof dbE.date);
-
-    return gqlEdition;
+    return mapAnswerEdition(dbE, loggedUserId);
   });
+}
+
+function mapAnswerEdition(dbEdtion: DbEdition, loggedUserId: string) {
+  const gqlEdition: AnswerEdition = {
+    id: dbEdtion._id.toString(),
+    date: dbEdtion.date,
+    value: dbEdtion.value,
+    comments: mapComments({ dbComments: dbEdtion.comments, loggedUserId }),
+    likes: mapLikes({ dbLikes: dbEdtion.likes, loggedUserId })
+  };
+
+  // console.log(typeof dbE.date);
+
+  return gqlEdition;
 }
 
 function mapLikes({
@@ -72,4 +79,4 @@ function mapLikes({
   return gqlLikes;
 }
 
-export { mapAnswer, mapAnswerEditions, mapLikes };
+export { mapAnswer, mapAnswerEdition, mapAnswerEditions, mapLikes };

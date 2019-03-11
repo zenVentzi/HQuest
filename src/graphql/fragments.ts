@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const UserFields = gql`
   fragment UserFields on User {
@@ -32,28 +32,26 @@ export const CommentFields = gql`
 export const AnswerFields = gql`
   fragment AnswerFields on Answer {
     id
+    position
     userId
     questionId
-    value
-    comments {
-      ...CommentFields
-    }
-    likes {
-      total
-      likers {
-        user {
-          ...UserFields
-        }
-        numOfLikes
-      }
-    }
     editions {
       id
       date
-      before
-      after
+      value
+      comments {
+        ...CommentFields
+      }
+      likes {
+        total
+        likers {
+          user {
+            ...UserFields
+          }
+          numOfLikes
+        }
+      }
     }
-    position
   }
   ${UserFields}
   ${CommentFields}

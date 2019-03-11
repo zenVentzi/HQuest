@@ -309,17 +309,7 @@ export type EditAnswerMutation = {
   editAnswer: EditAnswerEditAnswer;
 };
 
-export type EditAnswerEditAnswer = {
-  __typename?: "Answer";
-
-  id: string;
-
-  userId: string;
-
-  questionId: string;
-
-  value: string;
-};
+export type EditAnswerEditAnswer = AnswerFieldsFragment;
 
 export type RemoveAnswerVariables = {
   answerId: string;
@@ -333,18 +323,19 @@ export type RemoveAnswerMutation = {
 
 export type RemoveAnswerRemoveAnswer = AnswerFieldsFragment;
 
-export type LikeAnswerVariables = {
+export type LikeAnswerEditionVariables = {
   answerId: string;
+  editionId: string;
   userLikes: number;
 };
 
-export type LikeAnswerMutation = {
+export type LikeAnswerEditionMutation = {
   __typename?: "Mutation";
 
-  likeAnswer: LikeAnswerLikeAnswer;
+  likeAnswerEdition: LikeAnswerEditionLikeAnswerEdition;
 };
 
-export type LikeAnswerLikeAnswer = AnswerFieldsFragment;
+export type LikeAnswerEditionLikeAnswerEdition = AnswerFieldsFragment;
 
 export type AddQuestionsVariables = {
   questions?: Maybe<InputQuestion[]>;
@@ -485,19 +476,27 @@ export type AnswerFieldsFragment = {
 
   id: string;
 
+  position: number;
+
   userId: string;
 
   questionId: string;
+
+  editions: AnswerFieldsEditions[];
+};
+
+export type AnswerFieldsEditions = {
+  __typename?: "AnswerEdition";
+
+  id: string;
+
+  date: DateTime;
 
   value: string;
 
   comments: Maybe<AnswerFieldsComments[]>;
 
   likes: Maybe<AnswerFieldsLikes>;
-
-  editions: Maybe<AnswerFieldsEditions[]>;
-
-  position: number;
 };
 
 export type AnswerFieldsComments = CommentFieldsFragment;
@@ -519,18 +518,6 @@ export type AnswerFieldsLikers = {
 };
 
 export type AnswerFieldsUser = UserFieldsFragment;
-
-export type AnswerFieldsEditions = {
-  __typename?: "AnswerEdition";
-
-  id: string;
-
-  date: DateTime;
-
-  before: string;
-
-  after: string;
-};
 
 export type QuestionFieldsFragment = {
   __typename?: "Question";

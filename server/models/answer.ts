@@ -11,16 +11,20 @@ const LikerSchema = new Schema({ user: UserSchema, numOfLikes: Number });
 
 const LikesSchema = new Schema({ total: Number, likers: [LikerSchema] });
 
-const EditionSchema = new Schema({ date: Date, before: String, after: String });
+const EditionSchema = new Schema({
+  date: Date,
+  // before: String,
+  // after: String,
+  value: { type: String, required: true },
+  comments: { type: [CommentSchema], required: false },
+  likes: { type: LikesSchema, required: false }
+});
 
 const AnswerSchema = new Schema({
+  position: { type: Number, required: true },
   userId: { type: Schema.Types.ObjectId, required: true },
   questionId: { type: Schema.Types.ObjectId, required: true },
-  value: { type: String, required: true },
-  position: { type: Number, required: true },
-  comments: { type: [CommentSchema], required: false },
-  likes: { type: LikesSchema, required: false },
-  editions: { type: [EditionSchema], required: false }
+  editions: { type: [EditionSchema], required: true }
 });
 
 const AnswerModel = model<DbTypes.AnswerDoc>("Answer", AnswerSchema);

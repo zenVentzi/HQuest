@@ -123,8 +123,11 @@ export interface CommentDoc extends Comment, Document {
 export interface Edition {
   _id: ObjectId;
   date: Date;
-  before: string;
-  after: string;
+  // before: string;
+  // after: string;
+  value: string;
+  comments?: Comment[];
+  likes?: Likes;
 }
 
 export interface EditionDoc extends Edition, Document {
@@ -144,13 +147,10 @@ export interface Likes {
 
 export interface Answer {
   _id: ObjectId;
+  position: number;
   userId: ObjectId;
   questionId: ObjectId;
-  value: string;
-  position: number;
-  comments?: Comment[];
-  likes?: Likes;
-  editions?: Edition[];
+  editions: Edition[];
 }
 
 export interface AnswerDoc extends Answer, Document {

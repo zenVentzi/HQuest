@@ -14,7 +14,6 @@ import {
 import { toast } from "react-toastify";
 import { getLoggedUserId } from "Utils";
 import { MutationFn } from "react-apollo";
-import Anchor from "Reusable/Anchor";
 import AnswerViewer from "./AnswerViewer";
 import AnswerEditor from "./AnswerEditor";
 import LikeBtn from "./LikeBtn";
@@ -26,10 +25,7 @@ import styled from "styled-components";
 import Likes from "./Likes";
 import Comments from "./Comments";
 import EditionDropdown from "./EditionDropdown";
-
-const SmallBtn = styled(Anchor)`
-  margin-right: 0.6em;
-`;
+import Editions from "./Editions";
 
 interface AnswerProps {
   showAnswerEditor: boolean;
@@ -45,34 +41,9 @@ interface AnswerProps {
 
 const Answer = (props: AnswerProps) => {
   // const { viewMode, answer, showPositionEditor } = props;
-  const timeoutIndex = useRef<number>();
   const removeMutation = useRef<
     MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>
   >();
-
-  const [totalLikes, setTotalLikes] = useState(() => {
-    return props.answer.likes ? props.answer.likes.total : 0;
-  });
-  const [userLikes, setUserLikes] = useState(() => {
-    if (!props.answer.likes) return 0;
-    const user = props.answer.likes.likers.find(
-      (liker: any) => liker.user.id === getLoggedUserId()
-    );
-
-    return user ? user.numOfLikes : 0;
-  });
-  const [showComments, setShowComments] = useState(props.showComments);
-  const [showLikes, setShowLikes] = useState(false);
-  useEffect(() => {
-    if (props.showAnswerEditor || props.showPositionEditor) {
-      setShowComments(false);
-      setShowLikes(false);
-    }
-  }, [props.showAnswerEditor, props.showPositionEditor]);
-  const [numOfComments, setNumOfComments] = useState(() => {
-    const { comments: cments } = props.answer!;
-    return cments ? cments.length : 0;
-  });
 
   useAsyncEffect(
     async () => {
@@ -90,7 +61,10 @@ const Answer = (props: AnswerProps) => {
   const onSaveAnswer = (
     mutation: MutationFn<EditAnswerMutation, EditAnswerVariables>
   ) => async (answerValue: string) => {
-    const isTheSame = props.answer!.value === answerValue;
+    const lastEdition = props.answer!.editions[
+      props.answer!.editions.length - 1
+    ];
+    const isTheSame = lastEdition.value === answerValue;
 
     if (isTheSame) {
       // closeAnswerEditor();
@@ -124,64 +98,12 @@ const Answer = (props: AnswerProps) => {
     props.onClosePositionEditor();
   };
 
-  const onClickLike = (
-    mutation: MutationFn<LikeAnswerMutation, LikeAnswerVariables>
-  ) => async () => {
-    if (userLikes === 20) {
-      toast.error("20 likes is the limit");
-      return;
-    }
-
-    setUserLikes(userLikes + 1);
-    setTotalLikes(totalLikes + 1);
-    cancelPrevWait();
-    await wait(500);
-    /* because the user can click multiple times in a row, creating too many sequential requests to the server */
-    const answerId = props.answer!.id;
-    const variables = { answerId, userLikes };
-    await mutation({ variables });
-  };
-
-  const wait = async (milliseconds: number) => {
-    return new Promise(resolve => {
-      timeoutIndex.current = setTimeout(resolve, milliseconds);
-    });
-    // return new Promise(resolve => setTimeout(resolve, milliseconds));
-  };
-
-  const cancelPrevWait = () => {
-    if (timeoutIndex) {
-      clearTimeout(timeoutIndex.current);
-      timeoutIndex.current = undefined;
-    }
-  };
-
-  const toggleComments = () => {
-    setShowComments(!showComments);
-    setShowLikes(false);
-    // setShowEditions(false);
-  };
-
-  const toggleLikes = () => {
-    setShowLikes(!showLikes);
-    setShowComments(false);
-    // setShowEditions(false);
-  };
-
-  const numofLikesText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
-  const numOfCommentsText =
-    numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
-  // const editionsBtnText =
-  //   numOfEditions === 1 ? `1 Edition` : `${numOfEditions} Editions`;
-  // console.log(props.viewMode);
-
   return (
     <AnswerGql>
       {(editAnswer, removeAnswer, moveAnswerPosition, likeAnswer) => {
         removeMutation.current = removeAnswer;
         return (
           <>
-            {/* <EditionDropdown /> */}
             {props.showAnswerEditor ? (
               <AnswerEditor
                 answer={props.answer}
@@ -189,7 +111,7 @@ const Answer = (props: AnswerProps) => {
                 onClickSave={onSaveAnswer(editAnswer)}
               />
             ) : (
-              <AnswerViewer answer={props.answer!} />
+              <Editions editions={props.answer.editions} />
             )}
             {props.showPositionEditor && (
               <PositionEditor
@@ -197,35 +119,6 @@ const Answer = (props: AnswerProps) => {
                 maxPosition={props.totalQuestionsCount}
                 onClickMove={onMovePosition(moveAnswerPosition)}
                 onClickClose={props.onClosePositionEditor}
-              />
-            )}
-            <Row
-              hide=/* {!hovered} */ {
-                props.showAnswerEditor || props.showPositionEditor
-              }
-            >
-              <LikeBtn
-                onClick={onClickLike(likeAnswer)}
-                isLiked={totalLikes > 0}
-              />
-              <SmallBtn onClick={toggleLikes}>{numofLikesText}</SmallBtn>
-              <SmallBtn onClick={toggleComments}>{numOfCommentsText}</SmallBtn>
-            </Row>
-            {showLikes && (
-              <Likes onClose={toggleLikes} likes={props.answer!.likes} />
-            )}
-            {(props.scrollToComment || showComments) && (
-              <Comments
-                comments={props.answer.comments}
-                answerId={props.answer.id}
-                scrollToComment={props.scrollToComment}
-                onAddComment={() => {
-                  setNumOfComments(numOfComments + 1);
-                }}
-                // onEditComment={onEditComment}
-                onRemoveComment={() => {
-                  setNumOfComments(numOfComments - 1);
-                }}
               />
             )}
           </>
