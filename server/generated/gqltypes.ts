@@ -181,27 +181,25 @@ export interface Question extends Node {
 export interface Answer {
   id: string;
 
-  userId: string;
+  position: number;
 
   questionId: string;
 
-  value: string;
+  userId: string;
 
-  comments?: Maybe<Comment[]>;
+  editions: AnswerEdition[];
+}
+
+export interface AnswerEdition {
+  id: string;
+
+  date: DateTime;
+  /** before: String! after: String! */
+  value: string;
 
   likes?: Maybe<Likes>;
 
-  editions?: Maybe<AnswerEdition[]>;
-
-  position: number;
-}
-
-export interface Comment {
-  id: string;
-
-  user: User;
-
-  value: string;
+  comments?: Maybe<Comment[]>;
 }
 
 export interface Likes {
@@ -216,14 +214,12 @@ export interface Liker {
   numOfLikes: number;
 }
 
-export interface AnswerEdition {
+export interface Comment {
   id: string;
 
-  date: DateTime;
+  user: User;
 
-  before: string;
-
-  after: string;
+  value: string;
 }
 
 export interface Mutation {
@@ -241,7 +237,7 @@ export interface Mutation {
 
   removeAnswer: Answer;
 
-  likeAnswer: Answer;
+  likeAnswerEdition: Answer;
 
   moveAnswerPosition?: Maybe<number>;
 
@@ -416,8 +412,10 @@ export interface AddAnswerMutationArgs {
 export interface RemoveAnswerMutationArgs {
   answerId: string;
 }
-export interface LikeAnswerMutationArgs {
+export interface LikeAnswerEditionMutationArgs {
   answerId: string;
+
+  editionId: string;
 
   userLikes: number;
 }
@@ -862,22 +860,26 @@ export namespace AnswerResolvers {
   export interface Resolvers<Context = ApolloContext, TypeParent = Answer> {
     id?: IdResolver<string, TypeParent, Context>;
 
-    userId?: UserIdResolver<string, TypeParent, Context>;
+    position?: PositionResolver<number, TypeParent, Context>;
 
     questionId?: QuestionIdResolver<string, TypeParent, Context>;
 
-    value?: ValueResolver<string, TypeParent, Context>;
+    userId?: UserIdResolver<string, TypeParent, Context>;
 
-    comments?: CommentsResolver<Maybe<Comment[]>, TypeParent, Context>;
-
-    likes?: LikesResolver<Maybe<Likes>, TypeParent, Context>;
-
-    editions?: EditionsResolver<Maybe<AnswerEdition[]>, TypeParent, Context>;
-
-    position?: PositionResolver<number, TypeParent, Context>;
+    editions?: EditionsResolver<AnswerEdition[], TypeParent, Context>;
   }
 
   export type IdResolver<
+    R = string,
+    Parent = Answer,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type PositionResolver<
+    R = number,
+    Parent = Answer,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type QuestionIdResolver<
     R = string,
     Parent = Answer,
     Context = ApolloContext
@@ -887,60 +889,52 @@ export namespace AnswerResolvers {
     Parent = Answer,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type QuestionIdResolver<
-    R = string,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type ValueResolver<
-    R = string,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentsResolver<
-    R = Maybe<Comment[]>,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type LikesResolver<
-    R = Maybe<Likes>,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
   export type EditionsResolver<
-    R = Maybe<AnswerEdition[]>,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PositionResolver<
-    R = number,
+    R = AnswerEdition[],
     Parent = Answer,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
 
-export namespace CommentResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Comment> {
+export namespace AnswerEditionResolvers {
+  export interface Resolvers<
+    Context = ApolloContext,
+    TypeParent = AnswerEdition
+  > {
     id?: IdResolver<string, TypeParent, Context>;
 
-    user?: UserResolver<User, TypeParent, Context>;
-
+    date?: DateResolver<DateTime, TypeParent, Context>;
+    /** before: String! after: String! */
     value?: ValueResolver<string, TypeParent, Context>;
+
+    likes?: LikesResolver<Maybe<Likes>, TypeParent, Context>;
+
+    comments?: CommentsResolver<Maybe<Comment[]>, TypeParent, Context>;
   }
 
   export type IdResolver<
     R = string,
-    Parent = Comment,
+    Parent = AnswerEdition,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type UserResolver<
-    R = User,
-    Parent = Comment,
+  export type DateResolver<
+    R = DateTime,
+    Parent = AnswerEdition,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type ValueResolver<
     R = string,
-    Parent = Comment,
+    Parent = AnswerEdition,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type LikesResolver<
+    R = Maybe<Likes>,
+    Parent = AnswerEdition,
+    Context = ApolloContext
+  > = Resolver<R, Parent, Context>;
+  export type CommentsResolver<
+    R = Maybe<Comment[]>,
+    Parent = AnswerEdition,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -983,38 +977,28 @@ export namespace LikerResolvers {
   > = Resolver<R, Parent, Context>;
 }
 
-export namespace AnswerEditionResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = AnswerEdition
-  > {
+export namespace CommentResolvers {
+  export interface Resolvers<Context = ApolloContext, TypeParent = Comment> {
     id?: IdResolver<string, TypeParent, Context>;
 
-    date?: DateResolver<DateTime, TypeParent, Context>;
+    user?: UserResolver<User, TypeParent, Context>;
 
-    before?: BeforeResolver<string, TypeParent, Context>;
-
-    after?: AfterResolver<string, TypeParent, Context>;
+    value?: ValueResolver<string, TypeParent, Context>;
   }
 
   export type IdResolver<
     R = string,
-    Parent = AnswerEdition,
+    Parent = Comment,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type DateResolver<
-    R = DateTime,
-    Parent = AnswerEdition,
+  export type UserResolver<
+    R = User,
+    Parent = Comment,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type BeforeResolver<
+  export type ValueResolver<
     R = string,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AfterResolver<
-    R = string,
-    Parent = AnswerEdition,
+    Parent = Comment,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
 }
@@ -1039,7 +1023,7 @@ export namespace MutationResolvers {
 
     removeAnswer?: RemoveAnswerResolver<Answer, TypeParent, Context>;
 
-    likeAnswer?: LikeAnswerResolver<Answer, TypeParent, Context>;
+    likeAnswerEdition?: LikeAnswerEditionResolver<Answer, TypeParent, Context>;
 
     moveAnswerPosition?: MoveAnswerPositionResolver<
       Maybe<number>,
@@ -1133,13 +1117,15 @@ export namespace MutationResolvers {
     answerId: string;
   }
 
-  export type LikeAnswerResolver<
+  export type LikeAnswerEditionResolver<
     R = Answer,
     Parent = {},
     Context = ApolloContext
-  > = Resolver<R, Parent, Context, LikeAnswerArgs>;
-  export interface LikeAnswerArgs {
+  > = Resolver<R, Parent, Context, LikeAnswerEditionArgs>;
+  export interface LikeAnswerEditionArgs {
     answerId: string;
+
+    editionId: string;
 
     userLikes: number;
   }
@@ -1685,10 +1671,10 @@ export interface IResolvers {
   QuestionEdge?: QuestionEdgeResolvers.Resolvers;
   Question?: QuestionResolvers.Resolvers;
   Answer?: AnswerResolvers.Resolvers;
-  Comment?: CommentResolvers.Resolvers;
+  AnswerEdition?: AnswerEditionResolvers.Resolvers;
   Likes?: LikesResolvers.Resolvers;
   Liker?: LikerResolvers.Resolvers;
-  AnswerEdition?: AnswerEditionResolvers.Resolvers;
+  Comment?: CommentResolvers.Resolvers;
   Mutation?: MutationResolvers.Resolvers;
   LoginResult?: LoginResultResolvers.Resolvers;
   Subscription?: SubscriptionResolvers.Resolvers;

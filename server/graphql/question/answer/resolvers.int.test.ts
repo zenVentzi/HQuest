@@ -111,7 +111,12 @@ test("likeAnswer() result should contain likes", async done => {
     answerId: existingAnswer._id.toHexString(),
     userLikes: 5
   };
-  const likedAnswer = await Mutation.likeAnswer({}, args, context, {} as any);
+  const likedAnswer = await Mutation.likeAnswerEdition(
+    {},
+    args,
+    context,
+    {} as any
+  );
   const actual = likedAnswer.likes!.total;
   const expected = args.userLikes;
   expect(actual).toEqual(expected);

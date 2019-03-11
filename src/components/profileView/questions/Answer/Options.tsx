@@ -8,7 +8,7 @@ import { CaretDown } from "styled-icons/fa-solid/CaretDown";
 
 interface AnswerOptionsProps {
   onClickEdit: () => void;
-  onClickRemove: () => void;
+  // onClickRemove: () => void;
   onClickMove: () => void;
   visible: boolean;
 }
@@ -17,9 +17,9 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
   const onClickEdit = () => {
     props.onClickEdit();
   };
-  const onClickRemove = () => {
-    props.onClickRemove();
-  };
+  // const onClickRemove = () => {
+  //   props.onClickRemove();
+  // };
   const onClickMove = () => {
     props.onClickMove();
   };
@@ -30,9 +30,9 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
     <TextBtn key="edit" onClick={onClickEdit}>
       Edit
     </TextBtn>,
-    <TextBtn key="remove" onClick={onClickRemove}>
-      Remove
-    </TextBtn>,
+    // <TextBtn key="remove" onClick={onClickRemove}>
+    //   Remove
+    // </TextBtn>,
     <TextBtn key="move" onClick={onClickMove}>
       Move
     </TextBtn>

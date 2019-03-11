@@ -1,12 +1,9 @@
 type Answer {
   id: ID!
-  userId: ID!
-  questionId: ID!
-  value: String!
-  comments: [Comment!]
-  likes: Likes
-  editions: [AnswerEdition!]
   position: Int!
+  questionId: ID!
+  userId: ID!
+  editions: [AnswerEdition!]!
 }
 
 type Likes {
@@ -22,14 +19,17 @@ type Liker {
 type AnswerEdition {
   id: ID!
   date: DateTime!
-  before: String!
-  after: String!
+  # before: String!
+  # after: String!
+  value: String!
+  likes: Likes
+  comments: [Comment!]
 }
 
 type Mutation {
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
-  likeAnswer(answerId: ID!, userLikes: Int!): Answer!
+  likeAnswerEdition(answerId: ID!, editionId: ID!, userLikes: Int!): Answer!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
 }

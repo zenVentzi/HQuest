@@ -1,46 +1,168 @@
-import React from "react";
-import distanceInWords from "date-fns/distance_in_words";
+import React, { useEffect, useState, useRef } from "react";
+import Anchor from "Reusable/Anchor";
 import styled from "styled-components";
-import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
+import shortid from "shortid";
 
-const StyledEdition = styled.div`
-  width: 80%;
-  ${"" /* color: black; */} margin-bottom: 0.8em;
+import { Row } from "../Row";
+import LikeBtn from "./LikeBtn";
+import {
+  AnswerFieldsEditions,
+  LikeAnswerEditionMutation,
+  LikeAnswerEditionVariables
+} from "GqlClient/autoGenTypes";
+import { getLoggedUserId } from "Utils";
+import { MutationFn } from "react-apollo";
+import { toast } from "react-toastify";
+import Comments from "./Comments";
+import Likes from "./Likes";
+
+const SmallBtn = styled(Anchor)`
+  margin-right: 0.6em;
 `;
 
-const Text = styled.div``;
+const Viewer = styled.div`
+  background: black;
+  text-align: left;
+  color: white;
+  width: 60%;
+  font-size: 1.2em;
+  line-height: 1.2;
+  padding: 0.2em 1em;
+  border-radius: 0.2em;
+  word-wrap: break-word;
+  /* text-align: center; */
 
-const AnswerText = styled.span`
-  font-family: Arial, Helvetica, sans-serif;
-
-  font-style: italic;
-  text-decoration: none;
+  @media (max-width: 600px) {
+    width: 90%;
+    font-size: 1em;
+  }
 `;
 
 interface EditionProps {
   edition: AnswerFieldsEditions;
+  scrollToComment?: string;
+  answerId: string;
+  likeEdition: MutationFn<
+    LikeAnswerEditionMutation,
+    LikeAnswerEditionVariables
+  >;
 }
 
-const Edition = ({ edition: { date, before, after } }: EditionProps) => {
-  const editDate = new Date(date).getTime();
-  const dateTimeNow = new Date().getTime();
+const Edition = (props: EditionProps) => {
+  const answerWithParagraphs = props.edition.value
+    .split("\n")
+    .map((paragraph: string) => (
+      <span key={shortid.generate()}>
+        {paragraph}
+        <br />
+      </span>
+    ));
 
-  const editedTimeAgo = distanceInWords(editDate, dateTimeNow);
+  const timeoutIndex = useRef<number>();
+
+  const [totalLikes, setTotalLikes] = useState(() => {
+    return props.edition.likes ? props.edition.likes.total : 0;
+  });
+  const [userLikes, setUserLikes] = useState(() => {
+    if (!props.edition.likes) return 0;
+    const user = props.edition.likes.likers.find(
+      liker => liker.user.id === getLoggedUserId()
+    );
+
+    return user ? user.numOfLikes : 0;
+  });
+  const [showComments, setShowComments] = useState(true);
+  const [showLikes, setShowLikes] = useState(false);
+  // useEffect(() => {
+  //   if (props.showAnswerEditor || props.showPositionEditor) {
+  //     setShowComments(false);
+  //     setShowLikes(false);
+  //   }
+  // }, [props.showAnswerEditor, props.showPositionEditor]);
+  const [numOfComments, setNumOfComments] = useState(() => {
+    const { comments: cments } = props.edition!;
+    return cments ? cments.length : 0;
+  });
+
+  const onClickLike = async () => {
+    if (userLikes === 20) {
+      toast.error("Max 20 likes per edition");
+      return;
+    }
+
+    const newUserLikes = userLikes + 1;
+    const newTotalLikes = totalLikes + 1;
+    setUserLikes(newUserLikes);
+    setTotalLikes(newTotalLikes);
+    cancelPrevWait();
+    await wait(500);
+    /* because the user can click multiple times in a row, creating too many sequential requests to the server */
+    const variables: LikeAnswerEditionVariables = {
+      answerId: props.answerId,
+      editionId: props.edition.id,
+      userLikes: newUserLikes
+    };
+    await props.likeEdition({ variables });
+  };
+
+  const wait = async (milliseconds: number) => {
+    return new Promise(resolve => {
+      timeoutIndex.current = setTimeout(resolve, milliseconds);
+    });
+    // return new Promise(resolve => setTimeout(resolve, milliseconds));
+  };
+
+  const cancelPrevWait = () => {
+    if (timeoutIndex) {
+      clearTimeout(timeoutIndex.current);
+      timeoutIndex.current = undefined;
+    }
+  };
+
+  const toggleComments = () => {
+    setShowComments(!showComments);
+    setShowLikes(false);
+    // setShowEditions(false);
+  };
+
+  const toggleLikes = () => {
+    setShowLikes(!showLikes);
+    setShowComments(false);
+    // setShowEditions(false);
+  };
+
+  const numofLikesText = totalLikes === 1 ? "1 Like" : `${totalLikes} Likes`;
+  const numOfCommentsText =
+    numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
 
   return (
-    <StyledEdition
-    // onMouseEnter={onMouseEnter}
-    // onMouseLeave={onMouseLeave}
-    >
-      <Text>Edit {editedTimeAgo} ago</Text>
-      <Text>
-        Before: <AnswerText>{before}</AnswerText>
-      </Text>
-      <Text>
-        After: <AnswerText>{after}</AnswerText>
-      </Text>
-    </StyledEdition>
+    <>
+      <Viewer>- {answerWithParagraphs}</Viewer>
+      <Row
+        hide=/* {!hovered} */ {
+          // props.showAnswerEditor || props.showPositionEditor
+          false
+        }
+      >
+        <LikeBtn onClick={onClickLike} isLiked={totalLikes > 0} />
+        <SmallBtn onClick={toggleLikes}>{numofLikesText}</SmallBtn>
+        <SmallBtn onClick={toggleComments}>{numOfCommentsText}</SmallBtn>
+      </Row>
+      {showLikes && <Likes onClose={toggleLikes} likes={props.edition.likes} />}
+      {(props.scrollToComment || showComments) && (
+        <Comments
+          comments={props.edition.comments}
+          answerId={props.answerId}
+          scrollToComment={props.scrollToComment}
+          onAddComment={() => {
+            setNumOfComments(numOfComments + 1);
+          }}
+          // onEditComment={onEditComment}
+          onRemoveComment={() => {
+            setNumOfComments(numOfComments - 1);
+          }}
+        />
+      )}
+    </>
   );
 };
-
-export default Edition;

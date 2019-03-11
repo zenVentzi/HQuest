@@ -71,9 +71,9 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
             if (showPositionEditor) return;
             setShowAnswerEditor(true);
           }}
-          onClickRemove={() => {
-            setRemoveAnswer(true);
-          }}
+          // onClickRemove={() => {
+          //   setRemoveAnswer(true);
+          // }}
           onClickMove={() => {
             if (showAnswerEditor) return;
             setShowPositionEditor(true);
