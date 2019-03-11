@@ -25,13 +25,14 @@ import { Row } from "../Row";
 import styled from "styled-components";
 import Likes from "./Likes";
 import Comments from "./Comments";
+import EditionDropdown from "./EditionDropdown";
 
 const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
 `;
 
 interface AnswerProps {
-  viewMode: boolean;
+  showAnswerEditor: boolean;
   showPositionEditor: boolean;
   remove: boolean;
   answer: QuestionFieldsAnswer;
@@ -62,6 +63,12 @@ const Answer = (props: AnswerProps) => {
   });
   const [showComments, setShowComments] = useState(props.showComments);
   const [showLikes, setShowLikes] = useState(false);
+  useEffect(() => {
+    if (props.showAnswerEditor || props.showPositionEditor) {
+      setShowComments(false);
+      setShowLikes(false);
+    }
+  }, [props.showAnswerEditor, props.showPositionEditor]);
   const [numOfComments, setNumOfComments] = useState(() => {
     const { comments: cments } = props.answer!;
     return cments ? cments.length : 0;
@@ -76,7 +83,7 @@ const Answer = (props: AnswerProps) => {
         toast.success("Answer removed!");
       }
     },
-    undefined,
+    () => {},
     [props.remove]
   );
 
@@ -174,14 +181,15 @@ const Answer = (props: AnswerProps) => {
         removeMutation.current = removeAnswer;
         return (
           <>
-            {props.viewMode ? (
-              <AnswerViewer answer={props.answer!} />
-            ) : (
+            {/* <EditionDropdown /> */}
+            {props.showAnswerEditor ? (
               <AnswerEditor
                 answer={props.answer}
                 onClickDoesNotApply={() => {}}
                 onClickSave={onSaveAnswer(editAnswer)}
               />
+            ) : (
+              <AnswerViewer answer={props.answer!} />
             )}
             {props.showPositionEditor && (
               <PositionEditor
@@ -191,7 +199,11 @@ const Answer = (props: AnswerProps) => {
                 onClickClose={props.onClosePositionEditor}
               />
             )}
-            <Row hide=/* {!hovered} */ {!props.viewMode}>
+            <Row
+              hide=/* {!hovered} */ {
+                props.showAnswerEditor || props.showPositionEditor
+              }
+            >
               <LikeBtn
                 onClick={onClickLike(likeAnswer)}
                 isLiked={totalLikes > 0}
@@ -199,10 +211,10 @@ const Answer = (props: AnswerProps) => {
               <SmallBtn onClick={toggleLikes}>{numofLikesText}</SmallBtn>
               <SmallBtn onClick={toggleComments}>{numOfCommentsText}</SmallBtn>
             </Row>
-            {props.viewMode && showLikes && (
+            {showLikes && (
               <Likes onClose={toggleLikes} likes={props.answer!.likes} />
             )}
-            {props.viewMode && (props.scrollToComment || showComments) && (
+            {(props.scrollToComment || showComments) && (
               <Comments
                 comments={props.answer.comments}
                 answerId={props.answer.id}
