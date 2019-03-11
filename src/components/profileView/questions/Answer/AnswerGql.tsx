@@ -17,7 +17,7 @@ import {
   LikeAnswerVariables
 } from "GqlClient/autoGenTypes";
 
-interface AnsweredQuestionGqlProps {
+interface AnswerGqlProps {
   children: (
     editAnswer: MutationFn<EditAnswerMutation, EditAnswerVariables>,
     removeAnswer: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>,
@@ -26,10 +26,10 @@ interface AnsweredQuestionGqlProps {
       MoveAnswerPositionVariables
     >,
     likeAnswer: MutationFn<LikeAnswerMutation, LikeAnswerVariables>
-  ) => any;
+  ) => React.ReactChild;
 }
 
-const AnsweredQuestionGql = (props: AnsweredQuestionGqlProps) => {
+const AnswerGql = (props: AnswerGqlProps) => {
   const { children } = props;
 
   // wtf really apollo level pre-japanese
@@ -75,4 +75,4 @@ const AnsweredQuestionGql = (props: AnsweredQuestionGqlProps) => {
   );
 };
 
-export default AnsweredQuestionGql;
+export default AnswerGql;
