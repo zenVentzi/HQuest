@@ -24,7 +24,6 @@ const config: webpack.Configuration = {
     splitChunks: false
   },
   devtool: "cheap-module-eval-source-map",
-
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new BundleAnalyzerPlugin({})

@@ -47,14 +47,17 @@ const Editions = (props: EditionsProps) => {
         }
         onPickEdition={onPickEdition}
       />
-      {pickedEditions.map(ed => (
-        <Edition
-          key={ed.id}
-          answerId={props.answerId}
-          edition={ed}
-          likeEdition={props.likeEdition}
-        />
-      ))}
+      {pickedEditions
+        .slice()
+        .reverse()
+        .map(ed => (
+          <Edition
+            key={ed.id}
+            answerId={props.answerId}
+            edition={ed}
+            likeEdition={props.likeEdition}
+          />
+        ))}
     </>
   );
 };
