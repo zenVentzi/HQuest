@@ -36,12 +36,14 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
       const offsetBottom =
         window.innerHeight + window.pageYOffset - bottomMarginPx;
       const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
-      const shouldFetchMore = isCloseToBottom && !isFetching && hasNextPage;
+      if (isCloseToBottom) {
+        if (isFetching.current || !hasNextPage.current) {
+          return;
+        }
 
-      if (shouldFetchMore) {
         fetchMoreFn.current!({
           variables: {
-            after: fetchAfter
+            after: fetchAfter.current
           },
           updateQuery: (prev: any, { fetchMoreResult }: any) => {
             if (!fetchMoreResult) return prev;
@@ -81,6 +83,9 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     questions: QuestionConnectionFieldsFragment | null,
     refetch: any
   ) => {
+    if (isFetchingInitial.current) {
+      return <div>Loading questions...</div>;
+    }
     // TODO fix no unanswered questions blink on first load
     if (!questions) {
       return (
@@ -155,10 +160,10 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
 
           return (
             <>
-              {!isFetchingInitial.current &&
-                renderQuestions(questions, refetch)}
-              {(isFetchingInitial.current || isFetchingMore.current) && (
+              {isFetchingInitial.current || isFetchingMore.current ? (
                 <div>loading questions..</div>
+              ) : (
+                renderQuestions(questions, refetch)
               )}
             </>
           );
