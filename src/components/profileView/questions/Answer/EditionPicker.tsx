@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
+import styled from "styled-components";
+
+const StyledSelect = styled.select`
+  background: black;
+  color: white;
+  border: 2px solid white;
+`;
 
 interface EditionPickerProps {
   allEditions: AnswerFieldsEditions[];
@@ -10,17 +17,25 @@ interface EditionPickerProps {
 const EditionPicker = (props: EditionPickerProps) => {
   const editions: React.ReactElement[] = [];
 
+  const getEditionText = (editionIndex: number) => {
+    return editionIndex === 0
+      ? `1'st edition`
+      : editionIndex === 1
+      ? `2'nd edition`
+      : `${editionIndex + 1}'th edition`;
+  };
+
   for (let i = 0; i < props.allEditions.length; i++) {
     // console.log(props.allEditions[i]);
     editions.push(
       <option key={props.allEditions[i].id} value={props.allEditions[i].id}>
-        {i + 1}'th edition
+        {getEditionText(i)}
       </option>
     );
   }
 
   return (
-    <select
+    <StyledSelect
       value={props.pickedEditionId || "all"}
       onChange={e => {
         if (e.target.value === "all") {
@@ -32,7 +47,7 @@ const EditionPicker = (props: EditionPickerProps) => {
     >
       <option value="all">All</option>
       {editions.reverse()}
-    </select>
+    </StyledSelect>
   );
 };
 
