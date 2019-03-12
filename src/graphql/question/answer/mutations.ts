@@ -2,7 +2,8 @@ import gql from "graphql-tag";
 import {
   QuestionFields,
   CommentFields,
-  AnswerFields
+  AnswerFields,
+  EditionFields
 } from "GqlClient/fragments";
 
 export const MOVE_ANSWER_POSITION = gql`
@@ -48,8 +49,8 @@ export const LIKE_ANSWER_EDITION = gql`
       answerEditionId: $answerEditionId
       userLikes: $userLikes
     ) {
-      ...AnswerFields
+      ...EditionFields
     }
   }
-  ${AnswerFields}
+  ${EditionFields}
 `;
