@@ -10,12 +10,14 @@ interface EditionPickerProps {
 const EditionPicker = (props: EditionPickerProps) => {
   const editions: React.ReactElement[] = [];
 
-  for (let i = 0; i < props.allEditions.length; i--) {
+  for (let i = 0; i < props.allEditions.length; i++) {
+    // console.log(props.allEditions[i]);
     editions.push(
-      <option value={props.allEditions[i].id}>{i + 1}'th edition</option>
+      <option key={props.allEditions[i].id} value={props.allEditions[i].id}>
+        {i + 1}'th edition
+      </option>
     );
   }
-  editions.reverse();
 
   return (
     <select
@@ -29,7 +31,7 @@ const EditionPicker = (props: EditionPickerProps) => {
       }}
     >
       <option value="all">All</option>
-      {editions}
+      {editions.reverse()}
     </select>
   );
 };

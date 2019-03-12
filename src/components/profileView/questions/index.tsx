@@ -81,8 +81,12 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     questions: QuestionConnectionFieldsFragment | null,
     refetch: any
   ) => {
-    // console.log(questions);
-    if (!questions) return null;
+    // TODO fix no unanswered questions blink on first load
+    if (!questions) {
+      return (
+        <div>{`No ${showAnswered ? "answered" : "unanswered"} questions`}</div>
+      );
+    }
 
     const questionNodes = questions.edges
       ? questions.edges.map(edge => edge.node)

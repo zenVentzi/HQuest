@@ -18,13 +18,13 @@ type Query {
 
 type Mutation {
   notifsMarkSeen: Boolean
-  commentAnswer(answerId: ID!, comment: String!): Comment!
-  editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
-  removeComment(answerId: ID!, commentId: ID!): Comment!
+  commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!): Comment!
+  editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!): Comment!
+  removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
-  likeAnswer(answerId: ID!, userLikes: Int!): Answer!
+  likeAnswerEdition(answerId: ID!, answerEditionId: ID!, userLikes: Int!): Answer!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
   addQuestions(questions: [InputQuestion!]): Boolean
   # removeQuestion(questionId: ID!): Question!
@@ -135,13 +135,10 @@ type Comment {
 
 type Answer {
   id: ID!
-  userId: ID!
-  questionId: ID!
-  value: String!
-  comments: [Comment!]
-  likes: Likes
-  editions: [AnswerEdition!]
   position: Int!
+  questionId: ID!
+  userId: ID!
+  editions: [AnswerEdition!]!
 }
 
 type Likes {
@@ -157,8 +154,11 @@ type Liker {
 type AnswerEdition {
   id: ID!
   date: DateTime!
-  before: String!
-  after: String!
+  # before: String!
+   # after: String!
+  value: String!
+  likes: Likes
+  comments: [Comment!]
 }
 
 # question should be made an interface

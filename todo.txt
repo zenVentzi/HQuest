@@ -5,6 +5,7 @@ Todo:
 - study the GitHunt example
 
 Fix:
+- Unnecessary re-renders on hover questions
 - 401 Unauthorized
 - reduce answer text font size
 - on first edit, edition is null if no refresh
