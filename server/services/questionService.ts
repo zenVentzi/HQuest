@@ -136,13 +136,13 @@ class QuestionService {
       userId
     ))!.toObject();
 
-    const ignoreQuestions: string[] = [];
+    let ignoreQuestions: string[] = [];
 
     if (answeredQuestionsIds && answeredQuestionsIds.length) {
-      ignoreQuestions.concat(answeredQuestionsIds);
+      ignoreQuestions = ignoreQuestions.concat(answeredQuestionsIds);
     }
     if (questionsNotApply && questionsNotApply.length) {
-      ignoreQuestions.concat(questionsNotApply);
+      ignoreQuestions = ignoreQuestions.concat(questionsNotApply);
     }
 
     const query: any = {};
