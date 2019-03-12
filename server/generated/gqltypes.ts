@@ -225,7 +225,7 @@ export interface Comment {
 export interface Mutation {
   notifsMarkSeen?: Maybe<boolean>;
 
-  commentAnswer: Comment;
+  commentAnswerEdition: Comment;
 
   editComment: Comment;
 
@@ -382,13 +382,17 @@ export interface FollowersQueryArgs {
 export interface FollowingQueryArgs {
   userId: string;
 }
-export interface CommentAnswerMutationArgs {
+export interface CommentAnswerEditionMutationArgs {
   answerId: string;
+
+  answerEditionId: string;
 
   comment: string;
 }
 export interface EditCommentMutationArgs {
   answerId: string;
+
+  answerEditionId: string;
 
   commentId: string;
 
@@ -396,6 +400,8 @@ export interface EditCommentMutationArgs {
 }
 export interface RemoveCommentMutationArgs {
   answerId: string;
+
+  answerEditionId: string;
 
   commentId: string;
 }
@@ -415,7 +421,7 @@ export interface RemoveAnswerMutationArgs {
 export interface LikeAnswerEditionMutationArgs {
   answerId: string;
 
-  editionId: string;
+  answerEditionId: string;
 
   userLikes: number;
 }
@@ -1011,7 +1017,11 @@ export namespace MutationResolvers {
       Context
     >;
 
-    commentAnswer?: CommentAnswerResolver<Comment, TypeParent, Context>;
+    commentAnswerEdition?: CommentAnswerEditionResolver<
+      Comment,
+      TypeParent,
+      Context
+    >;
 
     editComment?: EditCommentResolver<Comment, TypeParent, Context>;
 
@@ -1051,13 +1061,15 @@ export namespace MutationResolvers {
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
-  export type CommentAnswerResolver<
+  export type CommentAnswerEditionResolver<
     R = Comment,
     Parent = {},
     Context = ApolloContext
-  > = Resolver<R, Parent, Context, CommentAnswerArgs>;
-  export interface CommentAnswerArgs {
+  > = Resolver<R, Parent, Context, CommentAnswerEditionArgs>;
+  export interface CommentAnswerEditionArgs {
     answerId: string;
+
+    answerEditionId: string;
 
     comment: string;
   }
@@ -1069,6 +1081,8 @@ export namespace MutationResolvers {
   > = Resolver<R, Parent, Context, EditCommentArgs>;
   export interface EditCommentArgs {
     answerId: string;
+
+    answerEditionId: string;
 
     commentId: string;
 
@@ -1082,6 +1096,8 @@ export namespace MutationResolvers {
   > = Resolver<R, Parent, Context, RemoveCommentArgs>;
   export interface RemoveCommentArgs {
     answerId: string;
+
+    answerEditionId: string;
 
     commentId: string;
   }
@@ -1125,7 +1141,7 @@ export namespace MutationResolvers {
   export interface LikeAnswerEditionArgs {
     answerId: string;
 
-    editionId: string;
+    answerEditionId: string;
 
     userLikes: number;
   }

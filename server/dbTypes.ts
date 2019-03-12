@@ -38,10 +38,14 @@ User<FollowT extends User[] | ObjectId[] = ObjectId[]> {
   looks is cleaner but creates circular dependency
 */
 
+export enum UserPopulatedFields {
+  followers,
+  following,
+  none
+}
+
 export interface User<
-  PopulatedFields extends
-    | "noPopulatedFields"
-    | keyof User<"noPopulatedFields"> = "noPopulatedFields"
+  PopulatedFields extends UserPopulatedFields = UserPopulatedFields.none
 > {
   _id: ObjectId;
   firstName: string;
@@ -50,8 +54,12 @@ export interface User<
   intro: string;
   avatarSrc: string;
   questionsNotApply?: string[];
-  followers?: PopulatedFields extends "followers" ? User[] : ObjectId[];
-  following?: PopulatedFields extends "following" ? User[] : ObjectId[];
+  followers?: PopulatedFields extends UserPopulatedFields.followers
+    ? User[]
+    : ObjectId[];
+  following?: PopulatedFields extends UserPopulatedFields.following
+    ? User[]
+    : ObjectId[];
   notifications?: Notification[];
   socialMediaLinks?: {
     facebookLink?: string;
@@ -61,78 +69,63 @@ export interface User<
   };
 }
 
-// experiments
-// type Populated<T, K extends keyof T> = {
-//   [P in keyof T]: P extends K ? null : T[P];
-// }
-
-// type PopulatedUser = Populated<User, 'followers' | 'following'>;
-
-// interface Bla<K extends keyof Bla | "" = ""> {
-//   field1: K extends "field1" ? string : ObjectId;
-//   field2: K extends "field2" ? string : null;
-// }
-// interface Bla<K extends { populatedFields: keyof Bla } | "" = ""> {
-//   field1: K extends { populatedFields: 'field1' } ? string : null;
-//   field2: K extends { populatedFields: 'field2' } ? string : null;
-// }
-
-// type Bl = Bla<"field1" & "field2">;
-// type Bl = Bla<{ populatedFields: "field1" }>;
-
-// const bl: Bl = { field1: "", field2: "" };
-
-// export interface UserUnpopulated extends UserBase {
-//   followers?: ObjectId[];
-//   following?: ObjectId[];
-// }
-
-// export interface UserPopulated {
-//   followers?: UserUnpopulated[];
-//   following?: UserUnpopulated[];
-// }
-
 export interface UserDoc extends User, Document {
   _id: ObjectId;
   toObject<
-    PopulatedFields extends
-      | "noPopulatedFields"
-      | keyof User = "noPopulatedFields"
+    PopulatedFields extends UserPopulatedFields = UserPopulatedFields.none
   >(
     options?: DocumentToObjectOptions
   ): User<PopulatedFields>;
 }
-// export interface UserPopulatedDoc extends UserPopulated, Document {
-//   _id: ObjectId;
-//   toObject(options?: DocumentToObjectOptions): UserPopulated;
-// }
 
-export interface Comment<UserT extends User | ObjectId = User> {
+export enum CommentPopulatedFields {
+  user,
+  none
+}
+
+export interface Comment<
+  PopulatedFields extends CommentPopulatedFields = CommentPopulatedFields.user
+> {
   _id: ObjectId;
   value: string;
-  user: UserT;
+  user: PopulatedFields extends CommentPopulatedFields.user ? User : ObjectId;
 }
 
 export interface CommentDoc extends Comment, Document {
   _id: ObjectId;
-  toObject<UserT extends User | ObjectId = User>(
+  toObject<
+    PopulatedFields extends CommentPopulatedFields = CommentPopulatedFields.user
+  >(
     options?: DocumentToObjectOptions
-  ): Comment<UserT>;
+  ): Comment<PopulatedFields>;
 }
 
-export interface Edition {
+export enum EditionPopulatedFields {
+  comments_user,
+  none
+}
+
+export interface Edition<
+  PopulatedFields extends EditionPopulatedFields = EditionPopulatedFields.comments_user
+> {
   _id: ObjectId;
   date: Date;
   // before: string;
   // after: string;
   value: string;
-  comments?: Comment[];
+  comments?: PopulatedFields extends EditionPopulatedFields.comments_user
+    ? Array<Comment<CommentPopulatedFields.user>>
+    : Array<Comment<CommentPopulatedFields.none>>;
   likes?: Likes;
 }
 
 export interface EditionDoc extends Edition, Document {
   _id: ObjectId;
-  toObject(options?: DocumentToObjectOptions): Edition;
+  toObject<
+    PopulatedFields extends EditionPopulatedFields = EditionPopulatedFields.comments_user
+  >(
+    options?: DocumentToObjectOptions
+  ): Edition<PopulatedFields>;
 }
 
 export interface Liker {
@@ -145,17 +138,32 @@ export interface Likes {
   likers: Liker[];
 }
 
-export interface Answer {
+export enum AnswerPopulatedFields {
+  editions_comments_user,
+  none
+}
+
+export interface Answer<
+  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+> {
   _id: ObjectId;
   position: number;
   userId: ObjectId;
   questionId: ObjectId;
-  editions: Edition[];
+  editions: PopulatedFields extends AnswerPopulatedFields.editions_comments_user
+    ? Array<Edition<EditionPopulatedFields.comments_user>>
+    : Array<Edition<EditionPopulatedFields.none>>;
 }
 
-export interface AnswerDoc extends Answer, Document {
+export interface AnswerDoc<
+  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+> extends Answer<PopulatedFields>, Document {
   _id: ObjectId;
-  toObject(options?: DocumentToObjectOptions): Answer;
+  toObject<
+    PopulatedFieldss extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+  >(
+    options?: DocumentToObjectOptions
+  ): Answer<PopulatedFieldss>;
 }
 
 export interface Question {

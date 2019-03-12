@@ -9,21 +9,27 @@ const { ObjectId } = Types;
 
 test("map answer", () => {
   const dbAnswer = new models.answer({
+    _id: ObjectId(),
     position: 1,
-    value: "ass",
     questionId: ObjectId(),
-    userId: ObjectId()
+    userId: ObjectId(),
+    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as dbTypes.Answer).toObject();
 
   const expected: gqlTypes.Answer = {
     id: dbAnswer._id.toString(),
     position: dbAnswer.position,
-    value: dbAnswer.value,
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
-    comments: null,
-    editions: null,
-    likes: null
+    editions: [
+      {
+        id: dbAnswer.editions[0]._id.toHexString(),
+        date: dbAnswer.editions[0].date,
+        value: "ass",
+        comments: null,
+        likes: null
+      }
+    ]
   };
 
   const actual = mapAnswer({
@@ -77,10 +83,11 @@ test("getLikes() should return gql likes", () => {
 
   const dbAnswer = new models.answer({
     position: 1,
-    value: "ass",
     questionId: ObjectId(),
     userId: ObjectId(),
-    likes: dbLikes
+    editions: [
+      { _id: ObjectId(), date: new Date(), value: "ass", likes: dbLikes }
+    ]
   } as dbTypes.Answer).toObject();
 
   const gqlLikes = mapLikes({ dbLikes, loggedUserId: "" });
@@ -88,12 +95,17 @@ test("getLikes() should return gql likes", () => {
   const expected: gqlTypes.Answer = {
     id: dbAnswer._id.toString(),
     position: dbAnswer.position,
-    value: dbAnswer.value,
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
-    likes: gqlLikes,
-    comments: null,
-    editions: null
+    editions: [
+      {
+        id: dbAnswer.editions[0]._id.toHexString(),
+        date: dbAnswer.editions[0].date,
+        value: "ass",
+        comments: null,
+        likes: gqlLikes
+      }
+    ]
   };
 
   const actual = mapAnswer({
@@ -108,20 +120,21 @@ test("getAnswerEditions() should return gql editions", () => {
   const dbEdition: dbTypes.Edition = {
     _id: ObjectId(),
     date: new Date(),
-    before: "beforee",
-    after: "after"
+    value: "ass"
   };
 
   const actual = mapAnswerEditions({
-    dbEditions: [dbEdition]
+    dbEditions: [dbEdition],
+    loggedUserId: ""
   });
 
   const expected: gqlTypes.AnswerEdition[] = [
     {
       id: dbEdition._id.toHexString(),
       date: dbEdition.date,
-      before: "beforee",
-      after: "after"
+      value: "ass",
+      comments: null,
+      likes: null
     }
   ];
 
@@ -132,31 +145,30 @@ test("getAnswer() should return gql object with editions", () => {
   const dbEdition: dbTypes.Edition = {
     _id: ObjectId(),
     date: new Date(),
-    before: "beforee",
-    after: "after"
+    value: "ass"
   };
 
   const dbAnswer = new models.answer({
     position: 1,
-    value: "ass",
+    // value: "ass",
     questionId: ObjectId(),
     userId: ObjectId(),
     editions: [dbEdition]
   } as dbTypes.Answer).toObject();
 
   const gqlEditions = mapAnswerEditions({
-    dbEditions: [dbEdition]
+    dbEditions: [dbEdition],
+    loggedUserId: ""
   });
 
   const expected: gqlTypes.Answer = {
     id: dbAnswer._id.toString(),
     position: dbAnswer.position,
-    value: dbAnswer.value,
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
-    editions: gqlEditions,
-    comments: null,
-    likes: null
+    editions: gqlEditions
+    // comments: null,
+    // likes: null
   };
 
   const actual = mapAnswer({

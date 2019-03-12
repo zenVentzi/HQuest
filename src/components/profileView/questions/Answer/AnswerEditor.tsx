@@ -67,7 +67,10 @@ const AnswerEditor = (props: AnswerEditorProps) => {
   const isNew = !props.answer;
   const initialValues = { answer: "" };
   if (!isNew) {
-    initialValues.answer = props.answer!.value;
+    const latestEdition = props.answer!.editions[
+      props.answer!.editions.length - 1
+    ];
+    initialValues.answer = latestEdition.value;
   }
 
   return (
@@ -76,8 +79,9 @@ const AnswerEditor = (props: AnswerEditorProps) => {
       validateOnBlur={false}
       validate={values => {
         const errors: any = {};
-        if (values.answer.length < 10)
+        if (values.answer.length < 10) {
           errors.answer = "Answer must be at least 10 characters";
+        }
 
         return errors;
       }}

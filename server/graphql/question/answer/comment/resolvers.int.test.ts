@@ -27,17 +27,19 @@ test("commentAnswer() should return added comment", async done => {
   await new models.user(contextUser).save();
 
   const existingAnswer = (await new models.answer({
+    _id: ObjectId(),
     position: 1,
-    value: "ass",
     questionId: ObjectId(),
-    userId: ObjectId()
+    userId: ObjectId(),
+    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.CommentAnswerMutationArgs = {
+  const args: GqlTypes.CommentAnswerEditionMutationArgs = {
     answerId: existingAnswer._id.toHexString(),
+    answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
   };
-  const addedComment = await Mutation.commentAnswer(
+  const addedComment = await Mutation.commentAnswerEdition(
     {},
     args,
     context,
@@ -60,16 +62,18 @@ test("commentAnswer() should notify answer owner", async done => {
 
   const existingAnswer = (await new models.answer({
     position: 1,
-    value: "ass",
+    // value: "ass",
     questionId: ObjectId(),
-    userId: answerOwner._id
+    userId: answerOwner._id,
+    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.CommentAnswerMutationArgs = {
+  const args: GqlTypes.CommentAnswerEditionMutationArgs = {
     answerId: existingAnswer._id.toHexString(),
+    answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
   };
-  const addedComment = await Mutation.commentAnswer(
+  const addedComment = await Mutation.commentAnswerEdition(
     {},
     args,
     context,
@@ -90,17 +94,24 @@ test("editComment() should return edited comment", async done => {
 
   const existingAnswer = (await new models.answer({
     position: 1,
-    value: "ass",
     questionId: ObjectId(),
     userId: ObjectId(),
-    comments: [
-      { _id: ObjectId(), user: existingUser, value: "commentValue" }
-    ] as DbTypes.Comment[]
+    editions: [
+      {
+        _id: ObjectId(),
+        date: new Date(),
+        value: "ass",
+        comments: [
+          { _id: ObjectId(), user: existingUser, value: "commentValue" }
+        ] as DbTypes.Comment[]
+      }
+    ]
   } as DbTypes.Answer).save()).toObject();
 
   const args: GqlTypes.EditCommentMutationArgs = {
     answerId: existingAnswer._id.toHexString(),
-    commentId: existingAnswer.comments![0]._id.toHexString(),
+    answerEditionId: existingAnswer.editions[0]._id.toHexString(),
+    commentId: existingAnswer.editions[0].comments![0]._id.toHexString(),
     commentValue: "editedCommentValue"
   };
 
@@ -122,17 +133,24 @@ test("removeComment() should return removed comment", async done => {
 
   const existingAnswer = (await new models.answer({
     position: 1,
-    value: "ass",
     questionId: ObjectId(),
     userId: ObjectId(),
-    comments: [
-      { _id: ObjectId(), user: existingUser, value: "commentValue" }
-    ] as DbTypes.Comment[]
+    editions: [
+      {
+        _id: ObjectId(),
+        date: new Date(),
+        value: "ass",
+        comments: [
+          { _id: ObjectId(), user: existingUser, value: "commentValue" }
+        ] as DbTypes.Comment[]
+      }
+    ]
   } as DbTypes.Answer).save()).toObject();
 
   const args: GqlTypes.RemoveCommentMutationArgs = {
     answerId: existingAnswer._id.toHexString(),
-    commentId: existingAnswer.comments![0]._id.toHexString()
+    answerEditionId: existingAnswer.editions[0]._id.toHexString(),
+    commentId: existingAnswer.editions[0].comments![0]._id.toHexString()
   };
 
   const removedComment = await Mutation.removeComment(
@@ -143,7 +161,7 @@ test("removeComment() should return removed comment", async done => {
   );
 
   const actual = removedComment.id;
-  const expected = existingAnswer.comments![0]._id.toHexString();
+  const expected = existingAnswer.editions[0].comments![0]._id.toHexString();
   expect(actual).toEqual(expected);
   done();
 });

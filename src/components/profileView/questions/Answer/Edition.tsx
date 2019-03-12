@@ -166,3 +166,5 @@ const Edition = (props: EditionProps) => {
     </>
   );
 };
+
+export default Edition;

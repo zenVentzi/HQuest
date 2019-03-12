@@ -33,7 +33,7 @@ const Mutation: Mutation = {
 
   async likeAnswerEdition(
     _,
-    { answerId, editionId, userLikes },
+    { answerId, answerEditionId: editionId, userLikes },
     { services, user }
   ) {
     authMiddleware(user);

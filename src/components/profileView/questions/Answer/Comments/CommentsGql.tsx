@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import {
-  COMMENT_ANSWER,
+  COMMENT_ANSWER_EDITION,
   EDIT_COMMENT,
   REMOVE_COMMENT
 } from "GqlClient/question/answer/comment/mutations";
@@ -27,7 +27,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
 
   return (
     <Mutation<CommentAnswerMutation, CommentAnswerVariables>
-      mutation={COMMENT_ANSWER}
+      mutation={COMMENT_ANSWER_EDITION}
     >
       {commentAnswer => {
         return (

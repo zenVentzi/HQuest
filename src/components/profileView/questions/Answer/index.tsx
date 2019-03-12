@@ -6,25 +6,14 @@ import {
   EditAnswerVariables,
   MoveAnswerPositionMutation,
   MoveAnswerPositionVariables,
-  LikeAnswerMutation,
-  LikeAnswerVariables,
   RemoveAnswerMutation,
   RemoveAnswerVariables
 } from "GqlClient/autoGenTypes";
 import { toast } from "react-toastify";
-import { getLoggedUserId } from "Utils";
 import { MutationFn } from "react-apollo";
-import AnswerViewer from "./AnswerViewer";
 import AnswerEditor from "./AnswerEditor";
-import LikeBtn from "./LikeBtn";
 import AnswerGql from "./AnswerGql";
 import PositionEditor from "./PositionEditor";
-import { Row } from "../Row";
-
-import styled from "styled-components";
-import Likes from "./Likes";
-import Comments from "./Comments";
-import EditionDropdown from "./EditionDropdown";
 import Editions from "./Editions";
 
 interface AnswerProps {
@@ -100,8 +89,7 @@ const Answer = (props: AnswerProps) => {
 
   return (
     <AnswerGql>
-      {(editAnswer, removeAnswer, moveAnswerPosition, likeAnswer) => {
-        removeMutation.current = removeAnswer;
+      {(editAnswer, moveAnswerPosition, likeAnswerEdition) => {
         return (
           <>
             {props.showAnswerEditor ? (
@@ -111,7 +99,11 @@ const Answer = (props: AnswerProps) => {
                 onClickSave={onSaveAnswer(editAnswer)}
               />
             ) : (
-              <Editions editions={props.answer.editions} />
+              <Editions
+                editions={props.answer.editions}
+                answerId={props.answer.id}
+                likeEdition={likeAnswerEdition}
+              />
             )}
             {props.showPositionEditor && (
               <PositionEditor

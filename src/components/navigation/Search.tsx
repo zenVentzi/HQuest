@@ -135,7 +135,7 @@ const CustomSearch = (props: CustomSearchProps) => {
 
                 const { users } = data!;
 
-                if (!users.length) {
+                if (!users || !users.length) {
                   return <div> No matches found </div>;
                 }
 

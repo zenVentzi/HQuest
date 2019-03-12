@@ -30,6 +30,10 @@ type Mutation {
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
-  likeAnswerEdition(answerId: ID!, editionId: ID!, userLikes: Int!): Answer!
+  likeAnswerEdition(
+    answerId: ID!
+    answerEditionId: ID!
+    userLikes: Int!
+  ): Answer!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
 }

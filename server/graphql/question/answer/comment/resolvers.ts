@@ -3,14 +3,19 @@ import { mapComment, mapComments } from "./gqlMapper";
 import { authMiddleware } from "../../../middlewares";
 
 const Mutation: Mutation = {
-  async commentAnswer(_, { answerId, comment }, { services, user }) {
+  async commentAnswerEdition(
+    _,
+    { answerId, answerEditionId, comment },
+    { services, user }
+  ) {
     authMiddleware(user);
 
     const dbAnswer = await services.answer.getAnswerById(answerId);
-    const dbComment = await services.comment.addCommentToAnswer(
+    const dbComment = await services.comment.commentAnswerEdition(
       user!.id,
       comment,
-      answerId
+      answerId,
+      answerEditionId
     );
 
     if (!dbComment) throw Error("Failed to add comment");
@@ -30,13 +35,14 @@ const Mutation: Mutation = {
 
   async editComment(
     _,
-    { answerId, commentId, commentValue },
+    { answerId, answerEditionId, commentId, commentValue },
     { services, user }
   ) {
     authMiddleware(user);
 
     const dbComment = await services.comment.editComment(
       answerId,
+      answerEditionId,
       commentId,
       commentValue
     );
@@ -52,10 +58,18 @@ const Mutation: Mutation = {
     throw Error("Failed to edit comment");
   },
 
-  async removeComment(_, { answerId, commentId }, { services, user }) {
+  async removeComment(
+    _,
+    { answerId, answerEditionId, commentId },
+    { services, user }
+  ) {
     authMiddleware(user);
 
-    const dbComment = await services.comment.removeComment(answerId, commentId);
+    const dbComment = await services.comment.removeComment(
+      answerId,
+      answerEditionId,
+      commentId
+    );
     return mapComment({
       dbComment,
       loggedUserId: user!.id

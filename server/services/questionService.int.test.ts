@@ -34,7 +34,8 @@ test("getAnsweredQuestions() should return answered questions with tags", async 
     position: 1,
     userId: contextUser._id,
     questionId: question._id,
-    value: "answerVal"
+    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
+    // value: "answerVal"
   } as DbTypes.Answer).save()).toObject();
   const answeredQuestions = await questionService.getUserQuestions(
     context.user!.id,
