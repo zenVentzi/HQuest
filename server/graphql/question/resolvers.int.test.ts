@@ -236,14 +236,13 @@ test("answeredQuestion() should return answered question", async done => {
   const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
   await new models.question(question).save();
   await new models.user(contextUser).save();
-  const answer: DbTypes.Answer = {
+  const dbAnswer = (await new models.answer({
     _id: ObjectId(),
     userId: contextUser._id,
     position: 1,
     questionId: question._id,
-    value: "answerValue"
-  };
-  await new models.answer(answer).save();
+    editions: [{ _id: ObjectId(), date: new Date(), value: "answerValue" }]
+  } as DbTypes.Answer).save()).toObject();
 
   const answeredQuestion = await Query.answeredQuestion(
     {},
@@ -255,7 +254,9 @@ test("answeredQuestion() should return answered question", async done => {
     {} as any
   );
   expect(answeredQuestion.value).toEqual(question.value);
-  expect(answeredQuestion.answer!.value).toEqual(answer.value);
+  expect(answeredQuestion.answer!.editions[0].value).toEqual(
+    dbAnswer.editions[0].value
+  );
   done();
 });
 

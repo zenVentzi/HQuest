@@ -6,9 +6,17 @@ import {
 } from "GqlClient/fragments";
 
 // TODO return either Answer or Comment
-export const COMMENT_ANSWER = gql`
-  mutation commentAnswer($answerId: ID!, $comment: String!) {
-    commentAnswer(answerId: $answerId, comment: $comment) {
+export const COMMENT_ANSWER_EDITION = gql`
+  mutation commentAnswerEdition(
+    $answerId: ID!
+    $answerEditionId: ID!
+    $comment: String!
+  ) {
+    commentAnswerEdition(
+      answerId: $answerId
+      answerEditionId: $answerEditionId
+      comment: $comment
+    ) {
       ...CommentFields
     }
   }
@@ -18,11 +26,13 @@ export const COMMENT_ANSWER = gql`
 export const EDIT_COMMENT = gql`
   mutation editComment(
     $answerId: ID!
+    $answerEditionId: ID!
     $commentId: ID!
     $commentValue: String!
   ) {
     editComment(
       answerId: $answerId
+      answerEditionId: $answerEditionId
       commentId: $commentId
       commentValue: $commentValue
     ) {
@@ -33,8 +43,16 @@ export const EDIT_COMMENT = gql`
 `;
 
 export const REMOVE_COMMENT = gql`
-  mutation removeComment($answerId: ID!, $commentId: ID!) {
-    removeComment(answerId: $answerId, commentId: $commentId) {
+  mutation removeComment(
+    $answerId: ID!
+    $answerEditionId: ID!
+    $commentId: ID!
+  ) {
+    removeComment(
+      answerId: $answerId
+      answerEditionId: $answerEditionId
+      commentId: $commentId
+    ) {
       ...CommentFields
     }
   }

@@ -33,10 +33,14 @@ const SearchView = ({
       >
         {({ loading, error, data }) => {
           if (loading) return <div> Loading..</div>;
-          if (error) return <div> {error.message} </div>;
+          if (error) {
+            console.log(error);
+            console.log("maika ti qkichka");
+            return <div> Problem occured. Work is being done to fix it </div>;
+          }
 
           const { users } = data!;
-          if (!users.length) {
+          if (!users || !users.length) {
             return <div> No matches found </div>;
           }
 

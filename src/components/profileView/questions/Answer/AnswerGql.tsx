@@ -20,7 +20,6 @@ import {
 interface AnswerGqlProps {
   children: (
     editAnswer: MutationFn<EditAnswerMutation, EditAnswerVariables>,
-    // removeAnswer: MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>,
     moveAnswerPosition: MutationFn<
       MoveAnswerPositionMutation,
       MoveAnswerPositionVariables
@@ -29,7 +28,7 @@ interface AnswerGqlProps {
       LikeAnswerEditionMutation,
       LikeAnswerEditionVariables
     >
-  ) => React.ReactChild;
+  ) => React.ReactElement;
 }
 
 const AnswerGql = (props: AnswerGqlProps) => {

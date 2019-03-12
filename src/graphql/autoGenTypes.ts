@@ -234,21 +234,23 @@ export type NotifsMarkSeenMutation = {
   notifsMarkSeen: Maybe<boolean>;
 };
 
-export type CommentAnswerVariables = {
+export type CommentAnswerEditionVariables = {
   answerId: string;
+  answerEditionId: string;
   comment: string;
 };
 
-export type CommentAnswerMutation = {
+export type CommentAnswerEditionMutation = {
   __typename?: "Mutation";
 
-  commentAnswer: CommentAnswerCommentAnswer;
+  commentAnswerEdition: CommentAnswerEditionCommentAnswerEdition;
 };
 
-export type CommentAnswerCommentAnswer = CommentFieldsFragment;
+export type CommentAnswerEditionCommentAnswerEdition = CommentFieldsFragment;
 
 export type EditCommentVariables = {
   answerId: string;
+  answerEditionId: string;
   commentId: string;
   commentValue: string;
 };
@@ -263,6 +265,7 @@ export type EditCommentEditComment = CommentFieldsFragment;
 
 export type RemoveCommentVariables = {
   answerId: string;
+  answerEditionId: string;
   commentId: string;
 };
 
@@ -325,7 +328,7 @@ export type RemoveAnswerRemoveAnswer = AnswerFieldsFragment;
 
 export type LikeAnswerEditionVariables = {
   answerId: string;
-  editionId: string;
+  answerEditionId: string;
   userLikes: number;
 };
 

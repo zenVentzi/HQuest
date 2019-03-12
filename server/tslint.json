@@ -11,11 +11,11 @@
     "object-literal-sort-keys": false,
     "no-console": false,
     "interface-name": false,
-    "unified-signatures": false
-    // "max-line-length": [
-    //   true,
-    //   { "limit": 120, "ignore-pattern": "^import |^export {(.*?)}" }
-    // ]
+    "unified-signatures": false,
+    "max-line-length": [
+      true,
+      { "limit": 80, "ignore-pattern": "^import |^export {(.*?)}" }
+    ]
   },
   "rulesDirectory": []
 }

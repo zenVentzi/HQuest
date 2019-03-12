@@ -40,12 +40,12 @@ export const REMOVE_ANSWER = gql`
 export const LIKE_ANSWER_EDITION = gql`
   mutation likeAnswerEdition(
     $answerId: ID!
-    $editionId: ID!
+    $answerEditionId: ID!
     $userLikes: Int!
   ) {
     likeAnswerEdition(
       answerId: $answerId
-      editionId: $editionId
+      answerEditionId: $answerEditionId
       userLikes: $userLikes
     ) {
       ...AnswerFields

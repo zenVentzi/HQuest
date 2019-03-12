@@ -8,108 +8,129 @@ const { ObjectId } = GooseTypes;
 class CommentService {
   constructor(private models: Models) {}
 
-  public async addCommentToAnswer(
+  public async commentAnswerEdition(
     performerId: string,
     comment: string,
-    answerId: string
-  ) {
+    answerId: string,
+    answerEditionId: string
+  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
     const performer = (await this.models.user.findById(
       performerId
     ))!.toObject();
 
-    const dbAnswer = (await this.models.answer
-      .findByIdAndUpdate(
-        answerId,
-        {
-          $push: {
-            comments: { _id: ObjectId(), value: comment, user: performer!._id }
-          }
-        },
-        { new: true }
-        // { new: true, fields: "comments -_id" }
-      )
-      .populate("comments.user"))!.toObject();
+    const answer = ((await this.models.answer.findById(
+      answerId
+    )) as unknown) as DbTypes.AnswerDoc<DbTypes.AnswerPopulatedFields.none>;
 
-    const dbComments = dbAnswer!.comments;
+    if (!answer) {
+      throw Error(`Could not find answer with id ${answerId}`);
+    }
 
-    const addedComment = dbComments![dbComments!.length - 1];
-    return addedComment;
+    const editionIndex = answer.editions.findIndex(ed =>
+      ed._id.equals(answerEditionId)
+    );
+
+    let editionComments = answer.editions[editionIndex].comments;
+    const addedComment: DbTypes.Comment<DbTypes.CommentPopulatedFields.none> = {
+      _id: ObjectId(),
+      value: comment,
+      user: performer!._id
+    };
+
+    if (!editionComments || !editionComments.length) {
+      editionComments = [addedComment];
+      answer.editions[editionIndex].comments = editionComments;
+    } else {
+      editionComments.push({
+        _id: ObjectId(),
+        value: comment,
+        user: performer!._id
+      });
+    }
+
+    await answer.save();
+
+    const res: DbTypes.Comment = {
+      _id: addedComment._id,
+      value: addedComment.value,
+      user: performer
+    };
+
+    return res;
   }
 
-  // public async editComment({
-  //   answerId,
-  //   commentId,
-  //   commentValue,
-  //   context
-  // }: {
-  //   answerId: string;
-  //   commentId: string;
-  //   commentValue: string;
-  //   context: ApolloContext;
-  // }) {
-  //   const { models } = context;
-
-  //   const answerDoc = await models.answer
-  //     .findById(answerId)
-  //     .populate("comments.user");
-
-  //   if (answerDoc) {
-  //     answerDoc.comments!.forEach(c => (c.value = "fdf"));
-  //     await answerDoc.save();
-  //     return answerDoc.comments!.find(c => c._id.toHexString() === commentId);
-  //   }
-
-  //   throw Error("Failed to edit comment");
-  // }
   public async editComment(
     answerId: string,
+    answerEditionId: string,
     commentId: string,
     commentValue: string
-  ) {
-    const { comments: oldComments } = (await this.models.answer
+  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+    const answer = await this.models.answer
       .findById(answerId)
-      .populate("user"))!.toObject();
-    const newComments: DbTypes.Comment[] = [];
-    let editedComment: DbTypes.Comment | undefined;
+      .populate("editions.comments.user");
+    if (!answer) {
+      throw Error(`Could not find answer with id ${answerId}`);
+    }
+    const edition = answer.editions.find(ed => ed._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(`Could not find edition with id ${answerEditionId}`);
+    }
 
-    oldComments!.forEach(oldC => {
-      const newComment = oldC;
+    let editedComment:
+      | DbTypes.Comment<DbTypes.CommentPopulatedFields.user>
+      | undefined;
 
-      if (oldC._id.toString() === commentId) {
-        newComment.value = commentValue;
-        editedComment = newComment;
+    if (!edition.comments || !edition.comments.length) {
+      throw Error(`Edition with id ${answerEditionId} , has no comments`);
+    } else {
+      edition.comments.forEach(comment => {
+        if (comment._id.equals(commentId)) {
+          comment.value = commentValue;
+          editedComment = comment;
+        }
+      });
+      if (!editedComment) {
+        throw Error(`Could not find comment with id ${commentId}`);
       }
-
-      newComments.push(newComment);
-    });
-
-    await this.models.answer.findByIdAndUpdate(answerId, {
-      $set: { comments: newComments }
-    });
-
-    // console.log(editedComment);
-
-    return editedComment;
+      await answer.save();
+      return editedComment;
+    }
   }
 
   public async removeComment(
     answerId: string,
+    answerEditionId: string,
     commentId: string
-  ): Promise<DbTypes.Comment> {
-    const answer = (await this.models.answer
-      .findByIdAndUpdate(answerId, {
-        $pull: {
-          comments: { _id: ObjectId(commentId) }
-        }
-      })
-      .populate("comments.user"))!.toObject();
+  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+    const answer = await this.models.answer
+      .findById(answerId)
+      .populate("editions.comments.user");
 
-    const { comments } = answer!;
-
-    const removedComment = comments!.find(
-      com => com._id.toString() === commentId
+    if (!answer) {
+      throw Error(`Could not find answer with id ${answerId}`);
+    }
+    const edition = answer.editions.find(ed => ed._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(
+        `Could not find answer edition.
+         AnswerId: ${answerId} EditionId: ${answerEditionId}`
+      );
+    }
+    if (!edition.comments || !edition.comments.length) {
+      throw Error(`Edition has no comments. EditionId: ${answerEditionId}`);
+    }
+    const deletedComment = edition.comments.find(com =>
+      com._id.equals(commentId)
     );
-    return removedComment!;
+    if (!deletedComment) {
+      throw Error(`Could not find comment to delete. CommentId: ${commentId}`);
+    }
+    const updatedComments = edition.comments.filter(
+      com => !com._id.equals(commentId)
+    );
+    edition.comments = updatedComments;
+    await answer.save();
+    return deletedComment;
   }
 }
 

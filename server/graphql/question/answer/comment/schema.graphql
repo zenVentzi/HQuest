@@ -5,7 +5,16 @@ type Comment {
 }
 
 type Mutation {
-  commentAnswer(answerId: ID!, comment: String!): Comment!
-  editComment(answerId: ID!, commentId: ID!, commentValue: String!): Comment!
-  removeComment(answerId: ID!, commentId: ID!): Comment!
+  commentAnswerEdition(
+    answerId: ID!
+    answerEditionId: ID!
+    comment: String!
+  ): Comment!
+  editComment(
+    answerId: ID!
+    answerEditionId: ID!
+    commentId: ID!
+    commentValue: String!
+  ): Comment!
+  removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
 }

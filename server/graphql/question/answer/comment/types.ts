@@ -8,24 +8,32 @@ export interface Comment {
   value: string;
 }
 
-interface CommentAnswerArgs {
+interface CommentAnswerEditionArgs {
   answerId: string;
+  answerEditionId: string;
   comment: string;
 }
 
 interface EditCommentArgs {
   answerId: string;
+  answerEditionId: string;
   commentId: string;
   commentValue: string;
 }
 
 interface RemoveCommentArgs {
   answerId: string;
+  answerEditionId: string;
   commentId: string;
 }
 
 export interface Mutation {
-  commentAnswer: Resolver<{}, CommentAnswerArgs, ApolloContext, Comment>;
+  commentAnswerEdition: Resolver<
+    {},
+    CommentAnswerEditionArgs,
+    ApolloContext,
+    Comment
+  >;
   editComment: Resolver<{}, EditCommentArgs, ApolloContext, Comment>;
   removeComment: Resolver<{}, RemoveCommentArgs, ApolloContext, Comment>;
 }

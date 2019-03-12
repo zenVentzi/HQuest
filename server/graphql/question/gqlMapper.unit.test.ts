@@ -35,9 +35,9 @@ test("getQuestion() should return question with answer", () => {
 
   const dbAnswer = new models.answer({
     position: 1,
-    value: "ass",
     questionId: dbQuestion._id,
-    userId: ObjectId()
+    userId: ObjectId(),
+    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as dbTypes.Answer).toObject();
 
   const expectedQ: gqlTypes.Question = {
@@ -49,12 +49,18 @@ test("getQuestion() should return question with answer", () => {
   const expectedA: gqlTypes.Answer = {
     id: dbAnswer._id.toString(),
     position: dbAnswer.position,
-    value: dbAnswer.value,
+    // value: dbAnswer.value,
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
-    comments: null,
-    editions: null,
-    likes: null
+    editions: [
+      {
+        id: dbAnswer.editions[0]._id.toHexString(),
+        date: dbAnswer.editions[0].date,
+        value: dbAnswer.editions[0].value,
+        comments: null,
+        likes: null
+      }
+    ]
   };
 
   expectedQ.answer = expectedA;

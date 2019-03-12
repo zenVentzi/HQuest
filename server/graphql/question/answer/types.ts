@@ -49,9 +49,9 @@ interface RemoveAnswerArgs {
   answerId: string;
 }
 
-interface LikeAnswerArgs {
+interface LikeAnswerEditionArgs {
   answerId: string;
-  editionId: string;
+  answerEditionId: string;
   userLikes: number;
 }
 
@@ -64,7 +64,12 @@ export interface Mutation {
   editAnswer: Resolver<{}, EditAnswerArgs, ApolloContext, Answer>;
   addAnswer: Resolver<{}, AddAnswerArgs, ApolloContext, Answer>;
   removeAnswer: Resolver<{}, RemoveAnswerArgs, ApolloContext, Answer>;
-  likeAnswerEdition: Resolver<{}, LikeAnswerArgs, ApolloContext, AnswerEdition>;
+  likeAnswerEdition: Resolver<
+    {},
+    LikeAnswerEditionArgs,
+    ApolloContext,
+    AnswerEdition
+  >;
   moveAnswerPosition: Resolver<
     {},
     MoveAnswerPositionArgs,

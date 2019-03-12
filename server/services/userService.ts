@@ -40,7 +40,9 @@ class UserService {
     if (!userDoc) {
       return null;
     }
-    const { followers } = userDoc.toObject<"followers">();
+    const { followers } = userDoc.toObject<
+      DbTypes.UserPopulatedFields.followers
+    >();
     return followers && followers.length ? followers : null;
   }
 
@@ -51,7 +53,9 @@ class UserService {
     if (!userDoc) {
       return null;
     }
-    const { following } = userDoc.toObject<"following">();
+    const { following } = userDoc.toObject<
+      DbTypes.UserPopulatedFields.following
+    >();
     return following && following.length ? following : null;
   }
 
@@ -75,9 +79,7 @@ class UserService {
     return editedUser.toObject();
   }
 
-  public async getUser(
-    id: string
-  ): Promise<DbTypes.User<"noPopulatedFields"> | null> {
+  public async getUser(id: string): Promise<DbTypes.User | null> {
     const user = await this.models.user.findById(id);
     return user ? user.toObject() : null;
   }
