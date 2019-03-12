@@ -6,8 +6,8 @@ import {
   REMOVE_COMMENT
 } from "GqlClient/question/answer/comment/mutations";
 import {
-  CommentAnswerMutation,
-  CommentAnswerVariables,
+  CommentAnswerEditionMutation,
+  CommentAnswerEditionVariables,
   EditCommentMutation,
   EditCommentVariables,
   RemoveCommentMutation,
@@ -16,7 +16,10 @@ import {
 
 interface CommentsGqlProps {
   children: (
-    commentAnswer: MutationFn<CommentAnswerMutation, CommentAnswerVariables>,
+    commentAnswer: MutationFn<
+      CommentAnswerEditionMutation,
+      CommentAnswerEditionVariables
+    >,
     editComment: MutationFn<EditCommentMutation, EditCommentVariables>,
     removeComment: MutationFn<RemoveCommentMutation, RemoveCommentVariables>
   ) => ReactNode;
@@ -26,7 +29,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
   const { children } = props;
 
   return (
-    <Mutation<CommentAnswerMutation, CommentAnswerVariables>
+    <Mutation<CommentAnswerEditionMutation, CommentAnswerEditionVariables>
       mutation={COMMENT_ANSWER_EDITION}
     >
       {commentAnswer => {

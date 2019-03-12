@@ -54,6 +54,7 @@ const Editions = (props: EditionsProps) => {
         .map(ed => (
           <Edition
             key={ed.id}
+            showComments={pickedEditions.length === 1}
             answerId={props.answerId}
             edition={ed}
             likeEdition={props.likeEdition}

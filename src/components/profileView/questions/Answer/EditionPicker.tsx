@@ -6,6 +6,7 @@ const StyledSelect = styled.select`
   background: black;
   color: white;
   border: 2px solid white;
+  text-align: center;
 `;
 
 interface EditionPickerProps {
