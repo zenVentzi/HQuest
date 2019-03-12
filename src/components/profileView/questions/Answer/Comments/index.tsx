@@ -9,8 +9,8 @@ import Panel from "../Panel";
 import { MutationFn } from "react-apollo";
 import {
   CommentFieldsFragment,
-  CommentAnswerMutation,
-  CommentAnswerVariables,
+  CommentAnswerEditionMutation,
+  CommentAnswerEditionVariables,
   EditCommentVariables,
   EditCommentMutation,
   RemoveCommentVariables,
@@ -35,6 +35,7 @@ const ErrorText = styled.div`
 interface CommentsProps {
   comments: AnswerFieldsComments[] | null;
   answerId: string;
+  answerEditionId: string;
   onAddComment: () => void;
   // onEditComment: () => void;
   onRemoveComment: () => void;
@@ -86,22 +87,23 @@ const Comments = (props: CommentsProps) => {
 
   const onSubmitForm = (
     commentAnswerMutation: MutationFn<
-      CommentAnswerMutation,
-      CommentAnswerVariables
+      CommentAnswerEditionMutation,
+      CommentAnswerEditionVariables
     >
   ) => async (values: any, { setSubmitting, resetForm }: any) => {
     // console.log(commentAnswerMutation);
     const { answerId, onAddComment } = props;
-    const variables = {
+    const variables: CommentAnswerEditionVariables = {
       answerId,
+      answerEditionId: props.answerEditionId,
       comment: values.comment
     };
     const res = await commentAnswerMutation({ variables });
-    if (!res) {
+    if (!res || !res.data) {
       throw Error("Comment answer mutation failed");
     }
 
-    const newComment = res.data!.commentAnswer;
+    const newComment = res.data.commentAnswerEdition;
     updateComments(newComment);
     toast.success("Comment added!");
     onAddComment();
@@ -113,7 +115,12 @@ const Comments = (props: CommentsProps) => {
     editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>
   ) => async (commentId: string, commentValue: string) => {
     const { answerId } = props;
-    const variables = { answerId, commentId, commentValue };
+    const variables: EditCommentVariables = {
+      answerId,
+      answerEditionId: props.answerEditionId,
+      commentId,
+      commentValue
+    };
     const res = await editCommentMutation({ variables });
     if (!res) {
       throw Error("Failed edit comment mutation");
@@ -131,7 +138,11 @@ const Comments = (props: CommentsProps) => {
     >
   ) => async (commentId: string) => {
     const { answerId, onRemoveComment: onRemoveCommentProp } = props;
-    const variables = { answerId, commentId };
+    const variables: RemoveCommentVariables = {
+      answerId,
+      answerEditionId: props.answerEditionId,
+      commentId
+    };
     const res = await removeCommentMutation({ variables });
     if (!res) {
       throw Error("removeCommentMutation failed");

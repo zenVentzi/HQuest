@@ -34,6 +34,6 @@ type Mutation {
     answerId: ID!
     answerEditionId: ID!
     userLikes: Int!
-  ): Answer!
+  ): AnswerEdition!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
 }

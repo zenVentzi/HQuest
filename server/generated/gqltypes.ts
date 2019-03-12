@@ -237,7 +237,7 @@ export interface Mutation {
 
   removeAnswer: Answer;
 
-  likeAnswerEdition: Answer;
+  likeAnswerEdition: AnswerEdition;
 
   moveAnswerPosition?: Maybe<number>;
 
@@ -1033,7 +1033,11 @@ export namespace MutationResolvers {
 
     removeAnswer?: RemoveAnswerResolver<Answer, TypeParent, Context>;
 
-    likeAnswerEdition?: LikeAnswerEditionResolver<Answer, TypeParent, Context>;
+    likeAnswerEdition?: LikeAnswerEditionResolver<
+      AnswerEdition,
+      TypeParent,
+      Context
+    >;
 
     moveAnswerPosition?: MoveAnswerPositionResolver<
       Maybe<number>,
@@ -1134,7 +1138,7 @@ export namespace MutationResolvers {
   }
 
   export type LikeAnswerEditionResolver<
-    R = Answer,
+    R = AnswerEdition,
     Parent = {},
     Context = ApolloContext
   > = Resolver<R, Parent, Context, LikeAnswerEditionArgs>;

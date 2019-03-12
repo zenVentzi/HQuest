@@ -41,6 +41,7 @@ const Viewer = styled.div`
 interface EditionProps {
   edition: AnswerFieldsEditions;
   scrollToComment?: string;
+  showComments?: boolean;
   answerId: string;
   likeEdition: MutationFn<
     LikeAnswerEditionMutation,
@@ -71,7 +72,10 @@ const Edition = (props: EditionProps) => {
 
     return user ? user.numOfLikes : 0;
   });
-  const [showComments, setShowComments] = useState(true);
+  const [showComments, setShowComments] = useState(props.showComments);
+  useEffect(() => {
+    setShowComments(props.showComments);
+  }, [props.showComments]);
   const [showLikes, setShowLikes] = useState(false);
   // useEffect(() => {
   //   if (props.showAnswerEditor || props.showPositionEditor) {
@@ -99,7 +103,7 @@ const Edition = (props: EditionProps) => {
     /* because the user can click multiple times in a row, creating too many sequential requests to the server */
     const variables: LikeAnswerEditionVariables = {
       answerId: props.answerId,
-      editionId: props.edition.id,
+      answerEditionId: props.edition.id,
       userLikes: newUserLikes
     };
     await props.likeEdition({ variables });
@@ -153,6 +157,7 @@ const Edition = (props: EditionProps) => {
         <Comments
           comments={props.edition.comments}
           answerId={props.answerId}
+          answerEditionId={props.edition.id}
           scrollToComment={props.scrollToComment}
           onAddComment={() => {
             setNumOfComments(numOfComments + 1);

@@ -24,7 +24,7 @@ type Mutation {
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
   removeAnswer(answerId: ID!): Answer!
-  likeAnswerEdition(answerId: ID!, answerEditionId: ID!, userLikes: Int!): Answer!
+  likeAnswerEdition(answerId: ID!, answerEditionId: ID!, userLikes: Int!): AnswerEdition!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
   addQuestions(questions: [InputQuestion!]): Boolean
   # removeQuestion(questionId: ID!): Question!
