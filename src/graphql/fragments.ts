@@ -29,6 +29,28 @@ export const CommentFields = gql`
   ${UserFields}
 `;
 
+export const EditionFields = gql`
+  fragment EditionFields on AnswerEdition {
+    id
+    date
+    value
+    comments {
+      ...CommentFields
+    }
+    likes {
+      total
+      likers {
+        user {
+          ...UserFields
+        }
+        numOfLikes
+      }
+    }
+  }
+  ${UserFields}
+  ${CommentFields}
+`;
+
 export const AnswerFields = gql`
   fragment AnswerFields on Answer {
     id
@@ -36,25 +58,10 @@ export const AnswerFields = gql`
     userId
     questionId
     editions {
-      id
-      date
-      value
-      comments {
-        ...CommentFields
-      }
-      likes {
-        total
-        likers {
-          user {
-            ...UserFields
-          }
-          numOfLikes
-        }
-      }
+      ...EditionFields
     }
   }
-  ${UserFields}
-  ${CommentFields}
+  ${EditionFields}
 `;
 
 export const QuestionFields = gql`
