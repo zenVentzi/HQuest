@@ -12,20 +12,18 @@ import {
   QuestionsVariables,
   QuestionConnectionFieldsFragment
 } from "GqlClient/autoGenTypes";
+import { render } from "react-dom";
+import { NetworkStatus } from "apollo-client";
 
 interface QuestionsContainerProps {
   user: UserUser;
 }
 
 const QuestionsContainer = (props: QuestionsContainerProps) => {
-  const isFetching = useRef(false);
+  const networkStatus = useRef<NetworkStatus>();
   const hasNextPage = useRef(false);
   const fetchMoreFn = useRef<any>(undefined);
   const fetchAfter = useRef<string | null>();
-  const isFetchingInitial = useRef(false); // or true?
-  const isFetchingMore = useRef(false);
-  const isRefetching = useRef(false);
-  // const firstRenderResetScroll = useRef(true);
 
   const [showAnswered, setShowAnswered] = useState(true);
   const [selectedTags, setSelectedTags] = useState<string[]>();
@@ -37,7 +35,10 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
         window.innerHeight + window.pageYOffset - bottomMarginPx;
       const isCloseToBottom = offsetBottom >= document.body.scrollHeight;
       if (isCloseToBottom) {
-        if (isFetching.current || !hasNextPage.current) {
+        if (
+          networkStatus.current !== NetworkStatus.ready ||
+          !hasNextPage.current
+        ) {
           return;
         }
 
@@ -83,9 +84,6 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     questions: QuestionConnectionFieldsFragment | null,
     refetch: any
   ) => {
-    if (isFetchingInitial.current) {
-      return <div>Loading questions...</div>;
-    }
     // TODO fix no unanswered questions blink on first load
     if (!questions) {
       return (
@@ -96,6 +94,10 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     const questionNodes = questions.edges
       ? questions.edges.map(edge => edge.node)
       : [];
+
+    if (!showAnswered) {
+      console.log(questionNodes);
+    }
 
     return showAnswered ? (
       <AnsweredQuestions
@@ -129,11 +131,11 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
         variables={queryVars}
         fetchPolicy="network-only" // play with when not using HOT RELOAD
         // fetchPolicy="cache-and-network"
-        notifyOnNetworkStatusChange
+        notifyOnNetworkStatusChange={true}
       >
-        {({ error, data, fetchMore, refetch, networkStatus }) => {
+        {({ error, data, fetchMore, refetch, networkStatus: ns }) => {
           if (error) {
-            // console.log(error);
+            console.log(error);
             return (
               <div>
                 {`Could not find questions. Work is being done fixing this issue`}
@@ -141,15 +143,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             );
           }
 
-          isFetchingInitial.current = networkStatus === 1;
-          isFetchingMore.current = networkStatus === 3;
-          isRefetching.current = networkStatus === 4;
-
-          isFetching.current =
-            isFetchingInitial.current ||
-            isFetchingMore.current ||
-            isRefetching.current;
-
+          networkStatus.current = ns;
           const { questions } = data!;
 
           if (questions) {
@@ -158,15 +152,18 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             fetchMoreFn.current = fetchMore;
           }
 
-          return (
-            <>
-              {isFetchingInitial.current || isFetchingMore.current ? (
-                <div>loading questions..</div>
-              ) : (
-                renderQuestions(questions, refetch)
-              )}
-            </>
-          );
+          if (ns === NetworkStatus.ready) {
+            return renderQuestions(questions, refetch);
+          } else if (ns === NetworkStatus.fetchMore) {
+            return (
+              <>
+                {renderQuestions(questions, refetch)}
+                <div>Loading more questions...</div>
+              </>
+            );
+          }
+
+          return <div>Loading questions...</div>;
         }}
       </Query>
     </>
