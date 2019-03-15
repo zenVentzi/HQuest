@@ -39,9 +39,9 @@ User<FollowT extends User[] | ObjectId[] = ObjectId[]> {
 */
 
 export enum UserPopulatedFields {
-  followers,
-  following,
-  none
+  followers = "followers",
+  following = "following",
+  none = "none"
 }
 
 export interface User<
@@ -79,8 +79,8 @@ export interface UserDoc extends User, Document {
 }
 
 export enum CommentPopulatedFields {
-  user,
-  none
+  user = "editions.comments.user",
+  none = "none"
 }
 
 export interface Comment<
