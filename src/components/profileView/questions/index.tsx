@@ -95,10 +95,6 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
       ? questions.edges.map(edge => edge.node)
       : [];
 
-    if (!showAnswered) {
-      console.log(questionNodes);
-    }
-
     return showAnswered ? (
       <AnsweredQuestions
         isPersonal={!!user.me}
@@ -150,7 +146,6 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             hasNextPage.current = questions.pageInfo.hasNextPage;
             fetchAfter.current = questions.pageInfo.endCursor;
             fetchMoreFn.current = fetchMore;
-            console.log(questions);
           }
 
           if (ns === NetworkStatus.ready) {
