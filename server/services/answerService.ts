@@ -14,7 +14,7 @@ class AnswerService {
         userId: ObjectId(userId),
         $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }]
       })
-      .populate("comments.user")
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
       .sort({ position: 1 })
       .lean()) as DbTypes.Answer[];
 
@@ -34,7 +34,7 @@ class AnswerService {
         userId: userIdObj,
         questionId: questionIdObj
       })
-      .populate("comments.user");
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
 
     return answer!.toObject();
   }
@@ -42,7 +42,7 @@ class AnswerService {
   public async getAnswerById(answerId: string): Promise<DbTypes.Answer> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate("comments.user");
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
     return answer!.toObject();
   }
 
@@ -53,7 +53,7 @@ class AnswerService {
   }): Promise<DbTypes.Answer[]> {
     const answers = (await this.models.answer
       .find({ _id: { $in: answerIds } })
-      .populate("comments.user")
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
       .lean()) as DbTypes.Answer[];
 
     return answers;
@@ -74,7 +74,7 @@ class AnswerService {
         },
         { new: true, upsert: true }
       )
-      .populate("comments.user");
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
 
     return updatedAnswer.toObject();
   }
@@ -126,7 +126,9 @@ class AnswerService {
         },
         { new: true, upsert: true }
       )
-      .populate("comments.user")).toObject();
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_user
+      )).toObject();
 
     await this.models.answer.updateMany(
       { position: { $gt: removedAnswer.position } },
@@ -145,7 +147,7 @@ class AnswerService {
   ): Promise<DbTypes.Edition> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate("editions.comments.user");
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
     if (!answer) {
       throw Error(`Couldn't find answer with id ${answerId}`);
     }
