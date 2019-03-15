@@ -36,7 +36,7 @@ class UserService {
   public async getFollowers(userId: string): Promise<DbTypes.User[] | null> {
     const userDoc = await this.models.user
       .findById(userId)
-      .populate("followers");
+      .populate(DbTypes.UserPopulatedFields.followers);
     if (!userDoc) {
       return null;
     }
@@ -49,7 +49,7 @@ class UserService {
   public async getFollowing(userId: string): Promise<DbTypes.User[] | null> {
     const userDoc = await this.models.user
       .findById(userId)
-      .populate("following");
+      .populate(DbTypes.UserPopulatedFields.following);
     if (!userDoc) {
       return null;
     }
