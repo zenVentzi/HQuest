@@ -48,8 +48,6 @@ const ProfileView = ({ match }: ProfileViewProps) => {
             return <div>User not found</div>;
           }
 
-          // console.log(user);
-
           return (
             <Fragment>
               <Switch>

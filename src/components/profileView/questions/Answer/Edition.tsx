@@ -89,38 +89,36 @@ const Edition = (props: EditionProps) => {
   });
 
   const onClickLike = async () => {
-    if (userLikes === 20) {
+    if (userLikes <= 20) {
+      const newUserLikes = userLikes + 1;
+      const newTotalLikes = totalLikes + 1;
+      setUserLikes(newUserLikes);
+      setTotalLikes(newTotalLikes);
+      /* user can click multiple times in a row, creating too many sequential requests to the server */
+      await debounce(500);
+      const variables: LikeAnswerEditionVariables = {
+        answerId: props.answerId,
+        answerEditionId: props.edition.id,
+        userLikes: newUserLikes
+      };
+      await props.likeEdition({ variables });
+    } else {
       toast.error("Max 20 likes per edition");
-      return;
     }
-
-    const newUserLikes = userLikes + 1;
-    const newTotalLikes = totalLikes + 1;
-    setUserLikes(newUserLikes);
-    setTotalLikes(newTotalLikes);
-    cancelPrevWait();
-    await wait(500);
-    /* because the user can click multiple times in a row, creating too many sequential requests to the server */
-    const variables: LikeAnswerEditionVariables = {
-      answerId: props.answerId,
-      answerEditionId: props.edition.id,
-      userLikes: newUserLikes
-    };
-    await props.likeEdition({ variables });
   };
 
-  const wait = async (milliseconds: number) => {
+  const debounce = async (milliseconds: number) => {
+    const cancelPrev = () => {
+      if (timeoutIndex.current) {
+        clearTimeout(timeoutIndex.current);
+        timeoutIndex.current = undefined;
+      }
+    };
+    cancelPrev();
     return new Promise(resolve => {
       timeoutIndex.current = setTimeout(resolve, milliseconds);
     });
     // return new Promise(resolve => setTimeout(resolve, milliseconds));
-  };
-
-  const cancelPrevWait = () => {
-    if (timeoutIndex) {
-      clearTimeout(timeoutIndex.current);
-      timeoutIndex.current = undefined;
-    }
   };
 
   const toggleComments = () => {
