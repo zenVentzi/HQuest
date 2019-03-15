@@ -150,6 +150,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
             hasNextPage.current = questions.pageInfo.hasNextPage;
             fetchAfter.current = questions.pageInfo.endCursor;
             fetchMoreFn.current = fetchMore;
+            console.log(questions);
           }
 
           if (ns === NetworkStatus.ready) {

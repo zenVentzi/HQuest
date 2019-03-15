@@ -139,8 +139,8 @@ export interface Likes {
 }
 
 export enum AnswerPopulatedFields {
-  editions_comments_user,
-  none
+  editions_comments_user = "editions.comments.user",
+  none = "none"
 }
 
 export interface Answer<
