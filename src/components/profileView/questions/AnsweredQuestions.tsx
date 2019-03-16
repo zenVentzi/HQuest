@@ -2,6 +2,7 @@ import React, { Fragment, CSSProperties } from "react";
 import styled from "styled-components";
 import AnsweredQuestion from "./AnsweredQuestion";
 import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
+import { withPropsChecker } from "Utils";
 
 const Empty = styled.div`
   text-align: center;
@@ -43,4 +44,5 @@ const AnsweredQuestions = ({
   );
 };
 
+// export default AnsweredQuestions;
 export default AnsweredQuestions;

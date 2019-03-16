@@ -6,7 +6,7 @@ import {
 } from "GqlClient/autoGenTypes";
 import { MutationFn } from "react-apollo";
 import { toast } from "react-toastify";
-import { getLoggedUserId } from "Utils";
+import { getLoggedUserId, withPropsChecker } from "Utils";
 import EditionPicker from "./EditionPicker";
 import Edition from "./Edition";
 
@@ -21,21 +21,15 @@ interface EditionsProps {
 
 const Editions = (props: EditionsProps) => {
   const latestEdition = props.editions[props.editions.length - 1];
-  const [pickedEditions, setPickedEditions] = useState<AnswerFieldsEditions[]>([
-    latestEdition
-  ]);
+  const [pickedEditionId, setPickedEditionId] = useState<string | null>(
+    latestEdition.id
+  );
 
-  const onPickEdition = (all: boolean, pickedEditionId?: string) => {
+  const onPickEdition = (all: boolean, pickedEdId?: string) => {
     if (all) {
-      setPickedEditions(props.editions);
+      setPickedEditionId(null);
     } else {
-      const pickedEdition = props.editions.find(
-        ed => ed.id === pickedEditionId
-      );
-      if (!pickedEdition) {
-        throw Error(`Couldn't find edition with id ${pickedEditionId}`);
-      }
-      setPickedEditions([pickedEdition]);
+      setPickedEditionId(pickedEdId!);
     }
   };
 
@@ -43,25 +37,32 @@ const Editions = (props: EditionsProps) => {
     <>
       <EditionPicker
         allEditions={props.editions}
-        pickedEditionId={
-          pickedEditions.length === 1 ? pickedEditions[0].id : undefined
-        }
+        pickedEditionId={pickedEditionId}
         onPickEdition={onPickEdition}
       />
-      {pickedEditions
-        .slice()
-        .reverse()
-        .map(ed => (
-          <Edition
-            key={ed.id}
-            showComments={pickedEditions.length === 1}
-            answerId={props.answerId}
-            edition={ed}
-            likeEdition={props.likeEdition}
-          />
-        ))}
+      {pickedEditionId ? (
+        <Edition
+          showComments={true}
+          answerId={props.answerId}
+          edition={props.editions.find(ed => ed.id === pickedEditionId)}
+          likeEdition={props.likeEdition}
+        />
+      ) : (
+        props.editions
+          .slice()
+          .reverse()
+          .map(ed => (
+            <Edition
+              key={ed.id}
+              answerId={props.answerId}
+              edition={ed}
+              likeEdition={props.likeEdition}
+            />
+          ))
+      )}
     </>
   );
 };
 
 export default Editions;
+// export default withPropsChecker(Editions, "Editions");
