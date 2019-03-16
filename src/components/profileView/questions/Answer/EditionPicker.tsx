@@ -11,7 +11,7 @@ const StyledSelect = styled.select`
 
 interface EditionPickerProps {
   allEditions: AnswerFieldsEditions[];
-  pickedEditionId?: string;
+  pickedEditionId: string | null;
   onPickEdition: (all: boolean, pickedEditionId?: string) => void;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import { useAsyncEffect } from "use-async-effect";
 import {
   QuestionFieldsAnswer,
@@ -15,6 +15,7 @@ import AnswerEditor from "./AnswerEditor";
 import AnswerGql from "./AnswerGql";
 import PositionEditor from "./PositionEditor";
 import Editions from "./Editions";
+import { deepEqual, withPropsChecker } from "Utils";
 
 interface AnswerProps {
   showAnswerEditor: boolean;
@@ -87,6 +88,8 @@ const Answer = (props: AnswerProps) => {
     props.onClosePositionEditor();
   };
 
+  // console.log(props.answer.editions);
+
   return (
     <AnswerGql>
       {(editAnswer, moveAnswerPosition, likeAnswerEdition) => {
@@ -120,4 +123,6 @@ const Answer = (props: AnswerProps) => {
   );
 };
 
-export default Answer;
+// export default withPropsChecker(memo(Answer, deepEqual), "Answer");
+export default memo(Answer, deepEqual);
+// export default Answer;

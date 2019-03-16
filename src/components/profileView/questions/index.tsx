@@ -125,8 +125,8 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
       <Query<QuestionsQuery, QuestionsVariables>
         query={GET_QUESTIONS}
         variables={queryVars}
-        fetchPolicy="network-only" // play with when not using HOT RELOAD
-        // fetchPolicy="cache-and-network"
+        // fetchPolicy="network-only" // play with when not using HOT RELOAD
+        fetchPolicy="cache-and-network"
         notifyOnNetworkStatusChange={true}
       >
         {({ error, data, fetchMore, refetch, networkStatus: ns }) => {

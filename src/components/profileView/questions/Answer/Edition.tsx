@@ -10,7 +10,7 @@ import {
   LikeAnswerEditionMutation,
   LikeAnswerEditionVariables
 } from "GqlClient/autoGenTypes";
-import { getLoggedUserId } from "Utils";
+import { getLoggedUserId, withPropsChecker } from "Utils";
 import { MutationFn } from "react-apollo";
 import { toast } from "react-toastify";
 import Comments from "./Comments";
@@ -89,7 +89,8 @@ const Edition = (props: EditionProps) => {
   });
 
   const onClickLike = async () => {
-    if (userLikes <= 20) {
+    if (userLikes <= 200) {
+      // FIXME 200
       const newUserLikes = userLikes + 1;
       const newTotalLikes = totalLikes + 1;
       setUserLikes(newUserLikes);
@@ -137,6 +138,8 @@ const Edition = (props: EditionProps) => {
   const numOfCommentsText =
     numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
 
+  // console.log(props.edition.likes);
+
   return (
     <>
       <Viewer>- {answerWithParagraphs}</Viewer>
@@ -171,3 +174,4 @@ const Edition = (props: EditionProps) => {
 };
 
 export default Edition;
+// export default withPropsChecker(Edition, "Edition");

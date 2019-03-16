@@ -1,4 +1,8 @@
 import { AUTH_TOKEN, USER_ID } from "./constants";
+import arePropsEqual from "react-fast-compare";
+import { Component, useRef, useEffect } from "react";
+import React from "react";
+import deep_diff from "deep-diff";
 
 function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN);
@@ -52,6 +56,30 @@ const inverseTheme = (theme: any) => {
   return { ...theme, backgroundColor, foregroundColor };
 };
 
+const deepEqual = (prevProps: any, nextProps: any): boolean => {
+  // the negation operator is because we use Ract.memo
+  // and React.memo returns the opposite of shouldComponentUpdate
+  return arePropsEqual(prevProps, nextProps);
+};
+
+/**
+ * Logs what props changed from previous render
+ */
+const withPropsChecker = (WrappedComponent, componentName: string) => {
+  return props => {
+    const prevProps = useRef(props);
+    useEffect(() => {
+      const diff = deep_diff.diff(prevProps.current, props);
+      if (diff) {
+        console.log(`Component ${componentName} diff:`);
+        console.log(diff);
+      }
+      prevProps.current = props;
+    });
+    return <WrappedComponent {...props} />;
+  };
+};
+
 export {
   getAuthToken,
   getLoggedUserId,
@@ -60,5 +88,7 @@ export {
   loginEvent,
   overrideTheme,
   inverseColor,
-  inverseTheme
+  inverseTheme,
+  deepEqual,
+  withPropsChecker
 };
