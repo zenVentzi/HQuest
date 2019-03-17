@@ -1,14 +1,12 @@
 Todo:
 - show loading animation
 - mobile first
-- rename FloatingWindow to Modal
-- study the GitHunt example
+- go through the GitHunt example
 
 Fix:
+- Likes and comments not updating after switching editions
+- Search by tag
 - Unnecessary re-renders on hover questions
-- 401 Unauthorized
-- reduce answer text font size
-- on first edit, edition is null if no refresh
 - Modal to appear on top of all
 
 react-router-page-transition
