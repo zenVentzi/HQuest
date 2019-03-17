@@ -101,19 +101,18 @@ const Answer = (props: AnswerProps) => {
                 onClickDoesNotApply={() => {}}
                 onClickSave={onSaveAnswer(editAnswer)}
               />
-            ) : (
-              <Editions
-                editions={props.answer.editions}
-                answerId={props.answer.id}
-                likeEdition={likeAnswerEdition}
-              />
-            )}
-            {props.showPositionEditor && (
+            ) : props.showPositionEditor ? (
               <PositionEditor
                 position={props.answer!.position}
                 maxPosition={props.totalQuestionsCount}
                 onClickMove={onMovePosition(moveAnswerPosition)}
                 onClickClose={props.onClosePositionEditor}
+              />
+            ) : (
+              <Editions
+                editions={props.answer.editions}
+                answerId={props.answer.id}
+                likeEdition={likeAnswerEdition}
               />
             )}
           </>
