@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Comment, { CommentProps, CommentRef } from "./Comment";
 import CommentsGql from "./CommentsGql";
 import Panel from "../Panel";
+import Floater from "react-floater";
 import { MutationFn } from "react-apollo";
 import {
   CommentFieldsFragment,
@@ -15,19 +16,29 @@ import {
   EditCommentMutation,
   RemoveCommentVariables,
   RemoveCommentMutation,
-  AnswerFieldsComments
+  AnswerFieldsComments,
+  UsersVariables,
+  UserFieldsFragment
 } from "GqlClient/autoGenTypes";
+import PeopleDropdown from "./UsersDropdown";
+import TextareaAutosize from "react-textarea-autosize";
+import UsersDropdown from "./UsersDropdown";
+import { compose } from "async";
 
-const CommentInput = styled(Textarea)`
+const StyledCommentInput = styled(Textarea)`
   /* margin-top: 2em; */
   width: 79%;
   min-height: min-content;
   background: white;
   color: black;
-  margin-bottom: 1em;
 `;
 
+const CommentInput = ({ innerRef = null, ...rest }: any) => {
+  return <StyledCommentInput inputRef={innerRef} {...rest} />;
+};
+
 const ErrorText = styled.div`
+  margin-top: 1em;
   color: red;
   margin-bottom: 1em;
 `;
@@ -195,9 +206,62 @@ const Comments = (props: CommentsProps) => {
     return renderReversedComments();
   };
 
+  const checkValidSearchChar = (key: string) => {
+    // tslint:disable-next-line: variable-name
+    const is_letter_number_hyphen_underscore = /[a-zA-Z0-9-_ ]/.test(key);
+    return is_letter_number_hyphen_underscore;
+  };
+
+  const isSearchMode = useRef(false);
+  const searchUsername = useRef<string | null>();
+  // const commentInput = useRef<HTMLTextAreaElement>();
+  const [matchingUsers, setMatchingUsers] = useState<
+    UserFieldsFragment[] | null
+  >(null);
+
+  const onKeyPress = (
+    submitForm: () => void,
+    isSubmitting: boolean,
+    searchUsers: (
+      variables: UsersVariables
+    ) => Promise<UserFieldsFragment[] | null>
+  ) => async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    e.persist();
+    console.log(e.key);
+
+    if (e.key === "@" && !isSearchMode.current) {
+      isSearchMode.current = true;
+      return;
+    }
+
+    if (isSearchMode.current && checkValidSearchChar(e.key)) {
+      if (!searchUsername.current) {
+        searchUsername.current = e.key;
+      } else {
+        searchUsername.current += e.key;
+      }
+
+      const matching = await searchUsers({ match: searchUsername.current });
+
+      if (!matching) {
+        setMatchingUsers(null);
+        return;
+      }
+      setMatchingUsers(matching);
+    } else if (isSearchMode.current) {
+      isSearchMode.current = false;
+      searchUsername.current = null;
+    }
+
+    if (e.key === "Enter" && !e.shiftKey && !isSearchMode.current) {
+      e.preventDefault();
+      if (!isSubmitting) submitForm();
+    }
+  };
+
   return (
     <CommentsGql>
-      {(commentAnswer, editComment, removeComment) => {
+      {(commentAnswer, editComment, removeComment, searchUsers) => {
         return (
           <Panel ref={commentsPanel}>
             <Formik
@@ -214,20 +278,21 @@ const Comments = (props: CommentsProps) => {
                 isSubmitting
               }) => (
                 <Form style={{ width: "100%", textAlign: "center" }}>
-                  <CommentInput
+                  <StyledCommentInput
                     name="comment"
-                    placeholder="Add a comment..."
+                    // styles={{ wrapper: { width: "100%" } }}
+                    placeholder="Add a comment..., use @userName to tag people"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.comment || ""}
                     disabled={isSubmitting}
-                    onKeyPress={e => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        if (!isSubmitting) submitForm();
-                      }
-                    }}
+                    onKeyPress={onKeyPress(
+                      submitForm,
+                      isSubmitting,
+                      searchUsers
+                    )}
                   />
+                  {matchingUsers && <UsersDropdown users={matchingUsers} />}
                   <ErrorMessage
                     name="comment"
                     render={msg => <ErrorText>{msg}</ErrorText>}

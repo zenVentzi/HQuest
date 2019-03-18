@@ -5,7 +5,7 @@ import Editor from "./AvatarEditor";
 
 interface WrapperProps {
   editable: boolean;
-  theme: "bad typings support so..";
+  theme: "bad typings support so.. have fun";
   invertColors: boolean;
 }
 

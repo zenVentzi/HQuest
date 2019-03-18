@@ -13,6 +13,7 @@ const Modal = (props: ModalProps) => {
 
   useEffect(() => {
     el.current = document.createElement("div"); // this is under scrutiny(used to be in constructor)
+
     // The portal element is inserted in the DOM tree after
     // the Modal's children are mounted, meaning that children
     // will be mounted on a detached DOM node. If a child
@@ -27,7 +28,8 @@ const Modal = (props: ModalProps) => {
     };
   }, []);
 
-  return ReactDOM.createPortal(props.children, el.current!);
+  // return ReactDOM.createPortal(props.children, el.current!);
+  return ReactDOM.createPortal(props.children, modalRoot!);
 };
 
 export default Modal;
