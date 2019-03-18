@@ -57,6 +57,7 @@
     "react-dom": "^16.8.3",
     "react-facebook-login": "^4.1.1",
     "react-fast-compare": "^2.0.4",
+    "react-floater": "^0.6.4",
     "react-icons": "^3.4.0",
     "react-image": "^1.5.1",
     "react-loader-spinner": "^2.0.6",

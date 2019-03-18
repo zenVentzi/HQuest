@@ -9,8 +9,10 @@ Fix:
 - Unnecessary re-renders on hover questions
 - Modal to appear on top of all
 
+Useful tools:
 react-router-page-transition
 react-reveal
 react-floater
 popperjs
 draftJS
+circleCI

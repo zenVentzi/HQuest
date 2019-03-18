@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { ApolloProvider } from "react-apollo";
+import { ApolloProvider, ApolloConsumer } from "react-apollo";
 import { ThemeProvider } from "styled-components";
 import { ToastContainer, Zoom, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
