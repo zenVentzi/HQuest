@@ -219,6 +219,10 @@ const Comments = (props: CommentsProps) => {
     UserFieldsFragment[] | null
   >(null);
 
+  /* what happens on backspace?
+  remove last character from searchUsername
+  if last char is @ stop searchMode */
+
   const onKeyPress = (
     submitForm: () => void,
     isSubmitting: boolean,
@@ -227,7 +231,6 @@ const Comments = (props: CommentsProps) => {
     ) => Promise<UserFieldsFragment[] | null>
   ) => async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.persist();
-    console.log(e.key);
 
     if (e.key === "@" && !isSearchMode.current) {
       isSearchMode.current = true;
@@ -243,19 +246,65 @@ const Comments = (props: CommentsProps) => {
 
       const matching = await searchUsers({ match: searchUsername.current });
 
+      /* do I leave it as it is, or fix it a little bit?
+      Fix it a little bit.
+      
+      The problem currently is that if not matching, I reset the search params. I shouldn't do that.
+      Instead? When shoild I reset the search params?
+      
+      What is the expected behaviour? I want on backspace to resume searching, if there are matches.
+      I need to add more variables. 
+      
+      Imagine that the search key is invalid, e.g. (/., etc. I reset the search.
+      But then there is backspace, deleting the last, incorrect char, and the search term becomes correct once again.
+      How do I set the search params back?
+      
+      I can keep an array with searchUsernames and every time there is incorrectChar I stop adding to the array.
+      This doesn't solve the backspace problem. No need for array.
+      
+      A whole other solution is to check the whole input instead of a single key.
+      onKeyPress, split the input string in an array by @. 
+      
+      */
+
       if (!matching) {
         setMatchingUsers(null);
+        isSearchMode.current = false;
+        searchUsername.current = null;
+        console.log(`here`);
         return;
       }
       setMatchingUsers(matching);
     } else if (isSearchMode.current) {
       isSearchMode.current = false;
       searchUsername.current = null;
+      console.log(`here`);
     }
 
     if (e.key === "Enter" && !e.shiftKey && !isSearchMode.current) {
       e.preventDefault();
       if (!isSubmitting) submitForm();
+    }
+  };
+
+  const onKeyDown = (
+    submitForm: () => void,
+    isSubmitting: boolean,
+    searchUsers: (
+      variables: UsersVariables
+    ) => Promise<UserFieldsFragment[] | null>
+  ) => async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Backspace") {
+      console.log(searchUsername.current);
+      if (searchUsername.current && searchUsername.current.length > 0) {
+        searchUsername.current = searchUsername.current.slice(0, -1);
+
+        const matching = await searchUsers({ match: searchUsername.current });
+        setMatchingUsers(matching);
+      } else if (isSearchMode.current) {
+        isSearchMode.current = false;
+        setMatchingUsers(null);
+      }
     }
   };
 
@@ -291,6 +340,7 @@ const Comments = (props: CommentsProps) => {
                       isSubmitting,
                       searchUsers
                     )}
+                    onKeyDown={onKeyDown(submitForm, isSubmitting, searchUsers)}
                   />
                   {matchingUsers && <UsersDropdown users={matchingUsers} />}
                   <ErrorMessage

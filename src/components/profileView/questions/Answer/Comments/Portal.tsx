@@ -31,9 +31,7 @@ const Portal = (props: Portal) => {
   const [progress, setProgress] = useState<Progress>(Progress.measure_dom);
 
   useLayoutEffect(() => {
-    console.log(`outer, ${progress}`);
     if (progress !== Progress.done && modalRoot.current) {
-      console.log(`inner`);
       modalRoot.current.appendChild(childRef.current!);
       childRef.current!.style.position = "absolute";
       childRef.current!.style.top = `${childPosition.current!.top +
