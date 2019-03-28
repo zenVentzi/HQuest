@@ -120,7 +120,7 @@ export interface User {
 
   email?: Maybe<string>;
 
-  fullName?: Maybe<string>;
+  fullName: string;
 
   intro?: Maybe<string>;
 
@@ -645,7 +645,7 @@ export namespace UserResolvers {
 
     email?: EmailResolver<Maybe<string>, TypeParent, Context>;
 
-    fullName?: FullNameResolver<Maybe<string>, TypeParent, Context>;
+    fullName?: FullNameResolver<string, TypeParent, Context>;
 
     intro?: IntroResolver<Maybe<string>, TypeParent, Context>;
 
@@ -678,7 +678,7 @@ export namespace UserResolvers {
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
   export type FullNameResolver<
-    R = Maybe<string>,
+    R = string,
     Parent = User,
     Context = ApolloContext
   > = Resolver<R, Parent, Context>;
