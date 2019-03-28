@@ -338,7 +338,7 @@ export type LikeAnswerEditionMutation = {
   likeAnswerEdition: LikeAnswerEditionLikeAnswerEdition;
 };
 
-export type LikeAnswerEditionLikeAnswerEdition = AnswerFieldsFragment;
+export type LikeAnswerEditionLikeAnswerEdition = EditionFieldsFragment;
 
 export type AddQuestionsVariables = {
   questions?: Maybe<InputQuestion[]>;
@@ -435,7 +435,7 @@ export type UserFieldsFragment = {
 
   id: string;
 
-  fullName: Maybe<string>;
+  fullName: string;
 
   avatarSrc: Maybe<string>;
 
@@ -474,6 +474,40 @@ export type CommentFieldsFragment = {
 
 export type CommentFieldsUser = UserFieldsFragment;
 
+export type EditionFieldsFragment = {
+  __typename?: "AnswerEdition";
+
+  id: string;
+
+  date: DateTime;
+
+  value: string;
+
+  comments: Maybe<EditionFieldsComments[]>;
+
+  likes: Maybe<EditionFieldsLikes>;
+};
+
+export type EditionFieldsComments = CommentFieldsFragment;
+
+export type EditionFieldsLikes = {
+  __typename?: "Likes";
+
+  total: number;
+
+  likers: EditionFieldsLikers[];
+};
+
+export type EditionFieldsLikers = {
+  __typename?: "Liker";
+
+  user: EditionFieldsUser;
+
+  numOfLikes: number;
+};
+
+export type EditionFieldsUser = UserFieldsFragment;
+
 export type AnswerFieldsFragment = {
   __typename?: "Answer";
 
@@ -488,39 +522,7 @@ export type AnswerFieldsFragment = {
   editions: AnswerFieldsEditions[];
 };
 
-export type AnswerFieldsEditions = {
-  __typename?: "AnswerEdition";
-
-  id: string;
-
-  date: DateTime;
-
-  value: string;
-
-  comments: Maybe<AnswerFieldsComments[]>;
-
-  likes: Maybe<AnswerFieldsLikes>;
-};
-
-export type AnswerFieldsComments = CommentFieldsFragment;
-
-export type AnswerFieldsLikes = {
-  __typename?: "Likes";
-
-  total: number;
-
-  likers: AnswerFieldsLikers[];
-};
-
-export type AnswerFieldsLikers = {
-  __typename?: "Liker";
-
-  user: AnswerFieldsUser;
-
-  numOfLikes: number;
-};
-
-export type AnswerFieldsUser = UserFieldsFragment;
+export type AnswerFieldsEditions = EditionFieldsFragment;
 
 export type QuestionFieldsFragment = {
   __typename?: "Question";

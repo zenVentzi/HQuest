@@ -9,7 +9,7 @@ type User {
   id: ID!
   me: Boolean
   email: String
-  fullName: String
+  fullName: String!
   intro: String
   socialMediaLinks: SocialMediaLinks
   avatarSrc: String
