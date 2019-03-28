@@ -70,13 +70,8 @@ const MentionInput = (props: MentionInputProps) => {
           },
 
           item: {
-            padding: "5px 15px",
-            borderBottom: "1px solid rgba(1,1,1,0.15)",
-
-            "&focused": {
-              backgroundColor: "black",
-              color: "white"
-            }
+            // padding: "5px 15px",
+            borderBottom: "1px solid rgba(1,1,1,0.15)"
           }
         }
       }}
@@ -101,6 +96,14 @@ const MentionInput = (props: MentionInputProps) => {
             {
               id: "3",
               display: "Gede"
+            },
+            {
+              id: "4",
+              display: "Gede"
+            },
+            {
+              id: "5",
+              display: "Gede"
             }
           ];
           return users;
@@ -114,23 +117,6 @@ const MentionInput = (props: MentionInputProps) => {
                 callback(suggestions);
               }
             });
-          } else {
-            // TODO remove that, it\s for testing
-            const users: SuggestionDataItem[] = [
-              {
-                id: "1",
-                display: "Jimmy"
-              },
-              {
-                id: "2",
-                display: "Ketut"
-              },
-              {
-                id: "3",
-                display: "Gede"
-              }
-            ];
-            return users;
           }
         }}
         style={{
@@ -144,7 +130,17 @@ const MentionInput = (props: MentionInputProps) => {
           index,
           focused
         ) => {
-          return <div>{suggestion.display}</div>;
+          return (
+            <div
+              style={{
+                width: "100%",
+                backgroundColor: focused ? "black" : "white",
+                color: focused ? "white" : "black"
+              }}
+            >
+              {suggestion.display}
+            </div>
+          );
         }}
       />
     </MentionsInput>
