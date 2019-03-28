@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { UserFieldsFragment, UsersVariables } from "GqlClient/autoGenTypes";
 
 type MentionInputProps = {
-  searchUsers?: (
+  searchUsers: (
     variables: UsersVariables
   ) => Promise<UserFieldsFragment[] | null>;
   // placeholder: string;
@@ -18,6 +18,11 @@ type MentionInputProps = {
 
 const MentionInput = (props: MentionInputProps) => {
   const [value, setValue] = useState("");
+  let modalRoot = document.getElementById("modal-root");
+  if (!modalRoot) {
+    modalRoot = document.createElement("div");
+    modalRoot.id = "modal-root";
+  }
 
   return (
     <MentionsInput
@@ -75,7 +80,8 @@ const MentionInput = (props: MentionInputProps) => {
           }
         }
       }}
-      placeholder="Mention any Github user by typing `@` followed by at least one char"
+      suggestionsPortalHost={modalRoot}
+      placeholder="Add comment... use @userName to tag people"
       // displayTransform={login => {
       //   console.log(login);
       //   return `@${login + 1}`;
@@ -84,40 +90,38 @@ const MentionInput = (props: MentionInputProps) => {
       <Mention
         trigger="@"
         data={(search, callback) => {
-          const users: SuggestionDataItem[] = [
-            {
-              id: "1",
-              display: "Jimmy"
-            },
-            {
-              id: "2",
-              display: "Ketut"
-            },
-            {
-              id: "3",
-              display: "Gede"
-            },
-            {
-              id: "4",
-              display: "Gede"
-            },
-            {
-              id: "5",
-              display: "Gede"
-            }
-          ];
-          return users;
+          // const users: SuggestionDataItem[] = [
+          //   {
+          //     id: "1",
+          //     display: "Jimmy"
+          //   },
+          //   {
+          //     id: "2",
+          //     display: "Ketut"
+          //   },
+          //   {
+          //     id: "3",
+          //     display: "Gede"
+          //   },
+          //   {
+          //     id: "4",
+          //     display: "Gede"
+          //   },
+          //   {
+          //     id: "5",
+          //     display: "Gede"
+          //   }
+          // ];
+          // return users;
 
-          if (props.searchUsers) {
-            props.searchUsers({ match: search }).then(users => {
-              if (users && users.length) {
-                const suggestions: SuggestionDataItem[] = users.map(user => {
-                  return { ...user, display: user.fullName };
-                });
-                callback(suggestions);
-              }
-            });
-          }
+          props.searchUsers({ match: search }).then(users => {
+            if (users && users.length) {
+              const suggestions: SuggestionDataItem[] = users.map(user => {
+                return { ...user, display: user.fullName };
+              });
+              callback(suggestions);
+            }
+          });
         }}
         style={{
           backgroundColor: "black",
@@ -135,7 +139,8 @@ const MentionInput = (props: MentionInputProps) => {
               style={{
                 width: "100%",
                 backgroundColor: focused ? "black" : "white",
-                color: focused ? "white" : "black"
+                color: focused ? "white" : "black",
+                height: "50px"
               }}
             >
               {suggestion.display}
