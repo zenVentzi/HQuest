@@ -86,7 +86,6 @@ const MentionInput = (props: MentionInputProps) => {
       disabled={props.isSubmitting}
       // markup={"@__id__split__display__"}
       onChange={e => {
-        console.log(e.target.value);
         setValue(e.target.value);
       }}
       style={{
