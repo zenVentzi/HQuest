@@ -1,4 +1,4 @@
-import { Query } from "./types";
+import { QueryResolvers } from "../autoGenTypes";
 import { mapNewsfeed } from "./gqlMapper";
 import { ApolloContext } from "gqlContext";
 import { authMiddleware } from "../middlewares";
@@ -44,6 +44,10 @@ const News = {
     }
   }
 };
+
+interface Query {
+  newsfeed: QueryResolvers.NewsfeedResolver;
+}
 
 const Query: Query = {
   async newsfeed(_, __, { services, user }) {
