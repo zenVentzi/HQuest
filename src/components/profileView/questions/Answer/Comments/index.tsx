@@ -130,7 +130,6 @@ const Comments = (props: CommentsProps) => {
       CommentAnswerEditionVariables
     >
   ) => async (comment: string): Promise<{ success: boolean }> => {
-    console.log(comment.length);
     if (comment.length < 3) {
       toast.error("Comment must be at least 3 characters long");
       return { success: false };
