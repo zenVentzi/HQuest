@@ -9,6 +9,7 @@ type Mutation {
     answerId: ID!
     answerEditionId: ID!
     comment: String!
+    mentionedUsers: [ID!]
   ): Comment!
   editComment(
     answerId: ID!

@@ -15,9 +15,8 @@ type MentionInputProps = {
   searchUsers: (
     variables: UsersVariables
   ) => Promise<UserFieldsFragment[] | null>;
-  // placeholder: string;
-  // onChange: any;
-  // onBlur: any;
+  submitOnEnter: boolean;
+  onSubmit: () => void;
 };
 
 const MentionInput = (props: MentionInputProps) => {
@@ -69,7 +68,10 @@ const MentionInput = (props: MentionInputProps) => {
   return (
     <MentionsInput
       value={value}
+      onKeyDown={e => {}}
+      // markup={"@__id__split__display__"}
       onChange={e => {
+        console.log(e.target.value);
         setValue(e.target.value);
       }}
       style={{
@@ -124,10 +126,6 @@ const MentionInput = (props: MentionInputProps) => {
       }}
       suggestionsPortalHost={modalRoot}
       placeholder="Add comment... use @userName to tag people"
-      // displayTransform={login => {
-      //   console.log(login);
-      //   return `@${login + 1}`;
-      // }}
     >
       <Mention
         trigger="@"
@@ -171,6 +169,10 @@ const MentionInput = (props: MentionInputProps) => {
         }}
         // @ts-ignore // @types/ are incomplete
         renderSuggestion={renderSuggestion}
+        onAdd={(id, display) => {
+          const mentionedUserId = id.toString();
+          // console.log(mentionedUserId);
+        }}
       />
     </MentionsInput>
   );
