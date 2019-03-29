@@ -4,7 +4,7 @@ import {
   OnChangeHandlerFunc,
   SuggestionDataItem
 } from "react-mentions";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { UserFieldsFragment, UsersVariables } from "GqlClient/autoGenTypes";
 import Avatar from "Reusable/Avatar";
 import { ThemeProvider } from "styled-components";
@@ -16,7 +16,8 @@ type MentionInputProps = {
     variables: UsersVariables
   ) => Promise<UserFieldsFragment[] | null>;
   submitOnEnter: boolean;
-  onSubmit: () => void;
+  onSubmit: (comment: string) => Promise<{ success: boolean }>;
+  isSubmitting: boolean;
 };
 
 const MentionInput = (props: MentionInputProps) => {
@@ -65,10 +66,24 @@ const MentionInput = (props: MentionInputProps) => {
     );
   };
 
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   return (
+    // @ts-ignore // disabled prop causes error cuz of bad @types support
     <MentionsInput
       value={value}
-      onKeyDown={e => {}}
+      onKeyDown={async e => {
+        if (e.key === "Enter" && !e.shiftKey && props.submitOnEnter) {
+          e.preventDefault();
+          const { success } = await props.onSubmit(value);
+          if (success) {
+            setValue("");
+            inputRef.current!.blur();
+          }
+        }
+      }}
+      inputRef={inputRef}
+      disabled={props.isSubmitting}
       // markup={"@__id__split__display__"}
       onChange={e => {
         console.log(e.target.value);

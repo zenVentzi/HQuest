@@ -11,13 +11,11 @@ export const COMMENT_ANSWER_EDITION = gql`
     $answerId: ID!
     $answerEditionId: ID!
     $comment: String!
-    $mentionedUsers: [ID!]
   ) {
     commentAnswerEdition(
       answerId: $answerId
       answerEditionId: $answerEditionId
       comment: $comment
-      mentionedUsers: $mentionedUsers
     ) {
       ...CommentFields
     }
