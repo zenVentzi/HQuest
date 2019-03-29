@@ -1,5 +1,5 @@
-import { Comment } from "./types";
 import { Comment as DbComment } from "../../../../dbTypes";
+import { Comment } from "../../../autoGenTypes";
 import { mapUser } from "../../../user/gqlMapper";
 
 function mapComment({

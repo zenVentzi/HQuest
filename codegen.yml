@@ -6,7 +6,7 @@ documents:
   - "./src/graphql/**/*subscriptions.ts"
   - "./src/graphql/**/*fragments.ts"
 generates:
-  ./server/generated/gqltypes.ts:
+  ./server/graphql/autoGenTypes.ts:
     schema: "./server/graphql/**/*.graphql"
     config:
       contextType: ../types/gqlContext#ApolloContext

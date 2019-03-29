@@ -4,7 +4,7 @@ import { models } from "../../../models";
 import { Mutation } from "./resolvers";
 
 import * as DbTypes from "../../../dbTypes";
-import * as GqlTypes from "../../../generated/gqltypes";
+import * as GqlTypes from "../../autoGenTypes";
 import { ApolloContext } from "../../../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
