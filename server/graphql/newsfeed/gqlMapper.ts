@@ -1,5 +1,5 @@
 import * as newsfeedTypes from "./types";
-import * as userTypes from "../user/types";
+import { User } from "../autoGenTypes";
 import * as questionTypes from "../autoGenTypes";
 import * as dbTypes from "../../dbTypes";
 import { mapUser, mapUsers } from "../user/gqlMapper";
@@ -7,7 +7,7 @@ import { mapQuestions } from "../question/gqlMapper";
 
 type MapNews = (
   news: dbTypes.News,
-  newsfeedUsers: userTypes.User[],
+  newsfeedUsers: User[],
   newsfeedQuestions: questionTypes.Question[]
 ) => newsfeedTypes.NewsBase;
 
@@ -19,7 +19,7 @@ const mapNews: MapNews = (news, newsfeedUsers, newsfeedQuestions) => {
     throw Error(`performer not found`);
   }
 
-  let answerOwner: userTypes.User | undefined;
+  let answerOwner: User | undefined;
 
   if (news.type === dbTypes.NewsType.NewFollower) {
     const followedUser = newsfeedUsers.find(u => u.id === news.followedUserId);

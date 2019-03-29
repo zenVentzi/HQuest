@@ -1,7 +1,21 @@
 import jsonwebtoken from "jsonwebtoken";
-import { Query, Mutation } from "./types";
+import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 import { mapUser, mapUsers } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
+
+interface Query {
+  user: QueryResolvers.UserResolver;
+  users: QueryResolvers.UsersResolver;
+  followers: QueryResolvers.FollowersResolver;
+  following: QueryResolvers.FollowingResolver;
+}
+
+interface Mutation {
+  login: MutationResolvers.LoginResolver;
+  editUser: MutationResolvers.EditUserResolver;
+  follow: MutationResolvers.FollowResolver;
+  uploadAvatar: MutationResolvers.UploadAvatarResolver;
+}
 
 const Query: Query = {
   async user(_, { id }, { services, user }) {
