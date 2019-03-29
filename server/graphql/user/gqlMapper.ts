@@ -1,4 +1,4 @@
-import { User } from "./types";
+import { User } from "../autoGenTypes";
 import { User as DbUser } from "../../dbTypes";
 
 function mapUser(dbUser: DbUser, loggedUserId: string): User {

@@ -1,4 +1,4 @@
-import { User } from "../user/types";
+import { User } from "../autoGenTypes";
 import { Question } from "../autoGenTypes";
 import { Resolver } from "../global/types";
 import { ApolloContext } from "gqlContext";
