@@ -1,4 +1,4 @@
-import { Question } from "./types";
+import { Question } from "../autoGenTypes";
 import { Question as DbQuestion, Answer as DbAnswer } from "../../dbTypes";
 import { mapAnswer } from "./answer/gqlMapper";
 

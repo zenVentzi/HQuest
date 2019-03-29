@@ -1,6 +1,6 @@
 import * as newsfeedTypes from "./types";
 import * as userTypes from "../user/types";
-import * as questionTypes from "../question/types";
+import * as questionTypes from "../autoGenTypes";
 import * as dbTypes from "../../dbTypes";
 import { mapUser, mapUsers } from "../user/gqlMapper";
 import { mapQuestions } from "../question/gqlMapper";

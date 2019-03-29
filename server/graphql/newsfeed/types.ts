@@ -1,5 +1,5 @@
 import { User } from "../user/types";
-import { Question } from "../question/types";
+import { Question } from "../autoGenTypes";
 import { Resolver } from "../global/types";
 import { ApolloContext } from "gqlContext";
 
