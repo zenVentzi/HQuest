@@ -44,7 +44,7 @@ const Editions = (props: EditionsProps) => {
         <Edition
           showComments={true}
           answerId={props.answerId}
-          edition={props.editions.find(ed => ed.id === pickedEditionId)}
+          edition={props.editions.find(ed => ed.id === pickedEditionId)!}
           likeEdition={props.likeEdition}
         />
       ) : (

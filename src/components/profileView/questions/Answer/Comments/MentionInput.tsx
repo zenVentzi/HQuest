@@ -6,6 +6,10 @@ import {
 } from "react-mentions";
 import React, { useState } from "react";
 import { UserFieldsFragment, UsersVariables } from "GqlClient/autoGenTypes";
+import Avatar from "Reusable/Avatar";
+import { ThemeProvider } from "styled-components";
+
+type CustomSuggestion = SuggestionDataItem & UserFieldsFragment;
 
 type MentionInputProps = {
   searchUsers: (
@@ -24,13 +28,36 @@ const MentionInput = (props: MentionInputProps) => {
     modalRoot.id = "modal-root";
   }
 
+  const renderSuggestion = (
+    suggestion: CustomSuggestion,
+    search: string,
+    highlightedDisplay: React.ReactNode,
+    index: number,
+    focused: boolean
+  ) => {
+    return (
+      <div
+        style={{
+          width: "100%",
+          backgroundColor: focused ? "black" : "white",
+          color: focused ? "white" : "black",
+          height: "50px"
+        }}
+      >
+        <ThemeProvider theme={{ avatarSize: "2em" }}>
+          <Avatar src={suggestion.avatarSrc} />
+        </ThemeProvider>
+        {suggestion.display}
+      </div>
+    );
+  };
+
   return (
     <MentionsInput
       value={value}
       onChange={e => {
         setValue(e.target.value);
       }}
-      // markup={"'@[__display__](__display__)'"}
       style={{
         control: {
           backgroundColor: "white",
@@ -116,7 +143,7 @@ const MentionInput = (props: MentionInputProps) => {
 
           props.searchUsers({ match: search }).then(users => {
             if (users && users.length) {
-              const suggestions: SuggestionDataItem[] = users.map(user => {
+              const suggestions: CustomSuggestion[] = users.map(user => {
                 return { ...user, display: user.fullName };
               });
               callback(suggestions);
@@ -127,26 +154,8 @@ const MentionInput = (props: MentionInputProps) => {
           backgroundColor: "black",
           color: "white"
         }}
-        renderSuggestion={(
-          suggestion,
-          search,
-          highlightedDisplay,
-          index,
-          focused
-        ) => {
-          return (
-            <div
-              style={{
-                width: "100%",
-                backgroundColor: focused ? "black" : "white",
-                color: focused ? "white" : "black",
-                height: "50px"
-              }}
-            >
-              {suggestion.display}
-            </div>
-          );
-        }}
+        // @ts-ignore // @types/ are incomplete
+        renderSuggestion={renderSuggestion}
       />
     </MentionsInput>
   );

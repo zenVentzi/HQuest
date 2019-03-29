@@ -14,10 +14,6 @@ const getLoggedUserId = () => {
   return userId;
 };
 
-const overrideTheme = (neww: any) => (current: any) => {
-  const res = { ...current, ...neww };
-  return res;
-};
 class UserLoginEvent extends EventTarget {
   login(authToken: string, userId: string) {
     this.dispatchEvent(
@@ -86,7 +82,6 @@ export {
   saveLoggedUserData,
   deleteLoggedUserData,
   loginEvent,
-  overrideTheme,
   inverseColor,
   inverseTheme,
   deepEqual,

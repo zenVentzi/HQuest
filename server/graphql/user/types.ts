@@ -8,7 +8,7 @@ export interface User {
 
   email?: string | null;
 
-  fullName?: string;
+  fullName: string;
 
   intro?: string | null;
 

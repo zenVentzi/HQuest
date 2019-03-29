@@ -1,7 +1,6 @@
 import React, { Component, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
-import { overrideTheme, inverseTheme } from "Utils";
 import Avatar from "./Avatar";
 import { UsersUsers } from "GqlClient/autoGenTypes";
 
@@ -113,7 +112,11 @@ const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {
   }
 
   return (
-    <ThemeProvider theme={overrideTheme(theme)}>
+    <ThemeProvider
+      theme={currentTheme => {
+        return { ...currentTheme, ...theme };
+      }}
+    >
       <StyledUser
         // onMouseEnter={onMouseEnter}
         // onFocus={onMouseEnter}

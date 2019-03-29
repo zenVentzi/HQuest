@@ -3,7 +3,7 @@ import Textarea from "react-textarea-autosize";
 import { Formik, Form, ErrorMessage } from "formik";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
-import { AnswerFieldsComments } from "GqlClient/autoGenTypes";
+// import { EditionFieldsComments } from "GqlClient/autoGenTypes";
 
 const StyledEditor = styled(Textarea)`
   /* min-height: min-content; */

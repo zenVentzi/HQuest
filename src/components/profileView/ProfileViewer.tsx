@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ThemeProvider } from "styled-components";
-import { getLoggedUserId, overrideTheme } from "Utils";
+import { getLoggedUserId } from "Utils";
 import Avatar from "../reusable/Avatar";
 import Username from "./Username";
 import Intro from "./Intro";
@@ -34,12 +34,13 @@ const ProfileViewer = (props: ProfileViewerProps) => {
   const { user } = props;
   const isFollowed =
     user.followers && user.followers.includes(getLoggedUserId()!);
-  const theme = {
-    avatarSize: "150px"
-  };
 
   return (
-    <ThemeProvider theme={overrideTheme(theme)}>
+    <ThemeProvider
+      theme={currentTheme => {
+        return { ...currentTheme, avatarSize: "150px" };
+      }}
+    >
       <>
         <Avatar src={user.avatarSrc} editable={!!user.me} />
         <Username>{user.fullName}</Username>
