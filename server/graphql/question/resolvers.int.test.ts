@@ -40,7 +40,7 @@ test("questions() should return questions edges", async done => {
     first: 5
   };
   const questions = await Query.questions({}, args, context, {} as any);
-  const actual = questions!.edges.length;
+  const actual = questions!.edges!.length;
   const expected = 2;
   expect(actual).toEqual(expected);
   done();

@@ -1,10 +1,22 @@
-import { Query, Mutation } from "./types";
 import { mapQuestion, mapQuestions } from "./gqlMapper";
 import { createConnection } from "../relayConnection/functions";
 import { authMiddleware } from "../middlewares";
 import { Types as GooseTypes } from "mongoose";
+import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 
 const { ObjectId } = GooseTypes;
+
+interface Query {
+  questionsTags: QueryResolvers.QuestionsTagsResolver;
+  questions: QueryResolvers.QuestionsResolver;
+  answeredQuestion: QueryResolvers.AnsweredQuestionResolver;
+}
+
+interface Mutation {
+  addQuestions: MutationResolvers.AddQuestionsResolver;
+  // removeQuestion: Resolver<{}, RemoveQuestionArgs, ApolloContext, Question>;
+  questionNotApply: MutationResolvers.QuestionNotApplyResolver;
+}
 
 const Query: Query = {
   async questions(
