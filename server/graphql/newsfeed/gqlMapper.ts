@@ -1,4 +1,4 @@
-import * as newsfeedTypes from "./types";
+import * as newsfeedTypes from "../autoGenTypes";
 import { User } from "../autoGenTypes";
 import * as questionTypes from "../autoGenTypes";
 import * as dbTypes from "../../dbTypes";
