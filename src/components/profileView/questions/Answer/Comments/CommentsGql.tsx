@@ -39,7 +39,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
     <Mutation<CommentAnswerEditionMutation, CommentAnswerEditionVariables>
       mutation={COMMENT_ANSWER_EDITION}
     >
-      {commentAnswer => {
+      {commentAnswerEdition => {
         return (
           <Mutation<EditCommentMutation, EditCommentVariables>
             mutation={EDIT_COMMENT}
@@ -63,7 +63,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
                             return res.data.users;
                           };
                           return children(
-                            commentAnswer,
+                            commentAnswerEdition,
                             editComment,
                             removeComment,
                             searchUsers

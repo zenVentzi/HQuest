@@ -238,6 +238,7 @@ export type CommentAnswerEditionVariables = {
   answerId: string;
   answerEditionId: string;
   comment: string;
+  mentionedUsers?: Maybe<string[]>;
 };
 
 export type CommentAnswerEditionMutation = {

@@ -123,6 +123,8 @@ const Comments = (props: CommentsProps) => {
     resetForm({ comment: "" });
   };
 
+  // const onSubmitComment =
+
   const onEditComment = (
     editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>
   ) => async (commentId: string, commentValue: string) => {
@@ -223,7 +225,11 @@ const Comments = (props: CommentsProps) => {
       {(commentAnswer, editComment, removeComment, searchUsers) => {
         return (
           <Panel ref={commentsPanel}>
-            <MentionInput searchUsers={searchUsers} />
+            <MentionInput
+              searchUsers={searchUsers}
+              submitOnEnter
+              onSubmit={() => {}}
+            />
             {renderComments(editComment, removeComment)}
           </Panel>
         );
