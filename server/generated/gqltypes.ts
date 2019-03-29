@@ -388,8 +388,6 @@ export interface CommentAnswerEditionMutationArgs {
   answerEditionId: string;
 
   comment: string;
-
-  mentionedUsers?: Maybe<string[]>;
 }
 export interface EditCommentMutationArgs {
   answerId: string;
@@ -1078,8 +1076,6 @@ export namespace MutationResolvers {
     answerEditionId: string;
 
     comment: string;
-
-    mentionedUsers?: Maybe<string[]>;
   }
 
   export type EditCommentResolver<

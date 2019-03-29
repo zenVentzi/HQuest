@@ -56,6 +56,7 @@ interface CommentsProps {
 
 const Comments = (props: CommentsProps) => {
   const [comments, setComments] = useState(props.comments || []);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const highlightedComment = useRef<HTMLDivElement>(null);
   const commentsPanel = useRef<HTMLDivElement>(null);
 
@@ -88,42 +89,73 @@ const Comments = (props: CommentsProps) => {
     }
   };
 
-  const validateForm = (values: any) => {
-    const errors: any = {};
-    if (values.comment.length < 7) {
-      errors.comment = "Comment must be at least 7 characters";
-    }
+  // const validateForm = (values: any) => {
+  //   const errors: any = {};
+  //   if (values.comment.length < 7) {
+  //     errors.comment = "Comment must be at least 7 characters";
+  //   }
 
-    return errors;
-  };
+  //   return errors;
+  // };
 
-  const onSubmitForm = (
-    commentAnswerMutation: MutationFn<
+  // const onSubmitForm = (
+  //   commentAnswerMutation: MutationFn<
+  //     CommentAnswerEditionMutation,
+  //     CommentAnswerEditionVariables
+  //   >
+  // ) => async (values: any, { setSubmitting, resetForm }: any) => {
+  //   // console.log(commentAnswerMutation);
+  //   const { answerId, onAddComment } = props;
+  //   const variables: CommentAnswerEditionVariables = {
+  //     answerId,
+  //     answerEditionId: props.answerEditionId,
+  //     comment: values.comment
+  //   };
+  //   const res = await commentAnswerMutation({ variables });
+  //   if (!res || !res.data) {
+  //     throw Error("Comment answer mutation failed");
+  //   }
+
+  //   const newComment = res.data.commentAnswerEdition;
+  //   updateComments(newComment);
+  //   toast.success("Comment added!");
+  //   onAddComment();
+  //   setSubmitting(false);
+  //   resetForm({ comment: "" });
+  // };
+
+  const onSubmitComment = (
+    commentEditionMutation: MutationFn<
       CommentAnswerEditionMutation,
       CommentAnswerEditionVariables
     >
-  ) => async (values: any, { setSubmitting, resetForm }: any) => {
-    // console.log(commentAnswerMutation);
+  ) => async (comment: string): Promise<{ success: boolean }> => {
+    console.log(comment.length);
+    if (comment.length < 3) {
+      toast.error("Comment must be at least 3 characters long");
+      return { success: false };
+    }
+    setIsSubmitting(true);
     const { answerId, onAddComment } = props;
     const variables: CommentAnswerEditionVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
-      comment: values.comment
+      comment
     };
-    const res = await commentAnswerMutation({ variables });
+    const res = await commentEditionMutation({ variables });
     if (!res || !res.data) {
       throw Error("Comment answer mutation failed");
     }
 
     const newComment = res.data.commentAnswerEdition;
-    updateComments(newComment);
+    // updateComments(newComment);
+    // TODO make sure the above is not neccessary
     toast.success("Comment added!");
     onAddComment();
-    setSubmitting(false);
-    resetForm({ comment: "" });
+    setIsSubmitting(false);
+    // resetForm({ comment: "" });
+    return { success: true };
   };
-
-  // const onSubmitComment =
 
   const onEditComment = (
     editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>
@@ -222,13 +254,14 @@ const Comments = (props: CommentsProps) => {
 
   return (
     <CommentsGql>
-      {(commentAnswer, editComment, removeComment, searchUsers) => {
+      {(commentAnswerEdition, editComment, removeComment, searchUsers) => {
         return (
           <Panel ref={commentsPanel}>
             <MentionInput
               searchUsers={searchUsers}
-              submitOnEnter
-              onSubmit={() => {}}
+              submitOnEnter={true}
+              isSubmitting={isSubmitting}
+              onSubmit={onSubmitComment(commentAnswerEdition)}
             />
             {renderComments(editComment, removeComment)}
           </Panel>
