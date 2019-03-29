@@ -1,11 +1,11 @@
 import { Types as GooseTypes } from "mongoose";
-import { Node, PageInfo, Edge } from "./types";
+import { Node, PageInfo, Edge } from "../autoGenTypes";
 
 const { ObjectId } = GooseTypes;
 
 type CreatePageInfo = <NodeT extends Node>(
-  allEdges: Array<Edge<NodeT>>,
-  currentPageEdges: Array<Edge<NodeT>>
+  allEdges: Edge[],
+  currentPageEdges: Edge[]
 ) => PageInfo;
 
 const createPageInfo: CreatePageInfo = (allEdges, currentPageEdges) => {
@@ -42,7 +42,7 @@ const createPageInfo: CreatePageInfo = (allEdges, currentPageEdges) => {
   };
 };
 
-type GetAllEdges = <NodeT extends Node>(nodes: NodeT[]) => Array<Edge<NodeT>>;
+type GetAllEdges = <NodeT extends Node>(nodes: NodeT[]) => Edge[];
 const getAllEdges: GetAllEdges = nodes => {
   return nodes.map(node => {
     const cursor = node.id;
@@ -61,8 +61,8 @@ type GetCurrentPageEdges = <NodeT extends Node>(
     first: number;
     after?: string | null;
   },
-  allEdges: Array<Edge<NodeT>>
-) => Array<Edge<NodeT>>;
+  allEdges: Edge[]
+) => Edge[];
 const getCurrentPageEdges: GetCurrentPageEdges = (
   { first, after },
   allEdges
@@ -84,11 +84,12 @@ type CreateConnection = <NodeT extends Node>(
   nodes: NodeT[] | null,
   first: number,
   after?: string | null
-) => {
-  pageInfo: PageInfo;
-  edges: Array<Edge<NodeT>>;
-  totalCount: number;
-} | null;
+) => any; // FIXME
+// ) => {
+//   pageInfo: PageInfo;
+//   edges: Edge[];
+//   totalCount: number;
+// } | null;
 
 const createConnection: CreateConnection = (nodes, first, after) => {
   if (!nodes || !nodes.length) return null;
