@@ -1,4 +1,4 @@
-import { Answer, AnswerEdition, Likes } from "./types";
+import { Answer, AnswerEdition, Likes } from "../../autoGenTypes";
 import {
   Answer as DbAnswer,
   Edition as DbEdition,
