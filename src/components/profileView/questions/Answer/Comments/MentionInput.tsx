@@ -39,15 +39,29 @@ const MentionInput = (props: MentionInputProps) => {
       <div
         style={{
           width: "100%",
-          backgroundColor: focused ? "black" : "white",
-          color: focused ? "white" : "black",
-          height: "50px"
+          display: "flex",
+          padding: "5px 2px 5px 2px",
+          backgroundColor: focused ? "black" : "white"
+          // height: "50px"
         }}
       >
-        <ThemeProvider theme={{ avatarSize: "2em" }}>
+        <ThemeProvider
+          theme={{
+            avatarSize: "1em",
+            foregroundColor: focused ? "white" : "black"
+          }}
+        >
           <Avatar src={suggestion.avatarSrc} />
         </ThemeProvider>
-        {suggestion.display}
+        <div
+          style={{
+            marginLeft: "2px",
+            color: focused ? "white" : "black",
+            fontSize: "1.4em"
+          }}
+        >
+          {suggestion.display}
+        </div>
       </div>
     );
   };
@@ -97,7 +111,8 @@ const MentionInput = (props: MentionInputProps) => {
         suggestions: {
           list: {
             backgroundColor: "white",
-            border: "1px solid rgba(1,1,1,0.15)",
+            border: "1px solid black",
+            borderRadius: "0.4em",
             fontSize: 10
           },
 
