@@ -1,8 +1,25 @@
 import { withFilter } from "apollo-server";
 import { pubsub, NEW_NOTIFICATION } from "../../PubSub";
-import { Query, Mutation, Subscription } from "./types";
+// import { Query, Mutation, Subscription } from "./types";
+import {
+  QueryResolvers,
+  MutationResolvers,
+  SubscriptionResolvers
+} from "../autoGenTypes";
 import { mapNotifications } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
+
+interface Query {
+  notifications: QueryResolvers.NotificationsResolver;
+}
+
+interface Mutation {
+  notifsMarkSeen: MutationResolvers.NotifsMarkSeenResolver;
+}
+
+interface Subscription {
+  newNotification: SubscriptionResolvers.NewNotificationResolver;
+}
 
 const Notification = {
   __resolveType(obj, context, info) {

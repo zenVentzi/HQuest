@@ -1,4 +1,4 @@
-import { Notification, NewComment } from "./types";
+import { Notification, NewComment } from "../autoGenTypes";
 import {
   Notification as DbNotification,
   NotificationType,
