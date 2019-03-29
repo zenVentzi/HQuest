@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import distanceInWords from "date-fns/distance_in_words";
-import { getLoggedUserId, overrideTheme, inverseColor } from "Utils";
+import { getLoggedUserId, inverseColor } from "Utils";
 import Avatar from "../reusable/Avatar";
 import {
   NotificationsNotifications,
@@ -112,7 +112,11 @@ const Notif = ({ onClick, notif }: NotifProps) => {
   const redirectLink = getLink(notif);
 
   return (
-    <ThemeProvider theme={overrideTheme(theme)}>
+    <ThemeProvider
+      theme={currentTheme => {
+        return { ...currentTheme, ...theme };
+      }}
+    >
       <StyledNotif
         // @ts-ignore
         to={redirectLink}

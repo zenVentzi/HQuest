@@ -16,7 +16,7 @@ import {
   EditCommentMutation,
   RemoveCommentVariables,
   RemoveCommentMutation,
-  AnswerFieldsComments,
+  EditionFieldsComments,
   UsersVariables,
   UserFieldsFragment
 } from "GqlClient/autoGenTypes";
@@ -45,7 +45,7 @@ const ErrorText = styled.div`
 `;
 
 interface CommentsProps {
-  comments: AnswerFieldsComments[] | null;
+  comments: EditionFieldsComments[] | null;
   answerId: string;
   answerEditionId: string;
   onAddComment: () => void;
