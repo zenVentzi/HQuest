@@ -1,7 +1,7 @@
 import equal from "deep-equal";
 import { Types } from "mongoose";
 import * as dbTypes from "../../dbTypes";
-import * as gqlTypes from "../../generated/gqltypes";
+import * as gqlTypes from "../autoGenTypes";
 import { mapUser, mapUsers } from "./gqlMapper";
 import { models } from "../../models";
 

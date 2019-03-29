@@ -1,6 +1,6 @@
 import { Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
-import * as GqlTypes from "../generated/gqltypes";
+// import * as GqlTypes from "../graphql/autoGenTypes";
 import { Models } from "../models";
 
 const { ObjectId } = GooseTypes;

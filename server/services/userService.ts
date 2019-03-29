@@ -3,7 +3,7 @@ import { ApolloContext, ContextUser } from "gqlContext";
 import { Types } from "mongoose";
 import path from "path";
 import * as DbTypes from "../dbTypes";
-import * as GqlTypes from "../generated/gqltypes";
+// import * as GqlTypes from "../generated/gqltypes";
 import { Models } from "../models";
 
 const { ObjectId } = Types;
@@ -63,7 +63,12 @@ class UserService {
     userId: string,
     fullName: string,
     intro: string,
-    socialMediaLinks: GqlTypes.SocialMediaLinksInput
+    socialMediaLinks: {
+      facebookLink?: string | null;
+      twitterLink?: string | null;
+      instagramLink?: string | null;
+      linkedInLink?: string | null;
+    }
   ): Promise<DbTypes.User> {
     const [firstName, surName] = fullName.split(" ");
     const update = { $set: { firstName, surName, intro, socialMediaLinks } };
@@ -163,7 +168,10 @@ class UserService {
   private async registerUser({
     email,
     name
-  }: GqlTypes.LoginMutationArgs): Promise<DbTypes.User> {
+  }: {
+    email: string;
+    name: string;
+  }): Promise<DbTypes.User> {
     const [firstName, surName] = name.split(" ");
     const id = ObjectId();
 

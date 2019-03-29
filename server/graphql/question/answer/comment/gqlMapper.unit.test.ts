@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import * as dbTypes from "../../../../dbTypes";
-import * as gqlTypes from "../../../../generated/gqltypes";
+import * as gqlTypes from "../../../autoGenTypes";
 import { mapComment, mapComments } from "./gqlMapper";
 import { models } from "../../../../models";
 import { mapUser } from "../../../user/gqlMapper";

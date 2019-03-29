@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import * as GqlTypes from "../generated/gqltypes";
+// import * as GqlTypes from "../generated/gqltypes";
 import * as DbTypes from "../dbTypes";
 import { ApolloContext } from "gqlContext";
 import mongoose from "mongoose";
@@ -49,7 +49,10 @@ class QuestionService {
   constructor(private models: Models) {}
 
   public async addQuestions(
-    questions: GqlTypes.InputQuestion[]
+    questions: Array<{
+      value: string;
+      tags: string[];
+    }>
   ): Promise<void> {
     await this.models.question.create(questions);
   }

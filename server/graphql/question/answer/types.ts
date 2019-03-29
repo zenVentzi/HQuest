@@ -1,6 +1,6 @@
 import { Resolver } from "../../global/types";
 import { User } from "../../user/types";
-import { Comment } from "./comment/types";
+import { Comment } from "../../autoGenTypes";
 import { ApolloContext } from "gqlContext";
 
 export interface Answer {
