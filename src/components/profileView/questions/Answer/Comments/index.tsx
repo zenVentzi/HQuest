@@ -147,6 +147,7 @@ const Comments = (props: CommentsProps) => {
     }
 
     const newComment = res.data.commentAnswerEdition;
+    console.log(newComment);
     // updateComments(newComment);
     // TODO make sure the above is not neccessary
     toast.success("Comment added!");

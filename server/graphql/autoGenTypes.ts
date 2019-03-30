@@ -1,28 +1,230 @@
-export type Maybe<T> = T | null;
+type Maybe<T> = T | null;
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  DateTime: any;
+};
 
-export interface InputQuestion {
-  value: string;
+export type Answer = {
+  id: Scalars["ID"];
+  position: Scalars["Int"];
+  questionId: Scalars["ID"];
+  userId: Scalars["ID"];
+  editions: Array<AnswerEdition>;
+};
 
-  tags: string[];
-}
+export type AnswerEdition = {
+  id: Scalars["ID"];
+  date: Scalars["DateTime"];
+  value: Scalars["String"];
+  likes?: Maybe<Likes>;
+  comments?: Maybe<Array<Comment>>;
+};
 
-export interface EditUserInput {
-  fullName: string;
+export type AnswerNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  createdOn: Scalars["DateTime"];
+};
 
-  intro: string;
+export type Comment = {
+  id: Scalars["ID"];
+  user: User;
+  value: Scalars["String"];
+};
 
+export type CommentNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  commentId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
+};
+
+export type Connection = {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<Edge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type Edge = {
+  cursor: Scalars["String"];
+  node: Node;
+};
+
+export type EditUserInput = {
+  fullName: Scalars["String"];
+  intro: Scalars["String"];
   socialMediaLinks: SocialMediaLinksInput;
-}
+};
 
-export interface SocialMediaLinksInput {
-  facebookLink?: Maybe<string>;
+export type InputQuestion = {
+  value: Scalars["String"];
+  tags: Array<Scalars["String"]>;
+};
 
-  twitterLink?: Maybe<string>;
+export type Liker = {
+  user: User;
+  numOfLikes: Scalars["Int"];
+};
 
-  instagramLink?: Maybe<string>;
+export type Likes = {
+  total: Scalars["Int"];
+  likers: Array<Liker>;
+};
 
-  linkedInLink?: Maybe<string>;
-}
+export type LoginResult = {
+  authToken: Scalars["String"];
+  userId: Scalars["ID"];
+};
+
+export type Mutation = {
+  notifsMarkSeen?: Maybe<Scalars["Boolean"]>;
+  commentAnswerEdition: Comment;
+  editComment: Comment;
+  removeComment: Comment;
+  editAnswer: Answer;
+  addAnswer: Answer;
+  removeAnswer: Answer;
+  likeAnswerEdition: AnswerEdition;
+  moveAnswerPosition?: Maybe<Scalars["Int"]>;
+  addQuestions?: Maybe<Scalars["Boolean"]>;
+  questionNotApply: Question;
+  signUp?: Maybe<Scalars["String"]>;
+  login: LoginResult;
+  editUser: User;
+  uploadAvatar: Scalars["String"];
+  follow?: Maybe<Scalars["Boolean"]>;
+};
+
+export type MutationCommentAnswerEditionArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  comment: Scalars["String"];
+};
+
+export type MutationEditCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  commentValue: Scalars["String"];
+};
+
+export type MutationRemoveCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+};
+
+export type MutationEditAnswerArgs = {
+  answerId: Scalars["ID"];
+  answerValue: Scalars["String"];
+};
+
+export type MutationAddAnswerArgs = {
+  questionId: Scalars["ID"];
+  answerValue: Scalars["String"];
+};
+
+export type MutationRemoveAnswerArgs = {
+  answerId: Scalars["ID"];
+};
+
+export type MutationLikeAnswerEditionArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  userLikes: Scalars["Int"];
+};
+
+export type MutationMoveAnswerPositionArgs = {
+  answerId: Scalars["ID"];
+  position: Scalars["Int"];
+};
+
+export type MutationAddQuestionsArgs = {
+  questions?: Maybe<Array<InputQuestion>>;
+};
+
+export type MutationQuestionNotApplyArgs = {
+  questionId: Scalars["ID"];
+};
+
+export type MutationSignUpArgs = {
+  firstName: Scalars["String"];
+  surName: Scalars["String"];
+  email: Scalars["String"];
+  password: Scalars["String"];
+};
+
+export type MutationLoginArgs = {
+  email: Scalars["String"];
+  name: Scalars["String"];
+};
+
+export type MutationEditUserArgs = {
+  input?: Maybe<EditUserInput>;
+};
+
+export type MutationUploadAvatarArgs = {
+  base64Img: Scalars["String"];
+};
+
+export type MutationFollowArgs = {
+  userId: Scalars["ID"];
+  follow: Scalars["Boolean"];
+};
+
+export type NewComment = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  questionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+};
+
+export type NewFollower = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+};
+
+export type NewFollowerNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  followedUser: User;
+  createdOn: Scalars["DateTime"];
+};
+
+export type NewLikeNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  createdOn: Scalars["DateTime"];
+};
+
+export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+
+export type NewsBase = {
+  type: NewsType;
+  performer: User;
+  createdOn: Scalars["DateTime"];
+};
 
 export enum NewsType {
   NewAnswer = "NEW_ANSWER",
@@ -32,444 +234,125 @@ export enum NewsType {
   NewFollower = "NEW_FOLLOWER"
 }
 
+export type Node = {
+  id: Scalars["ID"];
+};
+
+export type Notification = {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+};
+
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT"
 }
 
-export type DateTime = any;
+export type PageInfo = {
+  startCursor?: Maybe<Scalars["String"]>;
+  endCursor?: Maybe<Scalars["String"]>;
+  hasNextPage: Scalars["Boolean"];
+  hasPreviousPage: Scalars["Boolean"];
+};
 
-// ====================================================
-// Scalars
-// ====================================================
-
-// ====================================================
-// Interfaces
-// ====================================================
-
-export interface NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  createdOn: DateTime;
-}
-
-export interface Notification {
-  id: string;
-
-  type: NotificationType;
-
-  performerId: string;
-
-  performerAvatarSrc: string;
-
-  text: string;
-
-  seen: boolean;
-
-  createdOn: DateTime;
-}
-
-export interface Connection {
-  pageInfo: PageInfo;
-
-  edges?: Maybe<Edge[]>;
-
-  totalCount: number;
-}
-
-export interface Edge {
-  cursor: string;
-
-  node: Node;
-}
-
-export interface Node {
-  id: string;
-}
-
-// ====================================================
-// Types
-// ====================================================
-
-export interface Query {
-  newsfeed?: Maybe<NewsBase[]>;
-
-  notifications?: Maybe<Notification[]>;
-
-  questionsTags: string[];
-
+export type Query = {
+  newsfeed?: Maybe<Array<NewsBase>>;
+  notifications?: Maybe<Array<Notification>>;
+  questionsTags: Array<Scalars["String"]>;
   questions?: Maybe<QuestionConnection>;
-
   answeredQuestion: Question;
-
-  users?: Maybe<User[]>;
-
+  users?: Maybe<Array<User>>;
   user?: Maybe<User>;
+  followers?: Maybe<Array<User>>;
+  following?: Maybe<Array<User>>;
+};
 
-  followers?: Maybe<User[]>;
+export type QueryQuestionsArgs = {
+  answered: Scalars["Boolean"];
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
+};
 
-  following?: Maybe<User[]>;
-}
+export type QueryAnsweredQuestionArgs = {
+  userId: Scalars["ID"];
+  questionId: Scalars["ID"];
+};
 
-export interface User {
-  id: string;
+export type QueryUsersArgs = {
+  match?: Maybe<Scalars["String"]>;
+};
 
-  me?: Maybe<boolean>;
+export type QueryUserArgs = {
+  id: Scalars["ID"];
+};
 
-  email?: Maybe<string>;
+export type QueryFollowersArgs = {
+  userId: Scalars["ID"];
+};
 
-  fullName: string;
+export type QueryFollowingArgs = {
+  userId: Scalars["ID"];
+};
 
-  intro?: Maybe<string>;
-
-  socialMediaLinks?: Maybe<SocialMediaLinks>;
-
-  avatarSrc?: Maybe<string>;
-
-  following?: Maybe<string[]>;
-
-  followers?: Maybe<string[]>;
-}
-
-export interface SocialMediaLinks {
-  facebookLink?: Maybe<string>;
-
-  twitterLink?: Maybe<string>;
-
-  instagramLink?: Maybe<string>;
-
-  linkedInLink?: Maybe<string>;
-}
-
-export interface QuestionConnection extends Connection {
-  pageInfo: PageInfo;
-
-  edges?: Maybe<QuestionEdge[]>;
-
-  totalCount: number;
-}
-
-export interface PageInfo {
-  startCursor?: Maybe<string>;
-
-  endCursor?: Maybe<string>;
-
-  hasNextPage: boolean;
-
-  hasPreviousPage: boolean;
-}
-
-export interface QuestionEdge extends Edge {
-  cursor: string;
-
-  node: Question;
-}
-
-/** question should be made an interface */
-export interface Question extends Node {
-  id: string;
-
-  tags?: Maybe<string[]>;
-
-  value: string;
-
+export type Question = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
   answer?: Maybe<Answer>;
-}
+};
 
-export interface Answer {
-  id: string;
+export type QuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<QuestionEdge>>;
+  totalCount: Scalars["Int"];
+};
 
-  position: number;
+export type QuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: Question;
+};
 
-  questionId: string;
+export type SocialMediaLinks = {
+  facebookLink?: Maybe<Scalars["String"]>;
+  twitterLink?: Maybe<Scalars["String"]>;
+  instagramLink?: Maybe<Scalars["String"]>;
+  linkedInLink?: Maybe<Scalars["String"]>;
+};
 
-  userId: string;
+export type SocialMediaLinksInput = {
+  facebookLink?: Maybe<Scalars["String"]>;
+  twitterLink?: Maybe<Scalars["String"]>;
+  instagramLink?: Maybe<Scalars["String"]>;
+  linkedInLink?: Maybe<Scalars["String"]>;
+};
 
-  editions: AnswerEdition[];
-}
-
-export interface AnswerEdition {
-  id: string;
-
-  date: DateTime;
-  /** before: String! after: String! */
-  value: string;
-
-  likes?: Maybe<Likes>;
-
-  comments?: Maybe<Comment[]>;
-}
-
-export interface Likes {
-  total: number;
-
-  likers: Liker[];
-}
-
-export interface Liker {
-  user: User;
-
-  numOfLikes: number;
-}
-
-export interface Comment {
-  id: string;
-
-  user: User;
-
-  value: string;
-}
-
-export interface Mutation {
-  notifsMarkSeen?: Maybe<boolean>;
-
-  commentAnswerEdition: Comment;
-
-  editComment: Comment;
-
-  removeComment: Comment;
-
-  editAnswer: Answer;
-
-  addAnswer: Answer;
-
-  removeAnswer: Answer;
-
-  likeAnswerEdition: AnswerEdition;
-
-  moveAnswerPosition?: Maybe<number>;
-
-  addQuestions?: Maybe<boolean>;
-  /** removeQuestion(questionId: ID!): Question! */
-  questionNotApply: Question;
-
-  signUp?: Maybe<string>;
-
-  login: LoginResult;
-
-  editUser: User;
-
-  uploadAvatar: string;
-
-  follow?: Maybe<boolean>;
-}
-
-export interface LoginResult {
-  authToken: string;
-
-  userId: string;
-}
-
-export interface Subscription {
+export type Subscription = {
   newNotification: Notification;
-}
+};
 
-export interface AnswerNews extends NewsBase {
-  type: NewsType;
+export type SubscriptionNewNotificationArgs = {
+  userId: Scalars["ID"];
+};
 
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  createdOn: DateTime;
-}
-
-export interface CommentNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  commentId: string;
-
-  createdOn: DateTime;
-}
-
-export interface NewFollowerNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  followedUser: User;
-
-  createdOn: DateTime;
-}
-
-export interface NewLikeNews extends NewsBase {
-  type: NewsType;
-
-  performer: User;
-
-  answerOwner: User;
-
-  question: Question;
-
-  createdOn: DateTime;
-}
-
-export interface NewComment extends Notification {
-  id: string;
-
-  type: NotificationType;
-
-  performerId: string;
-
-  performerAvatarSrc: string;
-
-  text: string;
-
-  seen: boolean;
-
-  createdOn: DateTime;
-
-  questionId: string;
-
-  commentId: string;
-}
-
-export interface NewFollower extends Notification {
-  id: string;
-
-  type: NotificationType;
-
-  performerId: string;
-
-  performerAvatarSrc: string;
-
-  text: string;
-
-  seen: boolean;
-
-  createdOn: DateTime;
-}
-
-// ====================================================
-// Arguments
-// ====================================================
-
-export interface QuestionsQueryArgs {
-  answered: boolean;
-
-  userId: string;
-
-  tags?: Maybe<string[]>;
-
-  first: number;
-
-  after?: Maybe<string>;
-}
-export interface AnsweredQuestionQueryArgs {
-  userId: string;
-
-  questionId: string;
-}
-export interface UsersQueryArgs {
-  match?: Maybe<string>;
-}
-export interface UserQueryArgs {
-  id: string;
-}
-export interface FollowersQueryArgs {
-  userId: string;
-}
-export interface FollowingQueryArgs {
-  userId: string;
-}
-export interface CommentAnswerEditionMutationArgs {
-  answerId: string;
-
-  answerEditionId: string;
-
-  comment: string;
-}
-export interface EditCommentMutationArgs {
-  answerId: string;
-
-  answerEditionId: string;
-
-  commentId: string;
-
-  commentValue: string;
-}
-export interface RemoveCommentMutationArgs {
-  answerId: string;
-
-  answerEditionId: string;
-
-  commentId: string;
-}
-export interface EditAnswerMutationArgs {
-  answerId: string;
-
-  answerValue: string;
-}
-export interface AddAnswerMutationArgs {
-  questionId: string;
-
-  answerValue: string;
-}
-export interface RemoveAnswerMutationArgs {
-  answerId: string;
-}
-export interface LikeAnswerEditionMutationArgs {
-  answerId: string;
-
-  answerEditionId: string;
-
-  userLikes: number;
-}
-export interface MoveAnswerPositionMutationArgs {
-  answerId: string;
-
-  position: number;
-}
-export interface AddQuestionsMutationArgs {
-  questions?: Maybe<InputQuestion[]>;
-}
-export interface QuestionNotApplyMutationArgs {
-  questionId: string;
-}
-export interface SignUpMutationArgs {
-  firstName: string;
-
-  surName: string;
-
-  email: string;
-
-  password: string;
-}
-export interface LoginMutationArgs {
-  email: string;
-
-  name: string;
-}
-export interface EditUserMutationArgs {
-  input?: Maybe<EditUserInput>;
-}
-export interface UploadAvatarMutationArgs {
-  base64Img: string;
-}
-export interface FollowMutationArgs {
-  userId: string;
-
-  follow: boolean;
-}
-export interface NewNotificationSubscriptionArgs {
-  userId: string;
-}
-
-// ====================================================
-// Unions
-// ====================================================
-
-export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+export type User = {
+  id: Scalars["ID"];
+  me?: Maybe<Scalars["Boolean"]>;
+  email?: Maybe<Scalars["String"]>;
+  fullName: Scalars["String"];
+  intro?: Maybe<Scalars["String"]>;
+  socialMediaLinks?: Maybe<SocialMediaLinks>;
+  avatarSrc?: Maybe<Scalars["String"]>;
+  following?: Maybe<Array<Scalars["ID"]>>;
+  followers?: Maybe<Array<Scalars["ID"]>>;
+};
+import { ApolloContext } from "../types/gqlContext";
 
 import {
   GraphQLResolveInfo,
@@ -477,1244 +360,462 @@ import {
   GraphQLScalarTypeConfig
 } from "graphql";
 
-import { ApolloContext } from "../types/gqlContext";
-
-export type Resolver<Result, Parent = {}, Context = {}, Args = {}> = (
-  parent: Parent,
-  args: Args,
-  context: Context,
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
   info: GraphQLResolveInfo
-) => Promise<Result> | Result;
+) => Promise<TResult> | TResult;
 
-export interface ISubscriptionResolverObject<Result, Parent, Context, Args> {
-  subscribe<R = Result, P = Parent>(
-    parent: P,
-    args: Args,
-    context: Context,
-    info: GraphQLResolveInfo
-  ): AsyncIterator<R | Result> | Promise<AsyncIterator<R | Result>>;
-  resolve?<R = Result, P = Parent>(
-    parent: P,
-    args: Args,
-    context: Context,
-    info: GraphQLResolveInfo
-  ): R | Result | Promise<R | Result>;
-}
+export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+  fragment: string;
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
 
-export type SubscriptionResolver<
-  Result,
-  Parent = {},
-  Context = {},
-  Args = {}
-> =
-  | ((
-      ...args: any[]
-    ) => ISubscriptionResolverObject<Result, Parent, Context, Args>)
-  | ISubscriptionResolverObject<Result, Parent, Context, Args>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+  | ResolverFn<TResult, TParent, TContext, TArgs>
+  | StitchingResolver<TResult, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<Types, Parent = {}, Context = {}> = (
-  parent: Parent,
-  context: Context,
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
   info: GraphQLResolveInfo
-) => Maybe<Types>;
+) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
 
-export type NextResolverFn<T> = () => Promise<T>;
-
-export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
-  next: NextResolverFn<TResult>,
-  source: any,
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export namespace QueryResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    newsfeed?: NewsfeedResolver<Maybe<NewsBase[]>, TypeParent, Context>;
-
-    notifications?: NotificationsResolver<
-      Maybe<Notification[]>,
-      TypeParent,
-      Context
-    >;
-
-    questionsTags?: QuestionsTagsResolver<string[], TypeParent, Context>;
-
-    questions?: QuestionsResolver<
-      Maybe<QuestionConnection>,
-      TypeParent,
-      Context
-    >;
-
-    answeredQuestion?: AnsweredQuestionResolver<Question, TypeParent, Context>;
-
-    users?: UsersResolver<Maybe<User[]>, TypeParent, Context>;
-
-    user?: UserResolver<Maybe<User>, TypeParent, Context>;
-
-    followers?: FollowersResolver<Maybe<User[]>, TypeParent, Context>;
-
-    following?: FollowingResolver<Maybe<User[]>, TypeParent, Context>;
-  }
-
-  export type NewsfeedResolver<
-    R = Maybe<NewsBase[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type NotificationsResolver<
-    R = Maybe<Notification[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionsTagsResolver<
-    R = string[],
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionsResolver<
-    R = Maybe<QuestionConnection>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, QuestionsArgs>;
-  export interface QuestionsArgs {
-    answered: boolean;
-
-    userId: string;
-
-    tags?: Maybe<string[]>;
-
-    first: number;
-
-    after?: Maybe<string>;
-  }
-
-  export type AnsweredQuestionResolver<
-    R = Question,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, AnsweredQuestionArgs>;
-  export interface AnsweredQuestionArgs {
-    userId: string;
-
-    questionId: string;
-  }
-
-  export type UsersResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, UsersArgs>;
-  export interface UsersArgs {
-    match?: Maybe<string>;
-  }
-
-  export type UserResolver<
-    R = Maybe<User>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, UserArgs>;
-  export interface UserArgs {
-    id: string;
-  }
-
-  export type FollowersResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, FollowersArgs>;
-  export interface FollowersArgs {
-    userId: string;
-  }
-
-  export type FollowingResolver<
-    R = Maybe<User[]>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, FollowingArgs>;
-  export interface FollowingArgs {
-    userId: string;
-  }
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, TParent, TContext, TArgs>;
 }
 
-export namespace UserResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = User> {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    me?: MeResolver<Maybe<boolean>, TypeParent, Context>;
-
-    email?: EmailResolver<Maybe<string>, TypeParent, Context>;
-
-    fullName?: FullNameResolver<string, TypeParent, Context>;
-
-    intro?: IntroResolver<Maybe<string>, TypeParent, Context>;
-
-    socialMediaLinks?: SocialMediaLinksResolver<
-      Maybe<SocialMediaLinks>,
-      TypeParent,
-      Context
-    >;
-
-    avatarSrc?: AvatarSrcResolver<Maybe<string>, TypeParent, Context>;
-
-    following?: FollowingResolver<Maybe<string[]>, TypeParent, Context>;
-
-    followers?: FollowersResolver<Maybe<string[]>, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type MeResolver<
-    R = Maybe<boolean>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EmailResolver<
-    R = Maybe<string>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FullNameResolver<
-    R = string,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type IntroResolver<
-    R = Maybe<string>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type SocialMediaLinksResolver<
-    R = Maybe<SocialMediaLinks>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AvatarSrcResolver<
-    R = Maybe<string>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FollowingResolver<
-    R = Maybe<string[]>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FollowersResolver<
-    R = Maybe<string[]>,
-    Parent = User,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace SocialMediaLinksResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = SocialMediaLinks
-  > {
-    facebookLink?: FacebookLinkResolver<Maybe<string>, TypeParent, Context>;
-
-    twitterLink?: TwitterLinkResolver<Maybe<string>, TypeParent, Context>;
-
-    instagramLink?: InstagramLinkResolver<Maybe<string>, TypeParent, Context>;
-
-    linkedInLink?: LinkedInLinkResolver<Maybe<string>, TypeParent, Context>;
-  }
-
-  export type FacebookLinkResolver<
-    R = Maybe<string>,
-    Parent = SocialMediaLinks,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TwitterLinkResolver<
-    R = Maybe<string>,
-    Parent = SocialMediaLinks,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type InstagramLinkResolver<
-    R = Maybe<string>,
-    Parent = SocialMediaLinks,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type LinkedInLinkResolver<
-    R = Maybe<string>,
-    Parent = SocialMediaLinks,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace QuestionConnectionResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = QuestionConnection
-  > {
-    pageInfo?: PageInfoResolver<PageInfo, TypeParent, Context>;
-
-    edges?: EdgesResolver<Maybe<QuestionEdge[]>, TypeParent, Context>;
-
-    totalCount?: TotalCountResolver<number, TypeParent, Context>;
-  }
-
-  export type PageInfoResolver<
-    R = PageInfo,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EdgesResolver<
-    R = Maybe<QuestionEdge[]>,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TotalCountResolver<
-    R = number,
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace PageInfoResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = PageInfo> {
-    startCursor?: StartCursorResolver<Maybe<string>, TypeParent, Context>;
-
-    endCursor?: EndCursorResolver<Maybe<string>, TypeParent, Context>;
-
-    hasNextPage?: HasNextPageResolver<boolean, TypeParent, Context>;
-
-    hasPreviousPage?: HasPreviousPageResolver<boolean, TypeParent, Context>;
-  }
-
-  export type StartCursorResolver<
-    R = Maybe<string>,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EndCursorResolver<
-    R = Maybe<string>,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type HasNextPageResolver<
-    R = boolean,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type HasPreviousPageResolver<
-    R = boolean,
-    Parent = PageInfo,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace QuestionEdgeResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = QuestionEdge
-  > {
-    cursor?: CursorResolver<string, TypeParent, Context>;
-
-    node?: NodeResolver<Question, TypeParent, Context>;
-  }
-
-  export type CursorResolver<
-    R = string,
-    Parent = QuestionEdge,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type NodeResolver<
-    R = Question,
-    Parent = QuestionEdge,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-/** question should be made an interface */
-export namespace QuestionResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Question> {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    tags?: TagsResolver<Maybe<string[]>, TypeParent, Context>;
-
-    value?: ValueResolver<string, TypeParent, Context>;
-
-    answer?: AnswerResolver<Maybe<Answer>, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = Question,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TagsResolver<
-    R = Maybe<string[]>,
-    Parent = Question,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type ValueResolver<
-    R = string,
-    Parent = Question,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerResolver<
-    R = Maybe<Answer>,
-    Parent = Question,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace AnswerResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Answer> {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    position?: PositionResolver<number, TypeParent, Context>;
-
-    questionId?: QuestionIdResolver<string, TypeParent, Context>;
-
-    userId?: UserIdResolver<string, TypeParent, Context>;
-
-    editions?: EditionsResolver<AnswerEdition[], TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PositionResolver<
-    R = number,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionIdResolver<
-    R = string,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type UserIdResolver<
-    R = string,
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type EditionsResolver<
-    R = AnswerEdition[],
-    Parent = Answer,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace AnswerEditionResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = AnswerEdition
-  > {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    date?: DateResolver<DateTime, TypeParent, Context>;
-    /** before: String! after: String! */
-    value?: ValueResolver<string, TypeParent, Context>;
-
-    likes?: LikesResolver<Maybe<Likes>, TypeParent, Context>;
-
-    comments?: CommentsResolver<Maybe<Comment[]>, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type DateResolver<
-    R = DateTime,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type ValueResolver<
-    R = string,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type LikesResolver<
-    R = Maybe<Likes>,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentsResolver<
-    R = Maybe<Comment[]>,
-    Parent = AnswerEdition,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace LikesResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Likes> {
-    total?: TotalResolver<number, TypeParent, Context>;
-
-    likers?: LikersResolver<Liker[], TypeParent, Context>;
-  }
-
-  export type TotalResolver<
-    R = number,
-    Parent = Likes,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type LikersResolver<
-    R = Liker[],
-    Parent = Likes,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace LikerResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Liker> {
-    user?: UserResolver<User, TypeParent, Context>;
-
-    numOfLikes?: NumOfLikesResolver<number, TypeParent, Context>;
-  }
-
-  export type UserResolver<
-    R = User,
-    Parent = Liker,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type NumOfLikesResolver<
-    R = number,
-    Parent = Liker,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace CommentResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = Comment> {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    user?: UserResolver<User, TypeParent, Context>;
-
-    value?: ValueResolver<string, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = Comment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type UserResolver<
-    R = User,
-    Parent = Comment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type ValueResolver<
-    R = string,
-    Parent = Comment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace MutationResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    notifsMarkSeen?: NotifsMarkSeenResolver<
-      Maybe<boolean>,
-      TypeParent,
-      Context
-    >;
-
-    commentAnswerEdition?: CommentAnswerEditionResolver<
-      Comment,
-      TypeParent,
-      Context
-    >;
-
-    editComment?: EditCommentResolver<Comment, TypeParent, Context>;
-
-    removeComment?: RemoveCommentResolver<Comment, TypeParent, Context>;
-
-    editAnswer?: EditAnswerResolver<Answer, TypeParent, Context>;
-
-    addAnswer?: AddAnswerResolver<Answer, TypeParent, Context>;
-
-    removeAnswer?: RemoveAnswerResolver<Answer, TypeParent, Context>;
-
-    likeAnswerEdition?: LikeAnswerEditionResolver<
-      AnswerEdition,
-      TypeParent,
-      Context
-    >;
-
-    moveAnswerPosition?: MoveAnswerPositionResolver<
-      Maybe<number>,
-      TypeParent,
-      Context
-    >;
-
-    addQuestions?: AddQuestionsResolver<Maybe<boolean>, TypeParent, Context>;
-    /** removeQuestion(questionId: ID!): Question! */
-    questionNotApply?: QuestionNotApplyResolver<Question, TypeParent, Context>;
-
-    signUp?: SignUpResolver<Maybe<string>, TypeParent, Context>;
-
-    login?: LoginResolver<LoginResult, TypeParent, Context>;
-
-    editUser?: EditUserResolver<User, TypeParent, Context>;
-
-    uploadAvatar?: UploadAvatarResolver<string, TypeParent, Context>;
-
-    follow?: FollowResolver<Maybe<boolean>, TypeParent, Context>;
-  }
-
-  export type NotifsMarkSeenResolver<
-    R = Maybe<boolean>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentAnswerEditionResolver<
-    R = Comment,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, CommentAnswerEditionArgs>;
-  export interface CommentAnswerEditionArgs {
-    answerId: string;
-
-    answerEditionId: string;
-
-    comment: string;
-  }
-
-  export type EditCommentResolver<
-    R = Comment,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, EditCommentArgs>;
-  export interface EditCommentArgs {
-    answerId: string;
-
-    answerEditionId: string;
-
-    commentId: string;
-
-    commentValue: string;
-  }
-
-  export type RemoveCommentResolver<
-    R = Comment,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, RemoveCommentArgs>;
-  export interface RemoveCommentArgs {
-    answerId: string;
-
-    answerEditionId: string;
-
-    commentId: string;
-  }
-
-  export type EditAnswerResolver<
-    R = Answer,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, EditAnswerArgs>;
-  export interface EditAnswerArgs {
-    answerId: string;
-
-    answerValue: string;
-  }
-
-  export type AddAnswerResolver<
-    R = Answer,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, AddAnswerArgs>;
-  export interface AddAnswerArgs {
-    questionId: string;
-
-    answerValue: string;
-  }
-
-  export type RemoveAnswerResolver<
-    R = Answer,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, RemoveAnswerArgs>;
-  export interface RemoveAnswerArgs {
-    answerId: string;
-  }
-
-  export type LikeAnswerEditionResolver<
-    R = AnswerEdition,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, LikeAnswerEditionArgs>;
-  export interface LikeAnswerEditionArgs {
-    answerId: string;
-
-    answerEditionId: string;
-
-    userLikes: number;
-  }
-
-  export type MoveAnswerPositionResolver<
-    R = Maybe<number>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, MoveAnswerPositionArgs>;
-  export interface MoveAnswerPositionArgs {
-    answerId: string;
-
-    position: number;
-  }
-
-  export type AddQuestionsResolver<
-    R = Maybe<boolean>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, AddQuestionsArgs>;
-  export interface AddQuestionsArgs {
-    questions?: Maybe<InputQuestion[]>;
-  }
-
-  export type QuestionNotApplyResolver<
-    R = Question,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, QuestionNotApplyArgs>;
-  export interface QuestionNotApplyArgs {
-    questionId: string;
-  }
-
-  export type SignUpResolver<
-    R = Maybe<string>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, SignUpArgs>;
-  export interface SignUpArgs {
-    firstName: string;
-
-    surName: string;
-
-    email: string;
-
-    password: string;
-  }
-
-  export type LoginResolver<
-    R = LoginResult,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, LoginArgs>;
-  export interface LoginArgs {
-    email: string;
-
-    name: string;
-  }
-
-  export type EditUserResolver<
-    R = User,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, EditUserArgs>;
-  export interface EditUserArgs {
-    input?: Maybe<EditUserInput>;
-  }
-
-  export type UploadAvatarResolver<
-    R = string,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, UploadAvatarArgs>;
-  export interface UploadAvatarArgs {
-    base64Img: string;
-  }
-
-  export type FollowResolver<
-    R = Maybe<boolean>,
-    Parent = {},
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context, FollowArgs>;
-  export interface FollowArgs {
-    userId: string;
-
-    follow: boolean;
-  }
-}
-
-export namespace LoginResultResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = LoginResult
-  > {
-    authToken?: AuthTokenResolver<string, TypeParent, Context>;
-
-    userId?: UserIdResolver<string, TypeParent, Context>;
-  }
-
-  export type AuthTokenResolver<
-    R = string,
-    Parent = LoginResult,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type UserIdResolver<
-    R = string,
-    Parent = LoginResult,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace SubscriptionResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = {}> {
-    newNotification?: NewNotificationResolver<
-      Notification,
-      TypeParent,
-      Context
-    >;
-  }
-
-  export type NewNotificationResolver<
-    R = Notification,
-    Parent = {},
-    Context = ApolloContext
-  > = SubscriptionResolver<R, Parent, Context, NewNotificationArgs>;
-  export interface NewNotificationArgs {
-    userId: string;
-  }
-}
-
-export namespace AnswerNewsResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = AnswerNews> {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = AnswerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace CommentNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = CommentNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    commentId?: CommentIdResolver<string, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentIdResolver<
-    R = string,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = CommentNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewFollowerNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = NewFollowerNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    followedUser?: FollowedUserResolver<User, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type FollowedUserResolver<
-    R = User,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewFollowerNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewLikeNewsResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = NewLikeNews
-  > {
-    type?: TypeResolver<NewsType, TypeParent, Context>;
-
-    performer?: PerformerResolver<User, TypeParent, Context>;
-
-    answerOwner?: AnswerOwnerResolver<User, TypeParent, Context>;
-
-    question?: QuestionResolver<Question, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type TypeResolver<
-    R = NewsType,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerResolver<
-    R = User,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type AnswerOwnerResolver<
-    R = User,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionResolver<
-    R = Question,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewLikeNews,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewCommentResolvers {
-  export interface Resolvers<Context = ApolloContext, TypeParent = NewComment> {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    type?: TypeResolver<NotificationType, TypeParent, Context>;
-
-    performerId?: PerformerIdResolver<string, TypeParent, Context>;
-
-    performerAvatarSrc?: PerformerAvatarSrcResolver<
-      string,
-      TypeParent,
-      Context
-    >;
-
-    text?: TextResolver<string, TypeParent, Context>;
-
-    seen?: SeenResolver<boolean, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-
-    questionId?: QuestionIdResolver<string, TypeParent, Context>;
-
-    commentId?: CommentIdResolver<string, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TypeResolver<
-    R = NotificationType,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerIdResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerAvatarSrcResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TextResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type SeenResolver<
-    R = boolean,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type QuestionIdResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CommentIdResolver<
-    R = string,
-    Parent = NewComment,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewFollowerResolvers {
-  export interface Resolvers<
-    Context = ApolloContext,
-    TypeParent = NewFollower
-  > {
-    id?: IdResolver<string, TypeParent, Context>;
-
-    type?: TypeResolver<NotificationType, TypeParent, Context>;
-
-    performerId?: PerformerIdResolver<string, TypeParent, Context>;
-
-    performerAvatarSrc?: PerformerAvatarSrcResolver<
-      string,
-      TypeParent,
-      Context
-    >;
-
-    text?: TextResolver<string, TypeParent, Context>;
-
-    seen?: SeenResolver<boolean, TypeParent, Context>;
-
-    createdOn?: CreatedOnResolver<DateTime, TypeParent, Context>;
-  }
-
-  export type IdResolver<
-    R = string,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TypeResolver<
-    R = NotificationType,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerIdResolver<
-    R = string,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type PerformerAvatarSrcResolver<
-    R = string,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type TextResolver<
-    R = string,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type SeenResolver<
-    R = boolean,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-  export type CreatedOnResolver<
-    R = DateTime,
-    Parent = NewFollower,
-    Context = ApolloContext
-  > = Resolver<R, Parent, Context>;
-}
-
-export namespace NewsBaseResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "AnswerNews" | "CommentNews" | "NewFollowerNews" | "NewLikeNews",
-    Parent = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-export namespace NotificationResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "NewComment" | "NewFollower",
-    Parent = NewComment | NewFollower,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-export namespace ConnectionResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "QuestionConnection",
-    Parent = QuestionConnection,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-export namespace EdgeResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "QuestionEdge",
-    Parent = QuestionEdge,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-export namespace NodeResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "Question",
-    Parent = Question,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-export namespace NewsResolvers {
-  export interface Resolvers {
-    __resolveType: ResolveType;
-  }
-  export type ResolveType<
-    R = "AnswerNews" | "CommentNews" | "NewFollowerNews" | "NewLikeNews",
-    Parent = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews,
-    Context = ApolloContext
-  > = TypeResolveFn<R, Parent, Context>;
-}
-
-/** Directs the executor to skip this field or fragment when the `if` argument is true. */
-export type SkipDirectiveResolver<Result> = DirectiveResolverFn<
-  Result,
-  SkipDirectiveArgs,
-  ApolloContext
->;
-export interface SkipDirectiveArgs {
-  /** Skipped when true. */
-  if: boolean;
-}
-
-/** Directs the executor to include this field or fragment only when the `if` argument is true. */
-export type IncludeDirectiveResolver<Result> = DirectiveResolverFn<
-  Result,
-  IncludeDirectiveArgs,
-  ApolloContext
->;
-export interface IncludeDirectiveArgs {
-  /** Included when true. */
-  if: boolean;
-}
-
-/** Marks an element of a GraphQL schema as no longer supported. */
-export type DeprecatedDirectiveResolver<Result> = DirectiveResolverFn<
-  Result,
-  DeprecatedDirectiveArgs,
-  ApolloContext
->;
-export interface DeprecatedDirectiveArgs {
-  /** Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted in [Markdown](https://daringfireball.net/projects/markdown/). */
-  reason?: string;
-}
+export type SubscriptionResolver<
+  TResult,
+  TParent = {},
+  TContext = {},
+  TArgs = {}
+> =
+  | ((
+      ...args: any[]
+    ) => SubscriptionResolverObject<TResult, TParent, TContext, TArgs>)
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<
+  TResult = {},
+  TParent = {},
+  TContext = {},
+  TArgs = {}
+> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export type AnswerResolvers<Context = ApolloContext, ParentType = Answer> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  position?: Resolver<Scalars["Int"], ParentType, Context>;
+  questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  userId?: Resolver<Scalars["ID"], ParentType, Context>;
+  editions?: Resolver<Array<AnswerEdition>, ParentType, Context>;
+};
+
+export type AnswerEditionResolvers<
+  Context = ApolloContext,
+  ParentType = AnswerEdition
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  date?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  value?: Resolver<Scalars["String"], ParentType, Context>;
+  likes?: Resolver<Maybe<Likes>, ParentType, Context>;
+  comments?: Resolver<Maybe<Array<Comment>>, ParentType, Context>;
+};
+
+export type AnswerNewsResolvers<
+  Context = ApolloContext,
+  ParentType = AnswerNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  answerOwner?: Resolver<User, ParentType, Context>;
+  question?: Resolver<Question, ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type CommentResolvers<Context = ApolloContext, ParentType = Comment> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  user?: Resolver<User, ParentType, Context>;
+  value?: Resolver<Scalars["String"], ParentType, Context>;
+};
+
+export type CommentNewsResolvers<
+  Context = ApolloContext,
+  ParentType = CommentNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  answerOwner?: Resolver<User, ParentType, Context>;
+  question?: Resolver<Question, ParentType, Context>;
+  commentId?: Resolver<Scalars["ID"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type ConnectionResolvers<
+  Context = ApolloContext,
+  ParentType = Connection
+> = {
+  __resolveType: TypeResolveFn<"QuestionConnection", ParentType, Context>;
+  pageInfo?: Resolver<PageInfo, ParentType, Context>;
+  edges?: Resolver<Maybe<Array<Edge>>, ParentType, Context>;
+  totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
+};
 
 export interface DateTimeScalarConfig
-  extends GraphQLScalarTypeConfig<DateTime, any> {
+  extends GraphQLScalarTypeConfig<Scalars["DateTime"], any> {
   name: "DateTime";
 }
 
-export interface IResolvers {
-  Query?: QueryResolvers.Resolvers;
-  User?: UserResolvers.Resolvers;
-  SocialMediaLinks?: SocialMediaLinksResolvers.Resolvers;
-  QuestionConnection?: QuestionConnectionResolvers.Resolvers;
-  PageInfo?: PageInfoResolvers.Resolvers;
-  QuestionEdge?: QuestionEdgeResolvers.Resolvers;
-  Question?: QuestionResolvers.Resolvers;
-  Answer?: AnswerResolvers.Resolvers;
-  AnswerEdition?: AnswerEditionResolvers.Resolvers;
-  Likes?: LikesResolvers.Resolvers;
-  Liker?: LikerResolvers.Resolvers;
-  Comment?: CommentResolvers.Resolvers;
-  Mutation?: MutationResolvers.Resolvers;
-  LoginResult?: LoginResultResolvers.Resolvers;
-  Subscription?: SubscriptionResolvers.Resolvers;
-  AnswerNews?: AnswerNewsResolvers.Resolvers;
-  CommentNews?: CommentNewsResolvers.Resolvers;
-  NewFollowerNews?: NewFollowerNewsResolvers.Resolvers;
-  NewLikeNews?: NewLikeNewsResolvers.Resolvers;
-  NewComment?: NewCommentResolvers.Resolvers;
-  NewFollower?: NewFollowerResolvers.Resolvers;
-  NewsBase?: NewsBaseResolvers.Resolvers;
-  Notification?: NotificationResolvers.Resolvers;
-  Connection?: ConnectionResolvers.Resolvers;
-  Edge?: EdgeResolvers.Resolvers;
-  Node?: NodeResolvers.Resolvers;
-  News?: NewsResolvers.Resolvers;
-  DateTime?: GraphQLScalarType;
-}
+export type EdgeResolvers<Context = ApolloContext, ParentType = Edge> = {
+  __resolveType: TypeResolveFn<"QuestionEdge", ParentType, Context>;
+  cursor?: Resolver<Scalars["String"], ParentType, Context>;
+  node?: Resolver<Node, ParentType, Context>;
+};
 
-export interface IDirectiveResolvers<Result> {
-  skip?: SkipDirectiveResolver<Result>;
-  include?: IncludeDirectiveResolver<Result>;
-  deprecated?: DeprecatedDirectiveResolver<Result>;
-}
+export type LikerResolvers<Context = ApolloContext, ParentType = Liker> = {
+  user?: Resolver<User, ParentType, Context>;
+  numOfLikes?: Resolver<Scalars["Int"], ParentType, Context>;
+};
+
+export type LikesResolvers<Context = ApolloContext, ParentType = Likes> = {
+  total?: Resolver<Scalars["Int"], ParentType, Context>;
+  likers?: Resolver<Array<Liker>, ParentType, Context>;
+};
+
+export type LoginResultResolvers<
+  Context = ApolloContext,
+  ParentType = LoginResult
+> = {
+  authToken?: Resolver<Scalars["String"], ParentType, Context>;
+  userId?: Resolver<Scalars["ID"], ParentType, Context>;
+};
+
+export type MutationResolvers<
+  Context = ApolloContext,
+  ParentType = Mutation
+> = {
+  notifsMarkSeen?: Resolver<Maybe<Scalars["Boolean"]>, ParentType, Context>;
+  commentAnswerEdition?: Resolver<
+    Comment,
+    ParentType,
+    Context,
+    MutationCommentAnswerEditionArgs
+  >;
+  editComment?: Resolver<Comment, ParentType, Context, MutationEditCommentArgs>;
+  removeComment?: Resolver<
+    Comment,
+    ParentType,
+    Context,
+    MutationRemoveCommentArgs
+  >;
+  editAnswer?: Resolver<Answer, ParentType, Context, MutationEditAnswerArgs>;
+  addAnswer?: Resolver<Answer, ParentType, Context, MutationAddAnswerArgs>;
+  removeAnswer?: Resolver<
+    Answer,
+    ParentType,
+    Context,
+    MutationRemoveAnswerArgs
+  >;
+  likeAnswerEdition?: Resolver<
+    AnswerEdition,
+    ParentType,
+    Context,
+    MutationLikeAnswerEditionArgs
+  >;
+  moveAnswerPosition?: Resolver<
+    Maybe<Scalars["Int"]>,
+    ParentType,
+    Context,
+    MutationMoveAnswerPositionArgs
+  >;
+  addQuestions?: Resolver<
+    Maybe<Scalars["Boolean"]>,
+    ParentType,
+    Context,
+    MutationAddQuestionsArgs
+  >;
+  questionNotApply?: Resolver<
+    Question,
+    ParentType,
+    Context,
+    MutationQuestionNotApplyArgs
+  >;
+  signUp?: Resolver<
+    Maybe<Scalars["String"]>,
+    ParentType,
+    Context,
+    MutationSignUpArgs
+  >;
+  login?: Resolver<LoginResult, ParentType, Context, MutationLoginArgs>;
+  editUser?: Resolver<User, ParentType, Context, MutationEditUserArgs>;
+  uploadAvatar?: Resolver<
+    Scalars["String"],
+    ParentType,
+    Context,
+    MutationUploadAvatarArgs
+  >;
+  follow?: Resolver<
+    Maybe<Scalars["Boolean"]>,
+    ParentType,
+    Context,
+    MutationFollowArgs
+  >;
+};
+
+export type NewCommentResolvers<
+  Context = ApolloContext,
+  ParentType = NewComment
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  commentId?: Resolver<Scalars["ID"], ParentType, Context>;
+};
+
+export type NewFollowerResolvers<
+  Context = ApolloContext,
+  ParentType = NewFollower
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type NewFollowerNewsResolvers<
+  Context = ApolloContext,
+  ParentType = NewFollowerNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  followedUser?: Resolver<User, ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type NewLikeNewsResolvers<
+  Context = ApolloContext,
+  ParentType = NewLikeNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  answerOwner?: Resolver<User, ParentType, Context>;
+  question?: Resolver<Question, ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type NewsResolvers<Context = ApolloContext, ParentType = News> = {
+  __resolveType: TypeResolveFn<
+    "AnswerNews" | "CommentNews" | "NewFollowerNews" | "NewLikeNews",
+    ParentType,
+    Context
+  >;
+};
+
+export type NewsBaseResolvers<
+  Context = ApolloContext,
+  ParentType = NewsBase
+> = {
+  __resolveType: TypeResolveFn<
+    "AnswerNews" | "CommentNews" | "NewFollowerNews" | "NewLikeNews",
+    ParentType,
+    Context
+  >;
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type NodeResolvers<Context = ApolloContext, ParentType = Node> = {
+  __resolveType: TypeResolveFn<"Question", ParentType, Context>;
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+};
+
+export type NotificationResolvers<
+  Context = ApolloContext,
+  ParentType = Notification
+> = {
+  __resolveType: TypeResolveFn<
+    "NewComment" | "NewFollower",
+    ParentType,
+    Context
+  >;
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
+export type PageInfoResolvers<
+  Context = ApolloContext,
+  ParentType = PageInfo
+> = {
+  startCursor?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  endCursor?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  hasNextPage?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  hasPreviousPage?: Resolver<Scalars["Boolean"], ParentType, Context>;
+};
+
+export type QueryResolvers<Context = ApolloContext, ParentType = Query> = {
+  newsfeed?: Resolver<Maybe<Array<NewsBase>>, ParentType, Context>;
+  notifications?: Resolver<Maybe<Array<Notification>>, ParentType, Context>;
+  questionsTags?: Resolver<Array<Scalars["String"]>, ParentType, Context>;
+  questions?: Resolver<
+    Maybe<QuestionConnection>,
+    ParentType,
+    Context,
+    QueryQuestionsArgs
+  >;
+  answeredQuestion?: Resolver<
+    Question,
+    ParentType,
+    Context,
+    QueryAnsweredQuestionArgs
+  >;
+  users?: Resolver<Maybe<Array<User>>, ParentType, Context, QueryUsersArgs>;
+  user?: Resolver<Maybe<User>, ParentType, Context, QueryUserArgs>;
+  followers?: Resolver<
+    Maybe<Array<User>>,
+    ParentType,
+    Context,
+    QueryFollowersArgs
+  >;
+  following?: Resolver<
+    Maybe<Array<User>>,
+    ParentType,
+    Context,
+    QueryFollowingArgs
+  >;
+};
+
+export type QuestionResolvers<
+  Context = ApolloContext,
+  ParentType = Question
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  tags?: Resolver<Maybe<Array<Scalars["String"]>>, ParentType, Context>;
+  value?: Resolver<Scalars["String"], ParentType, Context>;
+  answer?: Resolver<Maybe<Answer>, ParentType, Context>;
+};
+
+export type QuestionConnectionResolvers<
+  Context = ApolloContext,
+  ParentType = QuestionConnection
+> = {
+  pageInfo?: Resolver<PageInfo, ParentType, Context>;
+  edges?: Resolver<Maybe<Array<QuestionEdge>>, ParentType, Context>;
+  totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
+};
+
+export type QuestionEdgeResolvers<
+  Context = ApolloContext,
+  ParentType = QuestionEdge
+> = {
+  cursor?: Resolver<Scalars["String"], ParentType, Context>;
+  node?: Resolver<Question, ParentType, Context>;
+};
+
+export type SocialMediaLinksResolvers<
+  Context = ApolloContext,
+  ParentType = SocialMediaLinks
+> = {
+  facebookLink?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  twitterLink?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  instagramLink?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  linkedInLink?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+};
+
+export type SubscriptionResolvers<
+  Context = ApolloContext,
+  ParentType = Subscription
+> = {
+  newNotification?: SubscriptionResolver<
+    Notification,
+    ParentType,
+    Context,
+    SubscriptionNewNotificationArgs
+  >;
+};
+
+export type UserResolvers<Context = ApolloContext, ParentType = User> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  me?: Resolver<Maybe<Scalars["Boolean"]>, ParentType, Context>;
+  email?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  fullName?: Resolver<Scalars["String"], ParentType, Context>;
+  intro?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  socialMediaLinks?: Resolver<Maybe<SocialMediaLinks>, ParentType, Context>;
+  avatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
+  following?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
+  followers?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
+};
+
+export type Resolvers<Context = ApolloContext> = {
+  Answer?: AnswerResolvers<Context>;
+  AnswerEdition?: AnswerEditionResolvers<Context>;
+  AnswerNews?: AnswerNewsResolvers<Context>;
+  Comment?: CommentResolvers<Context>;
+  CommentNews?: CommentNewsResolvers<Context>;
+  Connection?: ConnectionResolvers;
+  DateTime?: GraphQLScalarType;
+  Edge?: EdgeResolvers;
+  Liker?: LikerResolvers<Context>;
+  Likes?: LikesResolvers<Context>;
+  LoginResult?: LoginResultResolvers<Context>;
+  Mutation?: MutationResolvers<Context>;
+  NewComment?: NewCommentResolvers<Context>;
+  NewFollower?: NewFollowerResolvers<Context>;
+  NewFollowerNews?: NewFollowerNewsResolvers<Context>;
+  NewLikeNews?: NewLikeNewsResolvers<Context>;
+  News?: NewsResolvers;
+  NewsBase?: NewsBaseResolvers;
+  Node?: NodeResolvers;
+  Notification?: NotificationResolvers;
+  PageInfo?: PageInfoResolvers<Context>;
+  Query?: QueryResolvers<Context>;
+  Question?: QuestionResolvers<Context>;
+  QuestionConnection?: QuestionConnectionResolvers<Context>;
+  QuestionEdge?: QuestionEdgeResolvers<Context>;
+  SocialMediaLinks?: SocialMediaLinksResolvers<Context>;
+  Subscription?: SubscriptionResolvers<Context>;
+  User?: UserResolvers<Context>;
+};
+
+/**
+ * @deprecated
+ * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
+ */
+export type IResolvers<Context = ApolloContext> = Resolvers<Context>;

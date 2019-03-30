@@ -1,9 +1,14 @@
-import { QueryResolvers } from "../autoGenTypes";
+import {
+  QueryResolvers,
+  NewsBase,
+  NewsBaseResolvers,
+  NewsResolvers
+} from "../autoGenTypes";
 import { mapNewsfeed } from "./gqlMapper";
 import { ApolloContext } from "gqlContext";
 import { authMiddleware } from "../middlewares";
 
-const NewsBase = {
+const NewsBase: NewsBaseResolvers = {
   __resolveType(obj, context: ApolloContext, info) {
     authMiddleware(context.user);
 
@@ -24,7 +29,7 @@ const NewsBase = {
   }
 };
 
-const News = {
+const News: NewsResolvers = {
   __resolveType(obj, context, info) {
     authMiddleware(context.user);
 
@@ -45,9 +50,7 @@ const News = {
   }
 };
 
-interface Query {
-  newsfeed: QueryResolvers.NewsfeedResolver;
-}
+type Query = Pick<QueryResolvers, "newsfeed">;
 
 const Query: Query = {
   async newsfeed(_, __, { services, user }) {
