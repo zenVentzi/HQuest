@@ -4,24 +4,13 @@ import { pubsub, NEW_NOTIFICATION } from "../../PubSub";
 import {
   QueryResolvers,
   MutationResolvers,
-  SubscriptionResolvers
+  SubscriptionResolvers,
+  NotificationResolvers
 } from "../autoGenTypes";
 import { mapNotifications } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
 
-interface Query {
-  notifications: QueryResolvers.NotificationsResolver;
-}
-
-interface Mutation {
-  notifsMarkSeen: MutationResolvers.NotifsMarkSeenResolver;
-}
-
-interface Subscription {
-  newNotification: SubscriptionResolvers.NewNotificationResolver;
-}
-
-const Notification = {
+const Notification: NotificationResolvers = {
   __resolveType(obj, context, info) {
     authMiddleware(context.user);
 
@@ -32,6 +21,10 @@ const Notification = {
     return "NewFollower";
   }
 };
+
+type Query = Pick<QueryResolvers, "notifications">;
+type Mutation = Pick<MutationResolvers, "notifsMarkSeen">;
+type Subscription = Pick<SubscriptionResolvers, "newNotification">;
 
 const Query: Query = {
   async notifications(_, __, { services, user }) {
