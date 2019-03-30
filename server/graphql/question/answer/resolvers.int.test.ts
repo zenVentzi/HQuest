@@ -24,7 +24,7 @@ const context: ApolloContext = {
 };
 
 test("addAnswer() should return added answer", async done => {
-  const args: GqlTypes.AddAnswerMutationArgs = {
+  const args: GqlTypes.MutationAddAnswerArgs = {
     answerValue: "answerValue",
     questionId: ObjectId().toHexString()
   };
@@ -68,7 +68,7 @@ test("editAnswer() should return edited answer", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.EditAnswerMutationArgs = {
+  const args: GqlTypes.MutationEditAnswerArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerValue: "newAss brand new fuck ya fresh mirin"
   };
@@ -87,7 +87,7 @@ test("editAnswer() result should contain editions", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.EditAnswerMutationArgs = {
+  const args: GqlTypes.MutationEditAnswerArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerValue: "newAss brand new fuck ya fresh mirin"
   };
@@ -107,7 +107,7 @@ test("likeAnswer() result should contain likes", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.LikeAnswerEditionMutationArgs = {
+  const args: GqlTypes.MutationLikeAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     userLikes: 5
@@ -132,7 +132,7 @@ test("moveAnswerPosition() should return new position", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.MoveAnswerPositionMutationArgs = {
+  const args: GqlTypes.MutationMoveAnswerPositionArgs = {
     answerId: existingAnswer._id.toHexString(),
     position: 4
   };
