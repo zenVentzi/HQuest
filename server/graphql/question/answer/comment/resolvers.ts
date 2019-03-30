@@ -1,14 +1,11 @@
-import { ApolloContext } from "gqlContext";
 import { mapComment, mapComments } from "./gqlMapper";
 import { authMiddleware } from "../../../middlewares";
-
 import { MutationResolvers } from "../../../autoGenTypes";
 
-interface Mutation {
-  commentAnswerEdition: MutationResolvers.CommentAnswerEditionResolver;
-  editComment: MutationResolvers.EditCommentResolver;
-  removeComment: MutationResolvers.RemoveCommentResolver;
-}
+type Mutation = Pick<
+  MutationResolvers,
+  "commentAnswerEdition" | "editComment" | "removeComment"
+>;
 
 const Mutation: Mutation = {
   async commentAnswerEdition(

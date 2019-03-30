@@ -34,7 +34,7 @@ test("commentAnswer() should return added comment", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.CommentAnswerEditionMutationArgs = {
+  const args: GqlTypes.MutationCommentAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
@@ -68,7 +68,7 @@ test("commentAnswer() should notify answer owner", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.CommentAnswerEditionMutationArgs = {
+  const args: GqlTypes.MutationCommentAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
@@ -108,7 +108,7 @@ test("editComment() should return edited comment", async done => {
     ]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.EditCommentMutationArgs = {
+  const args: GqlTypes.MutationEditCommentArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     commentId: existingAnswer.editions[0].comments![0]._id.toHexString(),
@@ -147,7 +147,7 @@ test("removeComment() should return removed comment", async done => {
     ]
   } as DbTypes.Answer).save()).toObject();
 
-  const args: GqlTypes.RemoveCommentMutationArgs = {
+  const args: GqlTypes.MutationRemoveCommentArgs = {
     answerId: existingAnswer._id.toHexString(),
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     commentId: existingAnswer.editions[0].comments![0]._id.toHexString()
