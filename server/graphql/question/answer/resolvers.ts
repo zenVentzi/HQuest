@@ -2,13 +2,14 @@ import { mapAnswer, mapAnswerEditions, mapAnswerEdition } from "./gqlMapper";
 import { authMiddleware } from "../../middlewares";
 import { MutationResolvers } from "../../autoGenTypes";
 
-interface Mutation {
-  editAnswer: MutationResolvers.EditAnswerResolver;
-  addAnswer: MutationResolvers.AddAnswerResolver;
-  removeAnswer: MutationResolvers.RemoveAnswerResolver;
-  likeAnswerEdition: MutationResolvers.LikeAnswerEditionResolver;
-  moveAnswerPosition: MutationResolvers.MoveAnswerPositionResolver;
-}
+type Mutation = Pick<
+  MutationResolvers,
+  | "editAnswer"
+  | "addAnswer"
+  | "removeAnswer"
+  | "likeAnswerEdition"
+  | "moveAnswerPosition"
+>;
 
 const Mutation: Mutation = {
   async editAnswer(_, { answerId, answerValue }, { services, user }) {
