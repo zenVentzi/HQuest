@@ -58,7 +58,7 @@ test("login() should register if user doesn't exist", async done => {
 test("editUser() should edit existing user", async done => {
   const existingUser = (await new models.user(contextUser).save()).toObject();
 
-  const args: GqlTypes.EditUserMutationArgs = {
+  const args: GqlTypes.MutationEditUserArgs = {
     input: {
       fullName: "Pesho Goshev1",
       intro: "fdf",
@@ -81,7 +81,7 @@ test("editUser() should edit existing user", async done => {
 
 test("user() should return user if found", async done => {
   await new models.user(contextUser).save();
-  const args: GqlTypes.UserQueryArgs = { id: contextUser._id.toHexString() };
+  const args: GqlTypes.QueryUserArgs = { id: contextUser._id.toHexString() };
   const user = await Query.user({}, args, context, {} as any);
   const actual = user!.id;
   const expected = contextUser._id.toHexString();
@@ -90,7 +90,7 @@ test("user() should return user if found", async done => {
 });
 
 test("user() should return null if not found", async done => {
-  const args: GqlTypes.UserQueryArgs = { id: contextUser._id.toHexString() };
+  const args: GqlTypes.QueryUserArgs = { id: contextUser._id.toHexString() };
   const user = await Query.user({}, args, context, {} as any);
   const actual = user;
   const expected = null;
@@ -105,7 +105,7 @@ test("users() should return users that match 1 word", async done => {
     firstName: "hasan", // kade si we hasane auf england where are you hasane
     _id: ObjectId()
   } as DbTypes.User).save();
-  const args: GqlTypes.UsersQueryArgs = { match: "hasan" };
+  const args: GqlTypes.QueryUsersArgs = { match: "hasan" };
   const users = await Query.users({}, args, context, {} as any);
   const actual = users![0].fullName;
   const expected = "hasan" + " " + contextUser.surName;
@@ -120,7 +120,7 @@ test("users() should return users that match 2 words", async done => {
     firstName: "hasan", // kade si we hasane auf england where are you hasane
     _id: ObjectId()
   } as DbTypes.User).save();
-  const args: GqlTypes.UsersQueryArgs = {
+  const args: GqlTypes.QueryUsersArgs = {
     match: `hasan ${contextUser.surName}`
   };
   const users = await Query.users({}, args, context, {} as any);
@@ -141,7 +141,7 @@ test("followers() should return followers if user has followers", async done => 
     followers: [follower._id]
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: followed._id.toHexString()
   };
   const followers = await Query.followers({}, args, context, {} as any);
@@ -162,7 +162,7 @@ test("followers() should return null if user has no followers", async done => {
     // followers: [follower._id]
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: userWithoutFollowers._id.toHexString()
   };
   const followers = await Query.followers({}, args, context, {} as any);
@@ -174,7 +174,7 @@ test("followers() should return null if user has no followers", async done => {
 
 test("followers() should return null if user is not found", async done => {
   const randomId = ObjectId().toHexString();
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: randomId
   };
   const followers = await Query.followers({}, args, context, {} as any);
@@ -195,7 +195,7 @@ test("following() should return following if user follows somebody", async done 
     following: [randomUser._id]
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: user._id.toHexString()
   };
   const following = await Query.following({}, args, context, {} as any);
@@ -210,7 +210,7 @@ test("following() should return nullshit if user doesn't follow anyone", async d
     ...contextUser
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: user._id.toHexString()
   };
   const following = await Query.following({}, args, context, {} as any);
@@ -223,7 +223,7 @@ test("following() should return nullshit if user doesn't follow anyone", async d
 test("following() should return nullshit if user doesn't exist", async done => {
   const randomId = ObjectId().toHexString();
 
-  const args: GqlTypes.FollowersQueryArgs = {
+  const args: GqlTypes.QueryFollowersArgs = {
     userId: randomId
   };
   const following = await Query.following({}, args, context, {} as any);
@@ -242,7 +242,7 @@ test("follow() should add followers to user doc", async done => {
     avatarSrc: "test"
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowMutationArgs = {
+  const args: GqlTypes.MutationFollowArgs = {
     follow: true,
     userId: existingUser._id.toHexString()
   };
@@ -266,7 +266,7 @@ test("follow(false) should remove followers from user doc", async done => {
     avatarSrc: "test"
   } as DbTypes.User).save())!.toObject();
 
-  const args: GqlTypes.FollowMutationArgs = {
+  const args: GqlTypes.MutationFollowArgs = {
     follow: true,
     userId: existingUser._id.toHexString()
   };
@@ -293,7 +293,7 @@ test("follow() should add notification to the followed user", async done => {
 
   const followedUser = (await new models.user(contextUser).save())!.toObject();
 
-  const args: GqlTypes.FollowMutationArgs = {
+  const args: GqlTypes.MutationFollowArgs = {
     follow: true,
     userId: followedUser._id.toHexString()
   };

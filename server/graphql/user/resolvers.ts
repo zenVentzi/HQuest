@@ -3,19 +3,12 @@ import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 import { mapUser, mapUsers } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
 
-interface Query {
-  user: QueryResolvers.UserResolver;
-  users: QueryResolvers.UsersResolver;
-  followers: QueryResolvers.FollowersResolver;
-  following: QueryResolvers.FollowingResolver;
-}
+type Query = Pick<QueryResolvers, "user" | "users" | "followers" | "following">;
 
-interface Mutation {
-  login: MutationResolvers.LoginResolver;
-  editUser: MutationResolvers.EditUserResolver;
-  follow: MutationResolvers.FollowResolver;
-  uploadAvatar: MutationResolvers.UploadAvatarResolver;
-}
+type Mutation = Pick<
+  MutationResolvers,
+  "login" | "editUser" | "follow" | "uploadAvatar"
+>;
 
 const Query: Query = {
   async user(_, { id }, { services, user }) {
