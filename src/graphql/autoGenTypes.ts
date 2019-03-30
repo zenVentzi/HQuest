@@ -1,28 +1,230 @@
-export type Maybe<T> = T | null;
+type Maybe<T> = T | null;
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  DateTime: any;
+};
 
-export interface InputQuestion {
-  value: string;
+export type Answer = {
+  id: Scalars["ID"];
+  position: Scalars["Int"];
+  questionId: Scalars["ID"];
+  userId: Scalars["ID"];
+  editions: Array<AnswerEdition>;
+};
 
-  tags: string[];
-}
+export type AnswerEdition = {
+  id: Scalars["ID"];
+  date: Scalars["DateTime"];
+  value: Scalars["String"];
+  likes?: Maybe<Likes>;
+  comments?: Maybe<Array<Comment>>;
+};
 
-export interface EditUserInput {
-  fullName: string;
+export type AnswerNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  createdOn: Scalars["DateTime"];
+};
 
-  intro: string;
+export type Comment = {
+  id: Scalars["ID"];
+  user: User;
+  value: Scalars["String"];
+};
 
+export type CommentNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  commentId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
+};
+
+export type Connection = {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<Edge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type Edge = {
+  cursor: Scalars["String"];
+  node: Node;
+};
+
+export type EditUserInput = {
+  fullName: Scalars["String"];
+  intro: Scalars["String"];
   socialMediaLinks: SocialMediaLinksInput;
-}
+};
 
-export interface SocialMediaLinksInput {
-  facebookLink?: Maybe<string>;
+export type InputQuestion = {
+  value: Scalars["String"];
+  tags: Array<Scalars["String"]>;
+};
 
-  twitterLink?: Maybe<string>;
+export type Liker = {
+  user: User;
+  numOfLikes: Scalars["Int"];
+};
 
-  instagramLink?: Maybe<string>;
+export type Likes = {
+  total: Scalars["Int"];
+  likers: Array<Liker>;
+};
 
-  linkedInLink?: Maybe<string>;
-}
+export type LoginResult = {
+  authToken: Scalars["String"];
+  userId: Scalars["ID"];
+};
+
+export type Mutation = {
+  notifsMarkSeen?: Maybe<Scalars["Boolean"]>;
+  commentAnswerEdition: Comment;
+  editComment: Comment;
+  removeComment: Comment;
+  editAnswer: Answer;
+  addAnswer: Answer;
+  removeAnswer: Answer;
+  likeAnswerEdition: AnswerEdition;
+  moveAnswerPosition?: Maybe<Scalars["Int"]>;
+  addQuestions?: Maybe<Scalars["Boolean"]>;
+  questionNotApply: Question;
+  signUp?: Maybe<Scalars["String"]>;
+  login: LoginResult;
+  editUser: User;
+  uploadAvatar: Scalars["String"];
+  follow?: Maybe<Scalars["Boolean"]>;
+};
+
+export type MutationCommentAnswerEditionArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  comment: Scalars["String"];
+};
+
+export type MutationEditCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  commentValue: Scalars["String"];
+};
+
+export type MutationRemoveCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+};
+
+export type MutationEditAnswerArgs = {
+  answerId: Scalars["ID"];
+  answerValue: Scalars["String"];
+};
+
+export type MutationAddAnswerArgs = {
+  questionId: Scalars["ID"];
+  answerValue: Scalars["String"];
+};
+
+export type MutationRemoveAnswerArgs = {
+  answerId: Scalars["ID"];
+};
+
+export type MutationLikeAnswerEditionArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  userLikes: Scalars["Int"];
+};
+
+export type MutationMoveAnswerPositionArgs = {
+  answerId: Scalars["ID"];
+  position: Scalars["Int"];
+};
+
+export type MutationAddQuestionsArgs = {
+  questions?: Maybe<Array<InputQuestion>>;
+};
+
+export type MutationQuestionNotApplyArgs = {
+  questionId: Scalars["ID"];
+};
+
+export type MutationSignUpArgs = {
+  firstName: Scalars["String"];
+  surName: Scalars["String"];
+  email: Scalars["String"];
+  password: Scalars["String"];
+};
+
+export type MutationLoginArgs = {
+  email: Scalars["String"];
+  name: Scalars["String"];
+};
+
+export type MutationEditUserArgs = {
+  input?: Maybe<EditUserInput>;
+};
+
+export type MutationUploadAvatarArgs = {
+  base64Img: Scalars["String"];
+};
+
+export type MutationFollowArgs = {
+  userId: Scalars["ID"];
+  follow: Scalars["Boolean"];
+};
+
+export type NewComment = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  questionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+};
+
+export type NewFollower = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+};
+
+export type NewFollowerNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  followedUser: User;
+  createdOn: Scalars["DateTime"];
+};
+
+export type NewLikeNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: Question;
+  createdOn: Scalars["DateTime"];
+};
+
+export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+
+export type NewsBase = {
+  type: NewsType;
+  performer: User;
+  createdOn: Scalars["DateTime"];
+};
 
 export enum NewsType {
   NewAnswer = "NEW_ANSWER",
@@ -32,570 +234,445 @@ export enum NewsType {
   NewFollower = "NEW_FOLLOWER"
 }
 
+export type Node = {
+  id: Scalars["ID"];
+};
+
+export type Notification = {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+};
+
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT"
 }
 
-export type DateTime = any;
-
-// ====================================================
-// Documents
-// ====================================================
-
-export type NewsfeedVariables = {};
-
-export type NewsfeedQuery = {
-  __typename?: "Query";
-
-  newsfeed: Maybe<NewsfeedNewsfeed[]>;
+export type PageInfo = {
+  startCursor?: Maybe<Scalars["String"]>;
+  endCursor?: Maybe<Scalars["String"]>;
+  hasNextPage: Scalars["Boolean"];
+  hasPreviousPage: Scalars["Boolean"];
 };
 
-export type NewsfeedNewsfeed = {
-  __typename?:
-    | NewsfeedAnswerNewsInlineFragment["__typename"]
-    | NewsfeedCommentNewsInlineFragment["__typename"]
-    | NewsfeedNewLikeNewsInlineFragment["__typename"]
-    | NewsfeedNewFollowerNewsInlineFragment["__typename"];
-
-  type: NewsType;
-
-  createdOn: DateTime;
-} & (
-  | NewsfeedAnswerNewsInlineFragment
-  | NewsfeedCommentNewsInlineFragment
-  | NewsfeedNewLikeNewsInlineFragment
-  | NewsfeedNewFollowerNewsInlineFragment);
-
-export type NewsfeedAnswerNewsInlineFragment = {
-  __typename?: "AnswerNews";
-
-  performer: NewsfeedPerformer;
-
-  question: NewsfeedQuestion;
+export type Query = {
+  newsfeed?: Maybe<Array<NewsBase>>;
+  notifications?: Maybe<Array<Notification>>;
+  questionsTags: Array<Scalars["String"]>;
+  questions?: Maybe<QuestionConnection>;
+  answeredQuestion: Question;
+  users?: Maybe<Array<User>>;
+  user?: Maybe<User>;
+  followers?: Maybe<Array<User>>;
+  following?: Maybe<Array<User>>;
 };
 
-export type NewsfeedPerformer = UserFieldsFragment;
-
-export type NewsfeedQuestion = QuestionFieldsFragment;
-
-export type NewsfeedCommentNewsInlineFragment = {
-  __typename?: "CommentNews";
-
-  performer: Newsfeed_Performer;
-
-  answerOwner: NewsfeedAnswerOwner;
-
-  question: Newsfeed_Question;
-
-  commentId: string;
+export type QueryQuestionsArgs = {
+  answered: Scalars["Boolean"];
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
 };
 
-export type Newsfeed_Performer = UserFieldsFragment;
-
-export type NewsfeedAnswerOwner = UserFieldsFragment;
-
-export type Newsfeed_Question = QuestionFieldsFragment;
-
-export type NewsfeedNewLikeNewsInlineFragment = {
-  __typename?: "NewLikeNews";
-
-  performer: Newsfeed__Performer;
-
-  answerOwner: Newsfeed_AnswerOwner;
-
-  question: Newsfeed__Question;
+export type QueryAnsweredQuestionArgs = {
+  userId: Scalars["ID"];
+  questionId: Scalars["ID"];
 };
 
-export type Newsfeed__Performer = UserFieldsFragment;
-
-export type Newsfeed_AnswerOwner = UserFieldsFragment;
-
-export type Newsfeed__Question = QuestionFieldsFragment;
-
-export type NewsfeedNewFollowerNewsInlineFragment = {
-  __typename?: "NewFollowerNews";
-
-  performer: Newsfeed___Performer;
-
-  followedUser: NewsfeedFollowedUser;
+export type QueryUsersArgs = {
+  match?: Maybe<Scalars["String"]>;
 };
 
-export type Newsfeed___Performer = UserFieldsFragment;
-
-export type NewsfeedFollowedUser = UserFieldsFragment;
-
-export type NotificationsVariables = {};
-
-export type NotificationsQuery = {
-  __typename?: "Query";
-
-  notifications: Maybe<NotificationsNotifications[]>;
+export type QueryUserArgs = {
+  id: Scalars["ID"];
 };
 
-export type NotificationsNotifications = NotificationFieldsFragment;
-
-export type AnsweredQuestionVariables = {
-  userId: string;
-  questionId: string;
+export type QueryFollowersArgs = {
+  userId: Scalars["ID"];
 };
 
-export type AnsweredQuestionQuery = {
-  __typename?: "Query";
-
-  answeredQuestion: AnsweredQuestionAnsweredQuestion;
+export type QueryFollowingArgs = {
+  userId: Scalars["ID"];
 };
 
-export type AnsweredQuestionAnsweredQuestion = {
-  __typename?: "Question";
-
-  answer: Maybe<AnsweredQuestionAnswer>;
-} & QuestionFieldsFragment;
-
-export type AnsweredQuestionAnswer = AnswerFieldsFragment;
-
-export type QuestionsVariables = {
-  answered: boolean;
-  userId: string;
-  tags?: Maybe<string[]>;
-  first: number;
-  after?: Maybe<string>;
+export type Question = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
+  answer?: Maybe<Answer>;
 };
 
-export type QuestionsQuery = {
-  __typename?: "Query";
-
-  questions: Maybe<QuestionsQuestions>;
+export type QuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<QuestionEdge>>;
+  totalCount: Scalars["Int"];
 };
 
-export type QuestionsQuestions = QuestionConnectionFieldsFragment;
-
-export type QuestionsTagsVariables = {};
-
-export type QuestionsTagsQuery = {
-  __typename?: "Query";
-
-  questionsTags: string[];
+export type QuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: Question;
 };
 
-export type UserVariables = {
-  id: string;
+export type SocialMediaLinks = {
+  facebookLink?: Maybe<Scalars["String"]>;
+  twitterLink?: Maybe<Scalars["String"]>;
+  instagramLink?: Maybe<Scalars["String"]>;
+  linkedInLink?: Maybe<Scalars["String"]>;
 };
 
-export type UserQuery = {
-  __typename?: "Query";
-
-  user: Maybe<UserUser>;
+export type SocialMediaLinksInput = {
+  facebookLink?: Maybe<Scalars["String"]>;
+  twitterLink?: Maybe<Scalars["String"]>;
+  instagramLink?: Maybe<Scalars["String"]>;
+  linkedInLink?: Maybe<Scalars["String"]>;
 };
 
-export type UserUser = UserFieldsFragment;
-
-export type UsersVariables = {
-  match?: Maybe<string>;
+export type Subscription = {
+  newNotification: Notification;
 };
 
-export type UsersQuery = {
-  __typename?: "Query";
-
-  users: Maybe<UsersUsers[]>;
+export type SubscriptionNewNotificationArgs = {
+  userId: Scalars["ID"];
 };
 
-export type UsersUsers = UserFieldsFragment;
+export type User = {
+  id: Scalars["ID"];
+  me?: Maybe<Scalars["Boolean"]>;
+  email?: Maybe<Scalars["String"]>;
+  fullName: Scalars["String"];
+  intro?: Maybe<Scalars["String"]>;
+  socialMediaLinks?: Maybe<SocialMediaLinks>;
+  avatarSrc?: Maybe<Scalars["String"]>;
+  following?: Maybe<Array<Scalars["ID"]>>;
+  followers?: Maybe<Array<Scalars["ID"]>>;
+};
+export type NewsfeedQueryVariables = {};
 
-export type FollowersVariables = {
-  userId: string;
+export type NewsfeedQuery = { __typename?: "Query" } & {
+  newsfeed: Maybe<
+    Array<
+      Pick<NewsBase, "type" | "createdOn"> &
+        (
+          | ({ __typename?: "AnswerNews" } & {
+              performer: { __typename?: "User" } & UserFieldsFragment;
+              question: { __typename?: "Question" } & QuestionFieldsFragment;
+            })
+          | ({ __typename?: "CommentNews" } & Pick<CommentNews, "commentId"> & {
+                performer: { __typename?: "User" } & UserFieldsFragment;
+                answerOwner: { __typename?: "User" } & UserFieldsFragment;
+                question: { __typename?: "Question" } & QuestionFieldsFragment;
+              })
+          | ({ __typename?: "NewLikeNews" } & {
+              performer: { __typename?: "User" } & UserFieldsFragment;
+              answerOwner: { __typename?: "User" } & UserFieldsFragment;
+              question: { __typename?: "Question" } & QuestionFieldsFragment;
+            })
+          | ({ __typename?: "NewFollowerNews" } & {
+              performer: { __typename?: "User" } & UserFieldsFragment;
+              followedUser: { __typename?: "User" } & UserFieldsFragment;
+            }))
+    >
+  >;
 };
 
-export type FollowersQuery = {
-  __typename?: "Query";
+export type NotificationsQueryVariables = {};
 
-  followers: Maybe<FollowersFollowers[]>;
+export type NotificationsQuery = { __typename?: "Query" } & {
+  notifications: Maybe<Array<NotificationFieldsFragment>>;
 };
 
-export type FollowersFollowers = UserFieldsFragment;
-
-export type FollowingVariables = {
-  userId: string;
+export type AnsweredQuestionQueryVariables = {
+  userId: Scalars["ID"];
+  questionId: Scalars["ID"];
 };
 
-export type FollowingQuery = {
-  __typename?: "Query";
-
-  following: Maybe<FollowingFollowing[]>;
+export type AnsweredQuestionQuery = { __typename?: "Query" } & {
+  answeredQuestion: { __typename?: "Question" } & {
+    answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment>;
+  } & QuestionFieldsFragment;
 };
 
-export type FollowingFollowing = UserFieldsFragment;
-
-export type NotifsMarkSeenVariables = {};
-
-export type NotifsMarkSeenMutation = {
-  __typename?: "Mutation";
-
-  notifsMarkSeen: Maybe<boolean>;
+export type QuestionsQueryVariables = {
+  answered: Scalars["Boolean"];
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
 };
 
-export type CommentAnswerEditionVariables = {
-  answerId: string;
-  answerEditionId: string;
-  comment: string;
+export type QuestionsQuery = { __typename?: "Query" } & {
+  questions: Maybe<
+    { __typename?: "QuestionConnection" } & QuestionConnectionFieldsFragment
+  >;
 };
 
-export type CommentAnswerEditionMutation = {
-  __typename?: "Mutation";
+export type QuestionsTagsQueryVariables = {};
 
-  commentAnswerEdition: CommentAnswerEditionCommentAnswerEdition;
+export type QuestionsTagsQuery = { __typename?: "Query" } & Pick<
+  Query,
+  "questionsTags"
+>;
+
+export type UserQueryVariables = {
+  id: Scalars["ID"];
 };
 
-export type CommentAnswerEditionCommentAnswerEdition = CommentFieldsFragment;
-
-export type EditCommentVariables = {
-  answerId: string;
-  answerEditionId: string;
-  commentId: string;
-  commentValue: string;
+export type UserQuery = { __typename?: "Query" } & {
+  user: Maybe<{ __typename?: "User" } & UserFieldsFragment>;
 };
 
-export type EditCommentMutation = {
-  __typename?: "Mutation";
-
-  editComment: EditCommentEditComment;
+export type UsersQueryVariables = {
+  match?: Maybe<Scalars["String"]>;
 };
 
-export type EditCommentEditComment = CommentFieldsFragment;
-
-export type RemoveCommentVariables = {
-  answerId: string;
-  answerEditionId: string;
-  commentId: string;
+export type UsersQuery = { __typename?: "Query" } & {
+  users: Maybe<Array<{ __typename?: "User" } & UserFieldsFragment>>;
 };
 
-export type RemoveCommentMutation = {
-  __typename?: "Mutation";
-
-  removeComment: RemoveCommentRemoveComment;
+export type FollowersQueryVariables = {
+  userId: Scalars["ID"];
 };
 
-export type RemoveCommentRemoveComment = CommentFieldsFragment;
-
-export type MoveAnswerPositionVariables = {
-  position: number;
-  answerId: string;
+export type FollowersQuery = { __typename?: "Query" } & {
+  followers: Maybe<Array<{ __typename?: "User" } & UserFieldsFragment>>;
 };
 
-export type MoveAnswerPositionMutation = {
-  __typename?: "Mutation";
-
-  moveAnswerPosition: Maybe<number>;
+export type FollowingQueryVariables = {
+  userId: Scalars["ID"];
 };
 
-export type AddAnswerVariables = {
-  questionId: string;
-  answerValue: string;
+export type FollowingQuery = { __typename?: "Query" } & {
+  following: Maybe<Array<{ __typename?: "User" } & UserFieldsFragment>>;
 };
 
-export type AddAnswerMutation = {
-  __typename?: "Mutation";
+export type NotifsMarkSeenMutationVariables = {};
 
-  addAnswer: AddAnswerAddAnswer;
+export type NotifsMarkSeenMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "notifsMarkSeen"
+>;
+
+export type CommentAnswerEditionMutationVariables = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  comment: Scalars["String"];
 };
 
-export type AddAnswerAddAnswer = AnswerFieldsFragment;
-
-export type EditAnswerVariables = {
-  answerId: string;
-  answerValue: string;
+export type CommentAnswerEditionMutation = { __typename?: "Mutation" } & {
+  commentAnswerEdition: { __typename?: "Comment" } & CommentFieldsFragment;
 };
 
-export type EditAnswerMutation = {
-  __typename?: "Mutation";
-
-  editAnswer: EditAnswerEditAnswer;
+export type EditCommentMutationVariables = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  commentValue: Scalars["String"];
 };
 
-export type EditAnswerEditAnswer = AnswerFieldsFragment;
-
-export type RemoveAnswerVariables = {
-  answerId: string;
+export type EditCommentMutation = { __typename?: "Mutation" } & {
+  editComment: { __typename?: "Comment" } & CommentFieldsFragment;
 };
 
-export type RemoveAnswerMutation = {
-  __typename?: "Mutation";
-
-  removeAnswer: RemoveAnswerRemoveAnswer;
+export type RemoveCommentMutationVariables = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
 };
 
-export type RemoveAnswerRemoveAnswer = AnswerFieldsFragment;
-
-export type LikeAnswerEditionVariables = {
-  answerId: string;
-  answerEditionId: string;
-  userLikes: number;
+export type RemoveCommentMutation = { __typename?: "Mutation" } & {
+  removeComment: { __typename?: "Comment" } & CommentFieldsFragment;
 };
 
-export type LikeAnswerEditionMutation = {
-  __typename?: "Mutation";
-
-  likeAnswerEdition: LikeAnswerEditionLikeAnswerEdition;
+export type MoveAnswerPositionMutationVariables = {
+  position: Scalars["Int"];
+  answerId: Scalars["ID"];
 };
 
-export type LikeAnswerEditionLikeAnswerEdition = EditionFieldsFragment;
+export type MoveAnswerPositionMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "moveAnswerPosition"
+>;
 
-export type AddQuestionsVariables = {
-  questions?: Maybe<InputQuestion[]>;
+export type AddAnswerMutationVariables = {
+  questionId: Scalars["ID"];
+  answerValue: Scalars["String"];
 };
 
-export type AddQuestionsMutation = {
-  __typename?: "Mutation";
-
-  addQuestions: Maybe<boolean>;
+export type AddAnswerMutation = { __typename?: "Mutation" } & {
+  addAnswer: { __typename?: "Answer" } & AnswerFieldsFragment;
 };
 
-export type QuestionNotApplyVariables = {
-  questionId: string;
+export type EditAnswerMutationVariables = {
+  answerId: Scalars["ID"];
+  answerValue: Scalars["String"];
 };
 
-export type QuestionNotApplyMutation = {
-  __typename?: "Mutation";
-
-  questionNotApply: QuestionNotApplyQuestionNotApply;
+export type EditAnswerMutation = { __typename?: "Mutation" } & {
+  editAnswer: { __typename?: "Answer" } & AnswerFieldsFragment;
 };
 
-export type QuestionNotApplyQuestionNotApply = QuestionFieldsFragment;
-
-export type LoginVariables = {
-  email: string;
-  name: string;
+export type RemoveAnswerMutationVariables = {
+  answerId: Scalars["ID"];
 };
 
-export type LoginMutation = {
-  __typename?: "Mutation";
-
-  login: LoginLogin;
+export type RemoveAnswerMutation = { __typename?: "Mutation" } & {
+  removeAnswer: { __typename?: "Answer" } & AnswerFieldsFragment;
 };
 
-export type LoginLogin = {
-  __typename?: "LoginResult";
-
-  authToken: string;
-
-  userId: string;
+export type LikeAnswerEditionMutationVariables = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  userLikes: Scalars["Int"];
 };
 
-export type EditUserVariables = {
+export type LikeAnswerEditionMutation = { __typename?: "Mutation" } & {
+  likeAnswerEdition: { __typename?: "AnswerEdition" } & EditionFieldsFragment;
+};
+
+export type AddQuestionsMutationVariables = {
+  questions?: Maybe<Array<InputQuestion>>;
+};
+
+export type AddQuestionsMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "addQuestions"
+>;
+
+export type QuestionNotApplyMutationVariables = {
+  questionId: Scalars["ID"];
+};
+
+export type QuestionNotApplyMutation = { __typename?: "Mutation" } & {
+  questionNotApply: { __typename?: "Question" } & QuestionFieldsFragment;
+};
+
+export type LoginMutationVariables = {
+  email: Scalars["String"];
+  name: Scalars["String"];
+};
+
+export type LoginMutation = { __typename?: "Mutation" } & {
+  login: { __typename?: "LoginResult" } & Pick<
+    LoginResult,
+    "authToken" | "userId"
+  >;
+};
+
+export type EditUserMutationVariables = {
   input?: Maybe<EditUserInput>;
 };
 
-export type EditUserMutation = {
-  __typename?: "Mutation";
-
-  editUser: EditUserEditUser;
+export type EditUserMutation = { __typename?: "Mutation" } & {
+  editUser: { __typename?: "User" } & Pick<User, "id">;
 };
 
-export type EditUserEditUser = {
-  __typename?: "User";
-
-  id: string;
+export type FollowMutationVariables = {
+  userId: Scalars["ID"];
+  follow: Scalars["Boolean"];
 };
 
-export type FollowVariables = {
-  userId: string;
-  follow: boolean;
+export type FollowMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "follow"
+>;
+
+export type UploadAvatarMutationVariables = {
+  base64Img: Scalars["String"];
 };
 
-export type FollowMutation = {
-  __typename?: "Mutation";
+export type UploadAvatarMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "uploadAvatar"
+>;
 
-  follow: Maybe<boolean>;
+export type NewNotificationSubscriptionVariables = {
+  userId: Scalars["ID"];
 };
 
-export type UploadAvatarVariables = {
-  base64Img: string;
+export type NewNotificationSubscription = { __typename?: "Subscription" } & {
+  newNotification: NotificationFieldsFragment;
 };
 
-export type UploadAvatarMutation = {
-  __typename?: "Mutation";
+export type UserFieldsFragment = { __typename?: "User" } & Pick<
+  User,
+  "id" | "fullName" | "avatarSrc" | "intro" | "me" | "followers" | "following"
+> & {
+    socialMediaLinks: Maybe<
+      { __typename?: "SocialMediaLinks" } & Pick<
+        SocialMediaLinks,
+        "facebookLink" | "twitterLink" | "instagramLink" | "linkedInLink"
+      >
+    >;
+  };
 
-  uploadAvatar: string;
+export type CommentFieldsFragment = { __typename?: "Comment" } & Pick<
+  Comment,
+  "id" | "value"
+> & { user: { __typename?: "User" } & UserFieldsFragment };
+
+export type EditionFieldsFragment = { __typename?: "AnswerEdition" } & Pick<
+  AnswerEdition,
+  "id" | "date" | "value"
+> & {
+    comments: Maybe<Array<{ __typename?: "Comment" } & CommentFieldsFragment>>;
+    likes: Maybe<
+      { __typename?: "Likes" } & Pick<Likes, "total"> & {
+          likers: Array<
+            { __typename?: "Liker" } & Pick<Liker, "numOfLikes"> & {
+                user: { __typename?: "User" } & UserFieldsFragment;
+              }
+          >;
+        }
+    >;
+  };
+
+export type AnswerFieldsFragment = { __typename?: "Answer" } & Pick<
+  Answer,
+  "id" | "position" | "userId" | "questionId"
+> & {
+    editions: Array<{ __typename?: "AnswerEdition" } & EditionFieldsFragment>;
+  };
+
+export type QuestionFieldsFragment = { __typename?: "Question" } & Pick<
+  Question,
+  "id" | "value" | "tags"
+> & { answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment> };
+
+export type PageInfoFieldsFragment = { __typename?: "PageInfo" } & Pick<
+  PageInfo,
+  "startCursor" | "endCursor" | "hasNextPage" | "hasPreviousPage"
+>;
+
+export type QuestionEdgeFieldsFragment = Pick<Edge, "cursor"> & {
+  node: QuestionFieldsFragment;
 };
-
-export type NewNotificationVariables = {
-  userId: string;
-};
-
-export type NewNotificationSubscription = {
-  __typename?: "Subscription";
-
-  newNotification: NewNotificationNewNotification;
-};
-
-export type NewNotificationNewNotification = NotificationFieldsFragment;
-
-export type UserFieldsFragment = {
-  __typename?: "User";
-
-  id: string;
-
-  fullName: string;
-
-  avatarSrc: Maybe<string>;
-
-  intro: Maybe<string>;
-
-  socialMediaLinks: Maybe<UserFieldsSocialMediaLinks>;
-
-  me: Maybe<boolean>;
-
-  followers: Maybe<string[]>;
-
-  following: Maybe<string[]>;
-};
-
-export type UserFieldsSocialMediaLinks = {
-  __typename?: "SocialMediaLinks";
-
-  facebookLink: Maybe<string>;
-
-  twitterLink: Maybe<string>;
-
-  instagramLink: Maybe<string>;
-
-  linkedInLink: Maybe<string>;
-};
-
-export type CommentFieldsFragment = {
-  __typename?: "Comment";
-
-  id: string;
-
-  user: CommentFieldsUser;
-
-  value: string;
-};
-
-export type CommentFieldsUser = UserFieldsFragment;
-
-export type EditionFieldsFragment = {
-  __typename?: "AnswerEdition";
-
-  id: string;
-
-  date: DateTime;
-
-  value: string;
-
-  comments: Maybe<EditionFieldsComments[]>;
-
-  likes: Maybe<EditionFieldsLikes>;
-};
-
-export type EditionFieldsComments = CommentFieldsFragment;
-
-export type EditionFieldsLikes = {
-  __typename?: "Likes";
-
-  total: number;
-
-  likers: EditionFieldsLikers[];
-};
-
-export type EditionFieldsLikers = {
-  __typename?: "Liker";
-
-  user: EditionFieldsUser;
-
-  numOfLikes: number;
-};
-
-export type EditionFieldsUser = UserFieldsFragment;
-
-export type AnswerFieldsFragment = {
-  __typename?: "Answer";
-
-  id: string;
-
-  position: number;
-
-  userId: string;
-
-  questionId: string;
-
-  editions: AnswerFieldsEditions[];
-};
-
-export type AnswerFieldsEditions = EditionFieldsFragment;
-
-export type QuestionFieldsFragment = {
-  __typename?: "Question";
-
-  id: string;
-
-  value: string;
-
-  tags: Maybe<string[]>;
-
-  answer: Maybe<QuestionFieldsAnswer>;
-};
-
-export type QuestionFieldsAnswer = AnswerFieldsFragment;
-
-export type PageInfoFieldsFragment = {
-  __typename?: "PageInfo";
-
-  startCursor: Maybe<string>;
-
-  endCursor: Maybe<string>;
-
-  hasNextPage: boolean;
-
-  hasPreviousPage: boolean;
-};
-
-export type QuestionEdgeFieldsFragment = {
-  __typename?: "Edge";
-
-  cursor: string;
-
-  node: QuestionEdgeFieldsNode;
-};
-
-export type QuestionEdgeFieldsNode = QuestionFieldsFragment;
 
 export type QuestionConnectionFieldsFragment = {
   __typename?: "QuestionConnection";
+} & Pick<QuestionConnection, "totalCount"> & {
+    pageInfo: { __typename?: "PageInfo" } & PageInfoFieldsFragment;
+    edges: Maybe<
+      Array<{ __typename?: "QuestionEdge" } & QuestionEdgeFieldsFragment>
+    >;
+  };
 
-  pageInfo: QuestionConnectionFieldsPageInfo;
-
-  edges: Maybe<QuestionConnectionFieldsEdges[]>;
-
-  totalCount: number;
-};
-
-export type QuestionConnectionFieldsPageInfo = PageInfoFieldsFragment;
-
-export type QuestionConnectionFieldsEdges = QuestionEdgeFieldsFragment;
-
-export type NotificationFieldsFragment = {
-  __typename?: "Notification";
-
-  id: string;
-
-  type: NotificationType;
-
-  performerId: string;
-
-  performerAvatarSrc: string;
-
-  text: string;
-
-  seen: boolean;
-
-  createdOn: DateTime;
-} & NotificationFieldsNewCommentInlineFragment;
-
-export type NotificationFieldsNewCommentInlineFragment = {
-  __typename?: "NewComment";
-
-  commentId: string;
-
-  questionId: string;
-};
+export type NotificationFieldsFragment = Pick<
+  Notification,
+  | "id"
+  | "type"
+  | "performerId"
+  | "performerAvatarSrc"
+  | "text"
+  | "seen"
+  | "createdOn"
+> &
+  ({ __typename?: "NewComment" } & Pick<
+    NewComment,
+    "commentId" | "questionId"
+  >);

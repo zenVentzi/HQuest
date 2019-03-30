@@ -11,15 +11,13 @@ generates:
     config:
       contextType: ../types/gqlContext#ApolloContext
     plugins:
-      - "typescript-common"
-      - "typescript-server"
-      - "typescript-resolvers"
-      # - "typescript-mongodb"
+      - typescript
+      - typescript-resolvers
   ./src/graphql/autoGenTypes.ts:
     schema: "./server/graphql/**/*.graphql"
     config:
-      noNamespaces: true
-      contextType: ../types/gqlContext#ApolloContext
+      # noNamespaces: true # used in v.0.18 and below
+      contextType: ../types/gqlContext#ApolloContext # this may not be needed
     plugins:
-      - "typescript-common"
-      - "typescript-client"
+      - typescript
+      - typescript-operations
