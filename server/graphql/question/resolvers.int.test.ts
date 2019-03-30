@@ -34,7 +34,7 @@ test("questions() should return questions edges", async done => {
   await new models.question(question1).save();
   await new models.user(contextUser).save();
 
-  const args: GqlTypes.QuestionsQueryArgs = {
+  const args: GqlTypes.QueryQuestionsArgs = {
     userId: contextUser._id.toHexString(),
     answered: false,
     first: 5
@@ -58,7 +58,7 @@ test("questions() should return total number of questions", async ____done____SE
   await new models.question(question1).save();
   await new models.user(contextUser).save();
 
-  const args: GqlTypes.QuestionsQueryArgs = {
+  const args: GqlTypes.QueryQuestionsArgs = {
     userId: contextUser._id.toHexString(),
     answered: false,
     first: 5

@@ -6,17 +6,12 @@ import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 
 const { ObjectId } = GooseTypes;
 
-interface Query {
-  questionsTags: QueryResolvers.QuestionsTagsResolver;
-  questions: QueryResolvers.QuestionsResolver;
-  answeredQuestion: QueryResolvers.AnsweredQuestionResolver;
-}
+type Query = Pick<
+  QueryResolvers,
+  "questionsTags" | "questions" | "answeredQuestion"
+>;
 
-interface Mutation {
-  addQuestions: MutationResolvers.AddQuestionsResolver;
-  // removeQuestion: Resolver<{}, RemoveQuestionArgs, ApolloContext, Question>;
-  questionNotApply: MutationResolvers.QuestionNotApplyResolver;
-}
+type Mutation = Pick<MutationResolvers, "addQuestions" | "questionNotApply">;
 
 const Query: Query = {
   async questions(
