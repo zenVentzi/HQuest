@@ -8,7 +8,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
 import { getTime } from ".";
-import { NewsfeedNewFollowerNewsInlineFragment } from "GqlClient/autoGenTypes";
+import { NewFollowerNews } from "GqlClient/autoGenTypes";
 
 // this file is duplication of NewComment. To be fixed.
 const NewFollowerWrapper = styled.div`
@@ -26,7 +26,7 @@ const Text = styled.div`
 `;
 
 interface NewFollowerProps {
-  news: NewsfeedNewFollowerNewsInlineFragment;
+  news: NewFollowerNews;
 }
 
 const NewFollower = ({

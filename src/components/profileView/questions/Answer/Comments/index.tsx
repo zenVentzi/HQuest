@@ -11,19 +11,15 @@ import { MutationFn } from "react-apollo";
 import {
   CommentFieldsFragment,
   CommentAnswerEditionMutation,
-  CommentAnswerEditionVariables,
-  EditCommentVariables,
+  CommentAnswerEditionMutationVariables,
+  EditCommentMutationVariables,
   EditCommentMutation,
-  RemoveCommentVariables,
+  RemoveCommentMutationVariables,
   RemoveCommentMutation,
-  EditionFieldsComments,
-  UsersVariables,
+  Comment as CommentType,
+  UsersQueryVariables,
   UserFieldsFragment
 } from "GqlClient/autoGenTypes";
-import PeopleDropdown from "./UsersDropdown";
-import TextareaAutosize from "react-textarea-autosize";
-import UsersDropdown from "./UsersDropdown";
-import { compose } from "async";
 import MentionInput from "./MentionInput";
 
 const StyledCommentInput = styled(Textarea)`
@@ -45,7 +41,7 @@ const ErrorText = styled.div`
 `;
 
 interface CommentsProps {
-  comments: EditionFieldsComments[] | null;
+  comments: CommentType[] | null;
   answerId: string;
   answerEditionId: string;
   onAddComment: () => void;
@@ -127,7 +123,7 @@ const Comments = (props: CommentsProps) => {
   const onSubmitComment = (
     commentEditionMutation: MutationFn<
       CommentAnswerEditionMutation,
-      CommentAnswerEditionVariables
+      CommentAnswerEditionMutationVariables
     >
   ) => async (comment: string): Promise<{ success: boolean }> => {
     if (comment.length < 3) {
@@ -136,7 +132,7 @@ const Comments = (props: CommentsProps) => {
     }
     setIsSubmitting(true);
     const { answerId, onAddComment } = props;
-    const variables: CommentAnswerEditionVariables = {
+    const variables: CommentAnswerEditionMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
       comment
@@ -158,10 +154,13 @@ const Comments = (props: CommentsProps) => {
   };
 
   const onEditComment = (
-    editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>
+    editCommentMutation: MutationFn<
+      EditCommentMutation,
+      EditCommentMutationVariables
+    >
   ) => async (commentId: string, commentValue: string) => {
     const { answerId } = props;
-    const variables: EditCommentVariables = {
+    const variables: EditCommentMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
       commentId,
@@ -180,11 +179,11 @@ const Comments = (props: CommentsProps) => {
   const onRemoveComment = (
     removeCommentMutation: MutationFn<
       RemoveCommentMutation,
-      RemoveCommentVariables
+      RemoveCommentMutationVariables
     >
   ) => async (commentId: string) => {
     const { answerId, onRemoveComment: onRemoveCommentProp } = props;
-    const variables: RemoveCommentVariables = {
+    const variables: RemoveCommentMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
       commentId
@@ -201,10 +200,13 @@ const Comments = (props: CommentsProps) => {
   };
 
   const renderComments = (
-    editCommentMutation: MutationFn<EditCommentMutation, EditCommentVariables>,
+    editCommentMutation: MutationFn<
+      EditCommentMutation,
+      EditCommentMutationVariables
+    >,
     removeCommentMutation: MutationFn<
       RemoveCommentMutation,
-      RemoveCommentVariables
+      RemoveCommentMutationVariables
     >
   ) => {
     const { scrollToComment } = props;

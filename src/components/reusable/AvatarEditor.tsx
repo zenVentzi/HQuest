@@ -6,7 +6,7 @@ import TextBtn from "Reusable/TextBtn";
 import { UPLOAD_AVATAR } from "GqlClient/user/mutations";
 import {
   UploadAvatarMutation,
-  UploadAvatarVariables
+  UploadAvatarMutationVariables
 } from "GqlClient/autoGenTypes";
 
 const Wrapper = styled.div`
@@ -30,7 +30,10 @@ interface AvatarEditorProps {
 const AvatarEditor = (props: AvatarEditorProps) => {
   const editor = useRef<Editor>();
   const onClickSave = (
-    uploadAvatar: MutationFn<UploadAvatarMutation, UploadAvatarVariables>
+    uploadAvatar: MutationFn<
+      UploadAvatarMutation,
+      UploadAvatarMutationVariables
+    >
   ) => async () => {
     if (editor) {
       const canvasScaled = editor.current!.getImageScaledToCanvas();
@@ -53,7 +56,7 @@ const AvatarEditor = (props: AvatarEditorProps) => {
   };
 
   return (
-    <Mutation<UploadAvatarMutation, UploadAvatarVariables>
+    <Mutation<UploadAvatarMutation, UploadAvatarMutationVariables>
       mutation={UPLOAD_AVATAR}
     >
       {uploadAvatar => {

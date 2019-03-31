@@ -11,7 +11,7 @@ import TextBtn from "Reusable/TextBtn";
 import {
   UserFieldsFragment,
   EditUserMutation,
-  EditUserVariables
+  EditUserMutationVariables
 } from "GqlClient/autoGenTypes";
 
 interface ProfileEditorProps extends RouteComponentProps {
@@ -39,7 +39,7 @@ const ProfileEditor = ({
   } = socialMediaLinks!;
 
   return (
-    <Mutation<EditUserMutation, EditUserVariables> mutation={EDIT_USER}>
+    <Mutation<EditUserMutation, EditUserMutationVariables> mutation={EDIT_USER}>
       {editUser => (
         <Formik
           initialValues={{
@@ -76,7 +76,7 @@ const ProfileEditor = ({
 
             /* */
 
-            const variables: EditUserVariables = {
+            const variables: EditUserMutationVariables = {
               input: {
                 fullName: values.fullName!,
                 intro: values.intro!,

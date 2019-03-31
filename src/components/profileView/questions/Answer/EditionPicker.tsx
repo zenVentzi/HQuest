@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AnswerFieldsEditions } from "GqlClient/autoGenTypes";
+import { AnswerEdition } from "GqlClient/autoGenTypes";
 import styled from "styled-components";
 
 const StyledSelect = styled.select`
@@ -10,7 +10,7 @@ const StyledSelect = styled.select`
 `;
 
 interface EditionPickerProps {
-  allEditions: AnswerFieldsEditions[];
+  allEditions: AnswerEdition[];
   pickedEditionId: string | null;
   onPickEdition: (all: boolean, pickedEditionId?: string) => void;
 }

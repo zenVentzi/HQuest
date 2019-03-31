@@ -5,7 +5,10 @@ import {
   SuggestionDataItem
 } from "react-mentions";
 import React, { useState, useRef } from "react";
-import { UserFieldsFragment, UsersVariables } from "GqlClient/autoGenTypes";
+import {
+  UserFieldsFragment,
+  UsersQueryVariables
+} from "GqlClient/autoGenTypes";
 import Avatar from "Reusable/Avatar";
 import { ThemeProvider } from "styled-components";
 
@@ -13,7 +16,7 @@ type CustomSuggestion = SuggestionDataItem & UserFieldsFragment;
 
 type MentionInputProps = {
   searchUsers: (
-    variables: UsersVariables
+    variables: UsersQueryVariables
   ) => Promise<UserFieldsFragment[] | null>;
   submitOnEnter: boolean;
   onSubmit: (comment: string) => Promise<{ success: boolean }>;

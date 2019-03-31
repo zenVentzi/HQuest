@@ -3,7 +3,10 @@ import { Query } from "react-apollo";
 import User from "Reusable/UserRow";
 import { GET_FOLLOWERS } from "GqlClient/user/queries";
 import WhitePanel from "Reusable/WhitePanel";
-import { FollowersQuery, FollowersVariables } from "GqlClient/autoGenTypes";
+import {
+  FollowersQuery,
+  FollowersQueryVariables
+} from "GqlClient/autoGenTypes";
 
 interface FollowersProps {
   userId: string;
@@ -13,7 +16,7 @@ interface FollowersProps {
 const Followers = ({ userId, onClose }: FollowersProps) => {
   return (
     <WhitePanel onClose={onClose}>
-      <Query<FollowersQuery, FollowersVariables>
+      <Query<FollowersQuery, FollowersQueryVariables>
         query={GET_FOLLOWERS}
         variables={{ userId }}
       >

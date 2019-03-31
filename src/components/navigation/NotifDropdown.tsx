@@ -3,7 +3,9 @@ import { useClickOutside } from "use-events";
 import styled from "styled-components";
 import Notif from "./Notif";
 import { ApolloError } from "apollo-client";
-import { NotificationsNotifications } from "GqlClient/autoGenTypes";
+import {
+  /* NotificationsNotifications,  */ Notification
+} from "GqlClient/autoGenTypes";
 
 const Text = styled.div`
   color: black;
@@ -35,7 +37,7 @@ const Dropdown = styled.div`
 export interface NotifDropdownProps {
   loading: boolean;
   error: ApolloError | undefined;
-  notifications: NotificationsNotifications[] | null;
+  notifications: Notification[] | null;
   onClickNotification: (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   ) => void;

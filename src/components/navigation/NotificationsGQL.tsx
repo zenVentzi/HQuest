@@ -7,16 +7,15 @@ import { getLoggedUserId } from "Utils";
 import { ApolloError, SubscribeToMoreOptions } from "apollo-client";
 import {
   NotificationsQuery,
-  NotificationsVariables,
-  NotificationsNotifications,
+  NotificationsQueryVariables,
   NotifsMarkSeenMutation,
-  NotifsMarkSeenVariables,
+  NotifsMarkSeenMutationVariables,
   NotificationFieldsFragment
 } from "GqlClient/autoGenTypes";
 
 const getSubcriptionOptions = (): SubscribeToMoreOptions<
   NotificationsQuery,
-  NotificationsVariables
+  NotificationsQueryVariables
 > => {
   const userId = getLoggedUserId();
   return {
@@ -47,7 +46,7 @@ const getSubcriptionOptions = (): SubscribeToMoreOptions<
 const updateSeen: MutationUpdaterFn<NotifsMarkSeenMutation> = cache => {
   const cachedQuery = cache.readQuery<
     NotificationsQuery,
-    NotificationsVariables
+    NotificationsQueryVariables
   >({ query: GET_NOTIFICATIONS });
   const { notifications } = cachedQuery!;
   if (!notifications || !notifications.length) {
@@ -65,8 +64,11 @@ interface NotificationsGQLProps {
   children: (
     loading: boolean,
     error: ApolloError | undefined,
-    notifications: NotificationsNotifications[] | null,
-    markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+    notifications: NotificationFieldsFragment[] | null,
+    markSeen: MutationFn<
+      NotifsMarkSeenMutation,
+      NotifsMarkSeenMutationVariables
+    >
   ) => JSX.Element;
 }
 
@@ -74,7 +76,7 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => {
   const subscribed = useRef(false);
 
   return (
-    <Query<NotificationsQuery, NotificationsVariables>
+    <Query<NotificationsQuery, NotificationsQueryVariables>
       query={GET_NOTIFICATIONS}
     >
       {({ loading, error, data, subscribeToMore }) => {
@@ -84,14 +86,14 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => {
           subscribed.current = true;
         }
 
-        let notifications: NotificationsNotifications[] | null;
+        let notifications: NotificationFieldsFragment[] | null;
 
         if (data) {
           notifications = data.notifications;
         }
 
         return (
-          <Mutation<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+          <Mutation<NotifsMarkSeenMutation, NotifsMarkSeenMutationVariables>
             mutation={NOTIFS_MARK_SEEN}
             update={updateSeen}
           >

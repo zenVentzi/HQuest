@@ -5,7 +5,7 @@ import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
-import { NewsfeedCommentNewsInlineFragment } from "GqlClient/autoGenTypes";
+import { CommentNews } from "GqlClient/autoGenTypes";
 
 const NewCommentWrapper = styled.div`
   width: 100%;
@@ -27,7 +27,7 @@ const HeaderText = styled.div`
 const Body = styled.div``;
 
 interface NewCommentProps {
-  news: NewsfeedCommentNewsInlineFragment;
+  news: CommentNews;
 }
 
 const NewComment = ({
