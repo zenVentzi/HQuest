@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
-import { EditionFieldsLikers } from "GqlClient/autoGenTypes";
+import { LikerFieldsFragment } from "GqlClient/autoGenTypes";
 
 const StyledLiker = styled.div`
   width: 80%;
@@ -13,7 +13,7 @@ const StyledLiker = styled.div`
 `;
 
 interface LikerProps {
-  liker: EditionFieldsLikers;
+  liker: LikerFieldsFragment;
 }
 
 /* do I store the whole user info inside the liker object? */

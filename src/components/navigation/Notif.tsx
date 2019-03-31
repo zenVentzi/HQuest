@@ -5,7 +5,7 @@ import distanceInWords from "date-fns/distance_in_words";
 import { getLoggedUserId, inverseColor } from "Utils";
 import Avatar from "../reusable/Avatar";
 import {
-  Notification,
+  NotificationFieldsFragment,
   NotificationType,
   NewComment
 } from "GqlClient/autoGenTypes";
@@ -63,7 +63,7 @@ const getTime = (createdOn: string) => {
   return `${res} ago`;
 };
 
-const getLink = (notif: Notification) => {
+const getLink = (notif: NotificationFieldsFragment) => {
   const { performerId } = notif;
   const loggedUsrId = getLoggedUserId();
 
@@ -87,7 +87,7 @@ const getLink = (notif: Notification) => {
 
 interface NotifProps {
   onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
-  notif: NotificationsNotifications;
+  notif: NotificationFieldsFragment;
 }
 
 interface NotifTheme {

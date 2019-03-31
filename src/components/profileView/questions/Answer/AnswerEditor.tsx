@@ -3,7 +3,7 @@ import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
-import { Answer } from "GqlClient/autoGenTypes";
+import { AnswerFieldsFragment } from "GqlClient/autoGenTypes";
 
 const TextArea = styled(Textarea)`
   display: block;
@@ -39,7 +39,7 @@ const RightBtn = styled(TextBtn)``;
 interface AnswerEditorProps {
   onClickDoesNotApply: () => void;
   onClickSave: (answerValue: string) => void;
-  answer: Answer | null;
+  answer: AnswerFieldsFragment | null;
 }
 
 const AnswerEditor = (props: AnswerEditorProps) => {

@@ -29,6 +29,26 @@ export const CommentFields = gql`
   ${UserFields}
 `;
 
+export const LikerFields = gql`
+  fragment LikerFields on Liker {
+    user {
+      ...UserFields
+    }
+    numOfLikes
+  }
+  ${UserFields}
+`;
+
+export const LikesFields = gql`
+  fragment LikesFields on Likes {
+    total
+    likers {
+      ...LikerFields
+    }
+  }
+  ${LikerFields}
+`;
+
 export const EditionFields = gql`
   fragment EditionFields on AnswerEdition {
     id
@@ -38,17 +58,12 @@ export const EditionFields = gql`
       ...CommentFields
     }
     likes {
-      total
-      likers {
-        user {
-          ...UserFields
-        }
-        numOfLikes
-      }
+      ...LikesFields
     }
   }
   ${UserFields}
   ${CommentFields}
+  ${LikesFields}
 `;
 
 export const AnswerFields = gql`

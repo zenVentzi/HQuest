@@ -4,10 +4,10 @@ import Answer from "./Answer";
 import NewComment from "./NewComment";
 import NewFollower from "./NewFollower";
 import NewLike from "./NewLike";
-import { News, NewsType } from "GqlClient/autoGenTypes";
+import { NewsBase, NewsType } from "GqlClient/autoGenTypes";
 
 interface NewsProps {
-  news: News;
+  news: NewsBase;
 }
 
 const News = ({ news }: NewsProps) => {

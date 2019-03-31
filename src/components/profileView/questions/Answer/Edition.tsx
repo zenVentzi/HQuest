@@ -6,7 +6,7 @@ import shortid from "shortid";
 import { Row } from "../Row";
 import LikeBtn from "./LikeBtn";
 import {
-  AnswerEdition,
+  EditionFieldsFragment,
   LikeAnswerEditionMutation,
   LikeAnswerEditionMutationVariables
 } from "GqlClient/autoGenTypes";
@@ -39,7 +39,7 @@ const Viewer = styled.div`
 `;
 
 interface EditionProps {
-  edition: AnswerEdition;
+  edition: EditionFieldsFragment;
   scrollToComment?: string;
   showComments?: boolean;
   answerId: string;

@@ -4,12 +4,8 @@ import { toast } from "react-toastify";
 import Question from "./Question";
 import OptionsDropdown from "./Answer/Options";
 import { MutationFn } from "react-apollo";
-import {
-  QuestionFieldsFragment,
-  RemoveAnswerMutation,
-  RemoveAnswerVariables
-} from "GqlClient/autoGenTypes";
-import Answer from "./Answer";
+import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
+import AnswerFieldsFragment from "./Answer";
 import { Row } from "./Row";
 
 const StyledQuestion = styled.div`
@@ -80,7 +76,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
           }}
         />
       </Row>
-      <Answer
+      <AnswerFieldsFragment
         showAnswerEditor={showAnswerEditor}
         onCloseAnswerEditor={() => {
           setShowAnswerEditor(false);

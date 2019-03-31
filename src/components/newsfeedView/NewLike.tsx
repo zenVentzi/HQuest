@@ -28,7 +28,7 @@ import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
-import { NewLikeNews } from "GqlClient/autoGenTypes";
+import { NewLikeNewsFieldsFragment, NewsBase } from "GqlClient/autoGenTypes";
 
 // this file is duplication of NewComment. To be fixed.
 const NewLikeWrapper = styled.div`
@@ -51,7 +51,7 @@ const HeaderText = styled.div`
 const Body = styled.div``;
 
 interface NewLikeProps {
-  news: NewLikeNews;
+  news: NewLikeNewsFieldsFragment & NewsBase;
 }
 
 const NewLike = ({

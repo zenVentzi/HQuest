@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, memo } from "react";
 import { useAsyncEffect } from "use-async-effect";
 import {
-  Answer,
+  AnswerFieldsFragment,
   EditAnswerMutation,
   EditAnswerMutationVariables,
   MoveAnswerPositionMutation,
@@ -21,7 +21,7 @@ interface AnswerProps {
   showAnswerEditor: boolean;
   showPositionEditor: boolean;
   remove: boolean;
-  answer: Answer;
+  answer: AnswerFieldsFragment;
   totalQuestionsCount: number;
   showComments: boolean;
   onCloseAnswerEditor: () => void;
@@ -29,7 +29,7 @@ interface AnswerProps {
   scrollToComment?: string;
 }
 
-const Answer = (props: AnswerProps) => {
+const AnswerFieldsFragment = (props: AnswerProps) => {
   // const { viewMode, answer, showPositionEditor } = props;
   const removeMutation = useRef<
     MutationFn<RemoveAnswerMutation, RemoveAnswerMutationVariables>
@@ -123,5 +123,5 @@ const Answer = (props: AnswerProps) => {
 };
 
 // export default withPropsChecker(memo(Answer, deepEqual), "Answer");
-export default memo(Answer, deepEqual);
+export default memo(AnswerFieldsFragment, deepEqual);
 // export default Answer;

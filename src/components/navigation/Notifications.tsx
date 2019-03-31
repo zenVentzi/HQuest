@@ -7,10 +7,10 @@ import { MutationFn } from "react-apollo";
 import {
   NotifsMarkSeenMutationVariables,
   NotifsMarkSeenMutation,
-  Notification
+  NotificationFieldsFragment
 } from "GqlClient/autoGenTypes";
 
-const getNumOfSeen = (notifications: Notification[] | null) =>
+const getNumOfSeen = (notifications: NotificationFieldsFragment[] | null) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 interface NotificationsProps {}

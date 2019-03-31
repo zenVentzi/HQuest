@@ -7,7 +7,7 @@ import QuestionTags from "./Tags";
 import UnansweredQuestions from "./UnansweredQuestions";
 import ToggleQuestions from "./ToggleQuestions";
 import {
-  User,
+  UserFieldsFragment,
   QuestionsQuery,
   QuestionsQueryVariables,
   QuestionConnectionFieldsFragment
@@ -16,7 +16,7 @@ import { render } from "react-dom";
 import { NetworkStatus } from "apollo-client";
 
 interface QuestionsContainerProps {
-  user: User;
+  user: UserFieldsFragment;
 }
 
 const QuestionsContainer = (props: QuestionsContainerProps) => {
