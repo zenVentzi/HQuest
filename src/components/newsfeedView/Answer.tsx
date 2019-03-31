@@ -1,17 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
-import { NewsType } from "../../constants";
 import { getTime } from ".";
-// import { NewsType } from 'Constants';
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import {
-  AnswerNews
-  // NewsfeedNewsfeed
+  AnswerNewsFieldsFragment,
+  NewsBase,
+  NewsType
 } from "GqlClient/autoGenTypes";
-import News from "./News";
-
-const { NEW_ANSWER_EDITION, NEW_ANSWER } = NewsType;
 
 const NewAnswerWrapper = styled.div`
   width: 100%;
@@ -35,7 +31,7 @@ const HeaderBottom = styled.div`
 const Body = styled.div``;
 
 interface NewAnswerEditionProps {
-  news: AnswerNews;
+  news: AnswerNewsFieldsFragment & NewsBase;
 }
 
 const NewAnswerEdition = ({
@@ -44,10 +40,10 @@ const NewAnswerEdition = ({
   let text;
 
   switch (type) {
-    case NEW_ANSWER:
+    case NewsType.NewAnswer:
       text = `Added new answer ${getTime(createdOn)}:`;
       break;
-    case NEW_ANSWER_EDITION:
+    case NewsType.NewAnswerEdition:
       text = `Edited answer ${getTime(createdOn)}:`;
       break;
     default:

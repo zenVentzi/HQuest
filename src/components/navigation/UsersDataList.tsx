@@ -1,8 +1,8 @@
 import React from "react";
-import { User } from "GqlClient/autoGenTypes";
+import { UserFieldsFragment } from "GqlClient/autoGenTypes";
 
 interface UsersDataListProps {
-  users: User[];
+  users: UserFieldsFragment[];
 }
 
 const UsersDataList = React.forwardRef<HTMLDataListElement, UsersDataListProps>(

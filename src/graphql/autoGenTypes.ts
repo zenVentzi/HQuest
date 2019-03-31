@@ -352,6 +352,33 @@ export type User = {
   following?: Maybe<Array<Scalars["ID"]>>;
   followers?: Maybe<Array<Scalars["ID"]>>;
 };
+export type AnswerNewsFieldsFragment = { __typename?: "AnswerNews" } & {
+  performer: { __typename?: "User" } & UserFieldsFragment;
+  question: { __typename?: "Question" } & QuestionFieldsFragment;
+};
+
+export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
+  CommentNews,
+  "commentId"
+> & {
+    performer: { __typename?: "User" } & UserFieldsFragment;
+    answerOwner: { __typename?: "User" } & UserFieldsFragment;
+    question: { __typename?: "Question" } & QuestionFieldsFragment;
+  };
+
+export type NewLikeNewsFieldsFragment = { __typename?: "NewLikeNews" } & {
+  performer: { __typename?: "User" } & UserFieldsFragment;
+  answerOwner: { __typename?: "User" } & UserFieldsFragment;
+  question: { __typename?: "Question" } & QuestionFieldsFragment;
+};
+
+export type NewFollowerNewsFieldsFragment = {
+  __typename?: "NewFollowerNews";
+} & {
+  performer: { __typename?: "User" } & UserFieldsFragment;
+  followedUser: { __typename?: "User" } & UserFieldsFragment;
+};
+
 export type NewsfeedQueryVariables = {};
 
 export type NewsfeedQuery = { __typename?: "Query" } & {
@@ -359,24 +386,12 @@ export type NewsfeedQuery = { __typename?: "Query" } & {
     Array<
       Pick<NewsBase, "type" | "createdOn"> &
         (
-          | ({ __typename?: "AnswerNews" } & {
-              performer: { __typename?: "User" } & UserFieldsFragment;
-              question: { __typename?: "Question" } & QuestionFieldsFragment;
-            })
-          | ({ __typename?: "CommentNews" } & Pick<CommentNews, "commentId"> & {
-                performer: { __typename?: "User" } & UserFieldsFragment;
-                answerOwner: { __typename?: "User" } & UserFieldsFragment;
-                question: { __typename?: "Question" } & QuestionFieldsFragment;
-              })
-          | ({ __typename?: "NewLikeNews" } & {
-              performer: { __typename?: "User" } & UserFieldsFragment;
-              answerOwner: { __typename?: "User" } & UserFieldsFragment;
-              question: { __typename?: "Question" } & QuestionFieldsFragment;
-            })
-          | ({ __typename?: "NewFollowerNews" } & {
-              performer: { __typename?: "User" } & UserFieldsFragment;
-              followedUser: { __typename?: "User" } & UserFieldsFragment;
-            }))
+          | ({ __typename?: "AnswerNews" } & AnswerNewsFieldsFragment)
+          | ({ __typename?: "CommentNews" } & CommentNewsFieldsFragment)
+          | ({ __typename?: "NewLikeNews" } & NewLikeNewsFieldsFragment)
+          | ({
+              __typename?: "NewFollowerNews";
+            } & NewFollowerNewsFieldsFragment))
     >
   >;
 };
@@ -616,20 +631,22 @@ export type CommentFieldsFragment = { __typename?: "Comment" } & Pick<
   "id" | "value"
 > & { user: { __typename?: "User" } & UserFieldsFragment };
 
+export type LikerFieldsFragment = { __typename?: "Liker" } & Pick<
+  Liker,
+  "numOfLikes"
+> & { user: { __typename?: "User" } & UserFieldsFragment };
+
+export type LikesFieldsFragment = { __typename?: "Likes" } & Pick<
+  Likes,
+  "total"
+> & { likers: Array<{ __typename?: "Liker" } & LikerFieldsFragment> };
+
 export type EditionFieldsFragment = { __typename?: "AnswerEdition" } & Pick<
   AnswerEdition,
   "id" | "date" | "value"
 > & {
     comments: Maybe<Array<{ __typename?: "Comment" } & CommentFieldsFragment>>;
-    likes: Maybe<
-      { __typename?: "Likes" } & Pick<Likes, "total"> & {
-          likers: Array<
-            { __typename?: "Liker" } & Pick<Liker, "numOfLikes"> & {
-                user: { __typename?: "User" } & UserFieldsFragment;
-              }
-          >;
-        }
-    >;
+    likes: Maybe<{ __typename?: "Likes" } & LikesFieldsFragment>;
   };
 
 export type AnswerFieldsFragment = { __typename?: "Answer" } & Pick<

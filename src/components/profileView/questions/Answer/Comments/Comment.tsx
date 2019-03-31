@@ -4,7 +4,7 @@ import User from "Reusable/UserRow";
 import CommentOptions from "./CommentOptions";
 import CommentViewer from "./CommentViewer";
 import CommentEditor from "./CommentEditor";
-import { Comment } from "GqlClient/autoGenTypes";
+import { CommentFieldsFragment } from "GqlClient/autoGenTypes";
 
 // const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
 //   cursor: pointer;
@@ -25,7 +25,7 @@ const Header = styled.div`
 `;
 
 export interface CommentProps {
-  comment: Comment;
+  comment: CommentFieldsFragment;
   onRemove: (commentId: string) => Promise<void>;
   onEdit: (commentId: string, commentValue: string) => Promise<void>;
   size?: number;

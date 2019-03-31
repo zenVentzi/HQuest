@@ -16,9 +16,7 @@ import {
   EditCommentMutation,
   RemoveCommentMutationVariables,
   RemoveCommentMutation,
-  Comment as CommentType,
-  UsersQueryVariables,
-  UserFieldsFragment
+  Comment as CommentType
 } from "GqlClient/autoGenTypes";
 import MentionInput from "./MentionInput";
 
@@ -41,7 +39,7 @@ const ErrorText = styled.div`
 `;
 
 interface CommentsProps {
-  comments: CommentType[] | null;
+  comments: CommentFieldsFragment[] | null;
   answerId: string;
   answerEditionId: string;
   onAddComment: () => void;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  AnswerEdition,
+  EditionFieldsFragment,
   LikeAnswerEditionMutation,
   LikeAnswerEditionMutationVariables
 } from "GqlClient/autoGenTypes";
@@ -11,7 +11,7 @@ import EditionPicker from "./EditionPicker";
 import Edition from "./Edition";
 
 interface EditionsProps {
-  editions: AnswerEdition[];
+  editions: EditionFieldsFragment[];
   answerId: string;
   likeEdition: MutationFn<
     LikeAnswerEditionMutation,
