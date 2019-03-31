@@ -7,9 +7,9 @@ import UnansweredQuestionGql from "./UnansweredQuestionGql";
 import { MutationFn } from "react-apollo";
 import {
   AddAnswerMutation,
-  AddAnswerVariables,
+  AddAnswerMutationVariables,
   QuestionNotApplyMutation,
-  QuestionNotApplyVariables,
+  QuestionNotApplyMutationVariables,
   QuestionFieldsFragment
 } from "GqlClient/autoGenTypes";
 
@@ -34,7 +34,7 @@ const UnansweredQuestion = ({
   style
 }: UnansweredQuestionProps) => {
   const onClickSave = (
-    addAnswer: MutationFn<AddAnswerMutation, AddAnswerVariables>
+    addAnswer: MutationFn<AddAnswerMutation, AddAnswerMutationVariables>
   ) => async (answerValue: string) => {
     if (!answerValue) {
       toast.error("Answer not provided");
@@ -55,7 +55,7 @@ const UnansweredQuestion = ({
   const onClickDoesNotApply = (
     questionNotApply: MutationFn<
       QuestionNotApplyMutation,
-      QuestionNotApplyVariables
+      QuestionNotApplyMutationVariables
     >
   ) => async () => {
     const variables = {

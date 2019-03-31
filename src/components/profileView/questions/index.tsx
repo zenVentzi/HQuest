@@ -7,16 +7,16 @@ import QuestionTags from "./Tags";
 import UnansweredQuestions from "./UnansweredQuestions";
 import ToggleQuestions from "./ToggleQuestions";
 import {
-  UserUser,
+  User,
   QuestionsQuery,
-  QuestionsVariables,
+  QuestionsQueryVariables,
   QuestionConnectionFieldsFragment
 } from "GqlClient/autoGenTypes";
 import { render } from "react-dom";
 import { NetworkStatus } from "apollo-client";
 
 interface QuestionsContainerProps {
-  user: UserUser;
+  user: User;
 }
 
 const QuestionsContainer = (props: QuestionsContainerProps) => {
@@ -111,7 +111,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
   };
 
   const { user } = props;
-  const queryVars: QuestionsVariables = {
+  const queryVars: QuestionsQueryVariables = {
     answered: showAnswered,
     userId: user.id,
     tags: selectedTags,
@@ -122,7 +122,7 @@ const QuestionsContainer = (props: QuestionsContainerProps) => {
     <>
       {user.me && <ToggleQuestions onClick={onToggleQuestions} />}
       <QuestionTags onSelected={onSelectedTags} />
-      <Query<QuestionsQuery, QuestionsVariables>
+      <Query<QuestionsQuery, QuestionsQueryVariables>
         query={GET_QUESTIONS}
         variables={queryVars}
         // fetchPolicy="network-only" // play with when not using HOT RELOAD

@@ -2,7 +2,7 @@ import React, { Component, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import Avatar from "./Avatar";
-import { UsersUsers } from "GqlClient/autoGenTypes";
+import { UserFieldsFragment } from "GqlClient/autoGenTypes";
 
 interface StyledUserNameProps {
   size: number;
@@ -72,7 +72,7 @@ const StyledUser = styled.div`
 interface UserRowProps {
   size?: number;
   inversedColors?: boolean;
-  user: UsersUsers;
+  user: UserFieldsFragment;
 }
 
 const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  AnswerFieldsEditions,
+  AnswerEdition,
   LikeAnswerEditionMutation,
-  LikeAnswerEditionVariables
+  LikeAnswerEditionMutationVariables
 } from "GqlClient/autoGenTypes";
 import { MutationFn } from "react-apollo";
 import { toast } from "react-toastify";
@@ -11,11 +11,11 @@ import EditionPicker from "./EditionPicker";
 import Edition from "./Edition";
 
 interface EditionsProps {
-  editions: AnswerFieldsEditions[];
+  editions: AnswerEdition[];
   answerId: string;
   likeEdition: MutationFn<
     LikeAnswerEditionMutation,
-    LikeAnswerEditionVariables
+    LikeAnswerEditionMutationVariables
   >;
 }
 

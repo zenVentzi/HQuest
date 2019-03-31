@@ -7,7 +7,7 @@ import { Mutation, MutationFunc, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 // import styled from "styled-components";
 import { saveLoggedUserData } from "Utils";
-import { LoginMutation, LoginVariables } from "GqlClient/autoGenTypes";
+import { LoginMutation, LoginMutationVariables } from "GqlClient/autoGenTypes";
 import {
   ReactFacebookLoginInfo,
   ReactFacebookLoginProps
@@ -15,15 +15,15 @@ import {
 
 interface LoginBtnProps {
   onLoggedIn: () => void;
-  testUser?: LoginVariables;
+  testUser?: LoginMutationVariables;
 }
 
 const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
   const responseFacebook = (
-    mutation: MutationFn<LoginMutation, LoginVariables>
+    mutation: MutationFn<LoginMutation, LoginMutationVariables>
   ) => async (response: ReactFacebookLoginInfo) => {
     if (response.email) {
-      const variables: LoginVariables = {
+      const variables: LoginMutationVariables = {
         email: response.email,
         name: response.name!
       };
@@ -38,7 +38,7 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
   };
 
   const testLogin = (
-    mutation: MutationFn<LoginMutation, LoginVariables>
+    mutation: MutationFn<LoginMutation, LoginMutationVariables>
   ) => async () => {
     const variables = {
       email: testUser!.email,
@@ -55,7 +55,7 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
   };
 
   return (
-    <Mutation<LoginMutation, LoginVariables> mutation={LOGIN_MUTATION}>
+    <Mutation<LoginMutation, LoginMutationVariables> mutation={LOGIN_MUTATION}>
       {login =>
         testUser ? (
           <TextBtn onClick={testLogin(login)}>{testUser.name}</TextBtn>

@@ -6,8 +6,8 @@ import { getTime } from ".";
 // import { NewsType } from 'Constants';
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import {
-  NewsfeedAnswerNewsInlineFragment,
-  NewsfeedNewsfeed
+  AnswerNews
+  // NewsfeedNewsfeed
 } from "GqlClient/autoGenTypes";
 import News from "./News";
 
@@ -35,11 +35,10 @@ const HeaderBottom = styled.div`
 const Body = styled.div``;
 
 interface NewAnswerEditionProps {
-  news: NewsfeedAnswerNewsInlineFragment;
+  news: AnswerNews;
 }
 
 const NewAnswerEdition = ({
-  // @ts-ignore
   news: { type, performer, question, createdOn }
 }: NewAnswerEditionProps) => {
   let text;

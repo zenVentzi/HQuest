@@ -8,25 +8,25 @@ import {
 } from "GqlClient/question/answer/mutations";
 import {
   EditAnswerMutation,
-  EditAnswerVariables,
+  EditAnswerMutationVariables,
   RemoveAnswerMutation,
-  RemoveAnswerVariables,
+  RemoveAnswerMutationVariables,
   MoveAnswerPositionMutation,
-  MoveAnswerPositionVariables,
+  MoveAnswerPositionMutationVariables,
   LikeAnswerEditionMutation,
-  LikeAnswerEditionVariables
+  LikeAnswerEditionMutationVariables
 } from "GqlClient/autoGenTypes";
 
 interface AnswerGqlProps {
   children: (
-    editAnswer: MutationFn<EditAnswerMutation, EditAnswerVariables>,
+    editAnswer: MutationFn<EditAnswerMutation, EditAnswerMutationVariables>,
     moveAnswerPosition: MutationFn<
       MoveAnswerPositionMutation,
-      MoveAnswerPositionVariables
+      MoveAnswerPositionMutationVariables
     >,
     likeAnswerEdition: MutationFn<
       LikeAnswerEditionMutation,
-      LikeAnswerEditionVariables
+      LikeAnswerEditionMutationVariables
     >
   ) => React.ReactElement;
 }
@@ -37,17 +37,19 @@ const AnswerGql = (props: AnswerGqlProps) => {
   // wtf really apollo level pre-japanese
   // in bulgarian- eб* мааму
   return (
-    <Mutation<EditAnswerMutation, EditAnswerVariables> mutation={EDIT_ANSWER}>
+    <Mutation<EditAnswerMutation, EditAnswerMutationVariables>
+      mutation={EDIT_ANSWER}
+    >
       {editAnswer => {
         return (
-          <Mutation<RemoveAnswerMutation, RemoveAnswerVariables>
+          <Mutation<RemoveAnswerMutation, RemoveAnswerMutationVariables>
             mutation={REMOVE_ANSWER}
           >
             {removeAnswer => {
               return (
                 <Mutation<
                   MoveAnswerPositionMutation,
-                  MoveAnswerPositionVariables
+                  MoveAnswerPositionMutationVariables
                 >
                   mutation={MOVE_ANSWER_POSITION}
                 >
@@ -55,7 +57,7 @@ const AnswerGql = (props: AnswerGqlProps) => {
                     return (
                       <Mutation<
                         LikeAnswerEditionMutation,
-                        LikeAnswerEditionVariables
+                        LikeAnswerEditionMutationVariables
                       >
                         mutation={LIKE_ANSWER_EDITION}
                       >

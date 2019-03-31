@@ -4,10 +4,10 @@ import Answer from "./Answer";
 import NewComment from "./NewComment";
 import NewFollower from "./NewFollower";
 import NewLike from "./NewLike";
-import { NewsfeedNewsfeed, NewsType } from "GqlClient/autoGenTypes";
+import { News, NewsType } from "GqlClient/autoGenTypes";
 
 interface NewsProps {
-  news: NewsfeedNewsfeed;
+  news: News;
 }
 
 const News = ({ news }: NewsProps) => {
@@ -31,7 +31,6 @@ const News = ({ news }: NewsProps) => {
       break;
   }
 
-  //@ts-ignore // due to ts and typegen limitations, otherwise correct
   return <NewsComponent news={news} />;
 };
 

@@ -5,12 +5,12 @@ import NavItem from "./NavItem";
 import NotificationsGQL from "./NotificationsGQL";
 import { MutationFn } from "react-apollo";
 import {
-  NotifsMarkSeenVariables,
+  NotifsMarkSeenMutationVariables,
   NotifsMarkSeenMutation,
-  NotificationsNotifications
+  Notification
 } from "GqlClient/autoGenTypes";
 
-const getNumOfSeen = (notifications: NotificationsNotifications[] | null) =>
+const getNumOfSeen = (notifications: Notification[] | null) =>
   notifications ? notifications.filter(n => !n.seen).length : 0;
 
 interface NotificationsProps {}
@@ -30,7 +30,10 @@ const Notifications = (props: NotificationsProps) => {
   };
 
   const onClick = (
-    markSeen: MutationFn<NotifsMarkSeenMutation, NotifsMarkSeenVariables>
+    markSeen: MutationFn<
+      NotifsMarkSeenMutation,
+      NotifsMarkSeenMutationVariables
+    >
   ) => async () => {
     toggleDropdown();
     await markSeen();

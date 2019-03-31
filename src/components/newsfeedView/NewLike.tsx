@@ -28,7 +28,7 @@ import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
-import { NewsfeedNewLikeNewsInlineFragment } from "GqlClient/autoGenTypes";
+import { NewLikeNews } from "GqlClient/autoGenTypes";
 
 // this file is duplication of NewComment. To be fixed.
 const NewLikeWrapper = styled.div`
@@ -51,11 +51,10 @@ const HeaderText = styled.div`
 const Body = styled.div``;
 
 interface NewLikeProps {
-  news: NewsfeedNewLikeNewsInlineFragment;
+  news: NewLikeNews;
 }
 
 const NewLike = ({
-  //@ts-ignore
   news: { performer, answerOwner, question, createdOn }
 }: NewLikeProps) => {
   let topText;

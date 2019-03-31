@@ -1,10 +1,10 @@
 import React from "react";
 import Panel from "../Panel";
 import Liker from "./Liker";
-import { EditionFieldsLikes } from "GqlClient/autoGenTypes";
+import { Likes } from "GqlClient/autoGenTypes";
 
 interface LikesProps {
-  likes: EditionFieldsLikes | null;
+  likes: Likes | null;
   onClose: () => void;
 }
 

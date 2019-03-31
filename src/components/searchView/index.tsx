@@ -5,7 +5,7 @@ import { GET_USERS } from "GqlClient/user/queries";
 import User from "Reusable/UserRow";
 import StyledView from "../reusable/StyledView";
 import { History, Location } from "history";
-import { UsersQuery, UsersVariables } from "GqlClient/autoGenTypes";
+import { UsersQuery, UsersQueryVariables } from "GqlClient/autoGenTypes";
 
 const Row = styled.div`
   width: 60%;
@@ -27,7 +27,7 @@ const SearchView = ({
   return (
     <StyledView>
       fdfd
-      <Query<UsersQuery, UsersVariables>
+      <Query<UsersQuery, UsersQueryVariables>
         query={GET_USERS}
         variables={{ match: username }}
       >

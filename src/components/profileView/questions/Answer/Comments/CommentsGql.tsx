@@ -7,13 +7,13 @@ import {
 } from "GqlClient/question/answer/comment/mutations";
 import {
   CommentAnswerEditionMutation,
-  CommentAnswerEditionVariables,
+  CommentAnswerEditionMutationVariables,
   EditCommentMutation,
-  EditCommentVariables,
+  EditCommentMutationVariables,
   RemoveCommentMutation,
-  RemoveCommentVariables,
+  RemoveCommentMutationVariables,
   UsersQuery,
-  UsersVariables,
+  UsersQueryVariables,
   UserFieldsFragment
 } from "GqlClient/autoGenTypes";
 import { GET_USERS } from "GqlClient/user/queries";
@@ -22,12 +22,15 @@ type CommentsGqlProps = {
   children: (
     commentAnswer: MutationFn<
       CommentAnswerEditionMutation,
-      CommentAnswerEditionVariables
+      CommentAnswerEditionMutationVariables
     >,
-    editComment: MutationFn<EditCommentMutation, EditCommentVariables>,
-    removeComment: MutationFn<RemoveCommentMutation, RemoveCommentVariables>,
+    editComment: MutationFn<EditCommentMutation, EditCommentMutationVariables>,
+    removeComment: MutationFn<
+      RemoveCommentMutation,
+      RemoveCommentMutationVariables
+    >,
     searchUsers: (
-      variables: UsersVariables
+      variables: UsersQueryVariables
     ) => Promise<UserFieldsFragment[] | null>
   ) => React.ReactElement;
 };
@@ -36,17 +39,20 @@ const CommentsGql = (props: CommentsGqlProps) => {
   const { children } = props;
 
   return (
-    <Mutation<CommentAnswerEditionMutation, CommentAnswerEditionVariables>
+    <Mutation<
+      CommentAnswerEditionMutation,
+      CommentAnswerEditionMutationVariables
+    >
       mutation={COMMENT_ANSWER_EDITION}
     >
       {commentAnswerEdition => {
         return (
-          <Mutation<EditCommentMutation, EditCommentVariables>
+          <Mutation<EditCommentMutation, EditCommentMutationVariables>
             mutation={EDIT_COMMENT}
           >
             {editComment => {
               return (
-                <Mutation<RemoveCommentMutation, RemoveCommentVariables>
+                <Mutation<RemoveCommentMutation, RemoveCommentMutationVariables>
                   mutation={REMOVE_COMMENT}
                 >
                   {removeComment => {
@@ -54,11 +60,11 @@ const CommentsGql = (props: CommentsGqlProps) => {
                       <ApolloConsumer>
                         {client => {
                           const searchUsers = async (
-                            variables: UsersVariables
+                            variables: UsersQueryVariables
                           ) => {
                             const res = await client.query<
                               UsersQuery,
-                              UsersVariables
+                              UsersQueryVariables
                             >({ query: GET_USERS, variables });
                             return res.data.users;
                           };

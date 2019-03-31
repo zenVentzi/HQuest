@@ -5,8 +5,9 @@ import distanceInWords from "date-fns/distance_in_words";
 import { getLoggedUserId, inverseColor } from "Utils";
 import Avatar from "../reusable/Avatar";
 import {
-  NotificationsNotifications,
-  NotificationType
+  Notification,
+  NotificationType,
+  NewComment
 } from "GqlClient/autoGenTypes";
 
 const StyledNotif = styled(Link)`
@@ -62,8 +63,8 @@ const getTime = (createdOn: string) => {
   return `${res} ago`;
 };
 
-const getLink = (notif: NotificationsNotifications) => {
-  const { performerId, questionId, commentId } = notif;
+const getLink = (notif: Notification) => {
+  const { performerId } = notif;
   const loggedUsrId = getLoggedUserId();
 
   switch (notif.type) {
@@ -73,7 +74,10 @@ const getLink = (notif: NotificationsNotifications) => {
     answerOwnerId in this case the current logged userid
     later, when we get notifications for other people's posts' comments we will upgrade that
     */:
-      return `/userProfile/${loggedUsrId}/${questionId}/${commentId}`;
+      const commentNotif = notif as NewComment;
+      return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${
+        commentNotif.commentId
+      }`;
     default:
       break;
   }

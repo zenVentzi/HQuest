@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, memo } from "react";
 import { useAsyncEffect } from "use-async-effect";
 import {
-  QuestionFieldsAnswer,
+  Answer,
   EditAnswerMutation,
-  EditAnswerVariables,
+  EditAnswerMutationVariables,
   MoveAnswerPositionMutation,
-  MoveAnswerPositionVariables,
+  MoveAnswerPositionMutationVariables,
   RemoveAnswerMutation,
-  RemoveAnswerVariables
+  RemoveAnswerMutationVariables
 } from "GqlClient/autoGenTypes";
 import { toast } from "react-toastify";
 import { MutationFn } from "react-apollo";
@@ -21,7 +21,7 @@ interface AnswerProps {
   showAnswerEditor: boolean;
   showPositionEditor: boolean;
   remove: boolean;
-  answer: QuestionFieldsAnswer;
+  answer: Answer;
   totalQuestionsCount: number;
   showComments: boolean;
   onCloseAnswerEditor: () => void;
@@ -32,7 +32,7 @@ interface AnswerProps {
 const Answer = (props: AnswerProps) => {
   // const { viewMode, answer, showPositionEditor } = props;
   const removeMutation = useRef<
-    MutationFn<RemoveAnswerMutation, RemoveAnswerVariables>
+    MutationFn<RemoveAnswerMutation, RemoveAnswerMutationVariables>
   >();
 
   useAsyncEffect(
@@ -49,7 +49,7 @@ const Answer = (props: AnswerProps) => {
   );
 
   const onSaveAnswer = (
-    mutation: MutationFn<EditAnswerMutation, EditAnswerVariables>
+    mutation: MutationFn<EditAnswerMutation, EditAnswerMutationVariables>
   ) => async (answerValue: string) => {
     const lastEdition = props.answer!.editions[
       props.answer!.editions.length - 1
@@ -77,7 +77,7 @@ const Answer = (props: AnswerProps) => {
   const onMovePosition = (
     mutation: MutationFn<
       MoveAnswerPositionMutation,
-      MoveAnswerPositionVariables
+      MoveAnswerPositionMutationVariables
     >
   ) => async (newPosition: number) => {
     const answerId = props.answer!.id;

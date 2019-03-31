@@ -6,9 +6,9 @@ import shortid from "shortid";
 import { Row } from "../Row";
 import LikeBtn from "./LikeBtn";
 import {
-  AnswerFieldsEditions,
+  AnswerEdition,
   LikeAnswerEditionMutation,
-  LikeAnswerEditionVariables
+  LikeAnswerEditionMutationVariables
 } from "GqlClient/autoGenTypes";
 import { getLoggedUserId, withPropsChecker } from "Utils";
 import { MutationFn } from "react-apollo";
@@ -39,13 +39,13 @@ const Viewer = styled.div`
 `;
 
 interface EditionProps {
-  edition: AnswerFieldsEditions;
+  edition: AnswerEdition;
   scrollToComment?: string;
   showComments?: boolean;
   answerId: string;
   likeEdition: MutationFn<
     LikeAnswerEditionMutation,
-    LikeAnswerEditionVariables
+    LikeAnswerEditionMutationVariables
   >;
 }
 
@@ -97,7 +97,7 @@ const Edition = (props: EditionProps) => {
       setTotalLikes(newTotalLikes);
       /* user can click multiple times in a row, creating too many sequential requests to the server */
       await debounce(500);
-      const variables: LikeAnswerEditionVariables = {
+      const variables: LikeAnswerEditionMutationVariables = {
         answerId: props.answerId,
         answerEditionId: props.edition.id,
         userLikes: newUserLikes

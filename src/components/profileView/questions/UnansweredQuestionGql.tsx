@@ -4,17 +4,17 @@ import { QUESTION_NOT_APPLY } from "GqlClient/question/mutations";
 import { ADD_ANSWER } from "GqlClient/question/answer/mutations";
 import {
   QuestionNotApplyMutation,
-  QuestionNotApplyVariables,
+  QuestionNotApplyMutationVariables,
   AddAnswerMutation,
-  AddAnswerVariables
+  AddAnswerMutationVariables
 } from "GqlClient/autoGenTypes";
 
 interface UnansweredQuestionGqlProps {
   children: (
-    addAnswer: MutationFn<AddAnswerMutation, AddAnswerVariables>,
+    addAnswer: MutationFn<AddAnswerMutation, AddAnswerMutationVariables>,
     questionNotApply: MutationFn<
       QuestionNotApplyMutation,
-      QuestionNotApplyVariables
+      QuestionNotApplyMutationVariables
     >
   ) => JSX.Element;
 }
@@ -23,10 +23,12 @@ const UnansweredQuestionGql = (props: UnansweredQuestionGqlProps) => {
   const { children } = props;
 
   return (
-    <Mutation<AddAnswerMutation, AddAnswerVariables> mutation={ADD_ANSWER}>
+    <Mutation<AddAnswerMutation, AddAnswerMutationVariables>
+      mutation={ADD_ANSWER}
+    >
       {addAnswer => {
         return (
-          <Mutation<QuestionNotApplyMutation, QuestionNotApplyVariables>
+          <Mutation<QuestionNotApplyMutation, QuestionNotApplyMutationVariables>
             mutation={QUESTION_NOT_APPLY}
           >
             {questionNotApply => {

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import shortid from "shortid";
 import { Route, Switch, RouteComponentProps } from "react-router-dom";
 import { GET_USER } from "GqlClient/user/queries";
-import { UserQuery, UserVariables } from "GqlClient/autoGenTypes";
+import { UserQuery, UserQueryVariables } from "GqlClient/autoGenTypes";
 import StyledViewRaw from "../reusable/StyledView";
 import ProfileViewer from "./ProfileViewer";
 import ProfileEditor from "./ProfileEditor";
@@ -19,12 +19,12 @@ interface ProfileViewProps extends RouteComponentProps<{ id: string }> {}
 
 const ProfileView = ({ match }: ProfileViewProps) => {
   const { id } = match.params;
-  const vars: UserVariables = { id };
+  const vars: UserQueryVariables = { id };
 
   // return null;
   return (
     <StyledView>
-      <Query<UserQuery, UserVariables>
+      <Query<UserQuery, UserQueryVariables>
         query={GET_USER}
         variables={vars}
         fetchPolicy="network-only" // this could be changed to cache-and-network, the default, if not using HOT RELOAD

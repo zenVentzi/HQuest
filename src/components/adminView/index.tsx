@@ -7,7 +7,7 @@ import { ADD_QUESTIONS } from "GqlClient/question/mutations";
 import TextBtn from "Reusable/TextBtn";
 import {
   AddQuestionsMutation,
-  AddQuestionsVariables
+  AddQuestionsMutationVariables
 } from "GqlClient/autoGenTypes";
 
 const TextArea = styled.textarea`
@@ -61,7 +61,7 @@ const AdminView = () => {
 
   return (
     <StyledView>
-      <Mutation<AddQuestionsMutation, AddQuestionsVariables>
+      <Mutation<AddQuestionsMutation, AddQuestionsMutationVariables>
         mutation={ADD_QUESTIONS}
       >
         {addQuestions => {

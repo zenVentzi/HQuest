@@ -3,7 +3,10 @@ import { Mutation, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
 import styled from "styled-components";
 import { FOLLOW } from "GqlClient/user/mutations";
-import { FollowMutation, FollowVariables } from "GqlClient/autoGenTypes";
+import {
+  FollowMutation,
+  FollowMutationVariables
+} from "GqlClient/autoGenTypes";
 
 const Btn = styled(TextBtn)`
   margin-bottom: 0.5em;
@@ -27,7 +30,7 @@ const FollowBtn = (props: FollowBtnProps) => {
   };
 
   const onClick = (
-    mutation: MutationFn<FollowMutation, FollowVariables>
+    mutation: MutationFn<FollowMutation, FollowMutationVariables>
   ) => async () => {
     const { userId } = props;
     const follow = !isFollowed;
@@ -40,7 +43,7 @@ const FollowBtn = (props: FollowBtnProps) => {
   const text = hovered ? hoverText : normalText;
 
   return (
-    <Mutation<FollowMutation, FollowVariables> mutation={FOLLOW}>
+    <Mutation<FollowMutation, FollowMutationVariables> mutation={FOLLOW}>
       {follow => (
         <Btn
           onMouseEnter={onMouseEnter}
