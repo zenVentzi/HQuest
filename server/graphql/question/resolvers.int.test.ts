@@ -39,7 +39,11 @@ test("questions() should return questions edges", async done => {
     answered: false,
     first: 5
   };
-  const questions = await Query.questions({}, args, context, {} as any);
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+  const questions = await Query.questions({} as any, args, context, {} as any);
   const actual = questions!.edges!.length;
   const expected = 2;
   expect(actual).toEqual(expected);
@@ -63,7 +67,12 @@ test("questions() should return total number of questions", async ____done____SE
     answered: false,
     first: 5
   };
-  const questions = await Query.questions({}, args, context, {} as any);
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+
+  const questions = await Query.questions({} as any, args, context, {} as any);
   const actual = questions!.totalCount;
   const expected = 2;
   expect(actual).toEqual(expected);
@@ -81,8 +90,13 @@ test("questions() should return correct page info", async __just_a_little_bit_mo
   await new models.question(question).save();
   await new models.question(question1).save();
   await new models.user(contextUser).save();
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+
   const questions = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -110,8 +124,13 @@ test("questions() return pageInfo hasNextPage=true", async done => {
   await new models.question(question).save();
   await new models.question(question1).save();
   await new models.user(contextUser).save();
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+
   const questions = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -139,8 +158,13 @@ test("questions() return pageInfo hasPreviousPage=true hasNextPage=false", async
   await new models.question(question).save();
   await new models.question(question1).save();
   await new models.user(contextUser).save();
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+
   const questionsFirstFetch = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -151,7 +175,7 @@ test("questions() return pageInfo hasPreviousPage=true hasNextPage=false", async
   );
 
   const questionsSecondFetch = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -185,8 +209,13 @@ test("questions() should return total number of questions", async ____done____SE
   await new models.question(question).save();
   await new models.question(question1).save();
   await new models.user(contextUser).save();
+
+  if (typeof Query.questions !== "function") {
+    throw Error(`questions must be a function`);
+  }
+
   const questionsFirstFetch = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -197,7 +226,7 @@ test("questions() should return total number of questions", async ____done____SE
   );
 
   const questionsSecondFetch = await Query.questions(
-    {},
+    {} as any,
     {
       userId: contextUser._id.toHexString(),
       answered: false,
@@ -224,7 +253,11 @@ test("questionsTags() should return all tags", async notDONEyet => {
   await new models.question(question1).save();
   await new models.user(contextUser).save();
 
-  const allTags = await Query.questionsTags({}, {}, context, {} as any);
+  if (typeof Query.questionsTags !== "function") {
+    throw Error(`questionsTags must be a function`);
+  }
+
+  const allTags = await Query.questionsTags({} as any, {}, context, {} as any);
   // console.log(allTags);
   expect(allTags).toContain("bla");
   expect(allTags).toContain("bla1");
@@ -244,8 +277,12 @@ test("answeredQuestion() should return answered question", async done => {
     editions: [{ _id: ObjectId(), date: new Date(), value: "answerValue" }]
   } as DbTypes.Answer).save()).toObject();
 
+  if (typeof Query.answeredQuestion !== "function") {
+    throw Error(`answeredQuestion must be a function`);
+  }
+
   const answeredQuestion = await Query.answeredQuestion(
-    {},
+    {} as any,
     {
       questionId: question._id.toHexString(),
       userId: contextUser._id.toHexString()
@@ -261,8 +298,11 @@ test("answeredQuestion() should return answered question", async done => {
 });
 
 test("addQuestions() should add questions to db", async done => {
+  if (typeof Mutation.addQuestions !== "function") {
+    throw Error(`questions must be a function`);
+  }
   await Mutation.addQuestions(
-    {},
+    {} as any,
     { questions: [{ tags: ["tag1"], value: "Question?" }] },
     context,
     {} as any

@@ -2,9 +2,11 @@ import { mapComment, mapComments } from "./gqlMapper";
 import { authMiddleware } from "../../../middlewares";
 import { MutationResolvers } from "../../../autoGenTypes";
 
-type Mutation = Pick<
-  MutationResolvers,
-  "commentAnswerEdition" | "editComment" | "removeComment"
+type Mutation = Required<
+  Pick<
+    MutationResolvers,
+    "commentAnswerEdition" | "editComment" | "removeComment"
+  >
 >;
 
 const Mutation: Mutation = {

@@ -3,11 +3,12 @@ import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 import { mapUser, mapUsers } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
 
-type Query = Pick<QueryResolvers, "user" | "users" | "followers" | "following">;
+type Query = Required<
+  Pick<QueryResolvers, "user" | "users" | "followers" | "following">
+>;
 
-type Mutation = Pick<
-  MutationResolvers,
-  "login" | "editUser" | "follow" | "uploadAvatar"
+type Mutation = Required<
+  Pick<MutationResolvers, "login" | "editUser" | "follow" | "uploadAvatar">
 >;
 
 const Query: Query = {

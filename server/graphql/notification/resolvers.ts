@@ -1,11 +1,12 @@
 import { withFilter } from "apollo-server";
 import { pubsub, NEW_NOTIFICATION } from "../../PubSub";
-// import { Query, Mutation, Subscription } from "./types";
+
 import {
   QueryResolvers,
   MutationResolvers,
   SubscriptionResolvers,
-  NotificationResolvers
+  NotificationResolvers,
+  Notification
 } from "../autoGenTypes";
 import { mapNotifications } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
@@ -22,9 +23,9 @@ const Notification: NotificationResolvers = {
   }
 };
 
-type Query = Pick<QueryResolvers, "notifications">;
-type Mutation = Pick<MutationResolvers, "notifsMarkSeen">;
-type Subscription = Pick<SubscriptionResolvers, "newNotification">;
+type Query = Required<Pick<QueryResolvers, "notifications">>;
+type Mutation = Required<Pick<MutationResolvers, "notifsMarkSeen">>;
+type Subscription = Required<Pick<SubscriptionResolvers, "newNotification">>;
 
 const Query: Query = {
   async notifications(_, __, { services, user }) {
@@ -38,6 +39,7 @@ const Query: Query = {
     return gqlNotifications;
   }
 };
+
 const Mutation: Mutation = {
   async notifsMarkSeen(_, __, { services, user }) {
     authMiddleware(user);
