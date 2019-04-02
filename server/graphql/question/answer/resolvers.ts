@@ -2,13 +2,15 @@ import { mapAnswer, mapAnswerEditions, mapAnswerEdition } from "./gqlMapper";
 import { authMiddleware } from "../../middlewares";
 import { MutationResolvers } from "../../autoGenTypes";
 
-type Mutation = Pick<
-  MutationResolvers,
-  | "editAnswer"
-  | "addAnswer"
-  | "removeAnswer"
-  | "likeAnswerEdition"
-  | "moveAnswerPosition"
+type Mutation = Required<
+  Pick<
+    MutationResolvers,
+    | "editAnswer"
+    | "addAnswer"
+    | "removeAnswer"
+    | "likeAnswerEdition"
+    | "moveAnswerPosition"
+  >
 >;
 
 const Mutation: Mutation = {

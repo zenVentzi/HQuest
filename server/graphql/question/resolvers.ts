@@ -6,12 +6,13 @@ import { QueryResolvers, MutationResolvers } from "../autoGenTypes";
 
 const { ObjectId } = GooseTypes;
 
-type Query = Pick<
-  QueryResolvers,
-  "questionsTags" | "questions" | "answeredQuestion"
+type Query = Required<
+  Pick<QueryResolvers, "questionsTags" | "questions" | "answeredQuestion">
 >;
 
-type Mutation = Pick<MutationResolvers, "addQuestions" | "questionNotApply">;
+type Mutation = Required<
+  Pick<MutationResolvers, "addQuestions" | "questionNotApply">
+>;
 
 const Query: Query = {
   async questions(

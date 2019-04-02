@@ -39,8 +39,12 @@ test("commentAnswer() should return added comment", async done => {
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
   };
+
+  if (typeof Mutation.commentAnswerEdition !== "function") {
+    throw Error(`commentANswerEdition must be a function`);
+  }
   const addedComment = await Mutation.commentAnswerEdition(
-    {},
+    {} as any,
     args,
     context,
     {} as any
@@ -73,8 +77,12 @@ test("commentAnswer() should notify answer owner", async done => {
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     comment: "commentValue"
   };
+
+  if (typeof Mutation.commentAnswerEdition !== "function") {
+    throw Error(`commentANswerEdition must be a function`);
+  }
   const addedComment = await Mutation.commentAnswerEdition(
-    {},
+    {} as any,
     args,
     context,
     {} as any
@@ -115,8 +123,12 @@ test("editComment() should return edited comment", async done => {
     commentValue: "editedCommentValue"
   };
 
+  if (typeof Mutation.editComment !== "function") {
+    throw Error(`editComment must be a function`);
+  }
+
   const editedComment = await Mutation.editComment(
-    {},
+    {} as any,
     args,
     context,
     {} as any
@@ -153,8 +165,11 @@ test("removeComment() should return removed comment", async done => {
     commentId: existingAnswer.editions[0].comments![0]._id.toHexString()
   };
 
+  if (typeof Mutation.removeComment !== "function") {
+    throw Error(`removeComment must be a function`);
+  }
   const removedComment = await Mutation.removeComment(
-    {},
+    {} as any,
     args,
     context,
     {} as any

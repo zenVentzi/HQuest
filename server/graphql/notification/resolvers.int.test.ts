@@ -44,7 +44,11 @@ test("notifications() should return notifications if found", async done => {
     notifications: [dbNotif]
   } as DbTypes.User).save();
 
-  const notifs = await Query.notifications({}, {}, context, {} as any);
+  if (typeof Query.notifications !== "function") {
+    throw Error(`notifications resolver must be a function`);
+  }
+  // const notifs = await Query.notifications();
+  const notifs = await Query.notifications({} as any, {}, context, {} as any);
   const actual = notifs![0].id;
   const expected = dbNotif._id.toHexString();
   expect(actual).toEqual(expected);
@@ -57,7 +61,11 @@ test("notifications() should return null if not found", async done => {
     // notifications: [dbNotif]
   } as DbTypes.User).save();
 
-  const notifs = await Query.notifications({}, {}, context, {} as any);
+  if (typeof Query.notifications !== "function") {
+    throw Error(`notifications resolver must be a function`);
+  }
+
+  const notifs = await Query.notifications({} as any, {}, context, {} as any);
   const actual = notifs;
   const expected = null;
   expect(actual).toEqual(expected);
@@ -90,7 +98,11 @@ test("notifsMarkSeen() should mark user notifications as seen", async done => {
     user: { email: followed.email, id: followed._id.toHexString() }
   };
 
-  await Mutation.notifsMarkSeen({}, {}, followedContext, {} as any);
+  if (typeof Mutation.notifsMarkSeen !== "function") {
+    throw Error(`notifsMarkSeen resolver must be a function`);
+  }
+
+  await Mutation.notifsMarkSeen({} as any, {}, followedContext, {} as any);
   const followedUpdated = (await models.user.findById(
     followed._id
   ))!.toObject();

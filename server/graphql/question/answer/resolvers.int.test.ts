@@ -29,7 +29,16 @@ test("addAnswer() should return added answer", async done => {
     questionId: ObjectId().toHexString()
   };
 
-  const addedAnswer = await Mutation.addAnswer({}, args, context, {} as any);
+  if (typeof Mutation.addAnswer !== "function") {
+    throw Error(`addAnswer must be a function`);
+  }
+
+  const addedAnswer = await Mutation.addAnswer(
+    {} as any,
+    args,
+    context,
+    {} as any
+  );
   const actual = addedAnswer.editions[0].value;
   const expected = args.answerValue;
   expect(actual).toEqual(expected);
@@ -72,7 +81,16 @@ test("editAnswer() should return edited answer", async done => {
     answerId: existingAnswer._id.toHexString(),
     answerValue: "newAss brand new fuck ya fresh mirin"
   };
-  const editedAnswer = await Mutation.editAnswer({}, args, context, {} as any);
+
+  if (typeof Mutation.editAnswer !== "function") {
+    throw Error(`editAnswer must be a function`);
+  }
+  const editedAnswer = await Mutation.editAnswer(
+    {} as any,
+    args,
+    context,
+    {} as any
+  );
   const actual = editedAnswer.editions[1].value;
   const expected = args.answerValue;
   expect(actual).toEqual(expected);
@@ -91,7 +109,16 @@ test("editAnswer() result should contain editions", async done => {
     answerId: existingAnswer._id.toHexString(),
     answerValue: "newAss brand new fuck ya fresh mirin"
   };
-  const editedAnswer = await Mutation.editAnswer({}, args, context, {} as any);
+
+  if (typeof Mutation.editAnswer !== "function") {
+    throw Error(`editAnswer must be a function`);
+  }
+  const editedAnswer = await Mutation.editAnswer(
+    {} as any,
+    args,
+    context,
+    {} as any
+  );
   const actual = editedAnswer.editions!.length;
   const expected = 2;
   expect(actual).toEqual(expected);
@@ -112,8 +139,12 @@ test("likeAnswer() result should contain likes", async done => {
     answerEditionId: existingAnswer.editions[0]._id.toHexString(),
     userLikes: 5
   };
+
+  if (typeof Mutation.likeAnswerEdition !== "function") {
+    throw Error(`likeAnswerEdition must be a function`);
+  }
   const likedAnswer = await Mutation.likeAnswerEdition(
-    {},
+    {} as any,
     args,
     context,
     {} as any
@@ -136,8 +167,12 @@ test("moveAnswerPosition() should return new position", async done => {
     answerId: existingAnswer._id.toHexString(),
     position: 4
   };
+
+  if (typeof Mutation.moveAnswerPosition !== "function") {
+    throw Error(`moveAnswerPosition must be a function`);
+  }
   const newPosition = await Mutation.moveAnswerPosition(
-    {},
+    {} as any,
     args,
     context,
     {} as any
