@@ -61,7 +61,15 @@ const Subscription: any = {
       },
       (payload, variables) => {
         const subscriberId = variables.userId;
-        return payload.receiverId === subscriberId;
+        if (payload.receiverId) {
+          return payload.receiverId === subscriberId;
+        } else if (payload.receiversIds) {
+          return payload.receiversIds.includes(subscriberId);
+        }
+
+        throw Error(
+          `incorrect format. Payload must have either receiverId or receiverIds`
+        );
       }
     )
   }

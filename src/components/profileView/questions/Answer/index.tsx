@@ -29,7 +29,7 @@ interface AnswerProps {
   scrollToComment?: string;
 }
 
-const AnswerFieldsFragment = (props: AnswerProps) => {
+const Answer = (props: AnswerProps) => {
   // const { viewMode, answer, showPositionEditor } = props;
   const removeMutation = useRef<
     MutationFn<RemoveAnswerMutation, RemoveAnswerMutationVariables>
@@ -123,5 +123,5 @@ const AnswerFieldsFragment = (props: AnswerProps) => {
 };
 
 // export default withPropsChecker(memo(Answer, deepEqual), "Answer");
-export default memo(AnswerFieldsFragment, deepEqual);
+export default memo(Answer, deepEqual);
 // export default Answer;

@@ -90,7 +90,7 @@ const Mutation: Mutation = {
     if (follow) {
       await services.user.follow(user!.id, userId);
       await services.newsfeed.onFollowUser(userId, user!.id);
-      await services.notification.newFollower(userId, user!.id);
+      await services.notification.onNewFollower(userId, user!.id);
     } else {
       await services.user.unfollow(user!.id, userId);
     }
