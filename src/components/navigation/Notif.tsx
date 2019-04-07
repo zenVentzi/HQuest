@@ -63,26 +63,28 @@ const getTime = (createdOn: string) => {
   return `${res} ago`;
 };
 
-const getLink = (notif: NotificationFieldsFragment) => {
+const getLink = (notif: NotificationFieldsFragment): string => {
   const { performerId } = notif;
   const loggedUsrId = getLoggedUserId();
 
   switch (notif.type) {
     case NotificationType.NewFollower:
       return `/userProfile/${performerId}`;
-    case NotificationType.NewComment /* 
-    answerOwnerId in this case the current logged userid
-    later, when we get notifications for other people's posts' comments we will upgrade that
-    */:
+    case NotificationType.NewComment: {
       const commentNotif = notif as NewComment;
       return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${
         commentNotif.commentId
       }`;
-    default:
-      break;
+    }
+    case NotificationType.CommentMention: {
+      const commentNotif = notif as NewComment;
+      return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${
+        commentNotif.commentId
+      }`;
+    }
   }
 
-  return null;
+  throw Error(`uknown notif.type, ${notif.type}`);
 };
 
 interface NotifProps {

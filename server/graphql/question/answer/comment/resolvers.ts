@@ -32,7 +32,12 @@ const Mutation: Mutation = {
       dbComment._id.toString(),
       user!.id
     );
-    await services.notification.onNewComment(user!.id, answerId, dbComment);
+    await services.notification.onNewComment(
+      user!.id,
+      answerId,
+      dbComment,
+      mentionedUsers
+    );
 
     return mapComment({
       dbComment,
@@ -52,6 +57,12 @@ const Mutation: Mutation = {
       answerEditionId,
       commentId,
       commentValue
+    );
+    await services.notification.onCommentEdit(
+      user!.id,
+      answerId,
+      dbComment,
+      mentionedUsers
     );
 
     return mapComment({

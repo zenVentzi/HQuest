@@ -14,23 +14,23 @@ class NotificationService {
     performerId: string,
     answerId: string,
     dbComment: DbTypes.Comment,
-    mentionedUsersIds: string[] | null
+    mentionedUsersIds: string[] | null | undefined
   ): Promise<void> {
     const answer = (await this.models.answer.findById(answerId))!;
     const ownsAnswer = answer.userId.equals(performerId);
-    if (ownsAnswer) return;
+    if (!ownsAnswer) {
+      const notifForAnswerOwner = await this.createCommentNotification(
+        DbTypes.NotificationType.NewComment,
+        performerId,
+        dbComment,
+        answer
+      );
 
-    const notifForAnswerOwner = await this.createCommentNotification(
-      DbTypes.NotificationType.NewComment,
-      performerId,
-      dbComment,
-      answer
-    );
-
-    await this.notifyOne(answer.userId.toHexString(), notifForAnswerOwner);
+      await this.notifyOne(answer.userId.toHexString(), notifForAnswerOwner);
+    }
     if (mentionedUsersIds && mentionedUsersIds.length) {
       const notifForMentionedUsers = await this.createCommentNotification(
-        DbTypes.NotificationType.NewComment,
+        DbTypes.NotificationType.CommentMention,
         performerId,
         dbComment,
         answer
@@ -43,12 +43,10 @@ class NotificationService {
     performerId: string,
     answerId: string,
     dbComment: DbTypes.Comment,
-    mentionedUsersIds: string[] | null
+    mentionedUsersIds: string[] | null | undefined
   ): Promise<void> {
     if (!mentionedUsersIds || mentionedUsersIds.length === 0) return;
     const answer = (await this.models.answer.findById(answerId))!;
-    const ownsAnswer = answer.userId.equals(performerId);
-    if (ownsAnswer) return;
 
     const notMentionedUserIds = await this.filterOutMentioned(
       dbComment,

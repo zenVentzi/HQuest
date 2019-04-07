@@ -123,7 +123,10 @@ const Comments = (props: CommentsProps) => {
       CommentAnswerEditionMutation,
       CommentAnswerEditionMutationVariables
     >
-  ) => async (comment: string): Promise<{ success: boolean }> => {
+  ) => async (
+    comment: string,
+    mentionedUserIds: string[] | undefined
+  ): Promise<{ success: boolean }> => {
     if (comment.length < 3) {
       toast.error("Comment must be at least 3 characters long");
       return { success: false };
@@ -133,7 +136,8 @@ const Comments = (props: CommentsProps) => {
     const variables: CommentAnswerEditionMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
-      comment
+      comment,
+      mentionedUsers: mentionedUserIds
     };
     const res = await commentEditionMutation({ variables });
     if (!res || !res.data) {
