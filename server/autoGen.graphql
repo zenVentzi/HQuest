@@ -9,7 +9,7 @@ type Query {
   notifications: [Notification!]
   questionsTags: [String!]!
   questions(answered: Boolean!, userId: ID!, tags: [String!], first: Int!, after: String): QuestionConnection
-  answeredQuestion(userId: ID!, questionId: ID!): Question!
+  answeredQuestion(userId: ID!, questionId: ID!): Question
   users(match: String): [User!]
   user(id: ID!): User
   followers(userId: ID!): [User!]
@@ -114,6 +114,7 @@ type NewComment implements Notification {
   text: String!
   seen: Boolean!
   createdOn: DateTime!
+  userProfileId: String!
   questionId: ID!
   commentId: ID!
 }

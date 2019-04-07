@@ -13,6 +13,7 @@ const NotificationSchema = new Schema({
     type: String,
     required: true
   },
+  userProfileId: { type: String, required: false },
   questionId: { type: String, required: false },
   commentId: { type: String, required: false },
   performerId: { type: String, required: true },

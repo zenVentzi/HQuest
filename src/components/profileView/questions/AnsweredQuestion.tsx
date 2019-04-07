@@ -51,6 +51,8 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     showComments
   } = props;
 
+  console.log(question);
+
   return (
     <StyledQuestion
       onMouseEnter={onMouseEnter}

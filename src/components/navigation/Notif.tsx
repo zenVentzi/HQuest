@@ -65,7 +65,6 @@ const getTime = (createdOn: string) => {
 
 const getLink = (notif: NotificationFieldsFragment): string => {
   const { performerId } = notif;
-  const loggedUsrId = getLoggedUserId();
 
   switch (notif.type) {
     case NotificationType.NewFollower:
@@ -73,9 +72,9 @@ const getLink = (notif: NotificationFieldsFragment): string => {
     case NotificationType.NewComment:
     case NotificationType.CommentMention: {
       const commentNotif = notif as NewComment;
-      return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${
-        commentNotif.commentId
-      }`;
+      return `/userProfile/${commentNotif.userProfileId}/${
+        commentNotif.questionId
+      }/${commentNotif.commentId}`;
     }
   }
 
