@@ -19,7 +19,10 @@ type MentionInputProps = {
     variables: UsersQueryVariables
   ) => Promise<UserFieldsFragment[] | null>;
   submitOnEnter: boolean;
-  onSubmit: (comment: string) => Promise<{ success: boolean }>;
+  onSubmit: (
+    comment: string,
+    mentionedUserIds: string[] | undefined
+  ) => Promise<{ success: boolean }>;
   isSubmitting: boolean;
 };
 
@@ -70,6 +73,7 @@ const MentionInput = (props: MentionInputProps) => {
   };
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const mentionedUserIds = useRef<string[]>();
 
   return (
     // @ts-ignore // disabled prop causes error cuz of bad @types support
@@ -78,7 +82,10 @@ const MentionInput = (props: MentionInputProps) => {
       onKeyDown={async e => {
         if (e.key === "Enter" && !e.shiftKey && props.submitOnEnter) {
           e.preventDefault();
-          const { success } = await props.onSubmit(value);
+          const { success } = await props.onSubmit(
+            value,
+            mentionedUserIds.current
+          );
           if (success) {
             setValue("");
             inputRef.current!.blur();
@@ -101,7 +108,7 @@ const MentionInput = (props: MentionInputProps) => {
             return parsedUserId;
           });
 
-          console.log(userIds);
+          mentionedUserIds.current = userIds;
         }
 
         // const ats = text.split("@");

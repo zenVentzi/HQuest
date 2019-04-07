@@ -8,11 +8,11 @@ import {
 } from "mongoose";
 import * as DbTypes from "../dbTypes";
 
-const NEW_FOLLOWER_TYPE = "NEW_FOLLOWER";
-const NEW_COMMENT_TYPE = "NEW_COMMENT";
-
 const NotificationSchema = new Schema({
-  type: { type: [NEW_FOLLOWER_TYPE, NEW_COMMENT_TYPE], required: true },
+  type: {
+    type: String,
+    required: true
+  },
   questionId: { type: String, required: false },
   commentId: { type: String, required: false },
   performerId: { type: String, required: true },

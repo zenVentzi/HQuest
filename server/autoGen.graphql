@@ -18,8 +18,8 @@ type Query {
 
 type Mutation {
   notifsMarkSeen: Boolean
-  commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!): Comment!
-  editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!): Comment!
+  commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!, mentionedUsers: [ID!]): Comment!
+  editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!, mentionedUsers: [ID!]): Comment!
   removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
   editAnswer(answerId: ID!, answerValue: String!): Answer!
   addAnswer(questionId: ID!, answerValue: String!): Answer!
@@ -93,6 +93,7 @@ union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
 enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
+  COMMENT_MENTION
 }
 
 interface Notification {

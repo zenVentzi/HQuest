@@ -1,6 +1,7 @@
 enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
+  COMMENT_MENTION
 }
 
 interface Notification {
