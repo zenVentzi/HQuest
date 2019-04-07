@@ -24,19 +24,15 @@ class AnswerService {
   public async getUserAnswer(
     userId: string,
     questionId: string
-  ): Promise<DbTypes.Answer> {
-    const userIdObj = typeof userId === "string" ? ObjectId(userId) : userId;
-    const questionIdObj =
-      typeof questionId === "string" ? ObjectId(questionId) : questionId;
-
+  ): Promise<DbTypes.Answer | null> {
     const answer = await this.models.answer
       .findOne({
-        userId: userIdObj,
-        questionId: questionIdObj
+        userId,
+        questionId
       })
       .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
 
-    return answer!.toObject();
+    return answer ? answer!.toObject() : null;
   }
 
   public async getAnswerById(answerId: string): Promise<DbTypes.Answer> {
@@ -106,8 +102,8 @@ class AnswerService {
       const newAnswer: DbTypes.Answer = {
         _id: ObjectId(),
         position: 1,
-        userId: ObjectId(userId),
-        questionId: ObjectId(questionId),
+        userId,
+        questionId,
         editions: [{ _id: ObjectId(), date: new Date(), value: answerValue }]
       };
 

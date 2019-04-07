@@ -17,7 +17,7 @@ class NotificationService {
     mentionedUsersIds: string[] | null | undefined
   ): Promise<void> {
     const answer = (await this.models.answer.findById(answerId))!;
-    const ownsAnswer = answer.userId.equals(performerId);
+    const ownsAnswer = answer.userId === performerId;
     if (!ownsAnswer) {
       const notifForAnswerOwner = await this.createCommentNotification(
         DbTypes.NotificationType.NewComment,
@@ -26,7 +26,7 @@ class NotificationService {
         answer
       );
 
-      await this.notifyOne(answer.userId.toHexString(), notifForAnswerOwner);
+      await this.notifyOne(answer.userId, notifForAnswerOwner);
     }
     if (mentionedUsersIds && mentionedUsersIds.length) {
       const notifForMentionedUsers = await this.createCommentNotification(
@@ -160,10 +160,12 @@ class NotificationService {
       type === DbTypes.NotificationType.NewComment
         ? `${performerName} commented: "${dbComment.value} "`
         : `${performerName} mentioned you in comment: "${dbComment.value} "`;
-    const notif: DbTypes.Notification = {
+    /* here we have to save the userId from answer */
+    const notif: DbTypes.NewComment = {
       _id: ObjectId(),
       type,
-      questionId: answer.questionId.toHexString(),
+      userProfileId: answer.userId,
+      questionId: answer.questionId,
       commentId: dbComment._id.toString(),
       performerId,
       performerAvatarSrc: performer.avatarSrc,

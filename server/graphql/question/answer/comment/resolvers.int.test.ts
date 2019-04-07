@@ -29,8 +29,8 @@ test("commentAnswer() should return added comment", async done => {
   const existingAnswer = (await new models.answer({
     _id: ObjectId(),
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
@@ -67,8 +67,8 @@ test("commentAnswer() should notify answer owner", async done => {
   const existingAnswer = (await new models.answer({
     position: 1,
     // value: "ass",
-    questionId: ObjectId(),
-    userId: answerOwner._id,
+    questionId: ObjectId().toHexString(),
+    userId: answerOwner._id.toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
@@ -102,8 +102,8 @@ test("editComment() should return edited comment", async done => {
 
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [
       {
         _id: ObjectId(),
@@ -145,8 +145,8 @@ test("removeComment() should return removed comment", async done => {
 
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [
       {
         _id: ObjectId(),

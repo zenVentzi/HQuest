@@ -8,10 +8,11 @@ import { mapUser } from "./../user/gqlMapper";
 const { ObjectId } = Types;
 
 test("getNotification()", () => {
-  const dbNotif: dbTypes.Notification = {
+  const dbNotif: dbTypes.NewComment = {
     _id: ObjectId(),
     commentId: "",
     performerAvatarSrc: "",
+    userProfileId: "",
     performerId: "",
     questionId: "",
     seen: false,
@@ -24,6 +25,7 @@ test("getNotification()", () => {
     id: dbNotif._id.toHexString(),
     commentId: "",
     performerAvatarSrc: "",
+    userProfileId: "",
     performerId: "",
     questionId: "",
     seen: false,
@@ -31,7 +33,6 @@ test("getNotification()", () => {
     type: dbTypes.NotificationType.NewComment,
     createdOn: dbNotif._id.getTimestamp()
   };
-  expect(true).toEqual(true);
 
   expect(actual).toEqual(expected);
 });

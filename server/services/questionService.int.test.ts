@@ -32,8 +32,8 @@ test("getAnsweredQuestions() should return answered questions with tags", async 
   } as DbTypes.Question).save()).toObject();
   const answer = (await new AnswerModel({
     position: 1,
-    userId: contextUser._id,
-    questionId: question._id,
+    userId: contextUser._id.toHexString(),
+    questionId: question._id.toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
     // value: "answerVal"
   } as DbTypes.Answer).save()).toObject();

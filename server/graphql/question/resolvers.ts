@@ -59,9 +59,9 @@ const Query: Query = {
 
     const dbQuestion = await services.question.getQuestion(questionId);
     const dbAnswer = await services.answer.getUserAnswer(userId, questionId);
-    const res = mapQuestion(user!.id, dbQuestion, dbAnswer);
-
-    return res;
+    if (!dbAnswer) return null;
+    const gqlQuestion = mapQuestion(user!.id, dbQuestion, dbAnswer);
+    return gqlQuestion;
   }
 };
 

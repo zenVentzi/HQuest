@@ -22,6 +22,7 @@ type NewComment implements Notification {
   text: String!
   seen: Boolean!
   createdOn: DateTime!
+  userProfileId: String!
   questionId: ID!
   commentId: ID!
 }

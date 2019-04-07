@@ -14,7 +14,7 @@ function mapQuestion(
   };
 
   if (dbAnswer) {
-    if (!dbAnswer.questionId.equals(dbQuestion._id)) {
+    if (!dbQuestion._id.equals(dbAnswer.questionId)) {
       throw Error("Cannot map answer to question with wrong id");
     }
 

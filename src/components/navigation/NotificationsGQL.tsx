@@ -88,7 +88,7 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => {
 
         let notifications: NotificationFieldsFragment[] | null;
 
-        if (data) {
+        if (data && data.notifications) {
           notifications = data.notifications;
         }
 

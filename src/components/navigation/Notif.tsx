@@ -70,12 +70,7 @@ const getLink = (notif: NotificationFieldsFragment): string => {
   switch (notif.type) {
     case NotificationType.NewFollower:
       return `/userProfile/${performerId}`;
-    case NotificationType.NewComment: {
-      const commentNotif = notif as NewComment;
-      return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${
-        commentNotif.commentId
-      }`;
-    }
+    case NotificationType.NewComment:
     case NotificationType.CommentMention: {
       const commentNotif = notif as NewComment;
       return `/userProfile/${loggedUsrId}/${commentNotif.questionId}/${

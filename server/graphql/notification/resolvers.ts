@@ -15,11 +15,15 @@ const Notification: NotificationResolvers = {
   __resolveType(obj, context, info) {
     authMiddleware(context.user);
 
-    if (obj.type === "NEW_COMMENT") {
-      return "NewComment";
+    switch (obj.type) {
+      case "NEW_COMMENT":
+      case "COMMENT_MENTION":
+        return "NewComment";
+      case "NEW_FOLLOWER":
+        return "NewFollower";
     }
 
-    return "NewFollower";
+    throw Error(`unknown type, ${obj.type}`);
   }
 };
 
