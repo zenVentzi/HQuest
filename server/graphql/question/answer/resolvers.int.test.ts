@@ -72,8 +72,8 @@ test("addAnswer() should return added answer", async done => {
 test("editAnswer() should return edited answer", async done => {
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
@@ -100,8 +100,8 @@ test("editAnswer() should return edited answer", async done => {
 test("editAnswer() result should contain editions", async done => {
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
@@ -129,8 +129,8 @@ test("likeAnswer() result should contain likes", async done => {
   await new models.user(contextUser).save();
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 
@@ -158,8 +158,8 @@ test("likeAnswer() result should contain likes", async done => {
 test("moveAnswerPosition() should return new position", async done => {
   const existingAnswer = (await new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as DbTypes.Answer).save()).toObject();
 

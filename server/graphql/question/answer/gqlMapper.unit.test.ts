@@ -11,8 +11,8 @@ test("map answer", () => {
   const dbAnswer = new models.answer({
     _id: ObjectId(),
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as dbTypes.Answer).toObject();
 
@@ -83,8 +83,8 @@ test("getLikes() should return gql likes", () => {
 
   const dbAnswer = new models.answer({
     position: 1,
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [
       { _id: ObjectId(), date: new Date(), value: "ass", likes: dbLikes }
     ]
@@ -151,8 +151,8 @@ test("getAnswer() should return gql object with editions", () => {
   const dbAnswer = new models.answer({
     position: 1,
     // value: "ass",
-    questionId: ObjectId(),
-    userId: ObjectId(),
+    questionId: ObjectId().toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [dbEdition]
   } as dbTypes.Answer).toObject();
 

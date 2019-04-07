@@ -22,8 +22,8 @@ const EditionSchema = new Schema({
 
 const AnswerSchema = new Schema({
   position: { type: Number, required: true },
-  userId: { type: Schema.Types.ObjectId, required: true },
-  questionId: { type: Schema.Types.ObjectId, required: true },
+  userId: { type: String, required: true },
+  questionId: { type: String, required: true },
   editions: { type: [EditionSchema], required: true }
 });
 

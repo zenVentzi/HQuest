@@ -191,6 +191,7 @@ export type NewComment = Notification & {
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
   questionId: Scalars["ID"];
   commentId: Scalars["ID"];
 };
@@ -268,7 +269,7 @@ export type Query = {
   notifications?: Maybe<Array<Notification>>;
   questionsTags: Array<Scalars["String"]>;
   questions?: Maybe<QuestionConnection>;
-  answeredQuestion: Question;
+  answeredQuestion?: Maybe<Question>;
   users?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
@@ -411,9 +412,11 @@ export type AnsweredQuestionQueryVariables = {
 };
 
 export type AnsweredQuestionQuery = { __typename?: "Query" } & {
-  answeredQuestion: { __typename?: "Question" } & {
-    answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment>;
-  } & QuestionFieldsFragment;
+  answeredQuestion: Maybe<
+    { __typename?: "Question" } & {
+      answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment>;
+    } & QuestionFieldsFragment
+  >;
 };
 
 export type QuestionsQueryVariables = {

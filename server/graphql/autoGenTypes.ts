@@ -191,6 +191,7 @@ export type NewComment = Notification & {
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
   questionId: Scalars["ID"];
   commentId: Scalars["ID"];
 };
@@ -268,7 +269,7 @@ export type Query = {
   notifications?: Maybe<Array<Notification>>;
   questionsTags: Array<Scalars["String"]>;
   questions?: Maybe<QuestionConnection>;
-  answeredQuestion: Question;
+  answeredQuestion?: Maybe<Question>;
   users?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
@@ -600,6 +601,7 @@ export type NewCommentResolvers<
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
   questionId?: Resolver<Scalars["ID"], ParentType, Context>;
   commentId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
@@ -704,7 +706,7 @@ export type QueryResolvers<Context = ApolloContext, ParentType = Query> = {
     QueryQuestionsArgs
   >;
   answeredQuestion?: Resolver<
-    Question,
+    Maybe<Question>,
     ParentType,
     Context,
     QueryAnsweredQuestionArgs

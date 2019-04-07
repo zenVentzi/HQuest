@@ -195,7 +195,7 @@ class QuestionService {
   }
 
   private getQuestionsIds(answers: DbTypes.Answer[]): string[] {
-    return answers.map(a => a.questionId.toHexString());
+    return answers.map(a => a.questionId);
   }
 
   private preserveOrder({
@@ -229,7 +229,7 @@ class QuestionService {
     questions.forEach(question => {
       const answer = answers.find(
         a =>
-          a.questionId.equals(question._id) &&
+          question._id.equals(a.questionId) &&
           !mergedAnswers.some(ma => ma._id.equals(a._id))
       );
       const mergedQA = this.mergeAnswerWithQuestion(answer!, question);

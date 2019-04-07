@@ -35,8 +35,8 @@ test("getQuestion() should return question with answer", () => {
 
   const dbAnswer = new models.answer({
     position: 1,
-    questionId: dbQuestion._id,
-    userId: ObjectId(),
+    questionId: dbQuestion._id.toHexString(),
+    userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
   } as dbTypes.Answer).toObject();
 

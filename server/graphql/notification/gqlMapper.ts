@@ -18,6 +18,7 @@ function mapNotification(notif: DbNotification): Notification {
 
   switch (notif.type) {
     case NotificationType.NewComment:
+    case NotificationType.CommentMention:
       (res as NewComment).questionId = (notif as DbNewComment).questionId;
       (res as NewComment).commentId = (notif as DbNewComment).commentId;
       break;

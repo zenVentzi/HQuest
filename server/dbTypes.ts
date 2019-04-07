@@ -16,6 +16,7 @@ export enum NotificationType {
 export interface Notification {
   _id: ObjectId;
   type: NotificationType;
+  userProfileId?: string;
   questionId?: string;
   commentId?: string;
   performerId: string;
@@ -25,7 +26,8 @@ export interface Notification {
 }
 
 export interface NewComment extends Notification {
-  type: NotificationType.NewComment;
+  type: NotificationType.NewComment | NotificationType.CommentMention;
+  userProfileId: string;
   questionId: string;
   commentId: string;
 }
@@ -149,8 +151,8 @@ export interface Answer<
 > {
   _id: ObjectId;
   position: number;
-  userId: ObjectId;
-  questionId: ObjectId;
+  userId: string;
+  questionId: string;
   editions: PopulatedFields extends AnswerPopulatedFields.editions_comments_user
     ? Array<Edition<EditionPopulatedFields.comments_user>>
     : Array<Edition<EditionPopulatedFields.none>>;
