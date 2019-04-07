@@ -11,6 +11,7 @@ import {
 } from "GqlClient/autoGenTypes";
 import Avatar from "Reusable/Avatar";
 import { ThemeProvider } from "styled-components";
+import { mentionRegex } from "./MentionConstants";
 
 type CustomSuggestion = SuggestionDataItem & UserFieldsFragment;
 
@@ -97,7 +98,7 @@ const MentionInput = (props: MentionInputProps) => {
       onChange={e => {
         setValue(e.target.value);
         const text = e.target.value;
-        const mentions = text.match(/@\[\w+( \w+)*\]\(\w+\)/g);
+        const mentions = text.match(mentionRegex);
         if (mentions) {
           const userIds = mentions.map(mention => {
             const userId = mention.match(/\(\w+\)/);
