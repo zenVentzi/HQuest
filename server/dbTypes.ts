@@ -9,7 +9,8 @@ export type ObjectId = GooseTypes.ObjectId;
 
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
-  NewComment = "NEW_COMMENT"
+  NewComment = "NEW_COMMENT",
+  CommentMention = "COMMENT_MENTION"
 }
 
 export interface Notification {

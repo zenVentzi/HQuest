@@ -87,9 +87,34 @@ const MentionInput = (props: MentionInputProps) => {
       }}
       inputRef={inputRef}
       disabled={props.isSubmitting}
-      // markup={"@__id__split__display__"}
       onChange={e => {
         setValue(e.target.value);
+        const text = e.target.value;
+        const mentions = text.match(/@\[\w+( \w+)*\]\(\w+\)/g);
+        if (mentions) {
+          const userIds = mentions.map(mention => {
+            const userId = mention.match(/\(\w+\)/);
+            if (!userId) {
+              throw Error(`incorrect markup format for user mentions`);
+            }
+            const parsedUserId = userId[0].slice(1, -1);
+            return parsedUserId;
+          });
+
+          console.log(userIds);
+        }
+
+        // const ats = text.split("@");
+        // if (ats.length <= 1) return;
+        // console.log(ats);
+        // ats.forEach(at => {
+        //   // console.log(at);
+        //   const userId = at.split("(")[1].slice(0, -1);
+        //   console.log(userId);
+        // });
+        //"@[Test11 Sarah](5c08b7766f91b01640e54921)".match(/@\[\w+( \w+)*\]\(\w+\)/)
+        //@\[\w+( \w+)*\]\(\w+\)
+        // console.log(e.target.value);
       }}
       style={{
         control: {

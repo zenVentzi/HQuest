@@ -108,6 +108,7 @@ export type MutationCommentAnswerEditionArgs = {
   answerId: Scalars["ID"];
   answerEditionId: Scalars["ID"];
   comment: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationEditCommentArgs = {
@@ -115,6 +116,7 @@ export type MutationEditCommentArgs = {
   answerEditionId: Scalars["ID"];
   commentId: Scalars["ID"];
   commentValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationRemoveCommentArgs = {
@@ -374,8 +376,7 @@ export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
 
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
-  | number;
-// | StitchingResolver<TResult, TParent, TContext, TArgs>;
+  | StitchingResolver<TResult, TParent, TContext, TArgs>;
 
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,

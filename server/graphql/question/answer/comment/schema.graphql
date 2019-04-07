@@ -9,12 +9,14 @@ type Mutation {
     answerId: ID!
     answerEditionId: ID!
     comment: String!
+    mentionedUsers: [ID!]
   ): Comment!
   editComment(
     answerId: ID!
     answerEditionId: ID!
     commentId: ID!
     commentValue: String!
+    mentionedUsers: [ID!]
   ): Comment!
   removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
 }

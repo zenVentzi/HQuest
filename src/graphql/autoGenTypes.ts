@@ -108,6 +108,7 @@ export type MutationCommentAnswerEditionArgs = {
   answerId: Scalars["ID"];
   answerEditionId: Scalars["ID"];
   comment: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationEditCommentArgs = {
@@ -115,6 +116,7 @@ export type MutationEditCommentArgs = {
   answerEditionId: Scalars["ID"];
   commentId: Scalars["ID"];
   commentValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationRemoveCommentArgs = {
@@ -477,6 +479,7 @@ export type CommentAnswerEditionMutationVariables = {
   answerId: Scalars["ID"];
   answerEditionId: Scalars["ID"];
   comment: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type CommentAnswerEditionMutation = { __typename?: "Mutation" } & {
@@ -488,6 +491,7 @@ export type EditCommentMutationVariables = {
   answerEditionId: Scalars["ID"];
   commentId: Scalars["ID"];
   commentValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type EditCommentMutation = { __typename?: "Mutation" } & {

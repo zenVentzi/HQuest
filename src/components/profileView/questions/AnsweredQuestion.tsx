@@ -5,7 +5,7 @@ import Question from "./Question";
 import OptionsDropdown from "./Answer/Options";
 import { MutationFn } from "react-apollo";
 import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
-import AnswerFieldsFragment from "./Answer";
+import Answer from "./Answer";
 import { Row } from "./Row";
 
 const StyledQuestion = styled.div`
@@ -76,7 +76,7 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
           }}
         />
       </Row>
-      <AnswerFieldsFragment
+      <Answer
         showAnswerEditor={showAnswerEditor}
         onCloseAnswerEditor={() => {
           setShowAnswerEditor(false);

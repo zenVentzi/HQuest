@@ -12,7 +12,7 @@ type Mutation = Required<
 const Mutation: Mutation = {
   async commentAnswerEdition(
     _,
-    { answerId, answerEditionId, comment },
+    { answerId, answerEditionId, comment, mentionedUsers },
     { services, user }
   ) {
     authMiddleware(user);
@@ -32,7 +32,7 @@ const Mutation: Mutation = {
       dbComment._id.toString(),
       user!.id
     );
-    await services.notification.newComment(user!.id, answerId, dbComment);
+    await services.notification.onNewComment(user!.id, answerId, dbComment);
 
     return mapComment({
       dbComment,
@@ -42,7 +42,7 @@ const Mutation: Mutation = {
 
   async editComment(
     _,
-    { answerId, answerEditionId, commentId, commentValue },
+    { answerId, answerEditionId, commentId, commentValue, mentionedUsers },
     { services, user }
   ) {
     authMiddleware(user);
@@ -54,15 +54,10 @@ const Mutation: Mutation = {
       commentValue
     );
 
-    if (dbComment) {
-      return mapComment({
-        dbComment,
-        loggedUserId: user!.id
-      });
-    }
-
-    // this should happen inside the service
-    throw Error("Failed to edit comment");
+    return mapComment({
+      dbComment,
+      loggedUserId: user!.id
+    });
   },
 
   async removeComment(

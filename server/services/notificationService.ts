@@ -10,35 +10,63 @@ const { ObjectId } = mongoose.Types;
 class NotificationService {
   constructor(private models: Models) {}
 
-  public async newComment(
+  public async onNewComment(
     performerId: string,
     answerId: string,
-    dbComment: DbTypes.Comment
+    dbComment: DbTypes.Comment,
+    mentionedUsersIds: string[] | null
   ): Promise<void> {
-    const {
-      questionId,
-      userId: receiverId
-    } = (await this.models.answer.findById(answerId))!;
+    const answer = (await this.models.answer.findById(answerId))!;
+    const ownsAnswer = answer.userId.equals(performerId);
+    if (ownsAnswer) return;
 
-    const performer = await this.models.user.findById(performerId).lean();
-
-    if (performer._id.equals(receiverId)) return;
-    const performerName = `${performer.firstName} ${performer.surName}`;
-    const notif: DbTypes.Notification = {
-      _id: ObjectId(),
-      type: DbTypes.NotificationType.NewComment,
-      questionId: questionId.toHexString(),
-      commentId: dbComment._id.toString(),
+    const notifForAnswerOwner = await this.createCommentNotification(
+      DbTypes.NotificationType.NewComment,
       performerId,
-      performerAvatarSrc: performer.avatarSrc,
-      text: `${performerName} commented: "${dbComment.value} "`,
-      seen: false
-    };
+      dbComment,
+      answer
+    );
 
-    await this.notify(receiverId.toHexString(), notif);
+    await this.notifyOne(answer.userId.toHexString(), notifForAnswerOwner);
+    if (mentionedUsersIds && mentionedUsersIds.length) {
+      const notifForMentionedUsers = await this.createCommentNotification(
+        DbTypes.NotificationType.NewComment,
+        performerId,
+        dbComment,
+        answer
+      );
+      await this.notifyMany(mentionedUsersIds, notifForMentionedUsers);
+    }
   }
 
-  public async newFollower(
+  public async onCommentEdit(
+    performerId: string,
+    answerId: string,
+    dbComment: DbTypes.Comment,
+    mentionedUsersIds: string[] | null
+  ): Promise<void> {
+    if (!mentionedUsersIds || mentionedUsersIds.length === 0) return;
+    const answer = (await this.models.answer.findById(answerId))!;
+    const ownsAnswer = answer.userId.equals(performerId);
+    if (ownsAnswer) return;
+
+    const notMentionedUserIds = await this.filterOutMentioned(
+      dbComment,
+      mentionedUsersIds
+    );
+
+    if (notMentionedUserIds.length > 0) {
+      const notif = await this.createCommentNotification(
+        DbTypes.NotificationType.CommentMention,
+        performerId,
+        dbComment,
+        answer
+      );
+      await this.notifyMany(notMentionedUserIds, notif);
+    }
+  }
+
+  public async onNewFollower(
     receiverId: string,
     followerId: string
   ): Promise<void> {
@@ -54,7 +82,7 @@ class NotificationService {
       seen: false
     };
 
-    await this.notify(receiverId, notif);
+    await this.notifyOne(receiverId, notif);
   }
 
   public async markSeen(userId: string): Promise<void> {
@@ -82,7 +110,7 @@ class NotificationService {
       : null;
   }
 
-  private async notify(
+  private async notifyOne(
     receiverId: string,
     notif: DbTypes.Notification
   ): Promise<void> {
@@ -99,6 +127,75 @@ class NotificationService {
     };
 
     pubsub.publish(NEW_NOTIFICATION, payload);
+  }
+  private async notifyMany(
+    receiversIds: string[],
+    notif: DbTypes.Notification
+  ): Promise<void> {
+    await this.models.user.updateMany(
+      { _id: { $in: receiversIds } },
+      { $push: { notifications: notif } },
+      { upsert: true }
+    );
+
+    const payload = {
+      receiversIds,
+      notif
+      // notif: gqlMapper.getNotification(notif)
+    };
+
+    pubsub.publish(NEW_NOTIFICATION, payload);
+  }
+
+  private async createCommentNotification(
+    type:
+      | DbTypes.NotificationType.NewComment
+      | DbTypes.NotificationType.CommentMention,
+    performerId: string,
+    dbComment: DbTypes.Comment,
+    answer: DbTypes.Answer
+  ): Promise<DbTypes.Notification> {
+    const performer = await this.models.user.findById(performerId).lean();
+
+    const performerName = `${performer.firstName} ${performer.surName}`;
+    const notifText =
+      type === DbTypes.NotificationType.NewComment
+        ? `${performerName} commented: "${dbComment.value} "`
+        : `${performerName} mentioned you in comment: "${dbComment.value} "`;
+    const notif: DbTypes.Notification = {
+      _id: ObjectId(),
+      type,
+      questionId: answer.questionId.toHexString(),
+      commentId: dbComment._id.toString(),
+      performerId,
+      performerAvatarSrc: performer.avatarSrc,
+      text: notifText,
+      seen: false
+    };
+    return notif;
+  }
+
+  private async filterOutMentioned(
+    dbComment: DbTypes.Comment,
+    mentionedUsersIds: string[]
+  ): Promise<string[]> {
+    const users = (await this.models.user
+      .find({
+        _id: { $in: mentionedUsersIds }
+      })
+      .lean()) as DbTypes.User[];
+
+    const usersWithoutNotif = users.filter(user => {
+      if (!user.notifications) return true;
+      const commentNotif = user.notifications.find(notif => {
+        if (!notif.commentId) return false;
+        return dbComment._id.equals(notif.commentId);
+      });
+
+      return !commentNotif;
+    });
+
+    return usersWithoutNotif.map(user => user._id.toHexString());
   }
 }
 
