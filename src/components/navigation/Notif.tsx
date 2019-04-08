@@ -9,6 +9,7 @@ import {
   NotificationType,
   NewComment
 } from "GqlClient/autoGenTypes";
+import TextWithMentions from "Reusable/TextWithMentions";
 
 const StyledNotif = styled(Link)`
   text-decoration: none;
@@ -128,7 +129,9 @@ const Notif = ({ onClick, notif }: NotifProps) => {
           <Avatar src={notif.performerAvatarSrc} invertColors />
         </Left>
         <Right>
-          <Text>{notif.text}</Text>
+          <Text>
+            <TextWithMentions text={notif.text} addLinkToMention={false} />
+          </Text>
           <Time>{getTime(notif.createdOn)}</Time>
         </Right>
       </StyledNotif>
