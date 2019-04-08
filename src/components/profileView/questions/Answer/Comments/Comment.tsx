@@ -27,8 +27,13 @@ const Header = styled.div`
 export interface CommentProps {
   comment: CommentFieldsFragment;
   onRemove: (commentId: string) => Promise<void>;
-  onEdit: (commentId: string, commentValue: string) => Promise<void>;
+  onEdit: (
+    commentId: string,
+    commentValue: string,
+    mentionedUserIds: string[] | undefined
+  ) => Promise<{ success: boolean }>;
   size?: number;
+  searchUsers: any;
 }
 
 export type CommentRef = React.Ref<HTMLDivElement>;
@@ -39,7 +44,13 @@ export type CommentRef = React.Ref<HTMLDivElement>;
 
 export default React.forwardRef<HTMLDivElement, CommentProps>(
   (
-    { size = 1.5, comment, onRemove: onRemoveProp, onEdit: onEditProp },
+    {
+      size = 1.5,
+      comment,
+      onRemove: onRemoveProp,
+      onEdit: onEditProp,
+      searchUsers
+    },
     ref
   ) => {
     const [commentHovered, setCommentHovered] = useState(false);
@@ -74,9 +85,20 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
       setViewMode(true);
     };
 
-    const onEdit = async (newComment: string) => {
-      await onEditProp(comment.id, newComment);
-      setViewMode(true);
+    const onEdit = async (
+      newComment: string,
+      mentionedUserIds: string[] | undefined
+    ) => {
+      const { success } = await onEditProp(
+        comment.id,
+        newComment,
+        mentionedUserIds
+      );
+      if (success) {
+        setViewMode(true);
+      }
+
+      return { success };
     };
 
     const toggleOptionsDropdown = () => {
@@ -103,6 +125,7 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
           <CommentViewer comment={value} />
         ) : (
           <CommentEditor
+            searchUsers={searchUsers}
             comment={value}
             onEdit={onEdit}
             onCancel={onCancelEdit}

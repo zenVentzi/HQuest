@@ -12,6 +12,7 @@ import {
 import Avatar from "Reusable/Avatar";
 import { ThemeProvider } from "styled-components";
 import { mentionRegex } from "Reusable/MentionConstants";
+import { useAsyncEffect } from "use-async-effect";
 
 type CustomSuggestion = SuggestionDataItem & UserFieldsFragment;
 
@@ -24,16 +25,37 @@ type MentionInputProps = {
     comment: string,
     mentionedUserIds: string[] | undefined
   ) => Promise<{ success: boolean }>;
+  shouldSubmit?: boolean;
   isSubmitting: boolean;
+  initialValue: string;
 };
 
 const MentionInput = (props: MentionInputProps) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(props.initialValue);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const mentionedUserIds = useRef<string[]>();
+  const isNewComment = useRef(
+    !props.initialValue || !props.initialValue.length
+  );
+
   let modalRoot = document.getElementById("modal-root");
   if (!modalRoot) {
     modalRoot = document.createElement("div");
     modalRoot.id = "modal-root";
   }
+
+  useAsyncEffect(
+    async () => {
+      if (props.shouldSubmit && !props.isSubmitting) {
+        const { success } = await props.onSubmit(
+          value,
+          mentionedUserIds.current
+        );
+      }
+    },
+    () => {},
+    [props.shouldSubmit]
+  );
 
   const renderSuggestion = (
     suggestion: CustomSuggestion,
@@ -73,21 +95,24 @@ const MentionInput = (props: MentionInputProps) => {
     );
   };
 
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const mentionedUserIds = useRef<string[]>();
-
   return (
     // @ts-ignore // disabled prop causes error cuz of bad @types support
     <MentionsInput
       value={value}
       onKeyDown={async e => {
-        if (e.key === "Enter" && !e.shiftKey && props.submitOnEnter) {
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          props.submitOnEnter &&
+          !props.isSubmitting
+        ) {
           e.preventDefault();
           const { success } = await props.onSubmit(
             value,
             mentionedUserIds.current
           );
-          if (success) {
+          /* isNewComment is very hacky. Needs improvement like 100 other things hihi */
+          if (success && isNewComment.current) {
             setValue("");
             inputRef.current!.blur();
           }
@@ -100,6 +125,7 @@ const MentionInput = (props: MentionInputProps) => {
         const text = e.target.value;
         const mentions = text.match(mentionRegex);
         if (mentions) {
+          console.log(mentions);
           const userIds = mentions.map(mention => {
             const userId = mention.match(/\(\w+\)/);
             if (!userId) {

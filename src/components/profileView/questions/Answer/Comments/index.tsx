@@ -16,7 +16,9 @@ import {
   EditCommentMutation,
   RemoveCommentMutationVariables,
   RemoveCommentMutation,
-  Comment as CommentType
+  Comment as CommentType,
+  UserFieldsFragment,
+  UsersQueryVariables
 } from "GqlClient/autoGenTypes";
 import MentionInput from "./MentionInput";
 
@@ -31,12 +33,6 @@ const StyledCommentInput = styled(Textarea)`
 const CommentInput = ({ innerRef = null, ...rest }: any) => {
   return <StyledCommentInput inputRef={innerRef} {...rest} />;
 };
-
-const ErrorText = styled.div`
-  margin-top: 1em;
-  color: red;
-  margin-bottom: 1em;
-`;
 
 interface CommentsProps {
   comments: CommentFieldsFragment[] | null;
@@ -160,13 +156,22 @@ const Comments = (props: CommentsProps) => {
       EditCommentMutation,
       EditCommentMutationVariables
     >
-  ) => async (commentId: string, commentValue: string) => {
+  ) => async (
+    commentId: string,
+    commentValue: string,
+    mentionedUserIds: string[] | undefined
+  ): Promise<{ success: boolean }> => {
+    if (commentValue.length < 3) {
+      toast.error("Comment must be at least 3 characters long");
+      return { success: false };
+    }
     const { answerId } = props;
     const variables: EditCommentMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
       commentId,
-      commentValue
+      commentValue,
+      mentionedUsers: mentionedUserIds
     };
     const res = await editCommentMutation({ variables });
     if (!res) {
@@ -176,6 +181,7 @@ const Comments = (props: CommentsProps) => {
     const editedComment = res.data!.editComment;
     updateComments(undefined, undefined, editedComment);
     toast.success("Comment edited!");
+    return { success: true };
   };
 
   const onRemoveComment = (
@@ -209,7 +215,10 @@ const Comments = (props: CommentsProps) => {
     removeCommentMutation: MutationFn<
       RemoveCommentMutation,
       RemoveCommentMutationVariables
-    >
+    >,
+    searchUsersQuery: (
+      variables: UsersQueryVariables
+    ) => Promise<UserFieldsFragment[] | null>
   ) => {
     const { scrollToComment } = props;
 
@@ -223,12 +232,16 @@ const Comments = (props: CommentsProps) => {
 
       while (copy.length) {
         const com = copy.pop();
-        const commentProps = {
-          key: com!.id,
+        if (!com) {
+          throw Error(`comment must be truthy`);
+        }
+        const commentProps: CommentProps & { key: string; ref?: CommentRef } = {
+          key: com.id,
           comment: com,
           onEdit: onEditComment(editCommentMutation),
-          onRemove: onRemoveComment(removeCommentMutation)
-        } as CommentProps & { key: string; ref: CommentRef };
+          onRemove: onRemoveComment(removeCommentMutation),
+          searchUsers: searchUsersQuery
+        };
 
         if (scrollToComment && scrollToComment === com!.id) {
           commentProps.ref = highlightedComment;
@@ -263,11 +276,12 @@ const Comments = (props: CommentsProps) => {
           <Panel ref={commentsPanel}>
             <MentionInput
               searchUsers={searchUsers}
+              initialValue=""
               submitOnEnter={true}
               isSubmitting={isSubmitting}
               onSubmit={onSubmitComment(commentAnswerEdition)}
             />
-            {renderComments(editComment, removeComment)}
+            {renderComments(editComment, removeComment, searchUsers)}
           </Panel>
         );
       }}

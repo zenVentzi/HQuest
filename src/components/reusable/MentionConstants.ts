@@ -1,2 +1,2 @@
-const mentionRegex = /(@\[\w+(?: \w+)*\]\(\w+\))/;
+const mentionRegex = /(@\[\w+(?: \w+)*\]\(\w+\))/g;
 export { mentionRegex };
