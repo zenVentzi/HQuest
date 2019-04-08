@@ -11,7 +11,7 @@ import {
 } from "GqlClient/autoGenTypes";
 import Avatar from "Reusable/Avatar";
 import { ThemeProvider } from "styled-components";
-import { mentionRegex } from "./MentionConstants";
+import { mentionRegex } from "Reusable/MentionConstants";
 
 type CustomSuggestion = SuggestionDataItem & UserFieldsFragment;
 
