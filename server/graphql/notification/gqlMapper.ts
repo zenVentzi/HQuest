@@ -2,7 +2,8 @@ import { Notification, NewComment } from "../autoGenTypes";
 import {
   Notification as DbNotification,
   NotificationType,
-  NewComment as DbNewComment
+  NewComment as DbNewComment,
+  AnswerEditionMention
 } from "../../dbTypes";
 
 function mapNotification(notif: DbNotification): Notification {
@@ -22,6 +23,10 @@ function mapNotification(notif: DbNotification): Notification {
       (res as NewComment).questionId = (notif as DbNewComment).questionId;
       (res as NewComment).commentId = (notif as DbNewComment).commentId;
       (res as NewComment).userProfileId = (notif as DbNewComment).userProfileId;
+      break;
+    case NotificationType.AnswerEditionMention:
+      (res as NewComment).questionId = (notif as AnswerEditionMention).questionId;
+      (res as NewComment).userProfileId = (notif as AnswerEditionMention).userProfileId;
       break;
 
     default:

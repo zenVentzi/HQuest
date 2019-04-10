@@ -15,6 +15,7 @@ import { MutationFn } from "react-apollo";
 import { toast } from "react-toastify";
 import Comments from "./Comments";
 import Likes from "./Likes";
+import TextWithMentions from "Reusable/TextWithMentions";
 
 const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
@@ -50,14 +51,15 @@ interface EditionProps {
 }
 
 const Edition = (props: EditionProps) => {
-  const answerWithParagraphs = props.edition.value
-    .split("\n")
-    .map((paragraph: string) => (
-      <span key={shortid.generate()}>
-        {paragraph}
-        <br />
-      </span>
-    ));
+  // const answerWithParagraphs = props.edition.value
+  //   .split("\n")
+  //   .map((paragraph: string) => (
+  //     <span key={shortid.generate()}>
+  //       {paragraph}
+  //       <br />
+  //     </span>
+  //   ));
+  // TODO make sure you don't need the above /n split
 
   const timeoutIndex = useRef<number>();
 
@@ -142,7 +144,11 @@ const Edition = (props: EditionProps) => {
 
   return (
     <>
-      <Viewer>- {answerWithParagraphs}</Viewer>
+      <Viewer>
+        -{" "}
+        <TextWithMentions text={props.edition.value} addLinkToMention={true} />
+      </Viewer>
+      {/* <Viewer>- {answerWithParagraphs}</Viewer> */}
       <Row
         hide=/* {!hovered} */ {
           // props.showAnswerEditor || props.showPositionEditor

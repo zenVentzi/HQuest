@@ -2,6 +2,7 @@ enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
   COMMENT_MENTION
+  ANSWER_EDITION_MENTION
 }
 
 interface Notification {
@@ -12,6 +13,18 @@ interface Notification {
   text: String!
   seen: Boolean!
   createdOn: DateTime!
+}
+
+type AnswerEditionMention implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
 }
 
 type NewComment implements Notification {

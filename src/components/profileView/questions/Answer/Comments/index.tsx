@@ -20,19 +20,19 @@ import {
   UserFieldsFragment,
   UsersQueryVariables
 } from "GqlClient/autoGenTypes";
-import MentionInput from "./MentionInput";
+import MentionInput, { getMentionedUserIdsFromInput } from "./MentionInput";
 
-const StyledCommentInput = styled(Textarea)`
-  /* margin-top: 2em; */
-  width: 79%;
-  min-height: min-content;
-  background: white;
-  color: black;
-`;
+// const StyledCommentInput = styled(Textarea)`
+//   /* margin-top: 2em; */
+//   width: 79%;
+//   min-height: min-content;
+//   background: white;
+//   color: black;
+// `;
 
-const CommentInput = ({ innerRef = null, ...rest }: any) => {
-  return <StyledCommentInput inputRef={innerRef} {...rest} />;
-};
+// const CommentInput = ({ innerRef = null, ...rest }: any) => {
+//   return <StyledCommentInput inputRef={innerRef} {...rest} />;
+// };
 
 interface CommentsProps {
   comments: CommentFieldsFragment[] | null;
@@ -49,6 +49,7 @@ const Comments = (props: CommentsProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const highlightedComment = useRef<HTMLDivElement>(null);
   const commentsPanel = useRef<HTMLDivElement>(null);
+  const [commentValue, setCommentValue] = useState<string>("");
 
   useEffect(() => {
     if (highlightedComment.current) {
@@ -114,25 +115,28 @@ const Comments = (props: CommentsProps) => {
   //   resetForm({ comment: "" });
   // };
 
-  const onSubmitComment = (
+  const onSubmitComment = async (
     commentEditionMutation: MutationFn<
       CommentAnswerEditionMutation,
       CommentAnswerEditionMutationVariables
     >
-  ) => async (
-    comment: string,
-    mentionedUserIds: string[] | undefined
-  ): Promise<{ success: boolean }> => {
-    if (comment.length < 3) {
+  ): Promise<void> => {
+    // const commentValue = inputRef.current!.value;
+    // if (!commentValue) {
+    //   throw Error(`commentValue must not be null`);
+    // }
+
+    const mentionedUserIds = getMentionedUserIdsFromInput(commentValue);
+    if (commentValue.length < 3) {
       toast.error("Comment must be at least 3 characters long");
-      return { success: false };
+      return;
     }
     setIsSubmitting(true);
     const { answerId, onAddComment } = props;
     const variables: CommentAnswerEditionMutationVariables = {
       answerId,
       answerEditionId: props.answerEditionId,
-      comment,
+      comment: commentValue,
       mentionedUsers: mentionedUserIds
     };
     const res = await commentEditionMutation({ variables });
@@ -141,15 +145,32 @@ const Comments = (props: CommentsProps) => {
     }
 
     const newComment = res.data.commentAnswerEdition;
-    console.log(newComment);
     // updateComments(newComment);
     // TODO make sure the above is not neccessary
     toast.success("Comment added!");
     onAddComment();
     setIsSubmitting(false);
+    // inputRef.current!.value = "";
+    setCommentValue("");
+    // inputRef.current!.blur();
     // resetForm({ comment: "" });
-    return { success: true };
   };
+
+  /*problem is that if I keep the value state inside MentionInput I have to
+  either 
+  1) send down shouldReset prop
+  2) duplicate state in MentionInput parent
+  3) keep state only in MentionInput parent
+  
+  why not 3)?
+  
+  I can't create shouldReset prop because there might be errors onSubmit
+  If I still want to use shouldReset, the MentionInput should know if
+  the submit was successful, which smells like an antipattern
+  
+  what are the cons if I keep the value state in parent component?
+  
+  shouldSubmit goes away*/
 
   const onEditComment = (
     editCommentMutation: MutationFn<
@@ -275,11 +296,23 @@ const Comments = (props: CommentsProps) => {
         return (
           <Panel ref={commentsPanel}>
             <MentionInput
+              value={commentValue}
+              onChange={e => {
+                setCommentValue(e.target.value);
+              }}
+              onKeyDown={async e => {
+                if (e.key === "Enter" && !e.shiftKey && !isSubmitting) {
+                  e.preventDefault();
+                  await onSubmitComment(commentAnswerEdition);
+                  // await onSubmit(e.target., mentionedUserIds.current);
+                }
+              }}
+              placeholder="Add comment... use @userName to tag people"
               searchUsers={searchUsers}
-              initialValue=""
-              submitOnEnter={true}
-              isSubmitting={isSubmitting}
-              onSubmit={onSubmitComment(commentAnswerEdition)}
+              // initialValue=""
+              // submitOnEnter={true}
+              disabled={isSubmitting}
+              // onSubmit={onSubmitComment(commentAnswerEdition)}
             />
             {renderComments(editComment, removeComment, searchUsers)}
           </Panel>

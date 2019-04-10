@@ -7,7 +7,8 @@ import Avatar from "../reusable/Avatar";
 import {
   NotificationFieldsFragment,
   NotificationType,
-  NewComment
+  NewComment,
+  AnswerEditionMention
 } from "GqlClient/autoGenTypes";
 import TextWithMentions from "Reusable/TextWithMentions";
 
@@ -76,6 +77,12 @@ const getLink = (notif: NotificationFieldsFragment): string => {
       return `/userProfile/${commentNotif.userProfileId}/${
         commentNotif.questionId
       }/${commentNotif.commentId}`;
+    }
+    case NotificationType.AnswerEditionMention: {
+      const editionMentionNotif = notif as AnswerEditionMention;
+      return `/userProfile/${editionMentionNotif.userProfileId}/${
+        editionMentionNotif.questionId
+      }`;
     }
   }
 

@@ -30,7 +30,7 @@ export interface CommentProps {
   onEdit: (
     commentId: string,
     commentValue: string,
-    mentionedUserIds: string[] | undefined
+    mentionedUserIds: string[] | null | undefined
   ) => Promise<{ success: boolean }>;
   size?: number;
   searchUsers: any;
@@ -87,8 +87,8 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
 
     const onEdit = async (
       newComment: string,
-      mentionedUserIds: string[] | undefined
-    ) => {
+      mentionedUserIds: string[] | null | undefined
+    ): Promise<void> => {
       const { success } = await onEditProp(
         comment.id,
         newComment,
@@ -97,8 +97,6 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
       if (success) {
         setViewMode(true);
       }
-
-      return { success };
     };
 
     const toggleOptionsDropdown = () => {

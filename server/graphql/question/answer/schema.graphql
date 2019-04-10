@@ -27,8 +27,16 @@ type AnswerEdition {
 }
 
 type Mutation {
-  editAnswer(answerId: ID!, answerValue: String!): Answer!
-  addAnswer(questionId: ID!, answerValue: String!): Answer!
+  editAnswer(
+    answerId: ID!
+    answerValue: String!
+    mentionedUsers: [ID!]
+  ): Answer!
+  addAnswer(
+    questionId: ID!
+    answerValue: String!
+    mentionedUsers: [ID!]
+  ): Answer!
   removeAnswer(answerId: ID!): Answer!
   likeAnswerEdition(
     answerId: ID!

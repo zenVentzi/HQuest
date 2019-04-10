@@ -20,42 +20,24 @@ type MentionInputProps = {
   searchUsers: (
     variables: UsersQueryVariables
   ) => Promise<UserFieldsFragment[] | null>;
-  submitOnEnter: boolean;
-  onSubmit: (
-    comment: string,
-    mentionedUserIds: string[] | undefined
-  ) => Promise<{ success: boolean }>;
-  shouldSubmit?: boolean;
-  isSubmitting: boolean;
-  initialValue: string;
+  onKeyDown?: (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => Promise<void> | void;
+  onChange: OnChangeHandlerFunc;
+  disabled: boolean;
+  placeholder: string;
+  value: string | undefined;
 };
 
-const MentionInput = (props: MentionInputProps) => {
-  const [value, setValue] = useState(props.initialValue);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const mentionedUserIds = useRef<string[]>();
-  const isNewComment = useRef(
-    !props.initialValue || !props.initialValue.length
-  );
-
+const MentionInput = React.forwardRef<
+  HTMLTextAreaElement | null | undefined,
+  MentionInputProps
+>((props: MentionInputProps, ref) => {
   let modalRoot = document.getElementById("modal-root");
   if (!modalRoot) {
     modalRoot = document.createElement("div");
     modalRoot.id = "modal-root";
   }
-
-  useAsyncEffect(
-    async () => {
-      if (props.shouldSubmit && !props.isSubmitting) {
-        const { success } = await props.onSubmit(
-          value,
-          mentionedUserIds.current
-        );
-      }
-    },
-    () => {},
-    [props.shouldSubmit]
-  );
 
   const renderSuggestion = (
     suggestion: CustomSuggestion,
@@ -96,60 +78,14 @@ const MentionInput = (props: MentionInputProps) => {
   };
 
   return (
-    // @ts-ignore // disabled prop causes error cuz of bad @types support
     <MentionsInput
-      value={value}
-      onKeyDown={async e => {
-        if (
-          e.key === "Enter" &&
-          !e.shiftKey &&
-          props.submitOnEnter &&
-          !props.isSubmitting
-        ) {
-          e.preventDefault();
-          const { success } = await props.onSubmit(
-            value,
-            mentionedUserIds.current
-          );
-          /* isNewComment is very hacky. Needs improvement like 100 other things hihi */
-          if (success && isNewComment.current) {
-            setValue("");
-            inputRef.current!.blur();
-          }
-        }
-      }}
-      inputRef={inputRef}
-      disabled={props.isSubmitting}
-      onChange={e => {
-        setValue(e.target.value);
-        const text = e.target.value;
-        const mentions = text.match(mentionRegex);
-        if (mentions) {
-          console.log(mentions);
-          const userIds = mentions.map(mention => {
-            const userId = mention.match(/\(\w+\)/);
-            if (!userId) {
-              throw Error(`incorrect markup format for user mentions`);
-            }
-            const parsedUserId = userId[0].slice(1, -1);
-            return parsedUserId;
-          });
-
-          mentionedUserIds.current = userIds;
-        }
-
-        // const ats = text.split("@");
-        // if (ats.length <= 1) return;
-        // console.log(ats);
-        // ats.forEach(at => {
-        //   // console.log(at);
-        //   const userId = at.split("(")[1].slice(0, -1);
-        //   console.log(userId);
-        // });
-        //"@[Test11 Sarah](5c08b7766f91b01640e54921)".match(/@\[\w+( \w+)*\]\(\w+\)/)
-        //@\[\w+( \w+)*\]\(\w+\)
-        // console.log(e.target.value);
-      }}
+      value={props.value}
+      // @ts-ignore // incorrect @types/
+      onKeyDown={props.onKeyDown}
+      // @ts-ignore
+      inputRef={ref}
+      disabled={props.disabled}
+      onChange={props.onChange}
       style={{
         control: {
           backgroundColor: "white",
@@ -201,35 +137,11 @@ const MentionInput = (props: MentionInputProps) => {
         }
       }}
       suggestionsPortalHost={modalRoot}
-      placeholder="Add comment... use @userName to tag people"
+      placeholder={props.placeholder}
     >
       <Mention
         trigger="@"
         data={(search, callback) => {
-          // const users: SuggestionDataItem[] = [
-          //   {
-          //     id: "1",
-          //     display: "Jimmy"
-          //   },
-          //   {
-          //     id: "2",
-          //     display: "Ketut"
-          //   },
-          //   {
-          //     id: "3",
-          //     display: "Gede"
-          //   },
-          //   {
-          //     id: "4",
-          //     display: "Gede"
-          //   },
-          //   {
-          //     id: "5",
-          //     display: "Gede"
-          //   }
-          // ];
-          // return users;
-
           props.searchUsers({ match: search }).then(users => {
             if (users && users.length) {
               const suggestions: CustomSuggestion[] = users.map(user => {
@@ -245,13 +157,27 @@ const MentionInput = (props: MentionInputProps) => {
         }}
         // @ts-ignore // @types/ are incomplete
         renderSuggestion={renderSuggestion}
-        onAdd={(id, display) => {
-          const mentionedUserId = id.toString();
-          // console.log(mentionedUserId);
-        }}
       />
     </MentionsInput>
   );
+});
+
+const getMentionedUserIdsFromInput = (inputValue: string): string[] | null => {
+  const mentions = inputValue.match(mentionRegex);
+  if (mentions) {
+    const userIds = mentions.map(mention => {
+      const userId = mention.match(/\(\w+\)/);
+      if (!userId) {
+        throw Error(`incorrect markup format for user mentions`);
+      }
+      const parsedUserId = userId[0].slice(1, -1);
+      return parsedUserId;
+    });
+    return userIds;
+  }
+
+  return null;
 };
 
 export default MentionInput;
+export { getMentionedUserIdsFromInput };

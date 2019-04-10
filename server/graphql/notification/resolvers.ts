@@ -6,7 +6,8 @@ import {
   MutationResolvers,
   SubscriptionResolvers,
   NotificationResolvers,
-  Notification
+  Notification,
+  NotificationType
 } from "../autoGenTypes";
 import { mapNotifications } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
@@ -21,6 +22,8 @@ const Notification: NotificationResolvers = {
         return "NewComment";
       case "NEW_FOLLOWER":
         return "NewFollower";
+      case NotificationType.AnswerEditionMention:
+        return "AnswerEditionMention";
     }
 
     throw Error(`unknown type, ${obj.type}`);

@@ -35,7 +35,7 @@ const UnansweredQuestion = ({
 }: UnansweredQuestionProps) => {
   const onClickSave = (
     addAnswer: MutationFn<AddAnswerMutation, AddAnswerMutationVariables>
-  ) => async (answerValue: string) => {
+  ) => async (answerValue: string): Promise<void> => {
     if (!answerValue) {
       toast.error("Answer not provided");
       return;

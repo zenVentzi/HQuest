@@ -135,7 +135,12 @@ export const NotificationFields = gql`
     createdOn
     ... on NewComment {
       userProfileId
+      questionId
       commentId
+    }
+
+    ... on AnswerEditionMention {
+      userProfileId
       questionId
     }
   }

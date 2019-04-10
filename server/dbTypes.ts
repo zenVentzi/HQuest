@@ -10,9 +10,11 @@ export type ObjectId = GooseTypes.ObjectId;
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT",
-  CommentMention = "COMMENT_MENTION"
+  CommentMention = "COMMENT_MENTION",
+  AnswerEditionMention = "ANSWER_EDITION_MENTION"
 }
 
+// try to remove commentId, questionId etc from the general Notification interface
 export interface Notification {
   _id: ObjectId;
   type: NotificationType;
@@ -24,6 +26,12 @@ export interface Notification {
   text: string;
   seen: boolean;
 }
+
+export type AnswerEditionMention = Notification & {
+  type: NotificationType.AnswerEditionMention;
+  userProfileId: string;
+  questionId: string;
+};
 
 export interface NewComment extends Notification {
   type: NotificationType.NewComment | NotificationType.CommentMention;
