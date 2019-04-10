@@ -13,8 +13,16 @@ export const MOVE_ANSWER_POSITION = gql`
 `;
 
 export const ADD_ANSWER = gql`
-  mutation addAnswer($questionId: ID!, $answerValue: String!) {
-    addAnswer(questionId: $questionId, answerValue: $answerValue) {
+  mutation addAnswer(
+    $questionId: ID!
+    $answerValue: String!
+    $mentionedUsers: [ID!]
+  ) {
+    addAnswer(
+      questionId: $questionId
+      answerValue: $answerValue
+      mentionedUsers: $mentionedUsers
+    ) {
       ...AnswerFields
     }
   }
@@ -22,8 +30,16 @@ export const ADD_ANSWER = gql`
 `;
 
 export const EDIT_ANSWER = gql`
-  mutation editAnswer($answerId: ID!, $answerValue: String!) {
-    editAnswer(answerId: $answerId, answerValue: $answerValue) {
+  mutation editAnswer(
+    $answerId: ID!
+    $answerValue: String!
+    $mentionedUsers: [ID!]
+  ) {
+    editAnswer(
+      answerId: $answerId
+      answerValue: $answerValue
+      mentionedUsers: $mentionedUsers
+    ) {
       ...AnswerFields
     }
   }

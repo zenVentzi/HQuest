@@ -25,6 +25,18 @@ export type AnswerEdition = {
   comments?: Maybe<Array<Comment>>;
 };
 
+export type AnswerEditionMention = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+};
+
 export type AnswerNews = NewsBase & {
   type: NewsType;
   performer: User;
@@ -128,11 +140,13 @@ export type MutationRemoveCommentArgs = {
 export type MutationEditAnswerArgs = {
   answerId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationAddAnswerArgs = {
   questionId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationRemoveAnswerArgs = {
@@ -254,7 +268,8 @@ export type Notification = {
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT",
-  CommentMention = "COMMENT_MENTION"
+  CommentMention = "COMMENT_MENTION",
+  AnswerEditionMention = "ANSWER_EDITION_MENTION"
 }
 
 export type PageInfo = {
@@ -448,6 +463,21 @@ export type AnswerEditionResolvers<
   value?: Resolver<Scalars["String"], ParentType, Context>;
   likes?: Resolver<Maybe<Likes>, ParentType, Context>;
   comments?: Resolver<Maybe<Array<Comment>>, ParentType, Context>;
+};
+
+export type AnswerEditionMentionResolvers<
+  Context = ApolloContext,
+  ParentType = AnswerEditionMention
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
+  questionId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 
 export type AnswerNewsResolvers<
@@ -672,7 +702,7 @@ export type NotificationResolvers<
   ParentType = Notification
 > = {
   __resolveType: TypeResolveFn<
-    "NewComment" | "NewFollower",
+    "AnswerEditionMention" | "NewComment" | "NewFollower",
     ParentType,
     Context
   >;
@@ -791,6 +821,7 @@ export type UserResolvers<Context = ApolloContext, ParentType = User> = {
 export type Resolvers<Context = ApolloContext> = {
   Answer?: AnswerResolvers<Context>;
   AnswerEdition?: AnswerEditionResolvers<Context>;
+  AnswerEditionMention?: AnswerEditionMentionResolvers<Context>;
   AnswerNews?: AnswerNewsResolvers<Context>;
   Comment?: CommentResolvers<Context>;
   CommentNews?: CommentNewsResolvers<Context>;

@@ -1,0 +1,16 @@
+apollographql.vscode-apollo
+ChakrounAnas.turbo-console-log
+CoenraadS.bracket-pair-colorizer-2
+dbaeumer.vscode-eslint
+donjayamanne.githistory
+eamodio.gitlens
+eg2.vscode-npm-script
+esbenp.prettier-vscode
+Gruntfuggly.todo-tree
+jasonnutter.search-node-modules
+jpoissonnier.vscode-styled-components
+kumar-harsh.graphql-for-vscode
+leizongmin.node-module-intellisense
+mikestead.dotenv
+ms-vscode.vscode-typescript-tslint-plugin
+vscode-icons-team.vscode-icons

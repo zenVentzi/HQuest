@@ -30,6 +30,7 @@ interface AnswerProps {
 }
 
 const Answer = (props: AnswerProps) => {
+  const editorInputRef = useRef<HTMLTextAreaElement>(null);
   // const { viewMode, answer, showPositionEditor } = props;
   const removeMutation = useRef<
     MutationFn<RemoveAnswerMutation, RemoveAnswerMutationVariables>
@@ -50,7 +51,10 @@ const Answer = (props: AnswerProps) => {
 
   const onSaveAnswer = (
     mutation: MutationFn<EditAnswerMutation, EditAnswerMutationVariables>
-  ) => async (answerValue: string) => {
+  ) => async (
+    answerValue: string,
+    mentionedUserIds: string[] | null | undefined
+  ): Promise<void> => {
     const lastEdition = props.answer!.editions[
       props.answer!.editions.length - 1
     ];
@@ -65,7 +69,11 @@ const Answer = (props: AnswerProps) => {
     }
 
     const answerId = props.answer!.id;
-    const variables = { answerId, answerValue };
+    const variables: EditAnswerMutationVariables = {
+      answerId,
+      answerValue,
+      mentionedUsers: mentionedUserIds
+    };
     await mutation({ variables });
     toast.success("Answer edited!");
 
@@ -97,6 +105,7 @@ const Answer = (props: AnswerProps) => {
           <>
             {props.showAnswerEditor ? (
               <AnswerEditor
+                ref={editorInputRef}
                 answer={props.answer}
                 onClickDoesNotApply={() => {}}
                 onClickSave={onSaveAnswer(editAnswer)}

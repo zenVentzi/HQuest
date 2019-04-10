@@ -25,6 +25,18 @@ export type AnswerEdition = {
   comments?: Maybe<Array<Comment>>;
 };
 
+export type AnswerEditionMention = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+};
+
 export type AnswerNews = NewsBase & {
   type: NewsType;
   performer: User;
@@ -128,11 +140,13 @@ export type MutationRemoveCommentArgs = {
 export type MutationEditAnswerArgs = {
   answerId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationAddAnswerArgs = {
   questionId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationRemoveAnswerArgs = {
@@ -254,7 +268,8 @@ export type Notification = {
 export enum NotificationType {
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT",
-  CommentMention = "COMMENT_MENTION"
+  CommentMention = "COMMENT_MENTION",
+  AnswerEditionMention = "ANSWER_EDITION_MENTION"
 }
 
 export type PageInfo = {
@@ -525,6 +540,7 @@ export type MoveAnswerPositionMutation = { __typename?: "Mutation" } & Pick<
 export type AddAnswerMutationVariables = {
   questionId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type AddAnswerMutation = { __typename?: "Mutation" } & {
@@ -534,6 +550,7 @@ export type AddAnswerMutation = { __typename?: "Mutation" } & {
 export type EditAnswerMutationVariables = {
   answerId: Scalars["ID"];
   answerValue: Scalars["String"];
+  mentionedUsers?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type EditAnswerMutation = { __typename?: "Mutation" } & {
@@ -697,7 +714,12 @@ export type NotificationFieldsFragment = Pick<
   | "seen"
   | "createdOn"
 > &
-  ({ __typename?: "NewComment" } & Pick<
-    NewComment,
-    "commentId" | "questionId"
-  >);
+  (
+    | ({ __typename?: "NewComment" } & Pick<
+        NewComment,
+        "userProfileId" | "questionId" | "commentId"
+      >)
+    | ({ __typename?: "AnswerEditionMention" } & Pick<
+        AnswerEditionMention,
+        "userProfileId" | "questionId"
+      >));

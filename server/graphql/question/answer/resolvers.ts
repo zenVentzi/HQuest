@@ -14,15 +14,28 @@ type Mutation = Required<
 >;
 
 const Mutation: Mutation = {
-  async editAnswer(_, { answerId, answerValue }, { services, user }) {
+  async editAnswer(
+    _,
+    { answerId, answerValue, mentionedUsers },
+    { services, user }
+  ) {
     authMiddleware(user);
 
     const dbAnswer = await services.answer.edit(answerId, answerValue);
     await services.newsfeed.onEditAnswer(answerId, user!.id);
+    await services.notification.onNewAnswerEdition(
+      dbAnswer,
+      user!.id,
+      mentionedUsers
+    );
     return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
 
-  async addAnswer(_, { answerValue, questionId }, { services, user }) {
+  async addAnswer(
+    _,
+    { answerValue, questionId, mentionedUsers },
+    { services, user }
+  ) {
     authMiddleware(user);
 
     const dbAnswer = await services.answer.add(
@@ -32,6 +45,11 @@ const Mutation: Mutation = {
     );
 
     await services.newsfeed.onNewAnswer(dbAnswer._id.toHexString(), user!.id);
+    await services.notification.onNewAnswerEdition(
+      dbAnswer,
+      user!.id,
+      mentionedUsers
+    );
     return mapAnswer({ dbAnswer, loggedUserId: user!.id });
   },
 

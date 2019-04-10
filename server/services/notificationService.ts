@@ -64,6 +64,21 @@ class NotificationService {
     }
   }
 
+  public async onNewAnswerEdition(
+    dbAnswer: DbTypes.Answer,
+    performerId: string,
+    mentionedUsersIds: string[] | null | undefined
+  ): Promise<void> {
+    if (!mentionedUsersIds || !mentionedUsersIds.length) return;
+
+    const notifForMentionedUsers = await this.createAnswerEditionNotification(
+      DbTypes.NotificationType.AnswerEditionMention,
+      dbAnswer,
+      performerId
+    );
+    await this.notifyMany(mentionedUsersIds, notifForMentionedUsers);
+  }
+
   public async onNewFollower(
     receiverId: string,
     followerId: string
@@ -143,6 +158,32 @@ class NotificationService {
     };
 
     pubsub.publish(NEW_NOTIFICATION, payload);
+  }
+
+  private async createAnswerEditionNotification(
+    type: DbTypes.NotificationType.AnswerEditionMention,
+    answer: DbTypes.Answer,
+    performerId: string
+  ): Promise<DbTypes.Notification> {
+    const performer = await this.models.user.findById(performerId).lean();
+
+    const performerName = `${performer.firstName} ${performer.surName}`;
+    const lastEdition = answer.editions[answer.editions.length - 1];
+    const notifText = `${performerName} mentioned you in answer: "${
+      lastEdition.value
+    } "`;
+    /* here we have to save the userId from answer */
+    const notif: DbTypes.AnswerEditionMention = {
+      _id: ObjectId(),
+      type,
+      userProfileId: answer.userId,
+      questionId: answer.questionId,
+      performerId,
+      performerAvatarSrc: performer.avatarSrc,
+      text: notifText,
+      seen: false
+    };
+    return notif;
   }
 
   private async createCommentNotification(

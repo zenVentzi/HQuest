@@ -21,8 +21,8 @@ type Mutation {
   commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!, mentionedUsers: [ID!]): Comment!
   editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!, mentionedUsers: [ID!]): Comment!
   removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
-  editAnswer(answerId: ID!, answerValue: String!): Answer!
-  addAnswer(questionId: ID!, answerValue: String!): Answer!
+  editAnswer(answerId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
+  addAnswer(questionId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
   removeAnswer(answerId: ID!): Answer!
   likeAnswerEdition(answerId: ID!, answerEditionId: ID!, userLikes: Int!): AnswerEdition!
   moveAnswerPosition(answerId: ID!, position: Int!): Int
@@ -94,6 +94,7 @@ enum NotificationType {
   NEW_FOLLOWER
   NEW_COMMENT
   COMMENT_MENTION
+  ANSWER_EDITION_MENTION
 }
 
 interface Notification {
@@ -104,6 +105,18 @@ interface Notification {
   text: String!
   seen: Boolean!
   createdOn: DateTime!
+}
+
+type AnswerEditionMention implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
 }
 
 type NewComment implements Notification {

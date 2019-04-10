@@ -41,7 +41,7 @@ fetch(`http://localhost:4000/graphql`, {
     // eslint-disable-next-line no-param-reassign
     result.data.__schema.types = filteredData;
     fs.writeFile(
-      './src/fragmentTypes.json',
+      './src/graphql/fragmentTypes.json',
       JSON.stringify(result.data),
       err => {
         if (err) {

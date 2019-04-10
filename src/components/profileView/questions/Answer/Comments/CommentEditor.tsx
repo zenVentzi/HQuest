@@ -3,7 +3,7 @@ import Textarea from "react-textarea-autosize";
 import { Formik, Form, ErrorMessage } from "formik";
 import styled from "styled-components";
 import TextBtn from "Reusable/TextBtn";
-import MentionInput from "./MentionInput";
+import MentionInput, { getMentionedUserIdsFromInput } from "./MentionInput";
 // import { EditionFieldsComments } from "GqlClient/autoGenTypes";
 
 const StyledEditor = styled(Textarea)`
@@ -35,8 +35,8 @@ interface CommentEditorProps {
   comment: string;
   onEdit: (
     newComment: string,
-    mentionedUserIds: string[] | undefined
-  ) => Promise<{ success: boolean }>;
+    mentionedUserIds: string[] | undefined | null
+  ) => Promise<void>;
   onCancel: () => void;
   searchUsers: any;
 }
@@ -44,8 +44,15 @@ interface CommentEditorProps {
 /* this component is pretty much the same as AnswerEditor and CommentInput. DRY fix */
 
 const CommentEditor = (props: CommentEditorProps) => {
+  const [commentValue, setCommentValue] = useState<string>(props.comment);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [shouldSubmit, setShouldSubmit] = useState(false);
+
+  const onSubmit = async () => {
+    const mentionedUserIds = getMentionedUserIdsFromInput(commentValue);
+    setIsSubmitting(true);
+    await props.onEdit(commentValue, mentionedUserIds);
+    // setIsSubmitting(false); //not necessary since it gets unmounted
+  };
 
   /* 1) pass forceSubmit property down to MentionInput
   2) Move the logic from onChange one layer up.
@@ -55,18 +62,31 @@ const CommentEditor = (props: CommentEditorProps) => {
   return (
     <>
       <MentionInput
-        initialValue={props.comment}
+        value={commentValue}
+        onChange={e => {
+          setCommentValue(e.target.value);
+        }}
+        onKeyDown={async e => {
+          if (e.key === "Enter" && !e.shiftKey && !isSubmitting) {
+            e.preventDefault();
+            await onSubmit();
+            // await onSubmitComment(commentAnswerEdition);
+            // await onSubmit(e.target., mentionedUserIds.current);
+          }
+        }}
+        placeholder="Add comment... use @userName to tag people"
+        // initialValue={props.comment}
         searchUsers={props.searchUsers}
-        submitOnEnter={true}
-        shouldSubmit={shouldSubmit}
-        isSubmitting={isSubmitting}
-        onSubmit={props.onEdit}
+        // submitOnEnter={true}
+        // shouldSubmit={shouldSubmit}
+        disabled={isSubmitting}
+        // onSubmit={props.onEdit}
       />
       <Buttons>
         <LeftBtn
-          onClick={() => {
+          onClick={async () => {
             if (!isSubmitting) {
-              setShouldSubmit(true);
+              await onSubmit();
             }
           }}
         >

@@ -1,4 +1,5 @@
 Todo:
+- scroll answer and comment notifications properly
 - show loading animation
 - mobile first
 - go through the GitHunt example
