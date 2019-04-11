@@ -18,9 +18,9 @@ export enum NotificationType {
 export interface Notification {
   _id: ObjectId;
   type: NotificationType;
-  userProfileId?: string;
-  questionId?: string;
-  commentId?: string;
+  // userProfileId?: string;
+  // questionId?: string;
+  // commentId?: string;
   performerId: string;
   performerAvatarSrc: string;
   text: string;

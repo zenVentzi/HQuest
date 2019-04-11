@@ -229,8 +229,8 @@ class NotificationService {
     const usersWithoutNotif = users.filter(user => {
       if (!user.notifications) return true;
       const commentNotif = user.notifications.find(notif => {
-        if (!notif.commentId) return false;
-        return dbComment._id.equals(notif.commentId);
+        if (!(notif as DbTypes.NewComment).commentId) return false;
+        return dbComment._id.equals((notif as DbTypes.NewComment).commentId);
       });
 
       return !commentNotif;
