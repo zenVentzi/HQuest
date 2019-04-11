@@ -91,7 +91,8 @@ test("commentAnswer() should notify answer owner", async done => {
   const answerOwnerWithNotifications = (await models.user.findById(
     answerOwner._id
   ))!.toObject();
-  const actual = answerOwnerWithNotifications.notifications![0].commentId;
+  const actual = (answerOwnerWithNotifications.notifications![0] as DbTypes.NewComment)
+    .commentId;
   const expected = addedComment.id;
   expect(actual).toEqual(expected);
   done();

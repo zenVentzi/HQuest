@@ -31,10 +31,8 @@ test("notifications() should return notifications if found", async done => {
   const dbNotif: DbTypes.NewFollower = {
     _id: ObjectId(),
     type: DbTypes.NotificationType.NewFollower,
-    commentId: "fd",
     performerAvatarSrc: "fd",
     performerId: "df",
-    questionId: "df",
     seen: false,
     text: "df"
   };
