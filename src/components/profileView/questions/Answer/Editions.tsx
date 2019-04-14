@@ -11,6 +11,7 @@ import EditionPicker from "./EditionPicker";
 import Edition from "./Edition";
 
 interface EditionsProps {
+  selectedEditionId?: string;
   editions: EditionFieldsFragment[];
   answerId: string;
   likeEdition: MutationFn<
@@ -21,15 +22,15 @@ interface EditionsProps {
 
 const Editions = (props: EditionsProps) => {
   const latestEdition = props.editions[props.editions.length - 1];
-  const [pickedEditionId, setPickedEditionId] = useState<string | null>(
-    latestEdition.id
+  const [selectedEditionId, setSelectedEditionId] = useState<string | null>(
+    props.selectedEditionId ? props.selectedEditionId : latestEdition.id
   );
 
-  const onPickEdition = (all: boolean, pickedEdId?: string) => {
+  const onSelectEdition = (all: boolean, selectedEdId?: string) => {
     if (all) {
-      setPickedEditionId(null);
+      setSelectedEditionId(null);
     } else {
-      setPickedEditionId(pickedEdId!);
+      setSelectedEditionId(selectedEdId!);
     }
   };
 
@@ -37,14 +38,14 @@ const Editions = (props: EditionsProps) => {
     <>
       <EditionPicker
         allEditions={props.editions}
-        pickedEditionId={pickedEditionId}
-        onPickEdition={onPickEdition}
+        pickedEditionId={selectedEditionId}
+        onPickEdition={onSelectEdition}
       />
-      {pickedEditionId ? (
+      {selectedEditionId ? (
         <Edition
           showComments={true}
           answerId={props.answerId}
-          edition={props.editions.find(ed => ed.id === pickedEditionId)!}
+          edition={props.editions.find(ed => ed.id === selectedEditionId)!}
           likeEdition={props.likeEdition}
         />
       ) : (

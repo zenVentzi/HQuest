@@ -91,6 +91,8 @@ export const QuestionFields = gql`
   ${AnswerFields}
 `;
 
+export const QuestionFieldsFragmentName = `QuestionFields`;
+
 export const PageInfoFields = gql`
   fragment PageInfoFields on PageInfo {
     startCursor
@@ -136,12 +138,14 @@ export const NotificationFields = gql`
     ... on NewComment {
       userProfileId
       questionId
+      editionId
       commentId
     }
 
     ... on AnswerEditionMention {
       userProfileId
       questionId
+      editionId
     }
   }
 `;

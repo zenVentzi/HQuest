@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, memo } from "react";
+import React, { useState, useRef, useEffect, memo, createContext } from "react";
 import { useAsyncEffect } from "use-async-effect";
 import {
   AnswerFieldsFragment,
@@ -27,6 +27,7 @@ interface AnswerProps {
   onCloseAnswerEditor: () => void;
   onClosePositionEditor: () => void;
   scrollToComment?: string;
+  editionId?: string;
 }
 
 const Answer = (props: AnswerProps) => {
@@ -119,6 +120,7 @@ const Answer = (props: AnswerProps) => {
               />
             ) : (
               <Editions
+                selectedEditionId={props.editionId}
                 editions={props.answer.editions}
                 answerId={props.answer.id}
                 likeEdition={likeAnswerEdition}

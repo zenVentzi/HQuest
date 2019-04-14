@@ -45,7 +45,7 @@ interface CommentsProps {
 }
 
 const Comments = (props: CommentsProps) => {
-  const [comments, setComments] = useState(props.comments || []);
+  // const [comments, setComments] = useState(props.comments || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const highlightedComment = useRef<HTMLDivElement>(null);
   const commentsPanel = useRef<HTMLDivElement>(null);
@@ -57,28 +57,28 @@ const Comments = (props: CommentsProps) => {
     }
   }, []);
 
-  const updateComments = (
-    newComment?: CommentFieldsFragment,
-    removedComment?: CommentFieldsFragment,
-    editedComment?: CommentFieldsFragment
-  ) => {
-    if (newComment) {
-      setComments([...comments, newComment]);
-    } else if (removedComment) {
-      setComments(comments.filter(c => c.id !== removedComment.id));
-    } else if (editedComment) {
-      setComments(() => {
-        const updatedComments = [...comments];
-        for (let i = 0; i < updatedComments.length; i++) {
-          if (updatedComments[i].id === editedComment.id) {
-            updatedComments[i] = editedComment;
-          }
-        }
+  // const updateComments = (
+  //   newComment?: CommentFieldsFragment,
+  //   removedComment?: CommentFieldsFragment,
+  //   editedComment?: CommentFieldsFragment
+  // ) => {
+  //   if (newComment) {
+  //     setComments([...comments, newComment]);
+  //   } else if (removedComment) {
+  //     setComments(comments.filter(c => c.id !== removedComment.id));
+  //   } else if (editedComment) {
+  //     setComments(() => {
+  //       const updatedComments = [...comments];
+  //       for (let i = 0; i < updatedComments.length; i++) {
+  //         if (updatedComments[i].id === editedComment.id) {
+  //           updatedComments[i] = editedComment;
+  //         }
+  //       }
 
-        return updatedComments;
-      });
-    }
-  };
+  //       return updatedComments;
+  //     });
+  //   }
+  // };
 
   // const validateForm = (values: any) => {
   //   const errors: any = {};
@@ -180,7 +180,7 @@ const Comments = (props: CommentsProps) => {
   ) => async (
     commentId: string,
     commentValue: string,
-    mentionedUserIds: string[] | undefined
+    mentionedUserIds: string[] | null | undefined
   ): Promise<{ success: boolean }> => {
     if (commentValue.length < 3) {
       toast.error("Comment must be at least 3 characters long");
@@ -200,7 +200,7 @@ const Comments = (props: CommentsProps) => {
     }
 
     const editedComment = res.data!.editComment;
-    updateComments(undefined, undefined, editedComment);
+    // updateComments(undefined, undefined, editedComment);
     toast.success("Comment edited!");
     return { success: true };
   };
@@ -223,7 +223,7 @@ const Comments = (props: CommentsProps) => {
     }
 
     const removedComment = res.data!.removeComment;
-    updateComments(undefined, removedComment);
+    // updateComments(undefined, removedComment);
     onRemoveCommentProp();
     toast.success("Comment removed!");
   };
@@ -243,13 +243,13 @@ const Comments = (props: CommentsProps) => {
   ) => {
     const { scrollToComment } = props;
 
-    if (!comments || !comments.length) {
+    if (!props.comments || !props.comments.length) {
       return <div> Be the first to add a comment </div>;
     }
 
     const renderReversedComments = () => {
       const res: JSX.Element[] = [];
-      const copy = comments.slice();
+      const copy = props.comments!.slice();
 
       while (copy.length) {
         const com = copy.pop();

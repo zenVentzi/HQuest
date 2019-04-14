@@ -14,13 +14,9 @@ export enum NotificationType {
   AnswerEditionMention = "ANSWER_EDITION_MENTION"
 }
 
-// try to remove commentId, questionId etc from the general Notification interface
 export interface Notification {
   _id: ObjectId;
   type: NotificationType;
-  // userProfileId?: string;
-  // questionId?: string;
-  // commentId?: string;
   performerId: string;
   performerAvatarSrc: string;
   text: string;
@@ -31,12 +27,14 @@ export type AnswerEditionMention = Notification & {
   type: NotificationType.AnswerEditionMention;
   userProfileId: string;
   questionId: string;
+  editionId: string;
 };
 
 export interface NewComment extends Notification {
   type: NotificationType.NewComment | NotificationType.CommentMention;
   userProfileId: string;
   questionId: string;
+  editionId: string;
   commentId: string;
 }
 

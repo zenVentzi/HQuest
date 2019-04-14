@@ -25,6 +25,7 @@ type AnswerEditionMention implements Notification {
   createdOn: DateTime!
   userProfileId: String!
   questionId: ID!
+  editionId: ID!
 }
 
 type NewComment implements Notification {
@@ -37,6 +38,7 @@ type NewComment implements Notification {
   createdOn: DateTime!
   userProfileId: String!
   questionId: ID!
+  editionId: ID!
   commentId: ID!
 }
 
