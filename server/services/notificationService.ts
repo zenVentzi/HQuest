@@ -178,6 +178,7 @@ class NotificationService {
       type,
       userProfileId: answer.userId,
       questionId: answer.questionId,
+      editionId: lastEdition._id.toHexString(),
       performerId,
       performerAvatarSrc: performer.avatarSrc,
       text: notifText,
@@ -193,9 +194,10 @@ class NotificationService {
     performerId: string,
     dbComment: DbTypes.Comment,
     answer: DbTypes.Answer
-  ): Promise<DbTypes.Notification> {
+  ): Promise<DbTypes.NewComment> {
     const performer = await this.models.user.findById(performerId).lean();
 
+    const lastEdition = answer.editions[answer.editions.length - 1];
     const performerName = `${performer.firstName} ${performer.surName}`;
     const notifText =
       type === DbTypes.NotificationType.NewComment
@@ -207,6 +209,7 @@ class NotificationService {
       type,
       userProfileId: answer.userId,
       questionId: answer.questionId,
+      editionId: lastEdition._id.toHexString(),
       commentId: dbComment._id.toString(),
       performerId,
       performerAvatarSrc: performer.avatarSrc,

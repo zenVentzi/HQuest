@@ -35,6 +35,7 @@ export type AnswerEditionMention = Notification & {
   createdOn: Scalars["DateTime"];
   userProfileId: Scalars["String"];
   questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
 };
 
 export type AnswerNews = NewsBase & {
@@ -207,6 +208,7 @@ export type NewComment = Notification & {
   createdOn: Scalars["DateTime"];
   userProfileId: Scalars["String"];
   questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
   commentId: Scalars["ID"];
 };
 
@@ -478,6 +480,7 @@ export type AnswerEditionMentionResolvers<
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
   userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
   questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 
 export type AnswerNewsResolvers<
@@ -633,6 +636,7 @@ export type NewCommentResolvers<
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
   userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
   questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
   commentId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 

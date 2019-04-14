@@ -1,13 +1,17 @@
-import { Notification, NewComment } from "../autoGenTypes";
+import {
+  Notification,
+  NewComment,
+  AnswerEditionMention
+} from "../autoGenTypes";
 import {
   Notification as DbNotification,
   NotificationType,
   NewComment as DbNewComment,
-  AnswerEditionMention
+  AnswerEditionMention as DbAnswerEditionMention
 } from "../../dbTypes";
 
 function mapNotification(notif: DbNotification): Notification {
-  const res: Notification = {
+  const gqlNotif: Notification = {
     id: notif._id.toString(),
     type: notif.type,
     performerId: notif.performerId,
@@ -19,21 +23,27 @@ function mapNotification(notif: DbNotification): Notification {
 
   switch (notif.type) {
     case NotificationType.NewComment:
-    case NotificationType.CommentMention:
-      (res as NewComment).questionId = (notif as DbNewComment).questionId;
-      (res as NewComment).commentId = (notif as DbNewComment).commentId;
-      (res as NewComment).userProfileId = (notif as DbNewComment).userProfileId;
-      break;
-    case NotificationType.AnswerEditionMention:
-      (res as NewComment).questionId = (notif as AnswerEditionMention).questionId;
-      (res as NewComment).userProfileId = (notif as AnswerEditionMention).userProfileId;
-      break;
-
-    default:
-      break;
+    case NotificationType.CommentMention: {
+      const res: NewComment = {
+        ...gqlNotif,
+        questionId: (notif as DbNewComment).questionId,
+        editionId: (notif as DbNewComment).editionId,
+        commentId: (notif as DbNewComment).commentId,
+        userProfileId: (notif as DbNewComment).userProfileId
+      };
+      return res;
+    }
+    case NotificationType.AnswerEditionMention: {
+      const res: AnswerEditionMention = {
+        ...gqlNotif,
+        questionId: (notif as DbAnswerEditionMention).questionId,
+        editionId: (notif as DbAnswerEditionMention).editionId,
+        userProfileId: (notif as DbAnswerEditionMention).userProfileId
+      };
+      return res;
+    }
   }
-
-  return res;
+  throw Error(`unknown type ${notif.type}`);
 }
 
 function mapNotifications(

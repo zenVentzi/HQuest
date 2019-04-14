@@ -76,13 +76,13 @@ const getLink = (notif: NotificationFieldsFragment): string => {
       const commentNotif = notif as NewComment;
       return `/userProfile/${commentNotif.userProfileId}/${
         commentNotif.questionId
-      }/${commentNotif.commentId}`;
+      }/${commentNotif.editionId}/${commentNotif.commentId}`;
     }
     case NotificationType.AnswerEditionMention: {
       const editionMentionNotif = notif as AnswerEditionMention;
       return `/userProfile/${editionMentionNotif.userProfileId}/${
         editionMentionNotif.questionId
-      }`;
+      }/${editionMentionNotif.editionId}`;
     }
   }
 

@@ -1,4 +1,6 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
+import deepClone from "clone";
+import deep_diff from "deep-diff";
 import { Mutation, MutationFn, Query, ApolloConsumer } from "react-apollo";
 import {
   COMMENT_ANSWER_EDITION,
@@ -14,9 +16,16 @@ import {
   RemoveCommentMutationVariables,
   UsersQuery,
   UsersQueryVariables,
-  UserFieldsFragment
+  UserFieldsFragment,
+  Question
 } from "GqlClient/autoGenTypes";
 import { GET_USERS } from "GqlClient/user/queries";
+import { AnsweredQuestionContext } from "../../AnsweredQuestion";
+import { EditionContext } from "../Edition";
+import {
+  QuestionFields,
+  QuestionFieldsFragmentName
+} from "GqlClient/fragments";
 
 type CommentsGqlProps = {
   children: (
@@ -37,6 +46,14 @@ type CommentsGqlProps = {
 
 const CommentsGql = (props: CommentsGqlProps) => {
   const { children } = props;
+  const answeredQuestion = useContext(AnsweredQuestionContext);
+  const edition = useContext(EditionContext);
+
+  if (!answeredQuestion) {
+    throw Error(`asnwer cannot be null|undefined`);
+  } else if (!edition) {
+    throw Error(`edition cannot be null|undefined`);
+  }
 
   return (
     <Mutation<
@@ -54,6 +71,43 @@ const CommentsGql = (props: CommentsGqlProps) => {
               return (
                 <Mutation<RemoveCommentMutation, RemoveCommentMutationVariables>
                   mutation={REMOVE_COMMENT}
+                  update={(cache, { data }) => {
+                    if (!data) {
+                      throw Error(`data must not be null`);
+                    }
+                    const removedComment = data.removeComment;
+
+                    const questionWithUpdatedComments = deepClone(
+                      answeredQuestion
+                    );
+
+                    questionWithUpdatedComments.answer!.editions.forEach(ed => {
+                      if (ed.id === edition.id) {
+                        ed.comments = ed.comments!.filter(
+                          com => com.id !== removedComment.id
+                        );
+                      }
+                    });
+
+                    cache.writeFragment({
+                      fragment: QuestionFields,
+                      data: questionWithUpdatedComments,
+                      id: `${questionWithUpdatedComments.__typename}:${
+                        questionWithUpdatedComments.id
+                      }`,
+                      fragmentName: QuestionFieldsFragmentName
+                    });
+
+                    // const commentKey = `Comment:${removedComment.id}`;
+                    // @ts-ignore // FIXME
+                    // cache.data.delete(commentKey);
+                    // console.log(commentKey);
+                    // const { allTodos } = cache.readQuery({ query: GET_TODOS });
+                    // cache.writeQuery({
+                    //   query: GET_TODOS,
+                    //   data: { allTodos: allTodos.filter(e => e.id !== id) }
+                    // });
+                  }}
                 >
                   {removeComment => {
                     return (

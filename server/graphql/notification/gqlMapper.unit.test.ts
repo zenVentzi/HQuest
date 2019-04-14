@@ -10,11 +10,12 @@ const { ObjectId } = Types;
 test("getNotification()", () => {
   const dbNotif: dbTypes.NewComment = {
     _id: ObjectId(),
+    questionId: "",
+    editionId: "",
     commentId: "",
     performerAvatarSrc: "",
     userProfileId: "",
     performerId: "",
-    questionId: "",
     seen: false,
     text: "fdfdf",
     type: dbTypes.NotificationType.NewComment
@@ -23,11 +24,12 @@ test("getNotification()", () => {
   const actual = mapNotification(dbNotif);
   const expected: gqlTypes.NewComment = {
     id: dbNotif._id.toHexString(),
+    questionId: "",
+    editionId: "",
     commentId: "",
     performerAvatarSrc: "",
     userProfileId: "",
     performerId: "",
-    questionId: "",
     seen: false,
     text: "fdfdf",
     type: dbTypes.NotificationType.NewComment,

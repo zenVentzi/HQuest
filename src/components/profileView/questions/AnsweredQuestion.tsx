@@ -1,4 +1,4 @@
-import React, { CSSProperties, useRef, useState } from "react";
+import React, { CSSProperties, useRef, useState, createContext } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import Question from "./Question";
@@ -7,6 +7,12 @@ import { MutationFn } from "react-apollo";
 import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 import Answer from "./Answer";
 import { Row } from "./Row";
+
+export const AnsweredQuestionContext = createContext<QuestionFieldsFragment | null>(
+  null
+);
+
+// export { AnsweredQuestionConsumer };
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -19,10 +25,10 @@ const StyledQuestion = styled.div`
 
 interface AnsweredQuestionProps {
   question: QuestionFieldsFragment;
-  // question: Required<QuestionFieldsFragment>;
   showComments: boolean;
   // onRemove: () => Promise<void>;
   scrollToComment?: string;
+  editionId?: string;
   totalQuestionsCount: number;
   isPersonal: boolean;
   style?: CSSProperties;
@@ -52,46 +58,49 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   } = props;
 
   return (
-    <StyledQuestion
-      onMouseEnter={onMouseEnter}
-      onFocus={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      // onBlur={onMouseLeave}
-      style={style}
-    >
-      <Row>
-        <Question question={question.value} />
-        <OptionsDropdown
-          visible={isPersonal && hovered}
-          onClickEdit={() => {
-            if (showPositionEditor) return;
-            setShowAnswerEditor(true);
+    <AnsweredQuestionContext.Provider value={props.question}>
+      <StyledQuestion
+        onMouseEnter={onMouseEnter}
+        onFocus={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        // onBlur={onMouseLeave}
+        style={style}
+      >
+        <Row>
+          <Question question={question.value} />
+          <OptionsDropdown
+            visible={isPersonal && hovered}
+            onClickEdit={() => {
+              if (showPositionEditor) return;
+              setShowAnswerEditor(true);
+            }}
+            // onClickRemove={() => {
+            //   setRemoveAnswer(true);
+            // }}
+            onClickMove={() => {
+              if (showAnswerEditor) return;
+              setShowPositionEditor(true);
+            }}
+          />
+        </Row>
+        <Answer
+          showAnswerEditor={showAnswerEditor}
+          onCloseAnswerEditor={() => {
+            setShowAnswerEditor(false);
           }}
-          // onClickRemove={() => {
-          //   setRemoveAnswer(true);
-          // }}
-          onClickMove={() => {
-            if (showAnswerEditor) return;
-            setShowPositionEditor(true);
+          remove={removeAnswer}
+          showPositionEditor={showPositionEditor}
+          onClosePositionEditor={() => {
+            setShowPositionEditor(false);
           }}
+          answer={question.answer!}
+          totalQuestionsCount={totalQuestionsCount}
+          showComments={showComments}
+          scrollToComment={scrollToComment}
+          editionId={props.editionId}
         />
-      </Row>
-      <Answer
-        showAnswerEditor={showAnswerEditor}
-        onCloseAnswerEditor={() => {
-          setShowAnswerEditor(false);
-        }}
-        remove={removeAnswer}
-        showPositionEditor={showPositionEditor}
-        onClosePositionEditor={() => {
-          setShowPositionEditor(false);
-        }}
-        answer={question.answer!}
-        totalQuestionsCount={totalQuestionsCount}
-        showComments={showComments}
-        scrollToComment={scrollToComment}
-      />
-    </StyledQuestion>
+      </StyledQuestion>
+    </AnsweredQuestionContext.Provider>
   );
 };
 

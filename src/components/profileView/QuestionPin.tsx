@@ -5,13 +5,18 @@ import AnsweredQuestion from "./questions/AnsweredQuestion";
 import { RouteComponentProps } from "react-router";
 
 interface QuestionPinProps
-  extends RouteComponentProps<{ id: string; questionId: string }> {
+  extends RouteComponentProps<{
+    id: string;
+    questionId: string;
+    editionId: string;
+    commentId?: string;
+  }> {
   editable: boolean;
 }
 
 const QuestionPin = ({
   match: {
-    params: { id: userId, questionId }
+    params: { id: userId, questionId, editionId, commentId }
   },
   editable
 }: QuestionPinProps) => {
@@ -30,7 +35,9 @@ const QuestionPin = ({
 
         return (
           <AnsweredQuestion
-            showComments
+            showComments={true}
+            editionId={editionId}
+            scrollToComment={commentId}
             isPersonal={editable}
             totalQuestionsCount={0} // FIXME: fix that shit
             question={q}

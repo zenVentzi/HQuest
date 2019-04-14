@@ -52,7 +52,7 @@ const ProfileView = ({ match }: ProfileViewProps) => {
             <Fragment>
               <Switch>
                 <Route
-                  path="/userProfile/:id/:questionId/:commentId"
+                  path="/userProfile/:id/:questionId/:editionId/:commentId"
                   render={props => (
                     <QuestionPin {...props} editable={!!user.me} />
                   )}

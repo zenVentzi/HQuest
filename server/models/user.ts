@@ -15,6 +15,7 @@ const NotificationSchema = new Schema({
   },
   userProfileId: { type: String, required: false },
   questionId: { type: String, required: false },
+  editionId: { type: String, required: false },
   commentId: { type: String, required: false },
   performerId: { type: String, required: true },
   performerAvatarSrc: { type: String, required: true },

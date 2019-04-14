@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, createContext } from "react";
 import Anchor from "Reusable/Anchor";
 import styled from "styled-components";
 import shortid from "shortid";
@@ -38,6 +38,8 @@ const Viewer = styled.div`
     font-size: 1em;
   }
 `;
+
+export const EditionContext = createContext<EditionFieldsFragment | null>(null);
 
 interface EditionProps {
   edition: EditionFieldsFragment;
@@ -141,9 +143,10 @@ const Edition = (props: EditionProps) => {
     numOfComments === 1 ? `1 Comment` : `${numOfComments} Comments`;
 
   // console.log(props.edition.likes);
+  // console.log(props.edition.comments);
 
   return (
-    <>
+    <EditionContext.Provider value={props.edition}>
       <Viewer>
         -{" "}
         <TextWithMentions text={props.edition.value} addLinkToMention={true} />
@@ -175,7 +178,7 @@ const Edition = (props: EditionProps) => {
           }}
         />
       )}
-    </>
+    </EditionContext.Provider>
   );
 };
 
