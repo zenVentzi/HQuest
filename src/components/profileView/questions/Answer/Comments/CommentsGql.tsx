@@ -61,6 +61,34 @@ const CommentsGql = (props: CommentsGqlProps) => {
       CommentAnswerEditionMutationVariables
     >
       mutation={COMMENT_ANSWER_EDITION}
+      update={(cache, { data }) => {
+        if (!data) {
+          throw Error(`data must not be null`);
+        }
+        const addedComment = data.commentAnswerEdition;
+        console.log(addedComment);
+
+        const questionWithUpdatedComments = deepClone(answeredQuestion);
+
+        questionWithUpdatedComments.answer!.editions.forEach(ed => {
+          if (ed.id === edition.id) {
+            if (!ed.comments) {
+              ed.comments = [addedComment];
+            } else {
+              ed.comments.push(addedComment);
+            }
+          }
+        });
+
+        cache.writeFragment({
+          fragment: QuestionFields,
+          data: questionWithUpdatedComments,
+          id: `${questionWithUpdatedComments.__typename}:${
+            questionWithUpdatedComments.id
+          }`,
+          fragmentName: QuestionFieldsFragmentName
+        });
+      }}
     >
       {commentAnswerEdition => {
         return (
@@ -97,16 +125,6 @@ const CommentsGql = (props: CommentsGqlProps) => {
                       }`,
                       fragmentName: QuestionFieldsFragmentName
                     });
-
-                    // const commentKey = `Comment:${removedComment.id}`;
-                    // @ts-ignore // FIXME
-                    // cache.data.delete(commentKey);
-                    // console.log(commentKey);
-                    // const { allTodos } = cache.readQuery({ query: GET_TODOS });
-                    // cache.writeQuery({
-                    //   query: GET_TODOS,
-                    //   data: { allTodos: allTodos.filter(e => e.id !== id) }
-                    // });
                   }}
                 >
                   {removeComment => {

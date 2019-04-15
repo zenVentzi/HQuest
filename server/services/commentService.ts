@@ -41,11 +41,7 @@ class CommentService {
       editionComments = [addedComment];
       answer.editions[editionIndex].comments = editionComments;
     } else {
-      editionComments.push({
-        _id: ObjectId(),
-        value: comment,
-        user: performer!._id
-      });
+      editionComments.push(addedComment);
     }
 
     await answer.save();
