@@ -381,6 +381,7 @@ export type User = {
   avatarSrc?: Maybe<Scalars["String"]>;
   following?: Maybe<Array<Scalars["ID"]>>;
   followers?: Maybe<Array<Scalars["ID"]>>;
+  experience: Scalars["Float"];
 };
 import { ApolloContext } from "../types/gqlContext";
 
@@ -831,6 +832,7 @@ export type UserResolvers<Context = ApolloContext, ParentType = User> = {
   avatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   following?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
   followers?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
+  experience?: Resolver<Scalars["Float"], ParentType, Context>;
 };
 
 export type Resolvers<Context = ApolloContext> = {

@@ -200,7 +200,7 @@ const Comments = (props: CommentsProps) => {
       );
       userLikes = userLikerObj ? userLikerObj.numOfLikes : 0;
     }
-    if (userLikes <= 20) {
+    if (userLikes < 20) {
       const questionWithUpdatedComments = deepClone(answeredQuestion);
 
       questionWithUpdatedComments.answer.editions.forEach(ed => {
@@ -276,7 +276,7 @@ const Comments = (props: CommentsProps) => {
         commentId: likedComment.id,
         userLikes: userLikes + 1
       };
-      // await likeCommentMutation({ variables });
+      await likeCommentMutation({ variables });
     } else {
       toast.error("Max 20 likes per edition");
       /* toast a message

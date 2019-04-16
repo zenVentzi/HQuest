@@ -75,6 +75,9 @@ const Mutation: Mutation = {
     );
     // FIXME  newsfeed
     // await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
+    const answer = await services.answer.getAnswerById(answerId);
+    const editionOwnerId = answer.userId;
+    await services.user.addExperience(2, editionOwnerId);
     return mapAnswerEdition(dbEdition, user!.id);
   },
   async moveAnswerPosition(_, { answerId, position }, { services, user }) {

@@ -22,7 +22,8 @@ test("map user without following/followers", async () => {
     intro: "introo",
     me: true,
     email: "bla@",
-    avatarSrc: "blaSrc"
+    avatarSrc: "blaSrc",
+    experience: 0
   };
 
   const actual = mapUser(dbUser, dbUser._id.toString());
@@ -49,7 +50,8 @@ test("map user with following/followers", async () => {
     email: "bla@",
     avatarSrc: "blaSrc",
     followers: dbUser.followers!.map(f => f.toString()),
-    following: dbUser.following!.map(f => f.toString())
+    following: dbUser.following!.map(f => f.toString()),
+    experience: 0
   };
 
   const actual = mapUser(dbUser, dbUser._id.toString());
@@ -87,7 +89,8 @@ test("map users", async () => {
     email: "bla@",
     avatarSrc: "blaSrc",
     followers: dbUser1.followers!.map(f => f.toString()),
-    following: dbUser1.following!.map(f => f.toString())
+    following: dbUser1.following!.map(f => f.toString()),
+    experience: 0
   };
 
   const expected2: gqlTypes.User = {
@@ -98,7 +101,8 @@ test("map users", async () => {
     email: "bla@",
     avatarSrc: "blaSrc",
     followers: dbUser2.followers!.map(f => f.toString()),
-    following: dbUser2.following!.map(f => f.toString())
+    following: dbUser2.following!.map(f => f.toString()),
+    experience: 0
   };
 
   const expected = [expected1, expected2];

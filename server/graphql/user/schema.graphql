@@ -15,6 +15,7 @@ type User {
   avatarSrc: String
   following: [ID!]
   followers: [ID!]
+  experience: Float!
 }
 
 type Query {

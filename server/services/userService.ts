@@ -141,6 +141,18 @@ class UserService {
     return avatarSrc;
   }
 
+  public async addExperience(
+    experience: number,
+    userId: string
+  ): Promise<void> {
+    const user = await this.models.user.findById(userId);
+    if (!user) {
+      throw Error(`user not found, id: ${userId}`);
+    }
+    user.experience += experience;
+    await user.save();
+  }
+
   private async saveAvatarToFile(
     base64Img: string,
     userId: string
@@ -175,7 +187,7 @@ class UserService {
     const [firstName, surName] = name.split(" ");
     const id = ObjectId();
 
-    const newUser = {
+    const newUser: DbTypes.User = {
       _id: id,
       firstName,
       surName,
@@ -187,7 +199,8 @@ class UserService {
         twitterLink: "",
         instagramLink: "",
         linkedInLink: ""
-      }
+      },
+      experience: 0
     };
 
     const userDoc = await this.models.user.create(newUser);
