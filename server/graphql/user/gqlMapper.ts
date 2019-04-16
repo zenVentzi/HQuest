@@ -1,10 +1,16 @@
 import { User } from "../autoGenTypes";
 import { User as DbUser } from "../../dbTypes";
 
-function mapUser(dbUser: DbUser, loggedUserId: string): User {
+function mapUser(
+  dbUser: DbUser,
+  loggedUserId: string,
+  isFromLogin?: boolean
+): User {
   let me = false;
 
-  if (loggedUserId) {
+  if (isFromLogin) {
+    me = true;
+  } else if (loggedUserId) {
     me = loggedUserId === dbUser._id.toString();
   }
 

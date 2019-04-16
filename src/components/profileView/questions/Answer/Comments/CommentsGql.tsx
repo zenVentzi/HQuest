@@ -5,7 +5,8 @@ import { Mutation, MutationFn, Query, ApolloConsumer } from "react-apollo";
 import {
   COMMENT_ANSWER_EDITION,
   EDIT_COMMENT,
-  REMOVE_COMMENT
+  REMOVE_COMMENT,
+  LIKE_COMMENT
 } from "GqlClient/question/answer/comment/mutations";
 import {
   CommentAnswerEditionMutation,
@@ -17,7 +18,9 @@ import {
   UsersQuery,
   UsersQueryVariables,
   UserFieldsFragment,
-  Question
+  Question,
+  LikeCommentMutation,
+  LikeCommentMutationVariables
 } from "GqlClient/autoGenTypes";
 import { GET_USERS } from "GqlClient/user/queries";
 import { AnsweredQuestionContext } from "../../AnsweredQuestion";
@@ -38,6 +41,7 @@ type CommentsGqlProps = {
       RemoveCommentMutation,
       RemoveCommentMutationVariables
     >,
+    likeComment: MutationFn<LikeCommentMutation, LikeCommentMutationVariables>,
     searchUsers: (
       variables: UsersQueryVariables
     ) => Promise<UserFieldsFragment[] | null>
@@ -66,11 +70,10 @@ const CommentsGql = (props: CommentsGqlProps) => {
           throw Error(`data must not be null`);
         }
         const addedComment = data.commentAnswerEdition;
-        console.log(addedComment);
 
         const questionWithUpdatedComments = deepClone(answeredQuestion);
 
-        questionWithUpdatedComments.answer!.editions.forEach(ed => {
+        questionWithUpdatedComments.answer.editions.forEach(ed => {
           if (ed.id === edition.id) {
             if (!ed.comments) {
               ed.comments = [addedComment];
@@ -93,7 +96,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
       {commentAnswerEdition => {
         return (
           <Mutation<EditCommentMutation, EditCommentMutationVariables>
-            mutation={EDIT_COMMENT}
+            mutation={EDIT_COMMENT} // TODO add update function
           >
             {editComment => {
               return (
@@ -109,7 +112,7 @@ const CommentsGql = (props: CommentsGqlProps) => {
                       answeredQuestion
                     );
 
-                    questionWithUpdatedComments.answer!.editions.forEach(ed => {
+                    questionWithUpdatedComments.answer.editions.forEach(ed => {
                       if (ed.id === edition.id) {
                         ed.comments = ed.comments!.filter(
                           com => com.id !== removedComment.id
@@ -129,25 +132,37 @@ const CommentsGql = (props: CommentsGqlProps) => {
                 >
                   {removeComment => {
                     return (
-                      <ApolloConsumer>
-                        {client => {
-                          const searchUsers = async (
-                            variables: UsersQueryVariables
-                          ) => {
-                            const res = await client.query<
-                              UsersQuery,
-                              UsersQueryVariables
-                            >({ query: GET_USERS, variables });
-                            return res.data.users;
-                          };
-                          return children(
-                            commentAnswerEdition,
-                            editComment,
-                            removeComment,
-                            searchUsers
+                      <Mutation<
+                        LikeCommentMutation,
+                        LikeCommentMutationVariables
+                      >
+                        mutation={LIKE_COMMENT}
+                      >
+                        {likeComment => {
+                          return (
+                            <ApolloConsumer>
+                              {client => {
+                                const searchUsers = async (
+                                  variables: UsersQueryVariables
+                                ) => {
+                                  const res = await client.query<
+                                    UsersQuery,
+                                    UsersQueryVariables
+                                  >({ query: GET_USERS, variables });
+                                  return res.data.users;
+                                };
+                                return children(
+                                  commentAnswerEdition,
+                                  editComment,
+                                  removeComment,
+                                  likeComment,
+                                  searchUsers
+                                );
+                              }}
+                            </ApolloConsumer>
                           );
                         }}
-                      </ApolloConsumer>
+                      </Mutation>
                     );
                   }}
                 </Mutation>

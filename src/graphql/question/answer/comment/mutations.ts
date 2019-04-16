@@ -62,3 +62,22 @@ export const REMOVE_COMMENT = gql`
   }
   ${CommentFields}
 `;
+
+export const LIKE_COMMENT = gql`
+  mutation likeComment(
+    $answerId: ID!
+    $answerEditionId: ID!
+    $commentId: ID!
+    $userLikes: Int!
+  ) {
+    likeComment(
+      answerId: $answerId
+      answerEditionId: $answerEditionId
+      commentId: $commentId
+      userLikes: $userLikes
+    ) {
+      ...CommentFields
+    }
+  }
+  ${CommentFields}
+`;

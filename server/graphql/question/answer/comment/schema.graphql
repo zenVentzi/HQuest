@@ -2,6 +2,7 @@ type Comment {
   id: ID!
   user: User!
   value: String!
+  likes: Likes # answer/schema.graphql
 }
 
 type Mutation {
@@ -19,4 +20,10 @@ type Mutation {
     mentionedUsers: [ID!]
   ): Comment!
   removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
+  likeComment(
+    answerId: ID!
+    answerEditionId: ID!
+    commentId: ID!
+    userLikes: Int!
+  ): Comment!
 }

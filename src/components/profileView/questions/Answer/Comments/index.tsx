@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import deepClone from "clone";
+import { ApolloConsumer } from "react-apollo";
 import styled from "styled-components";
 import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
@@ -18,9 +20,19 @@ import {
   RemoveCommentMutation,
   Comment as CommentType,
   UserFieldsFragment,
-  UsersQueryVariables
+  UsersQueryVariables,
+  LikeCommentMutation,
+  LikeCommentMutationVariables
 } from "GqlClient/autoGenTypes";
 import MentionInput, { getMentionedUserIdsFromInput } from "./MentionInput";
+import { getLoggedUserId, getLoggedUser } from "Utils";
+import ApolloClient from "apollo-client";
+import { AnsweredQuestionContext } from "../../AnsweredQuestion";
+import { EditionContext } from "../Edition";
+import {
+  QuestionFields,
+  QuestionFieldsFragmentName
+} from "GqlClient/fragments";
 
 // const StyledCommentInput = styled(Textarea)`
 //   /* margin-top: 2em; */
@@ -34,22 +46,34 @@ import MentionInput, { getMentionedUserIdsFromInput } from "./MentionInput";
 //   return <StyledCommentInput inputRef={innerRef} {...rest} />;
 // };
 
+type CommentLikes = CommentFieldsFragment["likes"];
+
 interface CommentsProps {
   comments: CommentFieldsFragment[] | null;
-  answerId: string;
-  answerEditionId: string;
-  onAddComment: () => void;
+  // answerId: string;
+  // answerEditionId: string;
+  onAddComment?: () => void;
   // onEditComment: () => void;
-  onRemoveComment: () => void;
+  onRemoveComment?: () => void;
   scrollToComment?: string;
 }
 
 const Comments = (props: CommentsProps) => {
   // const [comments, setComments] = useState(props.comments || []);
+  const apolloClient = useRef<ApolloClient<any>>();
+  const debounceTimeoutIndex = useRef<number>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const highlightedComment = useRef<HTMLDivElement>(null);
   const commentsPanel = useRef<HTMLDivElement>(null);
   const [commentValue, setCommentValue] = useState<string>("");
+  const answeredQuestion = useContext(AnsweredQuestionContext);
+  const selectedEdition = useContext(EditionContext);
+
+  if (!answeredQuestion) {
+    throw Error(`asnwer cannot be null|undefined`);
+  } else if (!selectedEdition) {
+    throw Error(`edition cannot be null|undefined`);
+  }
 
   useEffect(() => {
     if (highlightedComment.current) {
@@ -115,7 +139,7 @@ const Comments = (props: CommentsProps) => {
   //   resetForm({ comment: "" });
   // };
 
-  const onSubmitComment = async (
+  const onAddNewComment = async (
     commentEditionMutation: MutationFn<
       CommentAnswerEditionMutation,
       CommentAnswerEditionMutationVariables
@@ -132,10 +156,9 @@ const Comments = (props: CommentsProps) => {
       return;
     }
     setIsSubmitting(true);
-    const { answerId, onAddComment } = props;
     const variables: CommentAnswerEditionMutationVariables = {
-      answerId,
-      answerEditionId: props.answerEditionId,
+      answerId: answeredQuestion.answer.id,
+      answerEditionId: selectedEdition.id,
       comment: commentValue,
       mentionedUsers: mentionedUserIds
     };
@@ -144,16 +167,137 @@ const Comments = (props: CommentsProps) => {
       throw Error("Comment answer mutation failed");
     }
 
-    const newComment = res.data.commentAnswerEdition;
+    // const newComment = res.data.commentAnswerEdition;
     // updateComments(newComment);
     // TODO make sure the above is not neccessary
     toast.success("Comment added!");
-    onAddComment();
+    if (props.onAddComment) {
+      props.onAddComment();
+    }
     setIsSubmitting(false);
     // inputRef.current!.value = "";
     setCommentValue("");
     // inputRef.current!.blur();
     // resetForm({ comment: "" });
+  };
+
+  const onLikeComment = (
+    likeCommentMutation: MutationFn<
+      LikeCommentMutation,
+      LikeCommentMutationVariables
+    >
+  ) => async (commentId: string) => {
+    const likedComment = props.comments!.find(c => c.id === commentId);
+    if (!likedComment) {
+      throw Error(`likedComment cannot be null|undefined`);
+    }
+    let userLikes = 0;
+    let totalLikes = 0;
+    if (likedComment.likes) {
+      totalLikes = likedComment.likes.total;
+      const userLikerObj = likedComment.likes.likers.find(
+        liker => liker.user.id === getLoggedUserId()
+      );
+      userLikes = userLikerObj ? userLikerObj.numOfLikes : 0;
+    }
+    if (userLikes <= 20) {
+      const questionWithUpdatedComments = deepClone(answeredQuestion);
+
+      questionWithUpdatedComments.answer.editions.forEach(ed => {
+        if (ed.id === selectedEdition.id) {
+          if (!ed.comments) {
+            throw Error(`comments cannot be null|undefined`);
+          } else {
+            const comment = ed.comments.find(com => com.id === commentId);
+            if (!comment) {
+              throw Error(`comment cannot be null|undefned`);
+            }
+
+            for (let i = 0; i < ed.comments.length; i++) {
+              const com = ed.comments[i];
+
+              if (com.id === commentId) {
+                let commentLikes: CommentLikes = ed.comments[i].likes;
+                const loggedUser = getLoggedUser();
+                if (!loggedUser) {
+                  throw Error(`logged user cannot be null|undefined`);
+                }
+                if (!commentLikes) {
+                  commentLikes = {
+                    total: userLikes + 1,
+                    likers: [
+                      {
+                        numOfLikes: userLikes + 1,
+                        user: loggedUser,
+                        __typename: "Liker"
+                      }
+                    ],
+                    __typename: "Likes"
+                  };
+                  // ed.comments[i].likes
+                } else {
+                  commentLikes.total += 1;
+                  commentLikes.likers.forEach(liker => {
+                    if (liker.user.id === loggedUser.id) {
+                      liker.numOfLikes += 1;
+                    }
+                  });
+                }
+                ed.comments[i].likes = commentLikes;
+                break;
+              } else {
+                const reachedLastComment = i === ed.comments.length - 1;
+                if (reachedLastComment) {
+                  throw Error(`Comment must exist but could not be found.`);
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!apolloClient.current) {
+        throw Error(`apolloClient cannot be null|undefined`);
+      }
+      apolloClient.current.writeFragment({
+        fragment: QuestionFields,
+        data: questionWithUpdatedComments,
+        id: `${questionWithUpdatedComments.__typename}:${
+          questionWithUpdatedComments.id
+        }`,
+        fragmentName: QuestionFieldsFragmentName
+      });
+
+      /* user can click multiple times in a row, creating unnecessary sequential requests to the server */
+      await debounce(500);
+      const variables: LikeCommentMutationVariables = {
+        answerId: answeredQuestion.answer.id,
+        answerEditionId: selectedEdition.id,
+        commentId: likedComment.id,
+        userLikes: userLikes + 1
+      };
+      // await likeCommentMutation({ variables });
+    } else {
+      toast.error("Max 20 likes per edition");
+      /* toast a message
+      "don't suck your own dick 
+      just because you can"
+      if user likes their own comments */
+    }
+  };
+
+  const debounce = async (milliseconds: number) => {
+    const cancelPrev = () => {
+      if (debounceTimeoutIndex.current) {
+        clearTimeout(debounceTimeoutIndex.current);
+        debounceTimeoutIndex.current = undefined;
+      }
+    };
+    cancelPrev();
+    return new Promise(resolve => {
+      debounceTimeoutIndex.current = setTimeout(resolve, milliseconds);
+    });
+    // return new Promise(resolve => setTimeout(resolve, milliseconds));
   };
 
   /*problem is that if I keep the value state inside MentionInput I have to
@@ -186,10 +330,9 @@ const Comments = (props: CommentsProps) => {
       toast.error("Comment must be at least 3 characters long");
       return { success: false };
     }
-    const { answerId } = props;
     const variables: EditCommentMutationVariables = {
-      answerId,
-      answerEditionId: props.answerEditionId,
+      answerId: answeredQuestion.answer.id,
+      answerEditionId: selectedEdition.id,
       commentId,
       commentValue,
       mentionedUsers: mentionedUserIds
@@ -211,10 +354,10 @@ const Comments = (props: CommentsProps) => {
       RemoveCommentMutationVariables
     >
   ) => async (commentId: string) => {
-    const { answerId, onRemoveComment: onRemoveCommentProp } = props;
+    const { onRemoveComment: onRemoveCommentProp } = props;
     const variables: RemoveCommentMutationVariables = {
-      answerId,
-      answerEditionId: props.answerEditionId,
+      answerId: answeredQuestion.answer.id,
+      answerEditionId: selectedEdition.id,
       commentId
     };
     const res = await removeCommentMutation({ variables });
@@ -222,9 +365,11 @@ const Comments = (props: CommentsProps) => {
       throw Error("removeCommentMutation failed");
     }
 
-    const removedComment = res.data!.removeComment;
+    // const removedComment = res.data!.removeComment;
     // updateComments(undefined, removedComment);
-    onRemoveCommentProp();
+    if (onRemoveCommentProp) {
+      onRemoveCommentProp();
+    }
     toast.success("Comment removed!");
   };
 
@@ -236,6 +381,10 @@ const Comments = (props: CommentsProps) => {
     removeCommentMutation: MutationFn<
       RemoveCommentMutation,
       RemoveCommentMutationVariables
+    >,
+    likeCommentMutation: MutationFn<
+      LikeCommentMutation,
+      LikeCommentMutationVariables
     >,
     searchUsersQuery: (
       variables: UsersQueryVariables
@@ -261,6 +410,7 @@ const Comments = (props: CommentsProps) => {
           comment: com,
           onEdit: onEditComment(editCommentMutation),
           onRemove: onRemoveComment(removeCommentMutation),
+          onLike: onLikeComment(likeCommentMutation),
           searchUsers: searchUsersQuery
         };
 
@@ -292,31 +442,73 @@ const Comments = (props: CommentsProps) => {
 
   return (
     <CommentsGql>
-      {(commentAnswerEdition, editComment, removeComment, searchUsers) => {
+      {(
+        commentAnswerEdition,
+        editComment,
+        removeComment,
+        likeComment,
+        searchUsers
+      ) => {
         return (
-          <Panel ref={commentsPanel}>
-            <MentionInput
-              value={commentValue}
-              onChange={e => {
-                setCommentValue(e.target.value);
-              }}
-              onKeyDown={async e => {
-                if (e.key === "Enter" && !e.shiftKey && !isSubmitting) {
-                  e.preventDefault();
-                  await onSubmitComment(commentAnswerEdition);
-                  // await onSubmit(e.target., mentionedUserIds.current);
-                }
-              }}
-              placeholder="Add comment... use @userName to tag people"
-              searchUsers={searchUsers}
-              // initialValue=""
-              // submitOnEnter={true}
-              disabled={isSubmitting}
-              // onSubmit={onSubmitComment(commentAnswerEdition)}
-            />
-            {renderComments(editComment, removeComment, searchUsers)}
-          </Panel>
+          <ApolloConsumer>
+            {client => {
+              apolloClient.current = client;
+              return (
+                <Panel ref={commentsPanel}>
+                  <MentionInput
+                    value={commentValue}
+                    onChange={e => {
+                      setCommentValue(e.target.value);
+                    }}
+                    onKeyDown={async e => {
+                      if (e.key === "Enter" && !e.shiftKey && !isSubmitting) {
+                        e.preventDefault();
+                        await onAddNewComment(commentAnswerEdition);
+                        // await onSubmit(e.target., mentionedUserIds.current);
+                      }
+                    }}
+                    placeholder="Add comment... use @userName to tag people"
+                    searchUsers={searchUsers}
+                    // initialValue=""
+                    // submitOnEnter={true}
+                    disabled={isSubmitting}
+                    // onSubmit={onSubmitComment(commentAnswerEdition)}
+                  />
+                  {renderComments(
+                    editComment,
+                    removeComment,
+                    likeComment,
+                    searchUsers
+                  )}
+                </Panel>
+              );
+            }}
+          </ApolloConsumer>
         );
+        // return (
+        //   <Panel ref={commentsPanel}>
+        //     <MentionInput
+        //       value={commentValue}
+        //       onChange={e => {
+        //         setCommentValue(e.target.value);
+        //       }}
+        //       onKeyDown={async e => {
+        //         if (e.key === "Enter" && !e.shiftKey && !isSubmitting) {
+        //           e.preventDefault();
+        //           await onAddNewComment(commentAnswerEdition);
+        //           // await onSubmit(e.target., mentionedUserIds.current);
+        //         }
+        //       }}
+        //       placeholder="Add comment... use @userName to tag people"
+        //       searchUsers={searchUsers}
+        //       // initialValue=""
+        //       // submitOnEnter={true}
+        //       disabled={isSubmitting}
+        //       // onSubmit={onSubmitComment(commentAnswerEdition)}
+        //     />
+        //     {renderComments(editComment, removeComment, searchUsers)}
+        //   </Panel>
+        // );
       }}
     </CommentsGql>
   );

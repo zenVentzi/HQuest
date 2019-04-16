@@ -50,6 +50,7 @@ export type Comment = {
   id: Scalars["ID"];
   user: User;
   value: Scalars["String"];
+  likes?: Maybe<Likes>;
 };
 
 export type CommentNews = NewsBase & {
@@ -95,7 +96,7 @@ export type Likes = {
 
 export type LoginResult = {
   authToken: Scalars["String"];
-  userId: Scalars["ID"];
+  user: User;
 };
 
 export type Mutation = {
@@ -103,6 +104,7 @@ export type Mutation = {
   commentAnswerEdition: Comment;
   editComment: Comment;
   removeComment: Comment;
+  likeComment: Comment;
   editAnswer: Answer;
   addAnswer: Answer;
   removeAnswer: Answer;
@@ -136,6 +138,13 @@ export type MutationRemoveCommentArgs = {
   answerId: Scalars["ID"];
   answerEditionId: Scalars["ID"];
   commentId: Scalars["ID"];
+};
+
+export type MutationLikeCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  userLikes: Scalars["Int"];
 };
 
 export type MutationEditAnswerArgs = {
@@ -529,6 +538,17 @@ export type RemoveCommentMutation = { __typename?: "Mutation" } & {
   removeComment: { __typename?: "Comment" } & CommentFieldsFragment;
 };
 
+export type LikeCommentMutationVariables = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  userLikes: Scalars["Int"];
+};
+
+export type LikeCommentMutation = { __typename?: "Mutation" } & {
+  likeComment: { __typename?: "Comment" } & CommentFieldsFragment;
+};
+
 export type MoveAnswerPositionMutationVariables = {
   position: Scalars["Int"];
   answerId: Scalars["ID"];
@@ -600,10 +620,9 @@ export type LoginMutationVariables = {
 };
 
 export type LoginMutation = { __typename?: "Mutation" } & {
-  login: { __typename?: "LoginResult" } & Pick<
-    LoginResult,
-    "authToken" | "userId"
-  >;
+  login: { __typename?: "LoginResult" } & Pick<LoginResult, "authToken"> & {
+      user: { __typename?: "User" } & UserFieldsFragment;
+    };
 };
 
 export type EditUserMutationVariables = {
@@ -653,11 +672,6 @@ export type UserFieldsFragment = { __typename?: "User" } & Pick<
     >;
   };
 
-export type CommentFieldsFragment = { __typename?: "Comment" } & Pick<
-  Comment,
-  "id" | "value"
-> & { user: { __typename?: "User" } & UserFieldsFragment };
-
 export type LikerFieldsFragment = { __typename?: "Liker" } & Pick<
   Liker,
   "numOfLikes"
@@ -667,6 +681,14 @@ export type LikesFieldsFragment = { __typename?: "Likes" } & Pick<
   Likes,
   "total"
 > & { likers: Array<{ __typename?: "Liker" } & LikerFieldsFragment> };
+
+export type CommentFieldsFragment = { __typename?: "Comment" } & Pick<
+  Comment,
+  "id" | "value"
+> & {
+    user: { __typename?: "User" } & UserFieldsFragment;
+    likes: Maybe<{ __typename?: "Likes" } & LikesFieldsFragment>;
+  };
 
 export type EditionFieldsFragment = { __typename?: "AnswerEdition" } & Pick<
   AnswerEdition,

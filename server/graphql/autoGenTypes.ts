@@ -50,6 +50,7 @@ export type Comment = {
   id: Scalars["ID"];
   user: User;
   value: Scalars["String"];
+  likes?: Maybe<Likes>;
 };
 
 export type CommentNews = NewsBase & {
@@ -95,7 +96,7 @@ export type Likes = {
 
 export type LoginResult = {
   authToken: Scalars["String"];
-  userId: Scalars["ID"];
+  user: User;
 };
 
 export type Mutation = {
@@ -103,6 +104,7 @@ export type Mutation = {
   commentAnswerEdition: Comment;
   editComment: Comment;
   removeComment: Comment;
+  likeComment: Comment;
   editAnswer: Answer;
   addAnswer: Answer;
   removeAnswer: Answer;
@@ -136,6 +138,13 @@ export type MutationRemoveCommentArgs = {
   answerId: Scalars["ID"];
   answerEditionId: Scalars["ID"];
   commentId: Scalars["ID"];
+};
+
+export type MutationLikeCommentArgs = {
+  answerId: Scalars["ID"];
+  answerEditionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  userLikes: Scalars["Int"];
 };
 
 export type MutationEditAnswerArgs = {
@@ -498,6 +507,7 @@ export type CommentResolvers<Context = ApolloContext, ParentType = Comment> = {
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   user?: Resolver<User, ParentType, Context>;
   value?: Resolver<Scalars["String"], ParentType, Context>;
+  likes?: Resolver<Maybe<Likes>, ParentType, Context>;
 };
 
 export type CommentNewsResolvers<
@@ -548,7 +558,7 @@ export type LoginResultResolvers<
   ParentType = LoginResult
 > = {
   authToken?: Resolver<Scalars["String"], ParentType, Context>;
-  userId?: Resolver<Scalars["ID"], ParentType, Context>;
+  user?: Resolver<User, ParentType, Context>;
 };
 
 export type MutationResolvers<
@@ -569,6 +579,7 @@ export type MutationResolvers<
     Context,
     MutationRemoveCommentArgs
   >;
+  likeComment?: Resolver<Comment, ParentType, Context, MutationLikeCommentArgs>;
   editAnswer?: Resolver<Answer, ParentType, Context, MutationEditAnswerArgs>;
   addAnswer?: Resolver<Answer, ParentType, Context, MutationAddAnswerArgs>;
   removeAnswer?: Resolver<

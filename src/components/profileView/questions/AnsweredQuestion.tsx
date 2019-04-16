@@ -1,16 +1,12 @@
 import React, { CSSProperties, useRef, useState, createContext } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
-import Question from "./Question";
 import OptionsDropdown from "./Answer/Options";
 import { MutationFn } from "react-apollo";
 import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
 import Answer from "./Answer";
 import { Row } from "./Row";
-
-export const AnsweredQuestionContext = createContext<QuestionFieldsFragment | null>(
-  null
-);
+import Question from "./Question";
 
 // export { AnsweredQuestionConsumer };
 
@@ -23,8 +19,10 @@ const StyledQuestion = styled.div`
   align-items: center;
 `;
 
-interface AnsweredQuestionProps {
-  question: QuestionFieldsFragment;
+type AnsweredQuestion = RequireAndNotNullSome<QuestionFieldsFragment, "answer">;
+
+type AnsweredQuestionProps = {
+  question: AnsweredQuestion;
   showComments: boolean;
   // onRemove: () => Promise<void>;
   scrollToComment?: string;
@@ -32,7 +30,10 @@ interface AnsweredQuestionProps {
   totalQuestionsCount: number;
   isPersonal: boolean;
   style?: CSSProperties;
-}
+};
+export const AnsweredQuestionContext = createContext<AnsweredQuestion | null>(
+  null
+);
 
 const AnsweredQuestion = (props: AnsweredQuestionProps) => {
   const [hovered, setHovered] = useState(false);

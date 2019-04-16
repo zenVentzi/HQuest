@@ -28,11 +28,11 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
         name: response.name!
       };
       const result = await mutation({ variables });
-      if (!result) {
+      if (!result || !result.data) {
         throw Error("Mutation result fail");
       }
-      const { authToken, userId } = result.data!.login;
-      saveLoggedUserData(userId, authToken);
+      const { authToken, user } = result.data.login;
+      saveLoggedUserData(user, authToken);
       onLoggedIn();
     }
   };
@@ -49,8 +49,8 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
     if (!result) {
       throw Error("Mutation result fail");
     }
-    const { authToken, userId } = result.data!.login;
-    saveLoggedUserData(userId, authToken);
+    const { authToken, user } = result.data!.login;
+    saveLoggedUserData(user, authToken);
     onLoggedIn();
   };
 

@@ -2,14 +2,15 @@ import { Document, model, Model, Schema, Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
 import { UserSchema } from "./user";
 
-const CommentSchema = new Schema({
-  value: String,
-  user: { type: Schema.Types.ObjectId, ref: "User" }
-});
-
 const LikerSchema = new Schema({ user: UserSchema, numOfLikes: Number });
 
 const LikesSchema = new Schema({ total: Number, likers: [LikerSchema] });
+
+const CommentSchema = new Schema({
+  value: String,
+  user: { type: Schema.Types.ObjectId, ref: "User" },
+  likes: { type: LikesSchema, required: false }
+});
 
 const EditionSchema = new Schema({
   date: Date,

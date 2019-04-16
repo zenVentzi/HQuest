@@ -21,6 +21,7 @@ type Mutation {
   commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!, mentionedUsers: [ID!]): Comment!
   editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!, mentionedUsers: [ID!]): Comment!
   removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
+  likeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, userLikes: Int!): Comment!
   editAnswer(answerId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
   addAnswer(questionId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
   removeAnswer(answerId: ID!): Answer!
@@ -148,6 +149,7 @@ type Comment {
   id: ID!
   user: User!
   value: String!
+  likes: Likes
 }
 
 type Answer {
@@ -258,5 +260,5 @@ input EditUserInput {
 
 type LoginResult {
   authToken: String!
-  userId: ID!
+  user: User!
 }
