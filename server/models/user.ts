@@ -39,7 +39,8 @@ const UserSchema = new Schema({
     instagramLink: String,
     linkedInLink: String,
     required: false
-  }
+  },
+  experience: { type: Number, required: true }
 });
 
 const UserModel = model<DbTypes.UserDoc>("User", UserSchema);

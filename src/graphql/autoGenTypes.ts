@@ -381,6 +381,7 @@ export type User = {
   avatarSrc?: Maybe<Scalars["String"]>;
   following?: Maybe<Array<Scalars["ID"]>>;
   followers?: Maybe<Array<Scalars["ID"]>>;
+  experience: Scalars["Float"];
 };
 export type AnswerNewsFieldsFragment = { __typename?: "AnswerNews" } & {
   performer: { __typename?: "User" } & UserFieldsFragment;
@@ -662,7 +663,14 @@ export type NewNotificationSubscription = { __typename?: "Subscription" } & {
 
 export type UserFieldsFragment = { __typename?: "User" } & Pick<
   User,
-  "id" | "fullName" | "avatarSrc" | "intro" | "me" | "followers" | "following"
+  | "id"
+  | "fullName"
+  | "avatarSrc"
+  | "intro"
+  | "me"
+  | "followers"
+  | "following"
+  | "experience"
 > & {
     socialMediaLinks: Maybe<
       { __typename?: "SocialMediaLinks" } & Pick<

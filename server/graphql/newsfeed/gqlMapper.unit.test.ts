@@ -15,7 +15,8 @@ test("getNewsfeed() to return newsfeed with NewFollowerNews", () => {
     surName: "Goshev",
     email: "bla@",
     intro: "introo",
-    avatarSrc: "blaSrc"
+    avatarSrc: "blaSrc",
+    experience: 0
   };
   const performerDb: dbTypes.User = {
     _id: ObjectId(),
@@ -23,7 +24,8 @@ test("getNewsfeed() to return newsfeed with NewFollowerNews", () => {
     surName: "Goshev",
     email: "bla@",
     intro: "introo",
-    avatarSrc: "blaSrc"
+    avatarSrc: "blaSrc",
+    experience: 0
   };
   const newsfeedUsers: dbTypes.User[] = [followedDb, performerDb];
   const newsfeed: dbTypes.Newsfeed = [

@@ -76,6 +76,7 @@ export interface User<
     instagramLink?: string;
     linkedInLink?: string;
   };
+  experience: number;
 }
 
 export interface UserDoc extends User, Document {

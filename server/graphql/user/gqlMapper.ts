@@ -26,7 +26,7 @@ function mapUser(
     );
   }
 
-  const gqlUser = {
+  const gqlUser: User = {
     id: dbUser._id.toString(),
     email: dbUser.email,
     fullName: `${dbUser.firstName} ${dbUser.surName}`,
@@ -35,7 +35,8 @@ function mapUser(
     avatarSrc: dbUser.avatarSrc || "",
     me,
     followers,
-    following
+    following,
+    experience: dbUser.experience
   };
 
   return gqlUser;

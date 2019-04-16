@@ -107,6 +107,7 @@ const Mutation: Mutation = {
       dbComment: likedComment,
       loggedUserId: user!.id
     });
+    await services.user.addExperience(1, likedGqlComment.user.id);
     return likedGqlComment;
   }
 };
