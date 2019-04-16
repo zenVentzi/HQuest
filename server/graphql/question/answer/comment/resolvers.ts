@@ -5,7 +5,7 @@ import { MutationResolvers } from "../../../autoGenTypes";
 type Mutation = Required<
   Pick<
     MutationResolvers,
-    "commentAnswerEdition" | "editComment" | "removeComment"
+    "commentAnswerEdition" | "editComment" | "removeComment" | "likeComment"
   >
 >;
 
@@ -87,6 +87,27 @@ const Mutation: Mutation = {
       dbComment,
       loggedUserId: user!.id
     });
+  },
+
+  async likeComment(
+    _,
+    { answerId, answerEditionId, commentId, userLikes },
+    { services, user }
+  ) {
+    authMiddleware(user);
+
+    const likedComment = await services.comment.likeComment(
+      answerId,
+      answerEditionId,
+      commentId,
+      user!.id,
+      userLikes
+    );
+    const likedGqlComment = mapComment({
+      dbComment: likedComment,
+      loggedUserId: user!.id
+    });
+    return likedGqlComment;
   }
 };
 

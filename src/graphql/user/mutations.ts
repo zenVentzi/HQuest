@@ -1,17 +1,16 @@
 import gql from "graphql-tag";
-import {
-  QuestionFields,
-  CommentFields,
-  AnswerFields
-} from "GqlClient/fragments";
+import { UserFields } from "GqlClient/fragments";
 
 export const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $name: String!) {
     login(email: $email, name: $name) {
       authToken
-      userId
+      user {
+        ...UserFields
+      }
     }
   }
+  ${UserFields}
 `;
 
 export const EDIT_USER = gql`

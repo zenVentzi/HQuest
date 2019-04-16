@@ -128,6 +128,65 @@ class CommentService {
     await answer.save();
     return deletedComment;
   }
+  public async likeComment(
+    answerId: string,
+    answerEditionId: string,
+    commentId: string,
+    likerId: string,
+    userLikes: number
+  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+    const answer = await this.models.answer
+      .findById(answerId)
+      .populate(DbTypes.CommentPopulatedFields.user);
+
+    if (!answer) {
+      throw Error(`Could not find answer with id ${answerId}`);
+    }
+    const edition = answer.editions.find(ed => ed._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(
+        `Could not find answer edition.
+         AnswerId: ${answerId} EditionId: ${answerEditionId}`
+      );
+    }
+    if (!edition.comments || !edition.comments.length) {
+      throw Error(`Edition has no comments. EditionId: ${answerEditionId}`);
+    }
+    const likedComment = edition.comments.find(com =>
+      com._id.equals(commentId)
+    );
+    if (!likedComment) {
+      throw Error(`Could not find liked comment with id: ${commentId}`);
+    }
+    const liker = await this.models.user.findById(likerId);
+    if (!liker) {
+      throw Error(`liker object not found`);
+    }
+
+    if (!likedComment.likes) {
+      likedComment.likes = {
+        total: userLikes,
+        likers: [
+          {
+            numOfLikes: userLikes,
+            user: liker.toObject()
+          }
+        ]
+      };
+    } else {
+      let prevUserLikes = 0;
+      likedComment.likes.likers.forEach(currentLiker => {
+        if (currentLiker.user._id.equals(liker._id)) {
+          prevUserLikes = currentLiker.numOfLikes;
+          currentLiker.numOfLikes = userLikes;
+        }
+      });
+      likedComment.likes.total =
+        likedComment.likes.total - prevUserLikes + userLikes;
+    }
+    await answer.save();
+    return likedComment;
+  }
 }
 
 export { CommentService };

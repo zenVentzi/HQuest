@@ -1,8 +1,9 @@
-import { AUTH_TOKEN, USER_ID } from "./constants";
+import { AUTH_TOKEN, USER_ID, LOGGED_USER_JSON } from "./constants";
 import arePropsEqual from "react-fast-compare";
 import { Component, useRef, useEffect } from "react";
 import React from "react";
 import deep_diff from "deep-diff";
+import { LoginResult, LoginMutation } from "GqlClient/autoGenTypes";
 
 function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN);
@@ -12,6 +13,13 @@ const getLoggedUserId = () => {
   const userId = localStorage.getItem(USER_ID);
   // console.log('TCL: getLoggedUserId -> userId', userId);
   return userId;
+};
+
+const getLoggedUser = (): LoginMutation["login"]["user"] | null => {
+  const userJson = localStorage.getItem(LOGGED_USER_JSON);
+  if (!userJson) return null;
+  const user = JSON.parse(userJson) as LoginMutation["login"]["user"];
+  return user;
 };
 
 class UserLoginEvent extends EventTarget {
@@ -31,14 +39,24 @@ class UserLoginEvent extends EventTarget {
 
 const loginEvent = new UserLoginEvent();
 
-const saveLoggedUserData = (userId: string, authToken: string) => {
-  localStorage.setItem(USER_ID, userId);
+const saveLoggedUserData = (
+  user: LoginMutation["login"]["user"],
+  authToken: string
+) => {
+  localStorage.setItem(USER_ID, user.id);
+  localStorage.setItem(LOGGED_USER_JSON, JSON.stringify(user));
   localStorage.setItem(AUTH_TOKEN, authToken);
-  loginEvent.login(authToken, userId);
+  loginEvent.login(authToken, user.id);
 };
+// const saveLoggedUserData = (userId: string, authToken: string) => {
+//   localStorage.setItem(USER_ID, userId);
+//   localStorage.setItem(AUTH_TOKEN, authToken);
+//   loginEvent.login(authToken, userId);
+// };
 
 const deleteLoggedUserData = () => {
   localStorage.removeItem(USER_ID);
+  localStorage.removeItem(LOGGED_USER_JSON);
   localStorage.removeItem(AUTH_TOKEN);
 };
 
@@ -78,7 +96,8 @@ const withPropsChecker = (WrappedComponent, componentName: string) => {
 
 export {
   getAuthToken,
-  getLoggedUserId,
+  getLoggedUserId, // TODO this is unnecessary if we have getLoggedUser
+  getLoggedUser,
   saveLoggedUserData,
   deleteLoggedUserData,
   loginEvent,

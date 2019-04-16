@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, createContext } from "react";
 import Anchor from "Reusable/Anchor";
 import styled from "styled-components";
-import shortid from "shortid";
 
 import { Row } from "../Row";
 import LikeBtn from "./LikeBtn";
@@ -76,25 +75,27 @@ const Edition = (props: EditionProps) => {
 
     return user ? user.numOfLikes : 0;
   });
+  const [showLikes, setShowLikes] = useState(false);
   const [showComments, setShowComments] = useState(props.showComments);
   useEffect(() => {
     setShowComments(props.showComments);
   }, [props.showComments]);
-  const [showLikes, setShowLikes] = useState(false);
   // useEffect(() => {
   //   if (props.showAnswerEditor || props.showPositionEditor) {
   //     setShowComments(false);
   //     setShowLikes(false);
   //   }
   // }, [props.showAnswerEditor, props.showPositionEditor]);
-  const [numOfComments, setNumOfComments] = useState(() => {
-    const { comments: cments } = props.edition!;
-    return cments ? cments.length : 0;
-  });
+  // const [numOfComments, setNumOfComments] = useState(() => {
+  //   const { comments: cments } = props.edition;
+  //   return cments ? cments.length : 0;
+  // });
+  const numOfComments = props.edition.comments
+    ? props.edition.comments.length
+    : 0;
 
   const onClickLike = async () => {
-    if (userLikes <= 200) {
-      // FIXME 200
+    if (userLikes <= 20) {
       const newUserLikes = userLikes + 1;
       const newTotalLikes = totalLikes + 1;
       setUserLikes(newUserLikes);
@@ -166,16 +167,14 @@ const Edition = (props: EditionProps) => {
       {(props.scrollToComment || showComments) && (
         <Comments
           comments={props.edition.comments}
-          answerId={props.answerId}
-          answerEditionId={props.edition.id}
           scrollToComment={props.scrollToComment}
-          onAddComment={() => {
-            setNumOfComments(numOfComments + 1);
-          }}
-          // onEditComment={onEditComment}
-          onRemoveComment={() => {
-            setNumOfComments(numOfComments - 1);
-          }}
+          // onAddComment={() => {
+          //   setNumOfComments(numOfComments + 1);
+          // }}
+          // // onEditComment={onEditComment}
+          // onRemoveComment={() => {
+          //   setNumOfComments(numOfComments - 1);
+          // }}
         />
       )}
     </EditionContext.Provider>

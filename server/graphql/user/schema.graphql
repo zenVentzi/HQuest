@@ -39,7 +39,7 @@ input EditUserInput {
 
 type LoginResult {
   authToken: String!
-  userId: ID!
+  user: User!
 }
 
 type Mutation {

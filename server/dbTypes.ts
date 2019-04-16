@@ -98,6 +98,7 @@ export interface Comment<
   _id: ObjectId;
   value: string;
   user: PopulatedFields extends CommentPopulatedFields.user ? User : ObjectId;
+  likes?: Likes;
 }
 
 export interface CommentDoc extends Comment, Document {

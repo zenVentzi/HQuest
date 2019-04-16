@@ -44,7 +44,7 @@ test("login() should login if user exists", async done => {
   const actual = await Mutation.login({} as any, args, context, {} as any);
 
   expect(existingUser._id).toBeTruthy();
-  expect(actual.userId).toEqual(existingUser._id.toString());
+  expect(actual.user.id).toEqual(existingUser._id.toString());
   expect(actual.authToken).toBeTruthy();
   done();
 });
@@ -59,7 +59,7 @@ test("login() should register if user doesn't exist", async done => {
   const actual = await Mutation.login({} as any, args, context, {} as any);
 
   expect(actual.authToken).toBeTruthy();
-  expect(actual.userId).toBeTruthy();
+  expect(actual.user.id).toBeTruthy();
   done();
 });
 

@@ -1,4 +1,4 @@
-import React, { ReactChild } from "react";
+import React, { ReactChild, ReactNode } from "react";
 import styled from "styled-components";
 import IconBtn from "Reusable/IconBtn";
 import { WindowClose } from "styled-icons/fa-solid/WindowClose";
@@ -75,7 +75,7 @@ const TopRightCorner = styled.span`
 
 interface PanelProps {
   onClose: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  children: ReactChild;
+  children: ReactNode;
 }
 
 const Panel = ({ onClose, children }: PanelProps) => (
@@ -83,7 +83,7 @@ const Panel = ({ onClose, children }: PanelProps) => (
     <BackgroundShade onClick={onClose}>
       <StyledPanel>
         <TopRightCorner>
-          <IconBtn
+          <IconBtn // FIXME it disappears on scroll
             icon={WindowClose}
             size="1.4em"
             onClick={e => {

@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
 import CommentOptions from "./CommentOptions";
 import CommentViewer from "./CommentViewer";
 import CommentEditor from "./CommentEditor";
-import { CommentFieldsFragment } from "GqlClient/autoGenTypes";
+import {
+  CommentFieldsFragment,
+  LikeCommentMutationVariables
+} from "GqlClient/autoGenTypes";
+import { getLoggedUserId } from "Utils";
 
 // const OptionsBtn = styled(CaretSquareDown).attrs({ size: '0.8em' })`
 //   cursor: pointer;
@@ -32,6 +36,7 @@ export interface CommentProps {
     commentValue: string,
     mentionedUserIds: string[] | null | undefined
   ) => Promise<{ success: boolean }>;
+  onLike: (commentId: string) => Promise<void>;
   size?: number;
   searchUsers: any;
 }
@@ -49,6 +54,7 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
       comment,
       onRemove: onRemoveProp,
       onEdit: onEditProp,
+      onLike: onLikeProp,
       searchUsers
     },
     ref
@@ -56,6 +62,18 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
     const [commentHovered, setCommentHovered] = useState(false);
     const [viewMode, setViewMode] = useState(true);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
+    const timeoutIndex = useRef<number>();
+    const [totalLikes, setTotalLikes] = useState(() => {
+      return comment.likes ? comment.likes.total : 0;
+    });
+    const [userLikes, setUserLikes] = useState(() => {
+      if (!comment.likes) return 0;
+      const usr = comment.likes.likers.find(
+        liker => liker.user.id === getLoggedUserId()
+      );
+
+      return usr ? usr.numOfLikes : 0;
+    });
 
     const onClickOutsideOptions = (e: MouseEvent) => {
       const isOptionsBtn = false;
@@ -75,6 +93,42 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
 
     const onRemove = async () => {
       await onRemoveProp(comment.id);
+    };
+
+    // const onClickLike = async () => {
+    //   if (userLikes <= 20) {
+    //     const newUserLikes = userLikes + 1;
+    //     const newTotalLikes = totalLikes + 1;
+    //     setUserLikes(newUserLikes);
+    //     setTotalLikes(newTotalLikes);
+    //     /* user can click multiple times in a row, creating too many sequential requests to the server */
+    //     await debounce(500);
+    //     const variables: LikeCommentMutationVariables = {
+    //       answerId: props.answerId,
+    //       answerEditionId: props.editionId,
+    //       commentId: comment.id,
+    //       userLikes: newUserLikes
+    //     };
+    //     await props.likeComment({ variables });
+    //   } else {
+    //     toast.error("Max 20 likes per edition");
+    //     /* toast a message "don't suck your own dick
+    //     just because you can" */
+    //   }
+    // };
+
+    const debounce = async (milliseconds: number) => {
+      const cancelPrev = () => {
+        if (timeoutIndex.current) {
+          clearTimeout(timeoutIndex.current);
+          timeoutIndex.current = undefined;
+        }
+      };
+      cancelPrev();
+      return new Promise(resolve => {
+        timeoutIndex.current = setTimeout(resolve, milliseconds);
+      });
+      // return new Promise(resolve => setTimeout(resolve, milliseconds));
     };
 
     const onClickEdit = () => {
@@ -120,7 +174,13 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
           />
         </Header>
         {viewMode ? (
-          <CommentViewer comment={value} />
+          <CommentViewer
+            comment={comment}
+            likes={comment.likes}
+            onClickLike={() => {
+              onLikeProp(comment.id);
+            }}
+          />
         ) : (
           <CommentEditor
             searchUsers={searchUsers}

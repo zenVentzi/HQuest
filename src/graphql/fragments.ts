@@ -18,17 +18,6 @@ export const UserFields = gql`
   }
 `;
 
-export const CommentFields = gql`
-  fragment CommentFields on Comment {
-    id
-    user {
-      ...UserFields
-    }
-    value
-  }
-  ${UserFields}
-`;
-
 export const LikerFields = gql`
   fragment LikerFields on Liker {
     user {
@@ -47,6 +36,21 @@ export const LikesFields = gql`
     }
   }
   ${LikerFields}
+`;
+
+export const CommentFields = gql`
+  fragment CommentFields on Comment {
+    id
+    user {
+      ...UserFields
+    }
+    value
+    likes {
+      ...LikesFields
+    }
+  }
+  ${UserFields}
+  ${LikesFields}
 `;
 
 export const EditionFields = gql`

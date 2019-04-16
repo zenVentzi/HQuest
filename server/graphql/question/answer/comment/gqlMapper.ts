@@ -1,6 +1,7 @@
 import { Comment as DbComment } from "../../../../dbTypes";
 import { Comment } from "../../../autoGenTypes";
 import { mapUser } from "../../../user/gqlMapper";
+import { mapLikes } from "../gqlMapper";
 
 function mapComment({
   dbComment,
@@ -11,10 +12,11 @@ function mapComment({
 }): Comment {
   const gqlUser = mapUser(dbComment.user, loggedUserId);
 
-  const gqlComment = {
+  const gqlComment: Comment = {
     id: dbComment._id.toString(),
     user: gqlUser,
-    value: dbComment.value
+    value: dbComment.value,
+    likes: mapLikes({ dbLikes: dbComment.likes, loggedUserId })
   };
 
   return gqlComment;

@@ -64,9 +64,10 @@ const Mutation: Mutation = {
         expiresIn: "1d"
       }
     );
+    const gqlUser = mapUser(dbUser, "", true);
     const result = {
       authToken,
-      userId: dbUser._id.toString()
+      user: gqlUser
     };
 
     return result;
