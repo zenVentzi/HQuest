@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { QuestionFields, UserFields } from "GqlClient/fragments";
+import { AnsweredQuestionFields, UserFields } from "GqlClient/fragments";
 
 const AnswerNewsFields = gql`
   fragment AnswerNewsFields on AnswerNews {
@@ -7,11 +7,11 @@ const AnswerNewsFields = gql`
       ...UserFields
     }
     question {
-      ...QuestionFields
+      ...AnsweredQuestionFields
     }
   }
   ${UserFields}
-  ${QuestionFields}
+  ${AnsweredQuestionFields}
 `;
 
 const CommentNewsFields = gql`
@@ -23,12 +23,12 @@ const CommentNewsFields = gql`
       ...UserFields
     }
     question {
-      ...QuestionFields
+      ...AnsweredQuestionFields
     }
     commentId
   }
   ${UserFields}
-  ${QuestionFields}
+  ${AnsweredQuestionFields}
 `;
 
 const NewLikeNewsFields = gql`
@@ -40,11 +40,11 @@ const NewLikeNewsFields = gql`
       ...UserFields
     }
     question {
-      ...QuestionFields
+      ...AnsweredQuestionFields
     }
   }
   ${UserFields}
-  ${QuestionFields}
+  ${AnsweredQuestionFields}
 `;
 
 const NewFollowerNewsFields = gql`
@@ -57,7 +57,6 @@ const NewFollowerNewsFields = gql`
     }
   }
   ${UserFields}
-  ${QuestionFields}
 `;
 
 export const GET_NEWSFEED = gql`
@@ -79,8 +78,6 @@ export const GET_NEWSFEED = gql`
       }
     }
   }
-  ${UserFields}
-  ${QuestionFields}
   ${AnswerNewsFields}
   ${CommentNewsFields}
   ${NewLikeNewsFields}

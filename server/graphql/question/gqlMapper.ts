@@ -1,43 +1,60 @@
-import { Question } from "../autoGenTypes";
-import { Question as DbQuestion, Answer as DbAnswer } from "../../dbTypes";
+import * as gqlTypes from "../autoGenTypes";
+import * as dbTypes from "../../dbTypes";
 import { mapAnswer } from "./answer/gqlMapper";
 
-function mapQuestion(
-  loggedUserId: string,
-  dbQuestion: DbQuestion,
-  dbAnswer?: DbAnswer
-): Question {
-  const gqlQuestion: Question = {
+function mapAnsweredQuestion(
+  dbQuestion: dbTypes.AnsweredQuestion,
+  loggedUserId: string
+): gqlTypes.AnsweredQuestion {
+  const gqlQuestion: gqlTypes.AnsweredQuestion = {
+    id: dbQuestion._id.toString(),
+    value: dbQuestion.value,
+    tags: dbQuestion.tags,
+    answer: mapAnswer({
+      dbAnswer: dbQuestion.answer,
+      loggedUserId
+    })
+  };
+
+  return gqlQuestion;
+}
+
+function mapUnansweredQuestion(
+  dbQuestion: dbTypes.UnansweredQuestion,
+  loggedUserId: string
+): gqlTypes.UnansweredQuestion {
+  const gqlQuestion: gqlTypes.UnansweredQuestion = {
     id: dbQuestion._id.toString(),
     value: dbQuestion.value,
     tags: dbQuestion.tags
   };
 
-  if (dbAnswer) {
-    if (!dbQuestion._id.equals(dbAnswer.questionId)) {
-      throw Error("Cannot map answer to question with wrong id");
-    }
-
-    gqlQuestion.answer = mapAnswer({
-      dbAnswer,
-      loggedUserId
-    });
-  }
-
   return gqlQuestion;
 }
 
-function mapQuestions({
-  dbQuestions,
-  loggedUserId
-}: {
-  dbQuestions: DbQuestion[] | null;
-  loggedUserId: string;
-}): Question[] | null {
+function mapAnsweredQuestions(
+  dbQuestions: dbTypes.AnsweredQuestion[] | null,
+  loggedUserId: string
+): gqlTypes.AnsweredQuestion[] | null {
   if (!dbQuestions) return null;
   return dbQuestions.map(dbQuestion => {
-    return mapQuestion(loggedUserId, dbQuestion, dbQuestion.answer);
+    return mapAnsweredQuestion(dbQuestion, loggedUserId);
   });
 }
 
-export { mapQuestion, mapQuestions };
+function mapUnansweredQuestions(
+  dbQuestions: dbTypes.UnansweredQuestion[] | null,
+  loggedUserId: string
+): gqlTypes.UnansweredQuestion[] | null {
+  if (!dbQuestions) return null;
+  return dbQuestions.map(dbQuestion => {
+    return mapUnansweredQuestion(dbQuestion, loggedUserId);
+  });
+}
+
+export {
+  mapAnsweredQuestion,
+  mapAnsweredQuestions,
+  mapUnansweredQuestion,
+  mapUnansweredQuestions
+};

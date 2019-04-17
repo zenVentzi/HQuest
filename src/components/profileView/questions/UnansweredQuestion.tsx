@@ -10,8 +10,11 @@ import {
   AddAnswerMutationVariables,
   QuestionNotApplyMutation,
   QuestionNotApplyMutationVariables,
-  QuestionFieldsFragment
+  UnansweredQuestionFieldsFragment,
+  UnansweredQuestionsQueryVariables,
+  UnansweredQuestionsQuery
 } from "GqlClient/autoGenTypes";
+import { ApolloQueryResult } from "apollo-client";
 
 const StyledQuestion = styled.div`
   width: 100%;
@@ -23,8 +26,10 @@ const StyledQuestion = styled.div`
 `;
 
 interface UnansweredQuestionProps {
-  question: QuestionFieldsFragment;
-  refetchQuestions: () => Promise<void>;
+  question: UnansweredQuestionFieldsFragment;
+  refetchQuestions: (
+    variables?: UnansweredQuestionsQueryVariables | undefined
+  ) => Promise<ApolloQueryResult<UnansweredQuestionsQuery>>;
   style?: CSSProperties;
 }
 
@@ -62,7 +67,7 @@ const UnansweredQuestion = ({
       questionId: question.id
     };
     await questionNotApply({ variables });
-    toast.success("🦄 Does not apply? Problem solved!");
+    toast.success("🦄 Does not apply? Mi ae huu.");
     refetchQuestions();
   };
 
@@ -74,7 +79,7 @@ const UnansweredQuestion = ({
           <AnswerEditor
             onClickSave={onClickSave(addAnswer)}
             onClickDoesNotApply={onClickDoesNotApply(questionNotApply)}
-            answer={question.answer}
+            answer={null}
           />
         </StyledQuestion>
       )}

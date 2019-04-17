@@ -177,7 +177,7 @@ export interface AnswerDoc<
   ): Answer<PopulatedFieldss>;
 }
 
-export interface Question {
+interface Question {
   _id: ObjectId;
   value: string;
   tags: string[];
@@ -187,6 +187,7 @@ export interface Question {
 export interface AnsweredQuestion extends Question {
   answer: Answer;
 }
+export interface UnansweredQuestion extends Question {}
 
 export interface QuestionDoc extends Question, Document {
   _id: ObjectId;

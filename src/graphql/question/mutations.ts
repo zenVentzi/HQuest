@@ -1,9 +1,5 @@
 import gql from "graphql-tag";
-import {
-  QuestionFields,
-  CommentFields,
-  AnswerFields
-} from "GqlClient/fragments";
+import { UnansweredQuestionFields } from "GqlClient/fragments";
 
 export const ADD_QUESTIONS = gql`
   mutation AddQuestions($questions: [InputQuestion!]) {
@@ -14,8 +10,8 @@ export const ADD_QUESTIONS = gql`
 export const QUESTION_NOT_APPLY = gql`
   mutation QuestionNotApply($questionId: ID!) {
     questionNotApply(questionId: $questionId) {
-      ...QuestionFields
+      ...UnansweredQuestionFields
     }
   }
-  ${QuestionFields}
+  ${UnansweredQuestionFields}
 `;

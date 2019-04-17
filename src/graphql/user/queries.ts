@@ -1,12 +1,5 @@
 import gql from "graphql-tag";
-import {
-  NotificationFields,
-  QuestionFields,
-  QuestionConnectionFields,
-  CommentFields,
-  UserFields,
-  AnswerFields
-} from "GqlClient/fragments";
+import { UserFields } from "GqlClient/fragments";
 
 export const GET_USER = gql`
   query User($id: ID!) {

@@ -1,8 +1,9 @@
 import gql from "graphql-tag";
 import {
   NotificationFields,
-  QuestionFields,
-  QuestionConnectionFields,
+  AnsweredQuestionFields,
+  AnsweredQuestionConnectionFields,
+  UnansweredQuestionConnectionFields,
   CommentFields,
   UserFields,
   AnswerFields
@@ -11,35 +12,51 @@ import {
 export const GET_ANSWERED_QUESTION = gql`
   query answeredQuestion($userId: ID!, $questionId: ID!) {
     answeredQuestion(userId: $userId, questionId: $questionId) {
-      ...QuestionFields
-      answer {
-        ...AnswerFields
-      }
+      ...AnsweredQuestionFields
+      # answer { TODO make sure this is not needed
+      #   ...AnswerFields
+      # }
     }
   }
-  ${QuestionFields}
-  ${AnswerFields}
+  ${AnsweredQuestionFields}
 `;
 
-export const GET_QUESTIONS = gql`
-  query questions(
-    $answered: Boolean!
+export const GET_UNANSWERED_QUESTIONS = gql`
+  query unansweredQuestions(
     $userId: ID!
     $tags: [String!]
     $first: Int!
     $after: String
   ) {
-    questions(
-      answered: $answered
+    unansweredQuestions(
       userId: $userId
       tags: $tags
       first: $first
       after: $after
     ) {
-      ...QuestionConnectionFields
+      ...UnansweredQuestionConnectionFields
     }
   }
-  ${QuestionConnectionFields}
+  ${UnansweredQuestionConnectionFields}
+`;
+
+export const GET_ANSWERED_QUESTIONS = gql`
+  query answeredQuestions(
+    $userId: ID!
+    $tags: [String!]
+    $first: Int!
+    $after: String
+  ) {
+    answeredQuestions(
+      userId: $userId
+      tags: $tags
+      first: $first
+      after: $after
+    ) {
+      ...AnsweredQuestionConnectionFields
+    }
+  }
+  ${AnsweredQuestionConnectionFields}
 `;
 
 export const GET_QUESTIONS_TAGS = gql`

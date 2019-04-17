@@ -16,7 +16,7 @@ type AnswerNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   createdOn: DateTime!
 }
 
@@ -24,7 +24,7 @@ type CommentNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   commentId: ID!
   createdOn: DateTime!
 }
@@ -40,7 +40,7 @@ type NewLikeNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   createdOn: DateTime!
 }
 

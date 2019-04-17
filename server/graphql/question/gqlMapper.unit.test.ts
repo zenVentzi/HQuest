@@ -1,76 +1,74 @@
 import { Types } from "mongoose";
 import * as dbTypes from "../../dbTypes";
 import * as gqlTypes from "../autoGenTypes";
-import { mapQuestion, mapQuestions } from "./gqlMapper";
+import {
+  mapAnsweredQuestion,
+  mapUnansweredQuestion,
+  mapAnsweredQuestions,
+  mapUnansweredQuestions
+} from "./gqlMapper";
 import { models } from "../../models";
 
 const { ObjectId } = Types;
 
-test("getQuestion() should return question without answer", () => {
+test("mapQuestion() should return question without answer", () => {
   const dbQuestion = new models.question({
     value: "haha?",
     tags: ["fasa"]
-  }).toObject();
+  } as dbTypes.UnansweredQuestion).toObject();
 
-  const expected: gqlTypes.Question = {
+  const expected: gqlTypes.UnansweredQuestion = {
     id: dbQuestion._id.toString(),
     value: "haha?",
     tags: ["fasa"]
   };
 
-  const actual = mapQuestion(
-    "",
-    // dbQuestion._id.toString() if test passes remove line
-    dbQuestion
-  );
+  const actual = mapUnansweredQuestion(dbQuestion, "");
 
   expect(actual).toEqual(expected);
 });
 
-test("getQuestion() should return question with answer", () => {
-  const dbQuestion = new models.question({
+test("mapAnsweredQuestion() should return question with answer", () => {
+  const questionId = ObjectId();
+  const dbQuestion: dbTypes.AnsweredQuestion = {
+    _id: questionId,
     value: "haha?",
-    tags: ["fasa"]
-  }).toObject();
+    tags: ["fasa"],
+    answer: {
+      _id: ObjectId(),
+      position: 1,
+      questionId: questionId.toHexString(),
+      userId: ObjectId().toHexString(),
+      editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
+    }
+  };
 
-  const dbAnswer = new models.answer({
-    position: 1,
-    questionId: dbQuestion._id.toHexString(),
-    userId: ObjectId().toHexString(),
-    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
-  } as dbTypes.Answer).toObject();
-
-  const expectedQ: gqlTypes.Question = {
+  const expectedQ: gqlTypes.AnsweredQuestion = {
     id: dbQuestion._id.toString(),
     value: "haha?",
-    tags: ["fasa"]
+    tags: ["fasa"],
+    answer: {
+      id: dbQuestion.answer._id.toString(),
+      position: dbQuestion.answer.position,
+      questionId: dbQuestion.answer.questionId.toString(),
+      userId: dbQuestion.answer.userId.toString(),
+      editions: [
+        {
+          id: dbQuestion.answer.editions[0]._id.toHexString(),
+          date: dbQuestion.answer.editions[0].date,
+          value: dbQuestion.answer.editions[0].value,
+          comments: null,
+          likes: null
+        }
+      ]
+    }
   };
 
-  const expectedA: gqlTypes.Answer = {
-    id: dbAnswer._id.toString(),
-    position: dbAnswer.position,
-    // value: dbAnswer.value,
-    questionId: dbAnswer.questionId.toString(),
-    userId: dbAnswer.userId.toString(),
-    editions: [
-      {
-        id: dbAnswer.editions[0]._id.toHexString(),
-        date: dbAnswer.editions[0].date,
-        value: dbAnswer.editions[0].value,
-        comments: null,
-        likes: null
-      }
-    ]
-  };
+  // const expectedA: gqlTypes.Answer = ;
 
-  expectedQ.answer = expectedA;
+  // expectedQ.answer = expectedA;
 
-  const actual = mapQuestion(
-    "",
-    // dbQuestion._id.toString(), if test passes remove that param
-    dbQuestion,
-    dbAnswer
-  );
+  const actual = mapAnsweredQuestion(dbQuestion, "");
 
   expect(actual).toEqual(expectedQ);
 });

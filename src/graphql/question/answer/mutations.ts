@@ -1,6 +1,5 @@
 import gql from "graphql-tag";
 import {
-  QuestionFields,
   CommentFields,
   AnswerFields,
   EditionFields

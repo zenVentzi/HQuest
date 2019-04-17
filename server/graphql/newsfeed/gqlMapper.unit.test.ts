@@ -4,7 +4,7 @@ import * as gqlTypes from "./../autoGenTypes";
 import { mapNews, mapNewsfeed } from "./gqlMapper";
 import { models } from "../../models";
 import { mapUser } from "./../user/gqlMapper";
-import { mapQuestion } from "./../question/gqlMapper";
+// import { mapQuestion } from "./../question/gqlMapper";
 
 const { ObjectId } = Types;
 
