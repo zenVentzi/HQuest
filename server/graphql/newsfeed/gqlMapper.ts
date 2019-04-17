@@ -1,17 +1,26 @@
-import * as newsfeedTypes from "../autoGenTypes";
+import * as gqlTypes from "../autoGenTypes";
 import { User } from "../autoGenTypes";
-import * as questionTypes from "../autoGenTypes";
+// import * as questionTypes from "../autoGenTypes";
 import * as dbTypes from "../../dbTypes";
 import { mapUser, mapUsers } from "../user/gqlMapper";
-import { mapQuestions } from "../question/gqlMapper";
+import {
+  mapAnsweredQuestions,
+  mapAnsweredQuestion
+} from "../question/gqlMapper";
 
 type MapNews = (
   news: dbTypes.News,
   newsfeedUsers: User[],
-  newsfeedQuestions: questionTypes.Question[]
-) => newsfeedTypes.NewsBase;
+  newsfeedQuestions: dbTypes.AnsweredQuestion[],
+  loggedUserId: string
+) => gqlTypes.NewsBase;
 
-const mapNews: MapNews = (news, newsfeedUsers, newsfeedQuestions) => {
+const mapNews: MapNews = (
+  news,
+  newsfeedUsers,
+  newsfeedQuestions,
+  loggedUserId
+) => {
   // some repetition down there could use some refactoring
   const createdOn = news._id.getTimestamp();
   const performer = newsfeedUsers.find(u => u.id === news.performerId);
@@ -28,7 +37,7 @@ const mapNews: MapNews = (news, newsfeedUsers, newsfeedQuestions) => {
       throw Error(`followedUser not found`);
     }
 
-    const gqlNews: newsfeedTypes.NewFollowerNews = {
+    const gqlNews: gqlTypes.NewFollowerNews = {
       createdOn,
       type: news.type,
       performer,
@@ -41,43 +50,45 @@ const mapNews: MapNews = (news, newsfeedUsers, newsfeedQuestions) => {
     if (!answerOwner) {
       throw Error("answerOwner was not found");
     }
-    const question = newsfeedQuestions.find(
-      q => q.answer!.id === news.answerId
+    const question = newsfeedQuestions.find(q =>
+      q.answer._id.equals(news.answerId)
     );
 
     if (!question) {
       throw Error("question was not found");
     }
 
+    const gqlQuestion = mapAnsweredQuestion(question, loggedUserId);
+
     if (news.type === dbTypes.NewsType.NewLike) {
-      const gqlNews: newsfeedTypes.NewLikeNews = {
+      const gqlNews: gqlTypes.NewLikeNews = {
         type: news.type,
         createdOn,
         performer,
         answerOwner,
-        question
+        question: gqlQuestion
       };
       return gqlNews;
     } else if (
       news.type === dbTypes.NewsType.NewAnswer ||
       news.type === dbTypes.NewsType.NewAnswerEdition
     ) {
-      const gqlNews: newsfeedTypes.AnswerNews = {
+      const gqlNews: gqlTypes.AnswerNews = {
         createdOn,
         type: news.type,
         performer,
         answerOwner,
-        question
+        question: gqlQuestion
       };
       return gqlNews;
     } else if (news.type === dbTypes.NewsType.NewComment) {
-      const gqlNews: newsfeedTypes.CommentNews = {
+      const gqlNews: gqlTypes.CommentNews = {
         createdOn,
         type: news.type,
         commentId: news.commentId,
         performer,
         answerOwner,
-        question
+        question: gqlQuestion
       };
       return gqlNews;
     }
@@ -95,7 +106,7 @@ type GetNewsfeed = (
   newsFeedUsers: dbTypes.User[],
   newsFeedQuestions: dbTypes.AnsweredQuestion[] | null,
   loggedUserId: string
-) => newsfeedTypes.NewsBase[] | null;
+) => gqlTypes.NewsBase[] | null;
 
 const mapNewsfeed: GetNewsfeed = (
   newsfeed,
@@ -116,13 +127,13 @@ const mapNewsfeed: GetNewsfeed = (
   }
 
   const newsfeedUsersGql = mapUsers({ dbUsers: newsfeedUsers, loggedUserId });
-  const newsfeedQuestionsGql = mapQuestions({
-    dbQuestions: newsfeedQuestions,
-    loggedUserId
-  });
+  // const newsfeedQuestionsGql = mapAnsweredQuestions(
+  //   newsfeedQuestions,
+  //   loggedUserId
+  // );
 
   const newsfeedGql = newsfeed.map(news =>
-    mapNews(news, newsfeedUsersGql, newsfeedQuestionsGql!)
+    mapNews(news, newsfeedUsersGql, newsfeedQuestions!, loggedUserId)
   );
 
   return newsfeedGql;

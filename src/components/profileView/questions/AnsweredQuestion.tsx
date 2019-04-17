@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import OptionsDropdown from "./Answer/Options";
 import { MutationFn } from "react-apollo";
-import { QuestionFieldsFragment } from "GqlClient/autoGenTypes";
+import { AnsweredQuestionFieldsFragment } from "GqlClient/autoGenTypes";
 import Answer from "./Answer";
 import { Row } from "./Row";
 import Question from "./Question";
@@ -19,10 +19,10 @@ const StyledQuestion = styled.div`
   align-items: center;
 `;
 
-type AnsweredQuestion = RequireAndNotNullSome<QuestionFieldsFragment, "answer">;
+// type AnsweredQuestion = RequireAndNotNullSome<QuestionFieldsFragment, "answer">;
 
 type AnsweredQuestionProps = {
-  question: AnsweredQuestion;
+  question: AnsweredQuestionFieldsFragment;
   showComments: boolean;
   // onRemove: () => Promise<void>;
   scrollToComment?: string;
@@ -31,7 +31,7 @@ type AnsweredQuestionProps = {
   isPersonal: boolean;
   style?: CSSProperties;
 };
-export const AnsweredQuestionContext = createContext<AnsweredQuestion | null>(
+export const AnsweredQuestionContext = createContext<AnsweredQuestionFieldsFragment | null>(
   null
 );
 

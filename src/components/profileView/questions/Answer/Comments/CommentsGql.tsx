@@ -18,7 +18,7 @@ import {
   UsersQuery,
   UsersQueryVariables,
   UserFieldsFragment,
-  Question,
+  // AnsweredQuestion,
   LikeCommentMutation,
   LikeCommentMutationVariables
 } from "GqlClient/autoGenTypes";
@@ -26,8 +26,8 @@ import { GET_USERS } from "GqlClient/user/queries";
 import { AnsweredQuestionContext } from "../../AnsweredQuestion";
 import { EditionContext } from "../Edition";
 import {
-  QuestionFields,
-  QuestionFieldsFragmentName
+  AnsweredQuestionFields,
+  AnsweredQuestionFieldsFragmentName
 } from "GqlClient/fragments";
 
 type CommentsGqlProps = {
@@ -84,12 +84,12 @@ const CommentsGql = (props: CommentsGqlProps) => {
         });
 
         cache.writeFragment({
-          fragment: QuestionFields,
+          fragment: AnsweredQuestionFields,
           data: questionWithUpdatedComments,
           id: `${questionWithUpdatedComments.__typename}:${
             questionWithUpdatedComments.id
           }`,
-          fragmentName: QuestionFieldsFragmentName
+          fragmentName: AnsweredQuestionFieldsFragmentName
         });
       }}
     >
@@ -121,12 +121,12 @@ const CommentsGql = (props: CommentsGqlProps) => {
                     });
 
                     cache.writeFragment({
-                      fragment: QuestionFields,
+                      fragment: AnsweredQuestionFields,
                       data: questionWithUpdatedComments,
                       id: `${questionWithUpdatedComments.__typename}:${
                         questionWithUpdatedComments.id
                       }`,
-                      fragmentName: QuestionFieldsFragmentName
+                      fragmentName: AnsweredQuestionFieldsFragmentName
                     });
                   }}
                 >

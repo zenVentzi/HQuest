@@ -26,21 +26,24 @@ const context: ApolloContext = {
 };
 
 test("getAnsweredQuestions() should return answered questions with tags", async done => {
-  const question = (await new QuestionModel({
+  const questionId = ObjectId();
+  const question: DbTypes.AnsweredQuestion = {
+    _id: questionId,
     tags: ["tag1"],
-    value: "question?"
-  } as DbTypes.Question).save()).toObject();
-  const answer = (await new AnswerModel({
-    position: 1,
-    userId: contextUser._id.toHexString(),
-    questionId: question._id.toHexString(),
-    editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
-    // value: "answerVal"
-  } as DbTypes.Answer).save()).toObject();
-  const answeredQuestions = await questionService.getUserQuestions(
-    context.user!.id,
-    [answer],
-    true,
+    value: "question?",
+    answer: {
+      _id: ObjectId(),
+      position: 1,
+      userId: contextUser._id.toHexString(),
+      questionId: questionId.toHexString(),
+      editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
+      // value: "answerVal"
+    }
+  };
+  await new QuestionModel(question).save();
+  await new AnswerModel(question.answer).save();
+  const answeredQuestions = await questionService.getAnsweredQuestions(
+    [question.answer],
     ["tag1", "tag2"]
   );
   const actual = answeredQuestions[0].value;

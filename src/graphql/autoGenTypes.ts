@@ -38,11 +38,29 @@ export type AnswerEditionMention = Notification & {
   editionId: Scalars["ID"];
 };
 
+export type AnsweredQuestion = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
+  answer: Answer;
+};
+
+export type AnsweredQuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<AnsweredQuestionEdge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type AnsweredQuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: AnsweredQuestion;
+};
+
 export type AnswerNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   createdOn: Scalars["DateTime"];
 };
 
@@ -57,7 +75,7 @@ export type CommentNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   commentId: Scalars["ID"];
   createdOn: Scalars["DateTime"];
 };
@@ -111,7 +129,7 @@ export type Mutation = {
   likeAnswerEdition: AnswerEdition;
   moveAnswerPosition?: Maybe<Scalars["Int"]>;
   addQuestions?: Maybe<Scalars["Boolean"]>;
-  questionNotApply: Question;
+  questionNotApply: UnansweredQuestion;
   signUp?: Maybe<Scalars["String"]>;
   login: LoginResult;
   editUser: User;
@@ -242,7 +260,7 @@ export type NewLikeNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   createdOn: Scalars["DateTime"];
 };
 
@@ -294,16 +312,23 @@ export type Query = {
   newsfeed?: Maybe<Array<NewsBase>>;
   notifications?: Maybe<Array<Notification>>;
   questionsTags: Array<Scalars["String"]>;
-  questions?: Maybe<QuestionConnection>;
-  answeredQuestion?: Maybe<Question>;
+  answeredQuestions?: Maybe<AnsweredQuestionConnection>;
+  unansweredQuestions?: Maybe<UnansweredQuestionConnection>;
+  answeredQuestion?: Maybe<AnsweredQuestion>;
   users?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
   following?: Maybe<Array<User>>;
 };
 
-export type QueryQuestionsArgs = {
-  answered: Scalars["Boolean"];
+export type QueryAnsweredQuestionsArgs = {
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
+};
+
+export type QueryUnansweredQuestionsArgs = {
   userId: Scalars["ID"];
   tags?: Maybe<Array<Scalars["String"]>>;
   first: Scalars["Int"];
@@ -331,24 +356,6 @@ export type QueryFollowingArgs = {
   userId: Scalars["ID"];
 };
 
-export type Question = Node & {
-  id: Scalars["ID"];
-  tags?: Maybe<Array<Scalars["String"]>>;
-  value: Scalars["String"];
-  answer?: Maybe<Answer>;
-};
-
-export type QuestionConnection = Connection & {
-  pageInfo: PageInfo;
-  edges?: Maybe<Array<QuestionEdge>>;
-  totalCount: Scalars["Int"];
-};
-
-export type QuestionEdge = Edge & {
-  cursor: Scalars["String"];
-  node: Question;
-};
-
 export type SocialMediaLinks = {
   facebookLink?: Maybe<Scalars["String"]>;
   twitterLink?: Maybe<Scalars["String"]>;
@@ -371,6 +378,23 @@ export type SubscriptionNewNotificationArgs = {
   userId: Scalars["ID"];
 };
 
+export type UnansweredQuestion = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
+};
+
+export type UnansweredQuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<UnansweredQuestionEdge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type UnansweredQuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: UnansweredQuestion;
+};
+
 export type User = {
   id: Scalars["ID"];
   me?: Maybe<Scalars["Boolean"]>;
@@ -385,7 +409,9 @@ export type User = {
 };
 export type AnswerNewsFieldsFragment = { __typename?: "AnswerNews" } & {
   performer: { __typename?: "User" } & UserFieldsFragment;
-  question: { __typename?: "Question" } & QuestionFieldsFragment;
+  question: {
+    __typename?: "AnsweredQuestion";
+  } & AnsweredQuestionFieldsFragment;
 };
 
 export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
@@ -394,13 +420,17 @@ export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
 > & {
     performer: { __typename?: "User" } & UserFieldsFragment;
     answerOwner: { __typename?: "User" } & UserFieldsFragment;
-    question: { __typename?: "Question" } & QuestionFieldsFragment;
+    question: {
+      __typename?: "AnsweredQuestion";
+    } & AnsweredQuestionFieldsFragment;
   };
 
 export type NewLikeNewsFieldsFragment = { __typename?: "NewLikeNews" } & {
   performer: { __typename?: "User" } & UserFieldsFragment;
   answerOwner: { __typename?: "User" } & UserFieldsFragment;
-  question: { __typename?: "Question" } & QuestionFieldsFragment;
+  question: {
+    __typename?: "AnsweredQuestion";
+  } & AnsweredQuestionFieldsFragment;
 };
 
 export type NewFollowerNewsFieldsFragment = {
@@ -440,23 +470,37 @@ export type AnsweredQuestionQueryVariables = {
 
 export type AnsweredQuestionQuery = { __typename?: "Query" } & {
   answeredQuestion: Maybe<
-    { __typename?: "Question" } & {
-      answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment>;
-    } & QuestionFieldsFragment
+    { __typename?: "AnsweredQuestion" } & AnsweredQuestionFieldsFragment
   >;
 };
 
-export type QuestionsQueryVariables = {
-  answered: Scalars["Boolean"];
+export type UnansweredQuestionsQueryVariables = {
   userId: Scalars["ID"];
   tags?: Maybe<Array<Scalars["String"]>>;
   first: Scalars["Int"];
   after?: Maybe<Scalars["String"]>;
 };
 
-export type QuestionsQuery = { __typename?: "Query" } & {
-  questions: Maybe<
-    { __typename?: "QuestionConnection" } & QuestionConnectionFieldsFragment
+export type UnansweredQuestionsQuery = { __typename?: "Query" } & {
+  unansweredQuestions: Maybe<
+    {
+      __typename?: "UnansweredQuestionConnection";
+    } & UnansweredQuestionConnectionFieldsFragment
+  >;
+};
+
+export type AnsweredQuestionsQueryVariables = {
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
+};
+
+export type AnsweredQuestionsQuery = { __typename?: "Query" } & {
+  answeredQuestions: Maybe<
+    {
+      __typename?: "AnsweredQuestionConnection";
+    } & AnsweredQuestionConnectionFieldsFragment
   >;
 };
 
@@ -612,7 +656,9 @@ export type QuestionNotApplyMutationVariables = {
 };
 
 export type QuestionNotApplyMutation = { __typename?: "Mutation" } & {
-  questionNotApply: { __typename?: "Question" } & QuestionFieldsFragment;
+  questionNotApply: {
+    __typename?: "UnansweredQuestion";
+  } & UnansweredQuestionFieldsFragment;
 };
 
 export type LoginMutationVariables = {
@@ -713,26 +759,52 @@ export type AnswerFieldsFragment = { __typename?: "Answer" } & Pick<
     editions: Array<{ __typename?: "AnswerEdition" } & EditionFieldsFragment>;
   };
 
-export type QuestionFieldsFragment = { __typename?: "Question" } & Pick<
-  Question,
-  "id" | "value" | "tags"
-> & { answer: Maybe<{ __typename?: "Answer" } & AnswerFieldsFragment> };
+export type AnsweredQuestionFieldsFragment = {
+  __typename?: "AnsweredQuestion";
+} & Pick<AnsweredQuestion, "id" | "value" | "tags"> & {
+    answer: { __typename?: "Answer" } & AnswerFieldsFragment;
+  };
+
+export type UnansweredQuestionFieldsFragment = {
+  __typename?: "UnansweredQuestion";
+} & Pick<UnansweredQuestion, "id" | "value" | "tags">;
 
 export type PageInfoFieldsFragment = { __typename?: "PageInfo" } & Pick<
   PageInfo,
   "startCursor" | "endCursor" | "hasNextPage" | "hasPreviousPage"
 >;
 
-export type QuestionEdgeFieldsFragment = Pick<Edge, "cursor"> & {
-  node: QuestionFieldsFragment;
+export type AnsweredQuestionEdgeFieldsFragment = Pick<Edge, "cursor"> & {
+  node: AnsweredQuestionFieldsFragment;
 };
 
-export type QuestionConnectionFieldsFragment = {
-  __typename?: "QuestionConnection";
-} & Pick<QuestionConnection, "totalCount"> & {
+export type UnansweredQuestionEdgeFieldsFragment = Pick<Edge, "cursor"> & {
+  node: UnansweredQuestionFieldsFragment;
+};
+
+export type AnsweredQuestionConnectionFieldsFragment = {
+  __typename?: "AnsweredQuestionConnection";
+} & Pick<AnsweredQuestionConnection, "totalCount"> & {
     pageInfo: { __typename?: "PageInfo" } & PageInfoFieldsFragment;
     edges: Maybe<
-      Array<{ __typename?: "QuestionEdge" } & QuestionEdgeFieldsFragment>
+      Array<
+        {
+          __typename?: "AnsweredQuestionEdge";
+        } & AnsweredQuestionEdgeFieldsFragment
+      >
+    >;
+  };
+
+export type UnansweredQuestionConnectionFieldsFragment = {
+  __typename?: "UnansweredQuestionConnection";
+} & Pick<UnansweredQuestionConnection, "totalCount"> & {
+    pageInfo: { __typename?: "PageInfo" } & PageInfoFieldsFragment;
+    edges: Maybe<
+      Array<
+        {
+          __typename?: "UnansweredQuestionEdge";
+        } & UnansweredQuestionEdgeFieldsFragment
+      >
     >;
   };
 

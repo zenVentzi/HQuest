@@ -38,11 +38,29 @@ export type AnswerEditionMention = Notification & {
   editionId: Scalars["ID"];
 };
 
+export type AnsweredQuestion = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
+  answer: Answer;
+};
+
+export type AnsweredQuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<AnsweredQuestionEdge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type AnsweredQuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: AnsweredQuestion;
+};
+
 export type AnswerNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   createdOn: Scalars["DateTime"];
 };
 
@@ -57,7 +75,7 @@ export type CommentNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   commentId: Scalars["ID"];
   createdOn: Scalars["DateTime"];
 };
@@ -111,7 +129,7 @@ export type Mutation = {
   likeAnswerEdition: AnswerEdition;
   moveAnswerPosition?: Maybe<Scalars["Int"]>;
   addQuestions?: Maybe<Scalars["Boolean"]>;
-  questionNotApply: Question;
+  questionNotApply: UnansweredQuestion;
   signUp?: Maybe<Scalars["String"]>;
   login: LoginResult;
   editUser: User;
@@ -242,7 +260,7 @@ export type NewLikeNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
-  question: Question;
+  question: AnsweredQuestion;
   createdOn: Scalars["DateTime"];
 };
 
@@ -294,16 +312,23 @@ export type Query = {
   newsfeed?: Maybe<Array<NewsBase>>;
   notifications?: Maybe<Array<Notification>>;
   questionsTags: Array<Scalars["String"]>;
-  questions?: Maybe<QuestionConnection>;
-  answeredQuestion?: Maybe<Question>;
+  answeredQuestions?: Maybe<AnsweredQuestionConnection>;
+  unansweredQuestions?: Maybe<UnansweredQuestionConnection>;
+  answeredQuestion?: Maybe<AnsweredQuestion>;
   users?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
   following?: Maybe<Array<User>>;
 };
 
-export type QueryQuestionsArgs = {
-  answered: Scalars["Boolean"];
+export type QueryAnsweredQuestionsArgs = {
+  userId: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  first: Scalars["Int"];
+  after?: Maybe<Scalars["String"]>;
+};
+
+export type QueryUnansweredQuestionsArgs = {
   userId: Scalars["ID"];
   tags?: Maybe<Array<Scalars["String"]>>;
   first: Scalars["Int"];
@@ -331,24 +356,6 @@ export type QueryFollowingArgs = {
   userId: Scalars["ID"];
 };
 
-export type Question = Node & {
-  id: Scalars["ID"];
-  tags?: Maybe<Array<Scalars["String"]>>;
-  value: Scalars["String"];
-  answer?: Maybe<Answer>;
-};
-
-export type QuestionConnection = Connection & {
-  pageInfo: PageInfo;
-  edges?: Maybe<Array<QuestionEdge>>;
-  totalCount: Scalars["Int"];
-};
-
-export type QuestionEdge = Edge & {
-  cursor: Scalars["String"];
-  node: Question;
-};
-
 export type SocialMediaLinks = {
   facebookLink?: Maybe<Scalars["String"]>;
   twitterLink?: Maybe<Scalars["String"]>;
@@ -369,6 +376,23 @@ export type Subscription = {
 
 export type SubscriptionNewNotificationArgs = {
   userId: Scalars["ID"];
+};
+
+export type UnansweredQuestion = Node & {
+  id: Scalars["ID"];
+  tags?: Maybe<Array<Scalars["String"]>>;
+  value: Scalars["String"];
+};
+
+export type UnansweredQuestionConnection = Connection & {
+  pageInfo: PageInfo;
+  edges?: Maybe<Array<UnansweredQuestionEdge>>;
+  totalCount: Scalars["Int"];
+};
+
+export type UnansweredQuestionEdge = Edge & {
+  cursor: Scalars["String"];
+  node: UnansweredQuestion;
 };
 
 export type User = {
@@ -493,6 +517,33 @@ export type AnswerEditionMentionResolvers<
   editionId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 
+export type AnsweredQuestionResolvers<
+  Context = ApolloContext,
+  ParentType = AnsweredQuestion
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  tags?: Resolver<Maybe<Array<Scalars["String"]>>, ParentType, Context>;
+  value?: Resolver<Scalars["String"], ParentType, Context>;
+  answer?: Resolver<Answer, ParentType, Context>;
+};
+
+export type AnsweredQuestionConnectionResolvers<
+  Context = ApolloContext,
+  ParentType = AnsweredQuestionConnection
+> = {
+  pageInfo?: Resolver<PageInfo, ParentType, Context>;
+  edges?: Resolver<Maybe<Array<AnsweredQuestionEdge>>, ParentType, Context>;
+  totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
+};
+
+export type AnsweredQuestionEdgeResolvers<
+  Context = ApolloContext,
+  ParentType = AnsweredQuestionEdge
+> = {
+  cursor?: Resolver<Scalars["String"], ParentType, Context>;
+  node?: Resolver<AnsweredQuestion, ParentType, Context>;
+};
+
 export type AnswerNewsResolvers<
   Context = ApolloContext,
   ParentType = AnswerNews
@@ -500,7 +551,7 @@ export type AnswerNewsResolvers<
   type?: Resolver<NewsType, ParentType, Context>;
   performer?: Resolver<User, ParentType, Context>;
   answerOwner?: Resolver<User, ParentType, Context>;
-  question?: Resolver<Question, ParentType, Context>;
+  question?: Resolver<AnsweredQuestion, ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
 };
 
@@ -518,7 +569,7 @@ export type CommentNewsResolvers<
   type?: Resolver<NewsType, ParentType, Context>;
   performer?: Resolver<User, ParentType, Context>;
   answerOwner?: Resolver<User, ParentType, Context>;
-  question?: Resolver<Question, ParentType, Context>;
+  question?: Resolver<AnsweredQuestion, ParentType, Context>;
   commentId?: Resolver<Scalars["ID"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
 };
@@ -527,7 +578,11 @@ export type ConnectionResolvers<
   Context = ApolloContext,
   ParentType = Connection
 > = {
-  __resolveType: TypeResolveFn<"QuestionConnection", ParentType, Context>;
+  __resolveType: TypeResolveFn<
+    "AnsweredQuestionConnection" | "UnansweredQuestionConnection",
+    ParentType,
+    Context
+  >;
   pageInfo?: Resolver<PageInfo, ParentType, Context>;
   edges?: Resolver<Maybe<Array<Edge>>, ParentType, Context>;
   totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
@@ -539,7 +594,11 @@ export interface DateTimeScalarConfig
 }
 
 export type EdgeResolvers<Context = ApolloContext, ParentType = Edge> = {
-  __resolveType: TypeResolveFn<"QuestionEdge", ParentType, Context>;
+  __resolveType: TypeResolveFn<
+    "AnsweredQuestionEdge" | "UnansweredQuestionEdge",
+    ParentType,
+    Context
+  >;
   cursor?: Resolver<Scalars["String"], ParentType, Context>;
   node?: Resolver<Node, ParentType, Context>;
 };
@@ -608,7 +667,7 @@ export type MutationResolvers<
     MutationAddQuestionsArgs
   >;
   questionNotApply?: Resolver<
-    Question,
+    UnansweredQuestion,
     ParentType,
     Context,
     MutationQuestionNotApplyArgs
@@ -682,7 +741,7 @@ export type NewLikeNewsResolvers<
   type?: Resolver<NewsType, ParentType, Context>;
   performer?: Resolver<User, ParentType, Context>;
   answerOwner?: Resolver<User, ParentType, Context>;
-  question?: Resolver<Question, ParentType, Context>;
+  question?: Resolver<AnsweredQuestion, ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
 };
 
@@ -709,7 +768,11 @@ export type NewsBaseResolvers<
 };
 
 export type NodeResolvers<Context = ApolloContext, ParentType = Node> = {
-  __resolveType: TypeResolveFn<"Question", ParentType, Context>;
+  __resolveType: TypeResolveFn<
+    "AnsweredQuestion" | "UnansweredQuestion",
+    ParentType,
+    Context
+  >;
   id?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 
@@ -745,14 +808,20 @@ export type QueryResolvers<Context = ApolloContext, ParentType = Query> = {
   newsfeed?: Resolver<Maybe<Array<NewsBase>>, ParentType, Context>;
   notifications?: Resolver<Maybe<Array<Notification>>, ParentType, Context>;
   questionsTags?: Resolver<Array<Scalars["String"]>, ParentType, Context>;
-  questions?: Resolver<
-    Maybe<QuestionConnection>,
+  answeredQuestions?: Resolver<
+    Maybe<AnsweredQuestionConnection>,
     ParentType,
     Context,
-    QueryQuestionsArgs
+    QueryAnsweredQuestionsArgs
+  >;
+  unansweredQuestions?: Resolver<
+    Maybe<UnansweredQuestionConnection>,
+    ParentType,
+    Context,
+    QueryUnansweredQuestionsArgs
   >;
   answeredQuestion?: Resolver<
-    Maybe<Question>,
+    Maybe<AnsweredQuestion>,
     ParentType,
     Context,
     QueryAnsweredQuestionArgs
@@ -771,33 +840,6 @@ export type QueryResolvers<Context = ApolloContext, ParentType = Query> = {
     Context,
     QueryFollowingArgs
   >;
-};
-
-export type QuestionResolvers<
-  Context = ApolloContext,
-  ParentType = Question
-> = {
-  id?: Resolver<Scalars["ID"], ParentType, Context>;
-  tags?: Resolver<Maybe<Array<Scalars["String"]>>, ParentType, Context>;
-  value?: Resolver<Scalars["String"], ParentType, Context>;
-  answer?: Resolver<Maybe<Answer>, ParentType, Context>;
-};
-
-export type QuestionConnectionResolvers<
-  Context = ApolloContext,
-  ParentType = QuestionConnection
-> = {
-  pageInfo?: Resolver<PageInfo, ParentType, Context>;
-  edges?: Resolver<Maybe<Array<QuestionEdge>>, ParentType, Context>;
-  totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
-};
-
-export type QuestionEdgeResolvers<
-  Context = ApolloContext,
-  ParentType = QuestionEdge
-> = {
-  cursor?: Resolver<Scalars["String"], ParentType, Context>;
-  node?: Resolver<Question, ParentType, Context>;
 };
 
 export type SocialMediaLinksResolvers<
@@ -822,6 +864,32 @@ export type SubscriptionResolvers<
   >;
 };
 
+export type UnansweredQuestionResolvers<
+  Context = ApolloContext,
+  ParentType = UnansweredQuestion
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  tags?: Resolver<Maybe<Array<Scalars["String"]>>, ParentType, Context>;
+  value?: Resolver<Scalars["String"], ParentType, Context>;
+};
+
+export type UnansweredQuestionConnectionResolvers<
+  Context = ApolloContext,
+  ParentType = UnansweredQuestionConnection
+> = {
+  pageInfo?: Resolver<PageInfo, ParentType, Context>;
+  edges?: Resolver<Maybe<Array<UnansweredQuestionEdge>>, ParentType, Context>;
+  totalCount?: Resolver<Scalars["Int"], ParentType, Context>;
+};
+
+export type UnansweredQuestionEdgeResolvers<
+  Context = ApolloContext,
+  ParentType = UnansweredQuestionEdge
+> = {
+  cursor?: Resolver<Scalars["String"], ParentType, Context>;
+  node?: Resolver<UnansweredQuestion, ParentType, Context>;
+};
+
 export type UserResolvers<Context = ApolloContext, ParentType = User> = {
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   me?: Resolver<Maybe<Scalars["Boolean"]>, ParentType, Context>;
@@ -839,6 +907,9 @@ export type Resolvers<Context = ApolloContext> = {
   Answer?: AnswerResolvers<Context>;
   AnswerEdition?: AnswerEditionResolvers<Context>;
   AnswerEditionMention?: AnswerEditionMentionResolvers<Context>;
+  AnsweredQuestion?: AnsweredQuestionResolvers<Context>;
+  AnsweredQuestionConnection?: AnsweredQuestionConnectionResolvers<Context>;
+  AnsweredQuestionEdge?: AnsweredQuestionEdgeResolvers<Context>;
   AnswerNews?: AnswerNewsResolvers<Context>;
   Comment?: CommentResolvers<Context>;
   CommentNews?: CommentNewsResolvers<Context>;
@@ -859,11 +930,11 @@ export type Resolvers<Context = ApolloContext> = {
   Notification?: NotificationResolvers;
   PageInfo?: PageInfoResolvers<Context>;
   Query?: QueryResolvers<Context>;
-  Question?: QuestionResolvers<Context>;
-  QuestionConnection?: QuestionConnectionResolvers<Context>;
-  QuestionEdge?: QuestionEdgeResolvers<Context>;
   SocialMediaLinks?: SocialMediaLinksResolvers<Context>;
   Subscription?: SubscriptionResolvers<Context>;
+  UnansweredQuestion?: UnansweredQuestionResolvers<Context>;
+  UnansweredQuestionConnection?: UnansweredQuestionConnectionResolvers<Context>;
+  UnansweredQuestionEdge?: UnansweredQuestionEdgeResolvers<Context>;
   User?: UserResolvers<Context>;
 };
 

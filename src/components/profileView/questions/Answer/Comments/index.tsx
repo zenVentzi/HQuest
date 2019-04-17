@@ -18,7 +18,6 @@ import {
   EditCommentMutation,
   RemoveCommentMutationVariables,
   RemoveCommentMutation,
-  Comment as CommentType,
   UserFieldsFragment,
   UsersQueryVariables,
   LikeCommentMutation,
@@ -30,8 +29,8 @@ import ApolloClient from "apollo-client";
 import { AnsweredQuestionContext } from "../../AnsweredQuestion";
 import { EditionContext } from "../Edition";
 import {
-  QuestionFields,
-  QuestionFieldsFragmentName
+  AnsweredQuestionFields,
+  AnsweredQuestionFieldsFragmentName
 } from "GqlClient/fragments";
 
 // const StyledCommentInput = styled(Textarea)`
@@ -260,12 +259,12 @@ const Comments = (props: CommentsProps) => {
         throw Error(`apolloClient cannot be null|undefined`);
       }
       apolloClient.current.writeFragment({
-        fragment: QuestionFields,
+        fragment: AnsweredQuestionFields,
         data: questionWithUpdatedComments,
         id: `${questionWithUpdatedComments.__typename}:${
           questionWithUpdatedComments.id
         }`,
-        fragmentName: QuestionFieldsFragmentName
+        fragmentName: AnsweredQuestionFieldsFragmentName
       });
 
       /* user can click multiple times in a row, creating unnecessary sequential requests to the server */

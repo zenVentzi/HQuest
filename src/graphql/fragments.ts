@@ -84,8 +84,8 @@ export const AnswerFields = gql`
   ${EditionFields}
 `;
 
-export const QuestionFields = gql`
-  fragment QuestionFields on Question {
+export const AnsweredQuestionFields = gql`
+  fragment AnsweredQuestionFields on AnsweredQuestion {
     id
     value
     tags
@@ -95,8 +95,17 @@ export const QuestionFields = gql`
   }
   ${AnswerFields}
 `;
+export const AnsweredQuestionFieldsFragmentName = `AnsweredQuestionFields`;
 
-export const QuestionFieldsFragmentName = `QuestionFields`;
+export const UnansweredQuestionFields = gql`
+  fragment UnansweredQuestionFields on UnansweredQuestion {
+    id
+    value
+    tags
+  }
+`;
+
+export const UnansweredQuestionFieldsFragmentName = `UnansweredQuestionFields`;
 
 export const PageInfoFields = gql`
   fragment PageInfoFields on PageInfo {
@@ -107,28 +116,52 @@ export const PageInfoFields = gql`
   }
 `;
 
-export const QuestionEdgeFields = gql`
-  fragment QuestionEdgeFields on Edge {
+export const AnsweredQuestionEdgeFields = gql`
+  fragment AnsweredQuestionEdgeFields on Edge {
     cursor
     node {
-      ...QuestionFields
+      ...AnsweredQuestionFields
     }
   }
-  ${QuestionFields}
+  ${AnsweredQuestionFields}
 `;
 
-export const QuestionConnectionFields = gql`
-  fragment QuestionConnectionFields on QuestionConnection {
+export const UnansweredQuestionEdgeFields = gql`
+  fragment UnansweredQuestionEdgeFields on Edge {
+    cursor
+    node {
+      ...UnansweredQuestionFields
+    }
+  }
+  ${UnansweredQuestionFields}
+`;
+
+export const AnsweredQuestionConnectionFields = gql`
+  fragment AnsweredQuestionConnectionFields on AnsweredQuestionConnection {
     pageInfo {
       ...PageInfoFields
     }
     edges {
-      ...QuestionEdgeFields
+      ...AnsweredQuestionEdgeFields
     }
     totalCount
   }
   ${PageInfoFields}
-  ${QuestionEdgeFields}
+  ${AnsweredQuestionEdgeFields}
+`;
+
+export const UnansweredQuestionConnectionFields = gql`
+  fragment UnansweredQuestionConnectionFields on UnansweredQuestionConnection {
+    pageInfo {
+      ...PageInfoFields
+    }
+    edges {
+      ...UnansweredQuestionEdgeFields
+    }
+    totalCount
+  }
+  ${PageInfoFields}
+  ${UnansweredQuestionEdgeFields}
 `;
 
 export const NotificationFields = gql`

@@ -60,7 +60,7 @@ class QuestionService {
   public async markNotApply(
     questionId: string,
     userId: string
-  ): Promise<DbTypes.Question> {
+  ): Promise<DbTypes.UnansweredQuestion> {
     // old way
     // await User.findByIdAndUpdate(
     //   user.id,
@@ -74,16 +74,19 @@ class QuestionService {
         { $push: { notApplyToUsers: userId } },
         { new: true, upsert: true }
       )
-      .lean()) as DbTypes.Question;
+      .lean()) as DbTypes.UnansweredQuestion;
 
     // return Question.findById(questionId).lean();
   }
 
   public async getAllTags(): Promise<string[]> {
-    const questions = (await this.models.question
-      .find()
-      .lean()) as DbTypes.Question[];
-    const reducer = (allTags: string[], currentQuestion: DbTypes.Question) => {
+    const questions = (await this.models.question.find().lean()) as Array<
+      DbTypes.UnansweredQuestion | DbTypes.AnsweredQuestion
+    >;
+    const reducer = (
+      allTags: string[],
+      currentQuestion: DbTypes.AnsweredQuestion | DbTypes.UnansweredQuestion
+    ) => {
       const questionTags = currentQuestion.tags.filter(
         t => !allTags.includes(t)
       );
@@ -106,15 +109,18 @@ class QuestionService {
   //   return answeredQuestion;
   // };
 
-  public async getQuestion(questionId: string): Promise<DbTypes.Question> {
+  public async getQuestion(
+    questionId: string
+  ): Promise<DbTypes.UnansweredQuestion> {
     return (await this.models.question.findById(questionId))!.toObject();
+    // write in more lines of code, do if chekcs
   }
 
   public async getAnsweredQuestions(
     answers: DbTypes.Answer[],
-    answeredQuestionsIds: string[],
     tags?: string[] | null
   ): Promise<DbTypes.AnsweredQuestion[]> {
+    const answeredQuestionsIds = answers.map(a => a.questionId);
     const query: any = { _id: { $in: answeredQuestionsIds } };
 
     if (tags && tags.length) {
@@ -123,7 +129,7 @@ class QuestionService {
 
     const questions = (await this.models.question
       .find(query)
-      .lean()) as DbTypes.Question[];
+      .lean()) as DbTypes.AnsweredQuestion[];
     // ordering is done because the $in query returns in random order
     const orderedQs = this.preserveOrder({ answeredQuestionsIds, questions });
     const mergedQuestions = this.mergeAnswersWithQuestions(answers, orderedQs);
@@ -134,7 +140,7 @@ class QuestionService {
     userId: string,
     answeredQuestionsIds: string[] | null,
     tags?: string[] | null
-  ): Promise<DbTypes.Question[]> {
+  ): Promise<DbTypes.UnansweredQuestion[]> {
     const { questionsNotApply } = (await this.models.user.findById(
       userId
     ))!.toObject();
@@ -159,36 +165,36 @@ class QuestionService {
 
     const questions = (await this.models.question
       .find(query)
-      .lean()) as DbTypes.Question[];
+      .lean()) as DbTypes.UnansweredQuestion[];
 
     return questions;
   }
 
-  public async getUserQuestions(
-    userId: string,
-    answers: DbTypes.Answer[],
-    answered: boolean,
-    tags?: string[] | null
-  ): Promise<DbTypes.Question[]> {
-    const answeredQuestionsIds = await this.getQuestionsIds(answers);
-    let questions: DbTypes.Question[];
+  // public async getUserQuestions(
+  //   userId: string,
+  //   answers: DbTypes.Answer[],
+  //   answered: boolean,
+  //   tags?: string[] | null
+  // ): Promise<DbTypes.Question[]> {
+  //   const answeredQuestionsIds = await this.getQuestionsIds(answers);
+  //   let questions: DbTypes.Question[];
 
-    if (answered) {
-      questions = await this.getAnsweredQuestions(
-        answers,
-        answeredQuestionsIds,
-        tags
-      );
-    } else {
-      questions = await this.getUnansweredQuestions(
-        userId,
-        answeredQuestionsIds,
-        tags
-      );
-    }
+  //   if (answered) {
+  //     questions = await this.getAnsweredQuestions(
+  //       answers,
+  //       answeredQuestionsIds,
+  //       tags
+  //     );
+  //   } else {
+  //     questions = await this.getUnansweredQuestions(
+  //       userId,
+  //       answeredQuestionsIds,
+  //       tags
+  //     );
+  //   }
 
-    return questions;
-  }
+  //   return questions;
+  // }
 
   public getQuestionsById({ ids }, context) {
     throw Error("Not implemented");
@@ -203,8 +209,8 @@ class QuestionService {
     questions
   }: {
     answeredQuestionsIds: string[];
-    questions: DbTypes.Question[];
-  }): DbTypes.Question[] {
+    questions: Array<DbTypes.AnsweredQuestion | DbTypes.UnansweredQuestion>;
+  }): Array<DbTypes.AnsweredQuestion | DbTypes.UnansweredQuestion> {
     const res = answeredQuestionsIds
       .map(id => questions.find(q => q._id.equals(id))!)
       .filter(q => q); // filters undefined or null values
@@ -214,14 +220,14 @@ class QuestionService {
 
   private mergeAnswerWithQuestion(
     answer: DbTypes.Answer,
-    question: DbTypes.Question
+    question: DbTypes.UnansweredQuestion
   ): DbTypes.AnsweredQuestion {
     return { ...question, answer };
   }
 
   private mergeAnswersWithQuestions(
     answers: DbTypes.Answer[],
-    questions: DbTypes.Question[]
+    questions: DbTypes.UnansweredQuestion[]
   ): DbTypes.AnsweredQuestion[] {
     const result: DbTypes.AnsweredQuestion[] = [];
     const mergedAnswers: typeof answers = [];
