@@ -14,7 +14,11 @@ class AnswerService {
         userId: ObjectId(userId),
         $or: [{ isRemoved: { $exists: false } }, { isRemoved: false }]
       })
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
       .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      )
       .sort({ position: 1 })
       .lean()) as DbTypes.Answer[];
 
@@ -30,7 +34,11 @@ class AnswerService {
         userId,
         questionId
       })
-      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      );
 
     return answer ? answer!.toObject() : null;
   }
@@ -38,7 +46,11 @@ class AnswerService {
   public async getAnswerById(answerId: string): Promise<DbTypes.Answer> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      );
     return answer!.toObject();
   }
 
@@ -49,7 +61,11 @@ class AnswerService {
   }): Promise<DbTypes.Answer[]> {
     const answers = (await this.models.answer
       .find({ _id: { $in: answerIds } })
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
       .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      )
       .lean()) as DbTypes.Answer[];
 
     return answers;
@@ -70,7 +86,11 @@ class AnswerService {
         },
         { new: true, upsert: true }
       )
-      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      );
 
     return updatedAnswer.toObject();
   }
@@ -122,8 +142,10 @@ class AnswerService {
         },
         { new: true, upsert: true }
       )
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
       .populate(
-        DbTypes.AnswerPopulatedFields.editions_comments_user
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
       )).toObject();
 
     await this.models.answer.updateMany(
@@ -143,7 +165,11 @@ class AnswerService {
   ): Promise<DbTypes.Edition> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_likes_likers_user)
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user)
+      .populate(
+        DbTypes.AnswerPopulatedFields.editions_comments_likes_likers_user
+      );
     if (!answer) {
       throw Error(`Couldn't find answer with id ${answerId}`);
     }
