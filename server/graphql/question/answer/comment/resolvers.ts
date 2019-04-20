@@ -107,7 +107,12 @@ const Mutation: Mutation = {
       dbComment: likedComment,
       loggedUserId: user!.id
     });
-    await services.user.addExperience(1, likedGqlComment.user.id);
+    const attempt_to_suck_own_dick_for_likes_and_exp =
+      user!.id === likedGqlComment.user.id;
+
+    if (!attempt_to_suck_own_dick_for_likes_and_exp) {
+      await services.user.addExperience(1, likedGqlComment.user.id);
+    }
     return likedGqlComment;
   }
 };
