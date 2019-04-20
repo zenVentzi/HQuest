@@ -86,6 +86,7 @@ UnansweredQuestionsProps) => {
           if (!unansweredQuestions || !unansweredQuestions.edges) {
             return <Empty style={style}> No unanswered questions </Empty>;
           }
+
           return unansweredQuestions.edges.map(edge => (
             <UnansweredQuestion
               key={edge.node.id}

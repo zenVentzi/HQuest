@@ -48,7 +48,10 @@ import * as DbTypes from "../dbTypes";
 
 //#endregion
 
-const LikerSchema = new Schema({ user: String, numOfLikes: Number });
+const LikerSchema = new Schema({
+  user: { type: String, ref: "User" },
+  numOfLikes: Number
+});
 const LikesSchema = new Schema({ total: Number, likers: [LikerSchema] });
 
 const CommentSchema = new Schema({
