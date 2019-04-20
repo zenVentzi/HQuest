@@ -49,7 +49,7 @@ import * as DbTypes from "../dbTypes";
 //#endregion
 
 const LikerSchema = new Schema({
-  user: { type: String, ref: "User" },
+  user: { type: Schema.Types.ObjectId, ref: "User" },
   numOfLikes: Number
 });
 const LikesSchema = new Schema({ total: Number, likers: [LikerSchema] });
