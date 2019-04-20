@@ -42,11 +42,6 @@ export interface NewFollower extends Notification {
   type: NotificationType.NewFollower;
 }
 
-/* 
-User<FollowT extends User[] | ObjectId[] = ObjectId[]> {
-  looks is cleaner but creates circular dependency
-*/
-
 export enum UserPopulatedFields {
   followers = "followers",
   following = "following",
@@ -88,90 +83,109 @@ export interface UserDoc extends User, Document {
   ): User<PopulatedFields>;
 }
 
-export enum CommentPopulatedFields {
-  user = "editions.comments.user",
-  none = "none"
-}
-
 export interface Comment<
-  PopulatedFields extends CommentPopulatedFields = CommentPopulatedFields.user
+  PopulatedFields extends string = AnswerPopulatedFields.editions_comments_user &
+    AnswerPopulatedFields.editions_comments_likes_likers_user
 > {
   _id: ObjectId;
   value: string;
-  user: PopulatedFields extends CommentPopulatedFields.user ? User : ObjectId;
-  likes?: Likes;
+  user: PopulatedFields extends AnswerPopulatedFields.editions_comments_user
+    ? User
+    : ObjectId;
+  likes?: CommentLikes<PopulatedFields>;
 }
 
 export interface CommentDoc extends Comment, Document {
   _id: ObjectId;
   toObject<
-    PopulatedFields extends CommentPopulatedFields = CommentPopulatedFields.user
+    PopulatedFields extends string = AnswerPopulatedFields.editions_comments_user &
+      AnswerPopulatedFields.editions_comments_likes_likers_user
   >(
     options?: DocumentToObjectOptions
   ): Comment<PopulatedFields>;
 }
 
-export enum EditionPopulatedFields {
-  comments_user,
-  none
-}
-
 export interface Edition<
-  PopulatedFields extends EditionPopulatedFields = EditionPopulatedFields.comments_user
+  PopulatedFields extends string = AnswerPopulatedFields.editions_likes_likers_user &
+    AnswerPopulatedFields.editions_comments_user &
+    AnswerPopulatedFields.editions_comments_likes_likers_user
 > {
   _id: ObjectId;
   date: Date;
-  // before: string;
-  // after: string;
   value: string;
-  comments?: PopulatedFields extends EditionPopulatedFields.comments_user
-    ? Array<Comment<CommentPopulatedFields.user>>
-    : Array<Comment<CommentPopulatedFields.none>>;
-  likes?: Likes;
+  comments?: Array<Comment<PopulatedFields>>;
+  likes?: EditionLikes<PopulatedFields>;
 }
 
 export interface EditionDoc extends Edition, Document {
   _id: ObjectId;
   toObject<
-    PopulatedFields extends EditionPopulatedFields = EditionPopulatedFields.comments_user
+    PopulatedFields extends string = AnswerPopulatedFields.editions_likes_likers_user &
+      AnswerPopulatedFields.editions_comments_user &
+      AnswerPopulatedFields.editions_comments_likes_likers_user
   >(
     options?: DocumentToObjectOptions
   ): Edition<PopulatedFields>;
 }
-
-export interface Liker {
-  user: User; // this has to change only to id
+export interface CommentLiker<
+  PopulatedFields extends string = AnswerPopulatedFields.editions_comments_likes_likers_user
+> {
+  user: PopulatedFields extends AnswerPopulatedFields.editions_comments_likes_likers_user
+    ? User
+    : ObjectId;
+  numOfLikes: number;
+}
+export interface EditionLiker<
+  PopulatedFields extends string = AnswerPopulatedFields.editions_likes_likers_user
+> {
+  user: PopulatedFields extends AnswerPopulatedFields.editions_likes_likers_user
+    ? User
+    : ObjectId;
   numOfLikes: number;
 }
 
-export interface Likes {
+export interface CommentLikes<
+  PopulatedFields extends string = AnswerPopulatedFields.editions_comments_likes_likers_user
+> {
   total: number;
-  likers: Liker[];
+  likers: Array<CommentLiker<PopulatedFields>>;
+}
+export interface EditionLikes<
+  PopulatedFields extends string = AnswerPopulatedFields.editions_likes_likers_user
+> {
+  total: number;
+  likers: Array<EditionLiker<PopulatedFields>>;
 }
 
 export enum AnswerPopulatedFields {
+  editions_likes_likers_user = "editions.likes.likers.user",
   editions_comments_user = "editions.comments.user",
+  editions_comments_likes_likers_user = "editions.comments.likes.likers.user",
   none = "none"
 }
 
 export interface Answer<
-  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user &
+    AnswerPopulatedFields.editions_likes_likers_user &
+    AnswerPopulatedFields.editions_comments_likes_likers_user
 > {
   _id: ObjectId;
   position: number;
   userId: string;
   questionId: string;
-  editions: PopulatedFields extends AnswerPopulatedFields.editions_comments_user
-    ? Array<Edition<EditionPopulatedFields.comments_user>>
-    : Array<Edition<EditionPopulatedFields.none>>;
+  editions: Array<Edition<PopulatedFields>>;
 }
 
 export interface AnswerDoc<
-  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+  PopulatedFields extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user &
+    AnswerPopulatedFields.editions_likes_likers_user &
+    AnswerPopulatedFields.editions_comments_likes_likers_user
 > extends Answer<PopulatedFields>, Document {
   _id: ObjectId;
   toObject<
-    PopulatedFieldss extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user
+    PopulatedFieldss extends AnswerPopulatedFields = AnswerPopulatedFields.editions_comments_user &
+      AnswerPopulatedFields.editions_likes_likers_user &
+      AnswerPopulatedFields.editions_comments_likes_likers_user
   >(
     options?: DocumentToObjectOptions
   ): Answer<PopulatedFieldss>;

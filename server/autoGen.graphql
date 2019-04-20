@@ -8,8 +8,9 @@ type Query {
   newsfeed: [NewsBase!]
   notifications: [Notification!]
   questionsTags: [String!]!
-  questions(answered: Boolean!, userId: ID!, tags: [String!], first: Int!, after: String): QuestionConnection
-  answeredQuestion(userId: ID!, questionId: ID!): Question
+  answeredQuestions(userId: ID!, tags: [String!], first: Int!, after: String): AnsweredQuestionConnection
+  unansweredQuestions(userId: ID!, tags: [String!], first: Int!, after: String): UnansweredQuestionConnection
+  answeredQuestion(userId: ID!, questionId: ID!): AnsweredQuestion
   users(match: String): [User!]
   user(id: ID!): User
   followers(userId: ID!): [User!]
@@ -29,7 +30,7 @@ type Mutation {
   moveAnswerPosition(answerId: ID!, position: Int!): Int
   addQuestions(questions: [InputQuestion!]): Boolean
   # removeQuestion(questionId: ID!): Question!
-  questionNotApply(questionId: ID!): Question!
+  questionNotApply(questionId: ID!): UnansweredQuestion!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
   login(email: String!, name: String!): LoginResult!
   editUser(input: EditUserInput): User!
@@ -61,7 +62,7 @@ type AnswerNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   createdOn: DateTime!
 }
 
@@ -69,7 +70,7 @@ type CommentNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   commentId: ID!
   createdOn: DateTime!
 }
@@ -85,7 +86,7 @@ type NewLikeNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
-  question: Question!
+  question: AnsweredQuestion!
   createdOn: DateTime!
 }
 
@@ -181,21 +182,44 @@ type AnswerEdition {
 }
 
 # question should be made an interface
-type Question implements Node {
+ # type Question implements Node {
+ #   id: ID!
+ #   tags: [String!]
+ #   value: String!
+ #   answer: Answer
+ # }
+type UnansweredQuestion implements Node {
   id: ID!
   tags: [String!]
   value: String!
-  answer: Answer
 }
 
-type QuestionEdge implements Edge {
+type AnsweredQuestion implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+  answer: Answer!
+}
+
+type AnsweredQuestionEdge implements Edge {
   cursor: String!
-  node: Question!
+  node: AnsweredQuestion!
 }
 
-type QuestionConnection implements Connection {
+type AnsweredQuestionConnection implements Connection {
   pageInfo: PageInfo!
-  edges: [QuestionEdge!]
+  edges: [AnsweredQuestionEdge!]
+  totalCount: Int!
+}
+
+type UnansweredQuestionEdge implements Edge {
+  cursor: String!
+  node: UnansweredQuestion!
+}
+
+type UnansweredQuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [UnansweredQuestionEdge!]
   totalCount: Int!
 }
 
@@ -243,6 +267,7 @@ type User {
   avatarSrc: String
   following: [ID!]
   followers: [ID!]
+  experience: Float!
 }
 
 input SocialMediaLinksInput {

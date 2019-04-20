@@ -13,7 +13,7 @@ class CommentService {
     comment: string,
     answerId: string,
     answerEditionId: string
-  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+  ): Promise<DbTypes.Comment> {
     const performer = (await this.models.user.findById(
       performerId
     ))!.toObject();
@@ -31,7 +31,7 @@ class CommentService {
     );
 
     let editionComments = answer.editions[editionIndex].comments;
-    const addedComment: DbTypes.Comment<DbTypes.CommentPopulatedFields.none> = {
+    const addedComment: DbTypes.Comment<DbTypes.AnswerPopulatedFields.none> = {
       _id: ObjectId(),
       value: comment,
       user: performer!._id
@@ -60,10 +60,10 @@ class CommentService {
     answerEditionId: string,
     commentId: string,
     commentValue: string
-  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+  ): Promise<DbTypes.Comment> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate(DbTypes.CommentPopulatedFields.user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
     if (!answer) {
       throw Error(`Could not find answer with id ${answerId}`);
     }
@@ -72,9 +72,7 @@ class CommentService {
       throw Error(`Could not find edition with id ${answerEditionId}`);
     }
 
-    let editedComment:
-      | DbTypes.Comment<DbTypes.CommentPopulatedFields.user>
-      | undefined;
+    let editedComment: DbTypes.Comment | undefined;
 
     if (!edition.comments || !edition.comments.length) {
       throw Error(`Edition with id ${answerEditionId} , has no comments`);
@@ -97,10 +95,10 @@ class CommentService {
     answerId: string,
     answerEditionId: string,
     commentId: string
-  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+  ): Promise<DbTypes.Comment> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate(DbTypes.CommentPopulatedFields.user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
 
     if (!answer) {
       throw Error(`Could not find answer with id ${answerId}`);
@@ -134,10 +132,10 @@ class CommentService {
     commentId: string,
     likerId: string,
     userLikes: number
-  ): Promise<DbTypes.Comment<DbTypes.CommentPopulatedFields.user>> {
+  ): Promise<DbTypes.Comment> {
     const answer = await this.models.answer
       .findById(answerId)
-      .populate(DbTypes.CommentPopulatedFields.user);
+      .populate(DbTypes.AnswerPopulatedFields.editions_comments_user);
 
     if (!answer) {
       throw Error(`Could not find answer with id ${answerId}`);

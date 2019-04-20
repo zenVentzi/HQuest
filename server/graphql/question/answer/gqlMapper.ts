@@ -1,9 +1,5 @@
-import { Answer, AnswerEdition, Likes } from "../../autoGenTypes";
-import {
-  Answer as DbAnswer,
-  Edition as DbEdition,
-  Likes as DbLikes
-} from "../../../dbTypes";
+import * as gqlTypes from "../../autoGenTypes";
+import * as dbTypes from "../../../dbTypes";
 import { mapUser } from "../../user/gqlMapper";
 import { mapComments } from "./comment/gqlMapper";
 
@@ -11,10 +7,10 @@ function mapAnswer({
   dbAnswer,
   loggedUserId
 }: {
-  dbAnswer: DbAnswer;
+  dbAnswer: dbTypes.Answer;
   loggedUserId: string;
-}): Answer {
-  const gqlAnswer: Answer = {
+}): gqlTypes.Answer {
+  const gqlAnswer: gqlTypes.Answer = {
     id: dbAnswer._id.toString(),
     questionId: dbAnswer.questionId.toString(),
     userId: dbAnswer.userId.toString(),
@@ -32,9 +28,9 @@ function mapAnswerEditions({
   dbEditions,
   loggedUserId
 }: {
-  dbEditions: DbEdition[];
+  dbEditions: dbTypes.Edition[];
   loggedUserId: string;
-}): AnswerEdition[] {
+}): gqlTypes.AnswerEdition[] {
   // if (!dbEditions || !dbEditions.length) return null;
   // console.trace();
 
@@ -43,8 +39,8 @@ function mapAnswerEditions({
   });
 }
 
-function mapAnswerEdition(dbEdtion: DbEdition, loggedUserId: string) {
-  const gqlEdition: AnswerEdition = {
+function mapAnswerEdition(dbEdtion: dbTypes.Edition, loggedUserId: string) {
+  const gqlEdition: gqlTypes.AnswerEdition = {
     id: dbEdtion._id.toString(),
     date: dbEdtion.date,
     value: dbEdtion.value,
@@ -61,15 +57,16 @@ function mapLikes({
   dbLikes,
   loggedUserId
 }: {
-  dbLikes?: DbLikes | null;
+  dbLikes?: dbTypes.CommentLikes | dbTypes.EditionLikes | null;
   loggedUserId: string;
-}): Likes | null {
+}): gqlTypes.Likes | null {
   if (!dbLikes) return null;
 
-  const gqlLikes: Likes = { total: dbLikes.total, likers: [] };
+  const gqlLikes: gqlTypes.Likes = { total: dbLikes.total, likers: [] };
+  // dbLikes.likers.forEach(l => {})
 
   dbLikes.likers.forEach(dbLiker => {
-    const gqlLiker = {
+    const gqlLiker: gqlTypes.Liker = {
       user: mapUser(dbLiker.user, loggedUserId),
       numOfLikes: dbLiker.numOfLikes
     };

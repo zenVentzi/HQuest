@@ -1,9 +1,54 @@
 import { Document, model, Model, Schema, Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
-import { UserSchema } from "./user";
+//#region ts-mongoose
+// import { createSchema, Type, typedModel } from "ts-mongoose";
+// import 'ts-mongoose/plugin'
 
-const LikerSchema = new Schema({ user: UserSchema, numOfLikes: Number });
+// const UserSchema = createSchema({
+//   name: Type.string()
+// });
 
+// const LikerSchema = createSchema({
+//   user: Type.string(),
+//   numOfLikes: Type.number()
+// });
+
+// const LikesSchema = createSchema({
+//   total: Type.number(),
+//   likers: Type.array().of(Type.schema().of(LikerSchema))
+// });
+
+// const CommentSchema = createSchema({
+//   value: Type.string(),
+//   user: Type.ref(Type.objectId()).to("User", UserSchema),
+//   likes: { type: LikesSchema, required: false }
+// });
+
+// const EditionSchema = createSchema({
+//   date: Type.date(),
+//   value: Type.string(),
+//   comments: Type.optionalSchema().of(CommentSchema),
+//   likes: Type.optionalSchema().of(LikesSchema)
+// });
+
+// const AnswerSchema = createSchema({
+//   position: Type.number(),
+//   userId: Type.string(),
+//   questionId: Type.string(),
+//   editions: Type.array().of(Type.schema().of(EditionSchema))
+// });
+
+// const AnswerModel = typedModel("Answer", AnswerSchema);
+
+// AnswerModel.findById("123").populateTs<number>(5).then(answer => {
+//   if (answer) {
+//     answer.editions[0].likes!.likers[0].; // autocomplete here
+//   }
+// });
+
+//#endregion
+
+const LikerSchema = new Schema({ user: String, numOfLikes: Number });
 const LikesSchema = new Schema({ total: Number, likers: [LikerSchema] });
 
 const CommentSchema = new Schema({
@@ -14,8 +59,6 @@ const CommentSchema = new Schema({
 
 const EditionSchema = new Schema({
   date: Date,
-  // before: String,
-  // after: String,
   value: { type: String, required: true },
   comments: { type: [CommentSchema], required: false },
   likes: { type: LikesSchema, required: false }
