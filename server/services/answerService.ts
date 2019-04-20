@@ -157,7 +157,7 @@ class AnswerService {
       );
     }
     const { likes } = edition;
-    let updatedLikes: DbTypes.Likes = { total: 0, likers: [] };
+    let updatedLikes: DbTypes.EditionLikes = { total: 0, likers: [] };
 
     const liker = (await this.models.user.findById(likerId))!.toObject();
 

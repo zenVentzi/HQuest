@@ -52,7 +52,7 @@ test("map gql likes", () => {
   }).toObject();
 
   const gqlUser = mapUser(dbUser, "");
-  const dbLikes: dbTypes.Likes = {
+  const dbLikes: dbTypes.CommentLikes = {
     total: 1,
     likers: [{ user: dbUser, numOfLikes: 1 }]
   };
@@ -76,7 +76,7 @@ test("getLikes() should return gql likes", () => {
     following: [ObjectId(), ObjectId()]
   }).toObject();
 
-  const dbLikes: dbTypes.Likes = {
+  const dbLikes: dbTypes.CommentLikes = {
     total: 1,
     likers: [{ user: dbUser, numOfLikes: 1 }]
   };
