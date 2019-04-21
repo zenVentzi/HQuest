@@ -25,6 +25,19 @@ export type AnswerEdition = {
   comments?: Maybe<Array<Comment>>;
 };
 
+export type AnswerEditionLike = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
+};
+
 export type AnswerEditionMention = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
@@ -69,6 +82,20 @@ export type Comment = {
   user: User;
   value: Scalars["String"];
   likes?: Maybe<Likes>;
+};
+
+export type CommentLike = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
+  commentId: Scalars["ID"];
 };
 
 export type CommentNews = NewsBase & {
@@ -295,6 +322,8 @@ export type Notification = {
 };
 
 export enum NotificationType {
+  AnswerEditionLike = "ANSWER_EDITION_LIKE",
+  CommentLike = "COMMENT_LIKE",
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT",
   CommentMention = "COMMENT_MENTION",
@@ -501,6 +530,22 @@ export type AnswerEditionResolvers<
   comments?: Resolver<Maybe<Array<Comment>>, ParentType, Context>;
 };
 
+export type AnswerEditionLikeResolvers<
+  Context = ApolloContext,
+  ParentType = AnswerEditionLike
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
+  questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
+};
+
 export type AnswerEditionMentionResolvers<
   Context = ApolloContext,
   ParentType = AnswerEditionMention
@@ -560,6 +605,23 @@ export type CommentResolvers<Context = ApolloContext, ParentType = Comment> = {
   user?: Resolver<User, ParentType, Context>;
   value?: Resolver<Scalars["String"], ParentType, Context>;
   likes?: Resolver<Maybe<Likes>, ParentType, Context>;
+};
+
+export type CommentLikeResolvers<
+  Context = ApolloContext,
+  ParentType = CommentLike
+> = {
+  id?: Resolver<Scalars["ID"], ParentType, Context>;
+  type?: Resolver<NotificationType, ParentType, Context>;
+  performerId?: Resolver<Scalars["ID"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  text?: Resolver<Scalars["String"], ParentType, Context>;
+  seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+  userProfileId?: Resolver<Scalars["String"], ParentType, Context>;
+  questionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  commentId?: Resolver<Scalars["ID"], ParentType, Context>;
 };
 
 export type CommentNewsResolvers<
@@ -781,7 +843,11 @@ export type NotificationResolvers<
   ParentType = Notification
 > = {
   __resolveType: TypeResolveFn<
-    "AnswerEditionMention" | "NewComment" | "NewFollower",
+    | "AnswerEditionLike"
+    | "CommentLike"
+    | "AnswerEditionMention"
+    | "NewComment"
+    | "NewFollower",
     ParentType,
     Context
   >;
@@ -906,12 +972,14 @@ export type UserResolvers<Context = ApolloContext, ParentType = User> = {
 export type Resolvers<Context = ApolloContext> = {
   Answer?: AnswerResolvers<Context>;
   AnswerEdition?: AnswerEditionResolvers<Context>;
+  AnswerEditionLike?: AnswerEditionLikeResolvers<Context>;
   AnswerEditionMention?: AnswerEditionMentionResolvers<Context>;
   AnsweredQuestion?: AnsweredQuestionResolvers<Context>;
   AnsweredQuestionConnection?: AnsweredQuestionConnectionResolvers<Context>;
   AnsweredQuestionEdge?: AnsweredQuestionEdgeResolvers<Context>;
   AnswerNews?: AnswerNewsResolvers<Context>;
   Comment?: CommentResolvers<Context>;
+  CommentLike?: CommentLikeResolvers<Context>;
   CommentNews?: CommentNewsResolvers<Context>;
   Connection?: ConnectionResolvers;
   DateTime?: GraphQLScalarType;

@@ -173,6 +173,19 @@ export const NotificationFields = gql`
     text
     seen
     createdOn
+    ... on AnswerEditionLike {
+      userProfileId
+      questionId
+      editionId
+    }
+
+    ... on CommentLike {
+      userProfileId
+      questionId
+      editionId
+      commentId
+    }
+
     ... on NewComment {
       userProfileId
       questionId

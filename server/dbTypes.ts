@@ -4,15 +4,12 @@ import {
   Types as GooseTypes,
   DocumentToObjectOptions
 } from "mongoose";
+import { NotificationType } from "./graphql/autoGenTypes";
 
+export { NotificationType };
+
+// const a: bla = bla.
 export type ObjectId = GooseTypes.ObjectId;
-
-export enum NotificationType {
-  NewFollower = "NEW_FOLLOWER",
-  NewComment = "NEW_COMMENT",
-  CommentMention = "COMMENT_MENTION",
-  AnswerEditionMention = "ANSWER_EDITION_MENTION"
-}
 
 export interface Notification {
   _id: ObjectId;
@@ -21,6 +18,21 @@ export interface Notification {
   performerAvatarSrc: string;
   text: string;
   seen: boolean;
+}
+
+export type AnswerEditionLike = Notification & {
+  type: NotificationType.AnswerEditionLike;
+  userProfileId: string;
+  questionId: string;
+  editionId: string;
+};
+
+export interface CommentLike extends Notification {
+  type: NotificationType.CommentLike;
+  userProfileId: string;
+  questionId: string;
+  editionId: string;
+  commentId: string;
 }
 
 export type AnswerEditionMention = Notification & {

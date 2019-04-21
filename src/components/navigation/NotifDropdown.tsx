@@ -55,9 +55,9 @@ const NotifDropdown = (props: NotifDropdownProps) => {
   return (
     <Dropdown ref={ref}>
       {notifications && notifications.length ? (
-        notifications.map(n => (
-          <Notif key={n.id} notif={n} onClick={onClickNotification} />
-        ))
+        notifications.map(n => {
+          return <Notif key={n.id} notif={n} onClick={onClickNotification} />;
+        })
       ) : (
         <Text>No notifications yet</Text>
       )}

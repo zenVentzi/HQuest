@@ -10,28 +10,49 @@ import {
   NotificationsQueryVariables,
   NotifsMarkSeenMutation,
   NotifsMarkSeenMutationVariables,
-  NotificationFieldsFragment
+  NotificationFieldsFragment,
+  NewNotificationSubscription
 } from "GqlClient/autoGenTypes";
 
-const getSubcriptionOptions = (): SubscribeToMoreOptions<
+// incorrect @types
+/* used to return type:
+
+ SubscribeToMoreOptions<
   NotificationsQuery,
   NotificationsQueryVariables
-> => {
+>*/
+const getSubcriptionOptions = () => {
   const userId = getLoggedUserId();
   return {
     document: NEW_NOTIFICATION,
     variables: { userId },
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data || !subscriptionData.data.notifications) {
+    updateQuery: (
+      prev: NotificationsQuery,
+      {
+        subscriptionData
+      }: { subscriptionData: { data: NewNotificationSubscription } }
+    ) => {
+      // debugger;
+      if (!subscriptionData.data || !subscriptionData.data.newNotification) {
         return prev;
       }
       const { notifications: oldNotifications } = prev;
-      const { notifications: newNotifications } = subscriptionData.data;
-      const updatedNotifications: NotificationFieldsFragment[] | null = [];
-      updatedNotifications.concat(newNotifications);
+      let updatedNotifications: NotificationFieldsFragment[] = [];
       if (oldNotifications) {
-        updatedNotifications.concat(oldNotifications);
+        updatedNotifications = [
+          ...oldNotifications,
+          subscriptionData.data.newNotification
+        ];
+      } else {
+        updatedNotifications = [subscriptionData.data.newNotification];
       }
+      // const { notifications: newNotifications } = subscriptionData.data;
+
+      // const updatedNotifications: NotificationFieldsFragment[] | null = [];
+      // updatedNotifications.concat(newNotifications);
+      // if (oldNotifications) {
+      //   updatedNotifications.concat(oldNotifications);
+      // }
 
       const updatedQuery: NotificationsQuery = {
         ...prev,

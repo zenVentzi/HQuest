@@ -1,8 +1,4 @@
-import {
-  Notification,
-  NewComment,
-  AnswerEditionMention
-} from "../autoGenTypes";
+import * as gqlTypes from "../autoGenTypes";
 import {
   Notification as DbNotification,
   NotificationType,
@@ -10,8 +6,8 @@ import {
   AnswerEditionMention as DbAnswerEditionMention
 } from "../../dbTypes";
 
-function mapNotification(notif: DbNotification): Notification {
-  const gqlNotif: Notification = {
+function mapNotification(notif: DbNotification): gqlTypes.Notification {
+  const gqlNotif: gqlTypes.Notification = {
     id: notif._id.toString(),
     type: notif.type,
     performerId: notif.performerId,
@@ -23,8 +19,9 @@ function mapNotification(notif: DbNotification): Notification {
 
   switch (notif.type) {
     case NotificationType.NewComment:
-    case NotificationType.CommentMention: {
-      const res: NewComment = {
+    case NotificationType.CommentMention:
+    case NotificationType.CommentLike: {
+      const res: gqlTypes.NewComment | gqlTypes.CommentLike = {
         ...gqlNotif,
         questionId: (notif as DbNewComment).questionId,
         editionId: (notif as DbNewComment).editionId,
@@ -33,8 +30,9 @@ function mapNotification(notif: DbNotification): Notification {
       };
       return res;
     }
-    case NotificationType.AnswerEditionMention: {
-      const res: AnswerEditionMention = {
+    case NotificationType.AnswerEditionMention:
+    case NotificationType.AnswerEditionLike: {
+      const res: gqlTypes.AnswerEditionMention | gqlTypes.AnswerEditionLike = {
         ...gqlNotif,
         questionId: (notif as DbAnswerEditionMention).questionId,
         editionId: (notif as DbAnswerEditionMention).editionId,
@@ -48,7 +46,7 @@ function mapNotification(notif: DbNotification): Notification {
 
 function mapNotifications(
   notifs: DbNotification[] | null
-): Notification[] | null {
+): gqlTypes.Notification[] | null {
   if (!notifs || !notifs.length) return null;
   return notifs.map(mapNotification);
   // const arr: Array<DbNewComment | DbNewFollower> = [];
