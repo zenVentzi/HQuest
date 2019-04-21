@@ -40,8 +40,8 @@ const getSubcriptionOptions = () => {
       let updatedNotifications: NotificationFieldsFragment[] = [];
       if (oldNotifications) {
         updatedNotifications = [
-          ...oldNotifications,
-          subscriptionData.data.newNotification
+          subscriptionData.data.newNotification,
+          ...oldNotifications
         ];
       } else {
         updatedNotifications = [subscriptionData.data.newNotification];

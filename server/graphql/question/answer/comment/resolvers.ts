@@ -113,7 +113,8 @@ const Mutation: Mutation = {
       user!.id === likedGqlComment.user.id;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
-      await services.notification.onEditionLike(
+      await services.notification.onCommentLike(
+        likedComment,
         answerId,
         answerEditionId,
         user!.id
