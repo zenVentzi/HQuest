@@ -111,7 +111,7 @@ class NotificationService {
     if (userNotifs && userNotifs.length) {
       userNotifs.forEach(notif => {
         if (
-          notif.type === DbTypes.NotificationType.AnswerEditionLike &&
+          notif.type === DbTypes.NotificationType.CommentLike &&
           (notif as DbTypes.CommentLike).commentId ===
             dbComment._id.toHexString()
         ) {
