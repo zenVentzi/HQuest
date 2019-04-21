@@ -188,6 +188,12 @@ class CommentService {
           currentLiker.numOfLikes = userLikes;
         }
       });
+      if (!prevUserLikes) {
+        likedComment.likes.likers.push({
+          numOfLikes: userLikes,
+          user: liker.toObject()
+        });
+      }
       likedComment.likes.total =
         likedComment.likes.total - prevUserLikes + userLikes;
     }
