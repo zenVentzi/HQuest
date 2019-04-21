@@ -17,13 +17,17 @@ const Notification: NotificationResolvers = {
     authMiddleware(context.user);
 
     switch (obj.type) {
-      case "NEW_COMMENT":
-      case "COMMENT_MENTION":
+      case NotificationType.NewComment:
+      case NotificationType.CommentMention:
         return "NewComment";
-      case "NEW_FOLLOWER":
+      case NotificationType.NewFollower:
         return "NewFollower";
       case NotificationType.AnswerEditionMention:
         return "AnswerEditionMention";
+      case NotificationType.AnswerEditionLike:
+        return "AnswerEditionLike";
+      case NotificationType.CommentLike:
+        return "CommentLike";
     }
 
     throw Error(`unknown type, ${obj.type}`);
@@ -32,6 +36,7 @@ const Notification: NotificationResolvers = {
 
 type Query = Required<Pick<QueryResolvers, "notifications">>;
 type Mutation = Required<Pick<MutationResolvers, "notifsMarkSeen">>;
+// type Subscription = SubscriptionResolvers["newNotification"];
 type Subscription = Required<Pick<SubscriptionResolvers, "newNotification">>;
 
 const Query: Query = {
@@ -57,9 +62,11 @@ const Mutation: Mutation = {
 };
 
 // fix the type
-const Subscription: any = {
+const Subscription: Subscription = {
   newNotification: {
-    resolve: payload => payload.notif, // this needs gqlMapper
+    resolve: payload => {
+      return payload.newNotification;
+    },
     subscribe: withFilter(
       (_, __, context) => {
         authMiddleware(context.user);

@@ -73,14 +73,15 @@ const Mutation: Mutation = {
       user!.id,
       userLikes
     );
-    // FIXME  newsfeed
-    // await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
     const answer = await services.answer.getAnswerById(answerId);
     const editionOwnerId = answer.userId;
     const attempt_to_suck_own_dick_for_likes_and_exp =
       user!.id === editionOwnerId;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
+      // FIXME  newsfeed
+      // await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
+      await services.notification.onEditionLike(answer, editionId, user!.id);
       await services.user.addExperience(2, editionOwnerId);
     }
     return mapAnswerEdition(dbEdition, user!.id);

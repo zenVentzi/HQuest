@@ -8,7 +8,9 @@ import {
   NotificationFieldsFragment,
   NotificationType,
   NewComment,
-  AnswerEditionMention
+  CommentLike,
+  AnswerEditionMention,
+  AnswerEditionLike
 } from "GqlClient/autoGenTypes";
 import TextWithMentions from "Reusable/TextWithMentions";
 
@@ -72,14 +74,18 @@ const getLink = (notif: NotificationFieldsFragment): string => {
     case NotificationType.NewFollower:
       return `/userProfile/${performerId}`;
     case NotificationType.NewComment:
-    case NotificationType.CommentMention: {
-      const commentNotif = notif as NewComment;
+    case NotificationType.CommentMention:
+    case NotificationType.CommentLike: {
+      const commentNotif = notif as NewComment | CommentLike;
       return `/userProfile/${commentNotif.userProfileId}/${
         commentNotif.questionId
       }/${commentNotif.editionId}/${commentNotif.commentId}`;
     }
-    case NotificationType.AnswerEditionMention: {
-      const editionMentionNotif = notif as AnswerEditionMention;
+    case NotificationType.AnswerEditionMention:
+    case NotificationType.AnswerEditionLike: {
+      const editionMentionNotif = notif as
+        | AnswerEditionMention
+        | AnswerEditionLike;
       return `/userProfile/${editionMentionNotif.userProfileId}/${
         editionMentionNotif.questionId
       }/${editionMentionNotif.editionId}`;
@@ -133,7 +139,7 @@ const Notif = ({ onClick, notif }: NotifProps) => {
         onMouseLeave={toggleTheme}
       >
         <Left>
-          <Avatar src={notif.performerAvatarSrc} invertColors />
+          <Avatar src={notif.performerAvatarSrc} invertColors={true} />
         </Left>
         <Right>
           <Text>

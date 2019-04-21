@@ -4,6 +4,7 @@ import * as DbTypes from "../dbTypes";
 // import { gqlMapper } from "../gqlMapper";
 import { NEW_NOTIFICATION, pubsub } from "../PubSub";
 import { Models } from "../models";
+import { mapNotification } from "../graphql/notification/gqlMapper";
 
 const { ObjectId } = mongoose.Types;
 
@@ -71,12 +72,50 @@ class NotificationService {
   ): Promise<void> {
     if (!mentionedUsersIds || !mentionedUsersIds.length) return;
 
-    const notifForMentionedUsers = await this.createAnswerEditionNotification(
+    const notifForMentionedUsers = await this.createAnswerEditionMentionNotification(
       DbTypes.NotificationType.AnswerEditionMention,
       dbAnswer,
       performerId
     );
     await this.notifyMany(mentionedUsersIds, notifForMentionedUsers);
+  }
+
+  public async onEditionLike(
+    dbAnswer: DbTypes.Answer,
+    answerEditionId: string,
+    performerId: string
+  ): Promise<void> {
+    const edition = dbAnswer.editions.find(e => e._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(`edition cannot be null`);
+    }
+
+    let alreadyNotified = false;
+    const user = await this.models.user.findById(dbAnswer.userId);
+    if (!user) {
+      throw Error(`user cannot be null, id: ${dbAnswer.userId}`);
+    }
+    const userNotifs = user.notifications;
+    if (userNotifs && userNotifs.length) {
+      userNotifs.forEach(notif => {
+        if (
+          notif.type === DbTypes.NotificationType.AnswerEditionLike &&
+          (notif as DbTypes.AnswerEditionLike).editionId === answerEditionId
+        ) {
+          alreadyNotified = true;
+        }
+      });
+    }
+
+    if (alreadyNotified) return;
+
+    const notifForEditionOwner = await this.createAnswerEditionLikeNotification(
+      DbTypes.NotificationType.AnswerEditionLike,
+      dbAnswer,
+      edition,
+      performerId
+    );
+    await this.notifyOne(dbAnswer.userId, notifForEditionOwner);
   }
 
   public async onNewFollower(
@@ -135,7 +174,7 @@ class NotificationService {
 
     const payload = {
       receiverId: receiverId.toString(),
-      notif
+      newNotification: mapNotification(notif)
       // notif: gqlMapper.getNotification(notif)
     };
 
@@ -153,14 +192,14 @@ class NotificationService {
 
     const payload = {
       receiversIds,
-      notif
+      newNotification: mapNotification(notif)
       // notif: gqlMapper.getNotification(notif)
     };
 
     pubsub.publish(NEW_NOTIFICATION, payload);
   }
 
-  private async createAnswerEditionNotification(
+  private async createAnswerEditionMentionNotification(
     type: DbTypes.NotificationType.AnswerEditionMention,
     answer: DbTypes.Answer,
     performerId: string
@@ -179,6 +218,33 @@ class NotificationService {
       userProfileId: answer.userId,
       questionId: answer.questionId,
       editionId: lastEdition._id.toHexString(),
+      performerId,
+      performerAvatarSrc: performer.avatarSrc,
+      text: notifText,
+      seen: false
+    };
+    return notif;
+  }
+
+  private async createAnswerEditionLikeNotification(
+    type: DbTypes.NotificationType.AnswerEditionLike,
+    answer: DbTypes.Answer,
+    edition: DbTypes.Edition,
+    performerId: string
+  ): Promise<DbTypes.Notification> {
+    const performer = await this.models.user.findById(performerId).lean();
+
+    const performerName = `${performer.firstName} ${performer.surName}`;
+    const notifText = `${performerName} liked your edition: "${
+      edition.value
+    } "`;
+
+    const notif: DbTypes.AnswerEditionLike = {
+      _id: ObjectId(),
+      type,
+      userProfileId: answer.userId,
+      questionId: answer.questionId,
+      editionId: edition._id.toHexString(),
       performerId,
       performerAvatarSrc: performer.avatarSrc,
       text: notifText,

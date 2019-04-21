@@ -25,6 +25,19 @@ export type AnswerEdition = {
   comments?: Maybe<Array<Comment>>;
 };
 
+export type AnswerEditionLike = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
+};
+
 export type AnswerEditionMention = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
@@ -69,6 +82,20 @@ export type Comment = {
   user: User;
   value: Scalars["String"];
   likes?: Maybe<Likes>;
+};
+
+export type CommentLike = Notification & {
+  id: Scalars["ID"];
+  type: NotificationType;
+  performerId: Scalars["ID"];
+  performerAvatarSrc: Scalars["String"];
+  text: Scalars["String"];
+  seen: Scalars["Boolean"];
+  createdOn: Scalars["DateTime"];
+  userProfileId: Scalars["String"];
+  questionId: Scalars["ID"];
+  editionId: Scalars["ID"];
+  commentId: Scalars["ID"];
 };
 
 export type CommentNews = NewsBase & {
@@ -295,6 +322,8 @@ export type Notification = {
 };
 
 export enum NotificationType {
+  AnswerEditionLike = "ANSWER_EDITION_LIKE",
+  CommentLike = "COMMENT_LIKE",
   NewFollower = "NEW_FOLLOWER",
   NewComment = "NEW_COMMENT",
   CommentMention = "COMMENT_MENTION",
