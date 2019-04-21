@@ -14,17 +14,27 @@ class NotificationService {
   public async onNewComment(
     performerId: string,
     answerId: string,
+    answerEditionId: string,
     dbComment: DbTypes.Comment,
     mentionedUsersIds: string[] | null | undefined
   ): Promise<void> {
-    const answer = (await this.models.answer.findById(answerId))!;
+    const answer = await this.models.answer.findById(answerId);
+    if (!answer) {
+      throw Error(`could not find answer with id ${answerId}`);
+    }
+
+    const edition = answer.editions.find(e => e._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(`could not find edition with id: ${answerEditionId}`);
+    }
     const ownsAnswer = answer.userId === performerId;
     if (!ownsAnswer) {
       const notifForAnswerOwner = await this.createCommentNotification(
         DbTypes.NotificationType.NewComment,
         performerId,
         dbComment,
-        answer
+        answer,
+        edition
       );
 
       await this.notifyOne(answer.userId, notifForAnswerOwner);
@@ -34,7 +44,8 @@ class NotificationService {
         DbTypes.NotificationType.CommentMention,
         performerId,
         dbComment,
-        answer
+        answer,
+        edition
       );
       await this.notifyMany(mentionedUsersIds, notifForMentionedUsers);
     }
@@ -43,26 +54,82 @@ class NotificationService {
   public async onCommentEdit(
     performerId: string,
     answerId: string,
+    answerEditionId: string,
     dbComment: DbTypes.Comment,
     mentionedUsersIds: string[] | null | undefined
   ): Promise<void> {
     if (!mentionedUsersIds || mentionedUsersIds.length === 0) return;
-    const answer = (await this.models.answer.findById(answerId))!;
+    const answer = await this.models.answer.findById(answerId);
+    if (!answer) {
+      throw Error(`could not find answer with id ${answerId}`);
+    }
 
-    const notMentionedUserIds = await this.filterOutMentioned(
+    const edition = answer.editions.find(e => e._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(`could not find edition with id: ${answerEditionId}`);
+    }
+
+    const newlyMentionedUserIds = await this.filterOutMentioned(
       dbComment,
       mentionedUsersIds
     );
 
-    if (notMentionedUserIds.length > 0) {
+    if (newlyMentionedUserIds.length > 0) {
       const notif = await this.createCommentNotification(
         DbTypes.NotificationType.CommentMention,
         performerId,
         dbComment,
-        answer
+        answer,
+        edition
       );
-      await this.notifyMany(notMentionedUserIds, notif);
+      await this.notifyMany(newlyMentionedUserIds, notif);
     }
+  }
+
+  public async onCommentLike(
+    dbComment: DbTypes.Comment,
+    answerId: string,
+    answerEditionId: string,
+    performerId: string
+  ): Promise<void> {
+    const answer = await this.models.answer.findById(answerId);
+    if (!answer) {
+      throw Error(`could not find answer with id ${answerId}`);
+    }
+
+    const edition = answer.editions.find(e => e._id.equals(answerEditionId));
+    if (!edition) {
+      throw Error(`could not find edition with id: ${answerEditionId}`);
+    }
+
+    let alreadyNotified = false;
+    const commentOwner = await this.models.user.findById(answer.userId);
+    if (!commentOwner) {
+      throw Error(`could not find commentOwner with id: ${answer.userId}`);
+    }
+    const userNotifs = commentOwner.notifications;
+    if (userNotifs && userNotifs.length) {
+      userNotifs.forEach(notif => {
+        if (
+          notif.type === DbTypes.NotificationType.AnswerEditionLike &&
+          (notif as DbTypes.CommentLike).commentId ===
+            dbComment._id.toHexString()
+        ) {
+          alreadyNotified = true;
+        }
+      });
+    }
+
+    if (alreadyNotified) return;
+
+    const notifForCommentOwner = await this.createCommentNotification(
+      DbTypes.NotificationType.CommentLike,
+      performerId,
+      dbComment,
+      answer,
+      edition
+    );
+    await this.notifyOne(answer.userId, notifForCommentOwner);
   }
 
   public async onNewAnswerEdition(
@@ -81,19 +148,24 @@ class NotificationService {
   }
 
   public async onEditionLike(
-    dbAnswer: DbTypes.Answer,
+    answerId: string,
     answerEditionId: string,
     performerId: string
   ): Promise<void> {
-    const edition = dbAnswer.editions.find(e => e._id.equals(answerEditionId));
+    const answer = await this.models.answer.findById(answerId);
+    if (!answer) {
+      throw Error(`could not find answer with id ${answerId}`);
+    }
+
+    const edition = answer.editions.find(e => e._id.equals(answerEditionId));
     if (!edition) {
-      throw Error(`edition cannot be null`);
+      throw Error(`could not find edition with id: ${answerEditionId}`);
     }
 
     let alreadyNotified = false;
-    const user = await this.models.user.findById(dbAnswer.userId);
+    const user = await this.models.user.findById(answer.userId);
     if (!user) {
-      throw Error(`user cannot be null, id: ${dbAnswer.userId}`);
+      throw Error(`user cannot be null, id: ${answer.userId}`);
     }
     const userNotifs = user.notifications;
     if (userNotifs && userNotifs.length) {
@@ -111,11 +183,11 @@ class NotificationService {
 
     const notifForEditionOwner = await this.createAnswerEditionLikeNotification(
       DbTypes.NotificationType.AnswerEditionLike,
-      dbAnswer,
+      answer,
       edition,
       performerId
     );
-    await this.notifyOne(dbAnswer.userId, notifForEditionOwner);
+    await this.notifyOne(answer.userId, notifForEditionOwner);
   }
 
   public async onNewFollower(
@@ -256,26 +328,47 @@ class NotificationService {
   private async createCommentNotification(
     type:
       | DbTypes.NotificationType.NewComment
-      | DbTypes.NotificationType.CommentMention,
+      | DbTypes.NotificationType.CommentMention
+      | DbTypes.NotificationType.CommentLike,
     performerId: string,
     dbComment: DbTypes.Comment,
-    answer: DbTypes.Answer
-  ): Promise<DbTypes.NewComment> {
+    answer: DbTypes.Answer,
+    edition: DbTypes.Edition
+  ): Promise<DbTypes.NewComment | DbTypes.CommentLike> {
     const performer = await this.models.user.findById(performerId).lean();
 
-    const lastEdition = answer.editions[answer.editions.length - 1];
+    // const lastEdition = answer.editions[answer.editions.length - 1];
     const performerName = `${performer.firstName} ${performer.surName}`;
-    const notifText =
-      type === DbTypes.NotificationType.NewComment
-        ? `${performerName} commented: "${dbComment.value} "`
-        : `${performerName} mentioned you in comment: "${dbComment.value} "`;
-    /* here we have to save the userId from answer */
-    const notif: DbTypes.NewComment = {
+    if (type !== DbTypes.NotificationType.CommentLike) {
+      const notifText =
+        type === DbTypes.NotificationType.NewComment
+          ? `${performerName} commented: "${dbComment.value} "`
+          : `${performerName} mentioned you in comment: "${dbComment.value} "`;
+      /* here we have to save the userId from answer */
+      const notif: DbTypes.NewComment = {
+        _id: ObjectId(),
+        type,
+        userProfileId: answer.userId,
+        questionId: answer.questionId,
+        editionId: edition._id.toHexString(),
+        commentId: dbComment._id.toString(),
+        performerId,
+        performerAvatarSrc: performer.avatarSrc,
+        text: notifText,
+        seen: false
+      };
+      return notif;
+    }
+    const notifText = `${performerName} liked your comment: "${
+      dbComment.value
+    } "`;
+
+    const notif: DbTypes.CommentLike = {
       _id: ObjectId(),
       type,
       userProfileId: answer.userId,
       questionId: answer.questionId,
-      editionId: lastEdition._id.toHexString(),
+      editionId: edition._id.toHexString(),
       commentId: dbComment._id.toString(),
       performerId,
       performerAvatarSrc: performer.avatarSrc,

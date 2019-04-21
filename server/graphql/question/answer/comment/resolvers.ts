@@ -35,6 +35,7 @@ const Mutation: Mutation = {
     await services.notification.onNewComment(
       user!.id,
       answerId,
+      answerEditionId,
       dbComment,
       mentionedUsers
     );
@@ -61,6 +62,7 @@ const Mutation: Mutation = {
     await services.notification.onCommentEdit(
       user!.id,
       answerId,
+      answerEditionId,
       dbComment,
       mentionedUsers
     );
@@ -111,6 +113,11 @@ const Mutation: Mutation = {
       user!.id === likedGqlComment.user.id;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
+      await services.notification.onEditionLike(
+        answerId,
+        answerEditionId,
+        user!.id
+      );
       await services.user.addExperience(1, likedGqlComment.user.id);
     }
     return likedGqlComment;
