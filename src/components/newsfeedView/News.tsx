@@ -14,7 +14,6 @@ const News = ({ news }: NewsProps) => {
   let NewsComponent;
 
   switch (news.type) {
-    case NewsType.NewAnswer:
     case NewsType.NewAnswerEdition:
       NewsComponent = Answer;
       break;

@@ -1,5 +1,4 @@
 enum NewsType {
-  NEW_ANSWER
   NEW_ANSWER_EDITION
   NEW_COMMENT
   NEW_FOLLOWER
@@ -13,7 +12,7 @@ interface NewsBase {
   createdOn: DateTime!
 }
 
-type AnswerNews implements NewsBase {
+type NewAnswerEditionNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
@@ -21,7 +20,7 @@ type AnswerNews implements NewsBase {
   createdOn: DateTime!
 }
 
-type CommentNews implements NewsBase {
+type NewCommentNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
@@ -58,8 +57,8 @@ type CommentLikeNews implements NewsBase {
 }
 
 union News =
-    AnswerNews
-  | CommentNews
+    NewAnswerEditionNews
+  | NewCommentNews
   | NewFollowerNews
   | EditionLikeNews
   | CommentLikeNews

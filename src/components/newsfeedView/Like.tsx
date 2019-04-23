@@ -50,6 +50,7 @@ const Like = ({ news }: LikeProps) => {
     topText = `Liked their ${likedObject} ${getTime(news.createdOn)} `;
     bottomText = null;
   } else if (isLoggedUserAnwer) {
+    return null; // the user will have notification for that anyway
     topText = `Liked your ${likedObject} ${getTime(news.createdOn)} `;
     bottomText = null;
   } else {

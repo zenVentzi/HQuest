@@ -103,6 +103,7 @@ const NotificationsGQL = ({ children }: NotificationsGQLProps) => {
       {({ loading, error, data, subscribeToMore }) => {
         // return null;
         if (!subscribed.current) {
+          // @ts-ignore // incorrect @types for the n-th time
           subscribeToMore(getSubcriptionOptions());
           subscribed.current = true;
         }

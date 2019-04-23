@@ -81,11 +81,8 @@ const mapNews: MapNews = (
         commentId: news.commentId
       };
       return gqlNews;
-    } else if (
-      news.type === dbTypes.NewsType.NewAnswer ||
-      news.type === dbTypes.NewsType.NewAnswerEdition
-    ) {
-      const gqlNews: gqlTypes.AnswerNews = {
+    } else if (news.type === dbTypes.NewsType.NewAnswerEdition) {
+      const gqlNews: gqlTypes.NewAnswerEditionNews = {
         createdOn,
         type: news.type,
         performer,
@@ -94,7 +91,7 @@ const mapNews: MapNews = (
       };
       return gqlNews;
     } else if (news.type === dbTypes.NewsType.NewComment) {
-      const gqlNews: gqlTypes.CommentNews = {
+      const gqlNews: gqlTypes.NewCommentNews = {
         createdOn,
         type: news.type,
         commentId: news.commentId,
@@ -107,7 +104,9 @@ const mapNews: MapNews = (
     }
   }
 
-  return assertUnreachable(news.type);
+  throw Error(`unreachable path`);
+
+  // return assertUnreachable(news.type);
 };
 
 function assertUnreachable(x?: dbTypes.NewsType): never {

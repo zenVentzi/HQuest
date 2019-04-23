@@ -8,11 +8,10 @@ const NewsBase: gqlTypes.NewsBaseResolvers = {
     authMiddleware(context.user);
 
     switch (obj.type) {
-      case gqlTypes.NewsType.NewAnswer:
       case gqlTypes.NewsType.NewAnswerEdition:
-        return "AnswerNews";
+        return "NewAnswerEditionNews";
       case gqlTypes.NewsType.NewComment:
-        return "CommentNews";
+        return "NewCommentNews";
       case gqlTypes.NewsType.EditionLike:
         return "EditionLikeNews";
       case gqlTypes.NewsType.CommentLike:
@@ -31,11 +30,10 @@ const News: gqlTypes.NewsResolvers = {
     authMiddleware(context.user);
 
     switch (obj.type) {
-      case gqlTypes.NewsType.NewAnswer:
       case gqlTypes.NewsType.NewAnswerEdition:
-        return "AnswerNews";
+        return "NewAnswerEditionNews";
       case gqlTypes.NewsType.NewComment:
-        return "CommentNews";
+        return "NewCommentNews";
       case gqlTypes.NewsType.EditionLike:
         return "EditionLikeNews";
       case gqlTypes.NewsType.CommentLike:

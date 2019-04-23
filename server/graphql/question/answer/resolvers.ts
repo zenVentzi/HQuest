@@ -22,7 +22,7 @@ const Mutation: Mutation = {
     authMiddleware(user);
 
     const dbAnswer = await services.answer.edit(answerId, answerValue);
-    await services.newsfeed.onEditAnswer(answerId, user!.id);
+    await services.newsfeed.onNewAnswerEdition(answerId, user!.id);
     await services.notification.onNewAnswerEdition(
       dbAnswer,
       user!.id,
@@ -44,7 +44,10 @@ const Mutation: Mutation = {
       answerValue
     );
 
-    await services.newsfeed.onNewAnswer(dbAnswer._id.toHexString(), user!.id);
+    await services.newsfeed.onNewAnswerEdition(
+      dbAnswer._id.toHexString(),
+      user!.id
+    );
     await services.notification.onNewAnswerEdition(
       dbAnswer,
       user!.id,

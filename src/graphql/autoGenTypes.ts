@@ -69,14 +69,6 @@ export type AnsweredQuestionEdge = Edge & {
   node: AnsweredQuestion;
 };
 
-export type AnswerNews = NewsBase & {
-  type: NewsType;
-  performer: User;
-  answerOwner: User;
-  question: AnsweredQuestion;
-  createdOn: Scalars["DateTime"];
-};
-
 export type Comment = {
   id: Scalars["ID"];
   user: User;
@@ -99,16 +91,6 @@ export type CommentLike = Notification & {
 };
 
 export type CommentLikeNews = NewsBase & {
-  type: NewsType;
-  performer: User;
-  answerOwner: User;
-  question: AnsweredQuestion;
-  editionId: Scalars["ID"];
-  commentId: Scalars["ID"];
-  createdOn: Scalars["DateTime"];
-};
-
-export type CommentNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
@@ -272,6 +254,14 @@ export type MutationFollowArgs = {
   follow: Scalars["Boolean"];
 };
 
+export type NewAnswerEditionNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  createdOn: Scalars["DateTime"];
+};
+
 export type NewComment = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
@@ -284,6 +274,16 @@ export type NewComment = Notification & {
   questionId: Scalars["ID"];
   editionId: Scalars["ID"];
   commentId: Scalars["ID"];
+};
+
+export type NewCommentNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  editionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
 };
 
 export type NewFollower = Notification & {
@@ -304,8 +304,8 @@ export type NewFollowerNews = NewsBase & {
 };
 
 export type News =
-  | AnswerNews
-  | CommentNews
+  | NewAnswerEditionNews
+  | NewCommentNews
   | NewFollowerNews
   | EditionLikeNews
   | CommentLikeNews;
@@ -317,7 +317,6 @@ export type NewsBase = {
 };
 
 export enum NewsType {
-  NewAnswer = "NEW_ANSWER",
   NewAnswerEdition = "NEW_ANSWER_EDITION",
   NewComment = "NEW_COMMENT",
   NewFollower = "NEW_FOLLOWER",
@@ -454,17 +453,18 @@ export type User = {
   followers?: Maybe<Array<Scalars["ID"]>>;
   experience: Scalars["Float"];
 };
-export type AnswerNewsFieldsFragment = { __typename?: "AnswerNews" } & {
+export type NewAnswerEditionNewsFieldsFragment = {
+  __typename?: "NewAnswerEditionNews";
+} & {
   performer: { __typename?: "User" } & UserFieldsFragment;
   question: {
     __typename?: "AnsweredQuestion";
   } & AnsweredQuestionFieldsFragment;
 };
 
-export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
-  CommentNews,
-  "editionId" | "commentId"
-> & {
+export type NewCommentNewsFieldsFragment = {
+  __typename?: "NewCommentNews";
+} & Pick<NewCommentNews, "editionId" | "commentId"> & {
     performer: { __typename?: "User" } & UserFieldsFragment;
     answerOwner: { __typename?: "User" } & UserFieldsFragment;
     question: {
@@ -506,8 +506,10 @@ export type NewsfeedQuery = { __typename?: "Query" } & {
     Array<
       Pick<NewsBase, "type" | "createdOn"> &
         (
-          | ({ __typename?: "AnswerNews" } & AnswerNewsFieldsFragment)
-          | ({ __typename?: "CommentNews" } & CommentNewsFieldsFragment)
+          | ({
+              __typename?: "NewAnswerEditionNews";
+            } & NewAnswerEditionNewsFieldsFragment)
+          | ({ __typename?: "NewCommentNews" } & NewCommentNewsFieldsFragment)
           | ({ __typename?: "EditionLikeNews" } & EditionLikeNewsFieldsFragment)
           | ({ __typename?: "CommentLikeNews" } & CommentLikeNewsFieldsFragment)
           | ({

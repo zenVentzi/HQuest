@@ -5,7 +5,7 @@ import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
-import { CommentNewsFieldsFragment, NewsBase } from "GqlClient/autoGenTypes";
+import { NewCommentNewsFieldsFragment, NewsBase } from "GqlClient/autoGenTypes";
 
 const NewCommentWrapper = styled.div`
   width: 100%;
@@ -27,7 +27,7 @@ const HeaderText = styled.div`
 const Body = styled.div``;
 
 interface NewCommentProps {
-  news: CommentNewsFieldsFragment & NewsBase;
+  news: NewCommentNewsFieldsFragment & NewsBase;
 }
 
 const NewComment = ({
@@ -43,6 +43,7 @@ const NewComment = ({
     topText = `Commented their answer ${getTime(createdOn)} `;
     bottomText = null;
   } else if (isLoggedUserAnwer) {
+    return null;
     topText = `Commented your edition ${getTime(createdOn)} `;
     bottomText = null;
   } else {

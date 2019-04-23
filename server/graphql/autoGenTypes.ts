@@ -69,14 +69,6 @@ export type AnsweredQuestionEdge = Edge & {
   node: AnsweredQuestion;
 };
 
-export type AnswerNews = NewsBase & {
-  type: NewsType;
-  performer: User;
-  answerOwner: User;
-  question: AnsweredQuestion;
-  createdOn: Scalars["DateTime"];
-};
-
 export type Comment = {
   id: Scalars["ID"];
   user: User;
@@ -99,16 +91,6 @@ export type CommentLike = Notification & {
 };
 
 export type CommentLikeNews = NewsBase & {
-  type: NewsType;
-  performer: User;
-  answerOwner: User;
-  question: AnsweredQuestion;
-  editionId: Scalars["ID"];
-  commentId: Scalars["ID"];
-  createdOn: Scalars["DateTime"];
-};
-
-export type CommentNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
@@ -272,6 +254,14 @@ export type MutationFollowArgs = {
   follow: Scalars["Boolean"];
 };
 
+export type NewAnswerEditionNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  createdOn: Scalars["DateTime"];
+};
+
 export type NewComment = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
@@ -284,6 +274,16 @@ export type NewComment = Notification & {
   questionId: Scalars["ID"];
   editionId: Scalars["ID"];
   commentId: Scalars["ID"];
+};
+
+export type NewCommentNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  editionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
 };
 
 export type NewFollower = Notification & {
@@ -304,8 +304,8 @@ export type NewFollowerNews = NewsBase & {
 };
 
 export type News =
-  | AnswerNews
-  | CommentNews
+  | NewAnswerEditionNews
+  | NewCommentNews
   | NewFollowerNews
   | EditionLikeNews
   | CommentLikeNews;
@@ -317,7 +317,6 @@ export type NewsBase = {
 };
 
 export enum NewsType {
-  NewAnswer = "NEW_ANSWER",
   NewAnswerEdition = "NEW_ANSWER_EDITION",
   NewComment = "NEW_COMMENT",
   NewFollower = "NEW_FOLLOWER",
@@ -607,17 +606,6 @@ export type AnsweredQuestionEdgeResolvers<
   node?: Resolver<AnsweredQuestion, ParentType, Context>;
 };
 
-export type AnswerNewsResolvers<
-  Context = ApolloContext,
-  ParentType = AnswerNews
-> = {
-  type?: Resolver<NewsType, ParentType, Context>;
-  performer?: Resolver<User, ParentType, Context>;
-  answerOwner?: Resolver<User, ParentType, Context>;
-  question?: Resolver<AnsweredQuestion, ParentType, Context>;
-  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
-};
-
 export type CommentResolvers<Context = ApolloContext, ParentType = Comment> = {
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   user?: Resolver<User, ParentType, Context>;
@@ -645,19 +633,6 @@ export type CommentLikeResolvers<
 export type CommentLikeNewsResolvers<
   Context = ApolloContext,
   ParentType = CommentLikeNews
-> = {
-  type?: Resolver<NewsType, ParentType, Context>;
-  performer?: Resolver<User, ParentType, Context>;
-  answerOwner?: Resolver<User, ParentType, Context>;
-  question?: Resolver<AnsweredQuestion, ParentType, Context>;
-  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
-  commentId?: Resolver<Scalars["ID"], ParentType, Context>;
-  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
-};
-
-export type CommentNewsResolvers<
-  Context = ApolloContext,
-  ParentType = CommentNews
 > = {
   type?: Resolver<NewsType, ParentType, Context>;
   performer?: Resolver<User, ParentType, Context>;
@@ -800,6 +775,17 @@ export type MutationResolvers<
   >;
 };
 
+export type NewAnswerEditionNewsResolvers<
+  Context = ApolloContext,
+  ParentType = NewAnswerEditionNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  answerOwner?: Resolver<User, ParentType, Context>;
+  question?: Resolver<AnsweredQuestion, ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
+};
+
 export type NewCommentResolvers<
   Context = ApolloContext,
   ParentType = NewComment
@@ -815,6 +801,19 @@ export type NewCommentResolvers<
   questionId?: Resolver<Scalars["ID"], ParentType, Context>;
   editionId?: Resolver<Scalars["ID"], ParentType, Context>;
   commentId?: Resolver<Scalars["ID"], ParentType, Context>;
+};
+
+export type NewCommentNewsResolvers<
+  Context = ApolloContext,
+  ParentType = NewCommentNews
+> = {
+  type?: Resolver<NewsType, ParentType, Context>;
+  performer?: Resolver<User, ParentType, Context>;
+  answerOwner?: Resolver<User, ParentType, Context>;
+  question?: Resolver<AnsweredQuestion, ParentType, Context>;
+  editionId?: Resolver<Scalars["ID"], ParentType, Context>;
+  commentId?: Resolver<Scalars["ID"], ParentType, Context>;
+  createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
 };
 
 export type NewFollowerResolvers<
@@ -842,8 +841,8 @@ export type NewFollowerNewsResolvers<
 
 export type NewsResolvers<Context = ApolloContext, ParentType = News> = {
   __resolveType: TypeResolveFn<
-    | "AnswerNews"
-    | "CommentNews"
+    | "NewAnswerEditionNews"
+    | "NewCommentNews"
     | "NewFollowerNews"
     | "EditionLikeNews"
     | "CommentLikeNews",
@@ -857,8 +856,8 @@ export type NewsBaseResolvers<
   ParentType = NewsBase
 > = {
   __resolveType: TypeResolveFn<
-    | "AnswerNews"
-    | "CommentNews"
+    | "NewAnswerEditionNews"
+    | "NewCommentNews"
     | "NewFollowerNews"
     | "EditionLikeNews"
     | "CommentLikeNews",
@@ -1018,11 +1017,9 @@ export type Resolvers<Context = ApolloContext> = {
   AnsweredQuestion?: AnsweredQuestionResolvers<Context>;
   AnsweredQuestionConnection?: AnsweredQuestionConnectionResolvers<Context>;
   AnsweredQuestionEdge?: AnsweredQuestionEdgeResolvers<Context>;
-  AnswerNews?: AnswerNewsResolvers<Context>;
   Comment?: CommentResolvers<Context>;
   CommentLike?: CommentLikeResolvers<Context>;
   CommentLikeNews?: CommentLikeNewsResolvers<Context>;
-  CommentNews?: CommentNewsResolvers<Context>;
   Connection?: ConnectionResolvers;
   DateTime?: GraphQLScalarType;
   Edge?: EdgeResolvers;
@@ -1031,7 +1028,9 @@ export type Resolvers<Context = ApolloContext> = {
   Likes?: LikesResolvers<Context>;
   LoginResult?: LoginResultResolvers<Context>;
   Mutation?: MutationResolvers<Context>;
+  NewAnswerEditionNews?: NewAnswerEditionNewsResolvers<Context>;
   NewComment?: NewCommentResolvers<Context>;
+  NewCommentNews?: NewCommentNewsResolvers<Context>;
   NewFollower?: NewFollowerResolvers<Context>;
   NewFollowerNews?: NewFollowerNewsResolvers<Context>;
   News?: NewsResolvers;

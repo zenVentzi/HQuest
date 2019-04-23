@@ -234,14 +234,14 @@ export interface NewsBase {
   performerId: string;
 }
 
-export interface AnswerNews extends NewsBase {
-  type: NewsType.NewAnswer | NewsType.NewAnswerEdition;
+export interface NewAnswerEditionNews extends NewsBase {
+  type: NewsType.NewAnswerEdition;
   answerOwnerId: string;
   answerId: string;
   // toObject(options?: DocumentToObjectOptions): AnswerNews;
 }
 
-export interface CommentNews extends NewsBase {
+export interface NewCommentNews extends NewsBase {
   type: NewsType.NewComment;
   answerOwnerId: string;
   answerId: string;
@@ -277,8 +277,8 @@ export const isCommentLikeNews = (
 };
 
 export type News =
-  | AnswerNews
-  | CommentNews
+  | NewAnswerEditionNews
+  | NewCommentNews
   | NewFollowerNews
   | EditionLikeNews
   | CommentLikeNews;

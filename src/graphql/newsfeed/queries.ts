@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 import { AnsweredQuestionFields, UserFields } from "GqlClient/fragments";
 
-const AnswerNewsFields = gql`
-  fragment AnswerNewsFields on AnswerNews {
+const NewAnswerEditionNewsFields = gql`
+  fragment NewAnswerEditionNewsFields on NewAnswerEditionNews {
     performer {
       ...UserFields
     }
@@ -14,8 +14,8 @@ const AnswerNewsFields = gql`
   ${AnsweredQuestionFields}
 `;
 
-const CommentNewsFields = gql`
-  fragment CommentNewsFields on CommentNews {
+const NewCommentNewsFields = gql`
+  fragment NewCommentNewsFields on NewCommentNews {
     performer {
       ...UserFields
     }
@@ -84,11 +84,11 @@ export const GET_NEWSFEED = gql`
     newsfeed {
       type
       createdOn
-      ... on AnswerNews {
-        ...AnswerNewsFields
+      ... on NewAnswerEditionNews {
+        ...NewAnswerEditionNewsFields
       }
-      ... on CommentNews {
-        ...CommentNewsFields
+      ... on NewCommentNews {
+        ...NewCommentNewsFields
       }
       ... on EditionLikeNews {
         ...EditionLikeNewsFields
@@ -101,8 +101,8 @@ export const GET_NEWSFEED = gql`
       }
     }
   }
-  ${AnswerNewsFields}
-  ${CommentNewsFields}
+  ${NewAnswerEditionNewsFields}
+  ${NewCommentNewsFields}
   ${EditionLikeNewsFields}
   ${CommentLikeNewsFields}
   ${NewFollowerNewsFields}

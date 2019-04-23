@@ -68,7 +68,7 @@ class NewsfeedService {
     commentId: string,
     performerId: string
   ): Promise<void> {
-    const news: DbTypes.CommentNews = {
+    const news: DbTypes.NewCommentNews = {
       _id: ObjectId(),
       type: DbTypes.NewsType.NewComment,
       performerId,
@@ -81,18 +81,18 @@ class NewsfeedService {
     await this.models.newsfeed.create(news);
   }
 
-  public async onNewAnswer(
-    answerId: string,
-    performerId: string
-  ): Promise<void> {
-    await this.onAnswerChange(
-      DbTypes.NewsType.NewAnswer,
-      answerId,
-      performerId
-    );
-  }
+  // public async onNewAnswer(
+  //   answerId: string,
+  //   performerId: string
+  // ): Promise<void> {
+  //   await this.onAnswerChange(
+  //     DbTypes.NewsType.NewAnswer,
+  //     answerId,
+  //     performerId
+  //   );
+  // }
 
-  public async onEditAnswer(
+  public async onNewAnswerEdition(
     answerId: string,
     performerId: string
   ): Promise<void> {
@@ -200,11 +200,11 @@ class NewsfeedService {
   }
 
   private async onAnswerChange(
-    type: DbTypes.NewsType.NewAnswer | DbTypes.NewsType.NewAnswerEdition,
+    type: DbTypes.NewsType.NewAnswerEdition,
     answerId: string,
     performerId: string
   ): Promise<void> {
-    const news: DbTypes.AnswerNews = {
+    const news: DbTypes.NewAnswerEditionNews = {
       _id: ObjectId(),
       type,
       performerId,

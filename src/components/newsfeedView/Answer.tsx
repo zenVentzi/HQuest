@@ -4,7 +4,7 @@ import User from "Reusable/UserRow";
 import { getTime } from ".";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import {
-  AnswerNewsFieldsFragment,
+  NewAnswerEditionNewsFieldsFragment,
   NewsBase,
   NewsType
 } from "GqlClient/autoGenTypes";
@@ -31,7 +31,7 @@ const HeaderBottom = styled.div`
 const Body = styled.div``;
 
 interface NewAnswerEditionProps {
-  news: AnswerNewsFieldsFragment & NewsBase;
+  news: NewAnswerEditionNewsFieldsFragment & NewsBase;
 }
 
 const NewAnswerEdition = ({
@@ -40,13 +40,8 @@ const NewAnswerEdition = ({
   let text;
 
   switch (type) {
-    case NewsType.NewAnswer:
-      text = `Added new answer ${getTime(createdOn)}:`;
-      break;
     case NewsType.NewAnswerEdition:
-      text = `Edited answer ${getTime(createdOn)}:`;
-      break;
-    default:
+      text = `Added new edition ${getTime(createdOn)}:`;
       break;
   }
   return (
