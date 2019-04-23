@@ -2,8 +2,9 @@ enum NewsType {
   NEW_ANSWER
   NEW_ANSWER_EDITION
   NEW_COMMENT
-  NEW_LIKE
   NEW_FOLLOWER
+  EDITION_LIKE
+  COMMENT_LIKE
 }
 
 interface NewsBase {
@@ -25,6 +26,7 @@ type CommentNews implements NewsBase {
   performer: User!
   answerOwner: User!
   question: AnsweredQuestion!
+  editionId: ID!
   commentId: ID!
   createdOn: DateTime!
 }
@@ -36,15 +38,31 @@ type NewFollowerNews implements NewsBase {
   createdOn: DateTime!
 }
 
-type NewLikeNews implements NewsBase {
+type EditionLikeNews implements NewsBase {
   type: NewsType!
   performer: User!
   answerOwner: User!
   question: AnsweredQuestion!
+  editionId: ID!
   createdOn: DateTime!
 }
 
-union News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews
+type CommentLikeNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: AnsweredQuestion!
+  editionId: ID!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+union News =
+    AnswerNews
+  | CommentNews
+  | NewFollowerNews
+  | EditionLikeNews
+  | CommentLikeNews
 
 type Query {
   newsfeed: [NewsBase!]

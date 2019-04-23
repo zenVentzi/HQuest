@@ -79,8 +79,7 @@ const Mutation: Mutation = {
       user!.id === editionOwnerId;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
-      // FIXME  newsfeed
-      // await services.newsfeed.onLikeAnswer(dbAnswer, user!.id);
+      await services.newsfeed.onLikeEdition(answer, editionId, user!.id);
       await services.notification.onEditionLike(answerId, editionId, user!.id);
       await services.user.addExperience(2, editionOwnerId);
     }

@@ -25,14 +25,15 @@ const CommentNewsFields = gql`
     question {
       ...AnsweredQuestionFields
     }
+    editionId
     commentId
   }
   ${UserFields}
   ${AnsweredQuestionFields}
 `;
 
-const NewLikeNewsFields = gql`
-  fragment NewLikeNewsFields on NewLikeNews {
+const EditionLikeNewsFields = gql`
+  fragment EditionLikeNewsFields on EditionLikeNews {
     performer {
       ...UserFields
     }
@@ -42,6 +43,25 @@ const NewLikeNewsFields = gql`
     question {
       ...AnsweredQuestionFields
     }
+    editionId
+  }
+  ${UserFields}
+  ${AnsweredQuestionFields}
+`;
+
+const CommentLikeNewsFields = gql`
+  fragment CommentLikeNewsFields on CommentLikeNews {
+    performer {
+      ...UserFields
+    }
+    answerOwner {
+      ...UserFields
+    }
+    question {
+      ...AnsweredQuestionFields
+    }
+    editionId
+    commentId
   }
   ${UserFields}
   ${AnsweredQuestionFields}
@@ -70,8 +90,11 @@ export const GET_NEWSFEED = gql`
       ... on CommentNews {
         ...CommentNewsFields
       }
-      ... on NewLikeNews {
-        ...NewLikeNewsFields
+      ... on EditionLikeNews {
+        ...EditionLikeNewsFields
+      }
+      ... on CommentLikeNews {
+        ...CommentLikeNewsFields
       }
       ... on NewFollowerNews {
         ...NewFollowerNewsFields
@@ -80,6 +103,7 @@ export const GET_NEWSFEED = gql`
   }
   ${AnswerNewsFields}
   ${CommentNewsFields}
-  ${NewLikeNewsFields}
+  ${EditionLikeNewsFields}
+  ${CommentLikeNewsFields}
   ${NewFollowerNewsFields}
 `;

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import distanceInWords from "date-fns/distance_in_words";
+// import distanceInWords from "date-fns/distance_in_words";
 import styled from "styled-components";
 import User from "Reusable/UserRow";
 import { getLoggedUserId } from "Utils";
@@ -31,7 +31,7 @@ interface NewCommentProps {
 }
 
 const NewComment = ({
-  news: { performer, answerOwner, question, commentId, createdOn }
+  news: { performer, answerOwner, question, editionId, commentId, createdOn }
 }: NewCommentProps) => {
   let topText;
   let bottomText;
@@ -43,11 +43,11 @@ const NewComment = ({
     topText = `Commented their answer ${getTime(createdOn)} `;
     bottomText = null;
   } else if (isLoggedUserAnwer) {
-    topText = `Commented your answer ${getTime(createdOn)} `;
+    topText = `Commented your edition ${getTime(createdOn)} `;
     bottomText = null;
   } else {
     topText = `commented on`;
-    bottomText = `answer ${getTime(createdOn)}`;
+    bottomText = `edition ${getTime(createdOn)}`;
   }
 
   return (
@@ -64,11 +64,12 @@ const NewComment = ({
       </Header>
       <Body>
         <AnsweredQuestion
-          scrollToComment={commentId}
           question={question}
+          editionId={editionId}
+          scrollToComment={commentId}
           totalQuestionsCount={0}
           isPersonal={false}
-          showComments={false}
+          showComments={true}
           // TODO fix hardcoded values
         />
       </Body>

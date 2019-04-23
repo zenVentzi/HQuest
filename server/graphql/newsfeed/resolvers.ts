@@ -1,25 +1,22 @@
-import {
-  QueryResolvers,
-  NewsBase,
-  NewsBaseResolvers,
-  NewsResolvers
-} from "../autoGenTypes";
+import * as gqlTypes from "../autoGenTypes";
 import { mapNewsfeed } from "./gqlMapper";
 import { ApolloContext } from "gqlContext";
 import { authMiddleware } from "../middlewares";
 
-const NewsBase: NewsBaseResolvers = {
+const NewsBase: gqlTypes.NewsBaseResolvers = {
   __resolveType(obj, context: ApolloContext, info) {
     authMiddleware(context.user);
 
     switch (obj.type) {
-      case "NEW_ANSWER":
-      case "NEW_ANSWER_EDITION":
+      case gqlTypes.NewsType.NewAnswer:
+      case gqlTypes.NewsType.NewAnswerEdition:
         return "AnswerNews";
-      case "NEW_COMMENT":
+      case gqlTypes.NewsType.NewComment:
         return "CommentNews";
-      case "NEW_LIKE":
-        return "NewLikeNews";
+      case gqlTypes.NewsType.EditionLike:
+        return "EditionLikeNews";
+      case gqlTypes.NewsType.CommentLike:
+        return "CommentLikeNews";
       case "NEW_FOLLOWER":
         return "NewFollowerNews";
 
@@ -29,18 +26,20 @@ const NewsBase: NewsBaseResolvers = {
   }
 };
 
-const News: NewsResolvers = {
+const News: gqlTypes.NewsResolvers = {
   __resolveType(obj, context, info) {
     authMiddleware(context.user);
 
     switch (obj.type) {
-      case "NEW_ANSWER":
-      case "NEW_ANSWER_EDITION":
+      case gqlTypes.NewsType.NewAnswer:
+      case gqlTypes.NewsType.NewAnswerEdition:
         return "AnswerNews";
-      case "NEW_COMMENT":
+      case gqlTypes.NewsType.NewComment:
         return "CommentNews";
-      case "NEW_LIKE":
-        return "NewLikeNews";
+      case gqlTypes.NewsType.EditionLike:
+        return "EditionLikeNews";
+      case gqlTypes.NewsType.CommentLike:
+        return "CommentLikeNews";
       case "NEW_FOLLOWER":
         return "NewFollowerNews";
 
@@ -50,7 +49,7 @@ const News: NewsResolvers = {
   }
 };
 
-type Query = Pick<QueryResolvers, "newsfeed">;
+type Query = Pick<gqlTypes.QueryResolvers, "newsfeed">;
 
 const Query: Query = {
   async newsfeed(_, __, { services, user }) {
@@ -58,7 +57,8 @@ const Query: Query = {
 
     const newsfeedDb = await services.newsfeed.getNewsfeed(user!.id);
     const newsfeedQuestions = await services.newsfeed.getNewsFeedQuestions(
-      newsfeedDb
+      newsfeedDb,
+      services.answer
     );
     const newsfeedUsers = await services.newsfeed.getNewsFeedUsers(newsfeedDb);
 

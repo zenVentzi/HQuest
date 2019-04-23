@@ -4,9 +4,9 @@ import {
   Types as GooseTypes,
   DocumentToObjectOptions
 } from "mongoose";
-import { NotificationType } from "./graphql/autoGenTypes";
+import { NotificationType, NewsType } from "./graphql/autoGenTypes";
 
-export { NotificationType };
+export { NotificationType, NewsType };
 
 // const a: bla = bla.
 export type ObjectId = GooseTypes.ObjectId;
@@ -220,13 +220,13 @@ export interface QuestionDoc extends Question, Document {
   toObject(options?: DocumentToObjectOptions): Question;
 }
 
-export enum NewsType {
-  NewAnswer = "NEW_ANSWER",
-  NewAnswerEdition = "NEW_ANSWER_EDITION",
-  NewComment = "NEW_COMMENT",
-  NewLike = "NEW_LIKE",
-  NewFollower = "NEW_FOLLOWER"
-}
+// export enum NewsType {
+//   NewAnswer = "NEW_ANSWER",
+//   NewAnswerEdition = "NEW_ANSWER_EDITION",
+//   NewComment = "NEW_COMMENT",
+//   NewLike = "NEW_LIKE",
+//   NewFollower = "NEW_FOLLOWER"
+// }
 
 export interface NewsBase {
   _id: ObjectId;
@@ -245,6 +245,7 @@ export interface CommentNews extends NewsBase {
   type: NewsType.NewComment;
   answerOwnerId: string;
   answerId: string;
+  editionId: string;
   commentId: string;
   // toObject(options?: DocumentToObjectOptions): CommentNews;
 }
@@ -255,14 +256,32 @@ export interface NewFollowerNews extends NewsBase {
   // toObject(options?: DocumentToObjectOptions): NewFollowerNews;
 }
 
-export interface NewLikeNews extends NewsBase {
-  type: NewsType.NewLike;
+export interface EditionLikeNews extends NewsBase {
+  type: NewsType.EditionLike;
   answerOwnerId: string;
   answerId: string;
-  // toObject(options?: DocumentToObjectOptions): NewLikeNews;
+  editionId: string;
+}
+export interface CommentLikeNews extends NewsBase {
+  type: NewsType.CommentLike;
+  answerOwnerId: string;
+  answerId: string;
+  editionId: string;
+  commentId: string;
 }
 
-export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+export const isCommentLikeNews = (
+  news: EditionLikeNews | CommentLikeNews
+): news is CommentLikeNews => {
+  return (news as CommentLikeNews).commentId !== undefined;
+};
+
+export type News =
+  | AnswerNews
+  | CommentNews
+  | NewFollowerNews
+  | EditionLikeNews
+  | CommentLikeNews;
 export type Newsfeed = News[];
 
 export type NewsDoc = News & {
