@@ -1,0 +1,334 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  newsfeed: [NewsBase!]
+  notifications: [Notification!]
+  questionsTags: [String!]!
+  answeredQuestions(userId: ID!, tags: [String!], first: Int!, after: String): AnsweredQuestionConnection
+  unansweredQuestions(userId: ID!, tags: [String!], first: Int!, after: String): UnansweredQuestionConnection
+  answeredQuestion(userId: ID!, questionId: ID!): AnsweredQuestion
+  users(match: String): [User!]
+  user(id: ID!): User
+  followers(userId: ID!): [User!]
+  following(userId: ID!): [User!]
+}
+
+type Mutation {
+  notifsMarkSeen: Boolean
+  commentAnswerEdition(answerId: ID!, answerEditionId: ID!, comment: String!, mentionedUsers: [ID!]): Comment!
+  editComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, commentValue: String!, mentionedUsers: [ID!]): Comment!
+  removeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!): Comment!
+  likeComment(answerId: ID!, answerEditionId: ID!, commentId: ID!, userLikes: Int!): Comment!
+  editAnswer(answerId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
+  addAnswer(questionId: ID!, answerValue: String!, mentionedUsers: [ID!]): Answer!
+  removeAnswer(answerId: ID!): Answer!
+  likeAnswerEdition(answerId: ID!, answerEditionId: ID!, userLikes: Int!): AnswerEdition!
+  moveAnswerPosition(answerId: ID!, position: Int!): Int
+  addQuestions(questions: [InputQuestion!]): Boolean
+  # removeQuestion(questionId: ID!): Question!
+  questionNotApply(questionId: ID!): UnansweredQuestion!
+  signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+  login(email: String!, name: String!): LoginResult!
+  editUser(input: EditUserInput): User!
+  uploadAvatar(base64Img: String!): String!
+  follow(userId: ID!, follow: Boolean!): Boolean
+}
+
+type Subscription {
+  newNotification(userId: ID!): Notification!
+}
+
+scalar DateTime
+
+enum NewsType {
+  NEW_ANSWER
+  NEW_ANSWER_EDITION
+  NEW_COMMENT
+  NEW_FOLLOWER
+  EDITION_LIKE
+  COMMENT_LIKE
+}
+
+interface NewsBase {
+  type: NewsType!
+  performer: User!
+  createdOn: DateTime!
+}
+
+type AnswerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: AnsweredQuestion!
+  createdOn: DateTime!
+}
+
+type CommentNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: AnsweredQuestion!
+  editionId: ID!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+type NewFollowerNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  followedUser: User!
+  createdOn: DateTime!
+}
+
+type EditionLikeNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: AnsweredQuestion!
+  editionId: ID!
+  createdOn: DateTime!
+}
+
+type CommentLikeNews implements NewsBase {
+  type: NewsType!
+  performer: User!
+  answerOwner: User!
+  question: AnsweredQuestion!
+  editionId: ID!
+  commentId: ID!
+  createdOn: DateTime!
+}
+
+union News = AnswerNews | CommentNews | NewFollowerNews | EditionLikeNews | CommentLikeNews
+
+enum NotificationType {
+  ANSWER_EDITION_LIKE
+  COMMENT_LIKE
+  NEW_FOLLOWER
+  NEW_COMMENT
+  COMMENT_MENTION
+  ANSWER_EDITION_MENTION
+}
+
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+# AnswerEditonLike and CommentLike types are duplicates of types below
+ # reason to keep them is consistency. They are still different type
+ # even though they've got the same fields we PISHLEMEnce_1996
+type AnswerEditionLike implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+}
+
+type CommentLike implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+  commentId: ID!
+}
+
+type AnswerEditionMention implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+}
+
+type NewComment implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+  commentId: ID!
+}
+
+type NewFollower implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type Comment {
+  id: ID!
+  user: User!
+  value: String!
+  likes: Likes
+}
+
+type Answer {
+  id: ID!
+  position: Int!
+  questionId: ID!
+  userId: ID!
+  editions: [AnswerEdition!]!
+}
+
+type Likes {
+  total: Int!
+  likers: [Liker!]!
+}
+
+type Liker {
+  user: User!
+  numOfLikes: Int!
+}
+
+type AnswerEdition {
+  id: ID!
+  date: DateTime!
+  # before: String!
+   # after: String!
+  value: String!
+  likes: Likes
+  comments: [Comment!]
+}
+
+# question should be made an interface
+ # type Question implements Node {
+ #   id: ID!
+ #   tags: [String!]
+ #   value: String!
+ #   answer: Answer
+ # }
+type UnansweredQuestion implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+}
+
+type AnsweredQuestion implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+  answer: Answer!
+}
+
+type AnsweredQuestionEdge implements Edge {
+  cursor: String!
+  node: AnsweredQuestion!
+}
+
+type AnsweredQuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [AnsweredQuestionEdge!]
+  totalCount: Int!
+}
+
+type UnansweredQuestionEdge implements Edge {
+  cursor: String!
+  node: UnansweredQuestion!
+}
+
+type UnansweredQuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [UnansweredQuestionEdge!]
+  totalCount: Int!
+}
+
+input InputQuestion {
+  value: String!
+  tags: [String!]!
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+interface Node {
+  id: ID!
+}
+
+interface Edge {
+  cursor: String!
+  node: Node!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
+  edges: [Edge!]
+  totalCount: Int!
+}
+
+type SocialMediaLinks {
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
+}
+
+type User {
+  id: ID!
+  me: Boolean
+  email: String
+  fullName: String!
+  intro: String
+  socialMediaLinks: SocialMediaLinks
+  avatarSrc: String
+  following: [ID!]
+  followers: [ID!]
+  experience: Float!
+}
+
+input SocialMediaLinksInput {
+  facebookLink: String
+  twitterLink: String
+  instagramLink: String
+  linkedInLink: String
+}
+
+input EditUserInput {
+  fullName: String!
+  intro: String!
+  socialMediaLinks: SocialMediaLinksInput!
+}
+
+type LoginResult {
+  authToken: String!
+  user: User!
+}

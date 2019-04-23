@@ -1,16 +1,19 @@
 Todo:
+- scroll answer and comment notifications properly
 - show loading animation
 - mobile first
-- rename FloatingWindow to Modal
-- study the GitHunt example
+- go through the GitHunt example
 
 Fix:
-- 401 Unauthorized
-- reduce answer text font size
-- on first edit, edition is null if no refresh
+- Likes and comments not updating after switching editions
+- Search by tag
+- Unnecessary re-renders on hover questions
 - Modal to appear on top of all
 
+Useful tools:
 react-router-page-transition
 react-reveal
 react-floater
 popperjs
+react-stick(positioning)
+circleCI

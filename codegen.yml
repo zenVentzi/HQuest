@@ -1,0 +1,23 @@
+overwrite: true
+schema: "./server/graphql/**/*.graphql"
+documents:
+  - "./src/graphql/**/*queries.ts"
+  - "./src/graphql/**/*mutations.ts"
+  - "./src/graphql/**/*subscriptions.ts"
+  - "./src/graphql/**/*fragments.ts"
+generates:
+  ./server/graphql/autoGenTypes.ts:
+    schema: "./server/graphql/**/*.graphql"
+    config:
+      contextType: ../types/gqlContext#ApolloContext
+    plugins:
+      - typescript
+      - typescript-resolvers
+  ./src/graphql/autoGenTypes.ts:
+    schema: "./server/graphql/**/*.graphql"
+    config:
+      # noNamespaces: true # used in v.0.18 and below
+      contextType: ../types/gqlContext#ApolloContext # this may not be needed
+    plugins:
+      - typescript
+      - typescript-operations

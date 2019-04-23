@@ -1,0 +1,97 @@
+enum NotificationType {
+  ANSWER_EDITION_LIKE
+  COMMENT_LIKE
+  NEW_FOLLOWER
+  NEW_COMMENT
+  COMMENT_MENTION
+  ANSWER_EDITION_MENTION
+}
+
+interface Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+# AnswerEditonLike and CommentLike types are duplicates of types below
+# reason to keep them is consistency. They are still different type
+# even though they've got the same fields we PISHLEMEnce_1996
+type AnswerEditionLike implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+}
+
+type CommentLike implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+  commentId: ID!
+}
+
+type AnswerEditionMention implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+}
+
+type NewComment implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+  userProfileId: String!
+  questionId: ID!
+  editionId: ID!
+  commentId: ID!
+}
+
+type NewFollower implements Notification {
+  id: ID!
+  type: NotificationType!
+  performerId: ID!
+  performerAvatarSrc: String!
+  text: String!
+  seen: Boolean!
+  createdOn: DateTime!
+}
+
+type Query {
+  notifications: [Notification!]
+}
+
+type Mutation {
+  notifsMarkSeen: Boolean
+}
+
+type Subscription {
+  newNotification(userId: ID!): Notification!
+}

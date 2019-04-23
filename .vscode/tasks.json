@@ -1,0 +1,38 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "copy-schemas",
+      "type": "npm",
+      "script": "copy-schemas"
+    },
+    {
+      "label": "tsc-server",
+      "type": "typescript",
+      "tsconfig": "server\\tsconfig.json",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "BuildServerFull",
+      "dependsOn": ["copy-schemas", "tsc-server"]
+    },
+    {
+      "label": "tsc-client",
+      "type": "typescript",
+      "tsconfig": "src\\tsconfig.json",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      },
+      "problemMatcher": ["$tsc"]
+    }
+  ]
+}

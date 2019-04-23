@@ -1,0 +1,69 @@
+# question should be made an interface
+# type Question implements Node {
+#   id: ID!
+#   tags: [String!]
+#   value: String!
+#   answer: Answer
+# }
+type UnansweredQuestion implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+}
+
+type AnsweredQuestion implements Node {
+  id: ID!
+  tags: [String!]
+  value: String!
+  answer: Answer!
+}
+
+type AnsweredQuestionEdge implements Edge {
+  cursor: String!
+  node: AnsweredQuestion!
+}
+
+type AnsweredQuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [AnsweredQuestionEdge!]
+  totalCount: Int!
+}
+
+type UnansweredQuestionEdge implements Edge {
+  cursor: String!
+  node: UnansweredQuestion!
+}
+
+type UnansweredQuestionConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [UnansweredQuestionEdge!]
+  totalCount: Int!
+}
+
+type Query {
+  questionsTags: [String!]!
+  answeredQuestions(
+    userId: ID!
+    tags: [String!]
+    first: Int!
+    after: String
+  ): AnsweredQuestionConnection
+  unansweredQuestions(
+    userId: ID!
+    tags: [String!]
+    first: Int!
+    after: String
+  ): UnansweredQuestionConnection
+  answeredQuestion(userId: ID!, questionId: ID!): AnsweredQuestion
+}
+
+input InputQuestion {
+  value: String!
+  tags: [String!]!
+}
+
+type Mutation {
+  addQuestions(questions: [InputQuestion!]): Boolean
+  # removeQuestion(questionId: ID!): Question!
+  questionNotApply(questionId: ID!): UnansweredQuestion!
+}

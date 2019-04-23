@@ -5,22 +5,48 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch server",
       "type": "node",
       "request": "launch",
-      "name": "Debug server",
-      "program": "${workspaceFolder}/server/server.js"
+      // "preLaunchTask": "server-build-partial",
+      "preLaunchTask": "BuildServerFull",
+      "program": "${workspaceFolder}/dist/server/server.js",
+      // "smartStep": true,
+      "cwd": "${workspaceFolder}"
+      // "protocol": "inspector",
+      // "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "test",
-      "program": "${workspaceFolder}/test.js"
+      "name": "Mongoose test",
+      "protocol": "inspector",
+      "program": "${workspaceFolder}/dist/server/db/mongoosetest.js",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "server1",
-      "program": "${workspaceFolder}/server/server1.js"
+      "name": "Jest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        // "--runInBand",
+        "--config",
+        "${workspaceRoot}/server/jest.config.js"
+      ],
+      "windows": {
+        "args": [
+          "--inspect-brk",
+          "${workspaceRoot}/node_modules/jest/bin/jest.js",
+          // "--runInBand",
+          "--config",
+          "${workspaceRoot}/server/jest.config.js"
+        ]
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
