@@ -98,11 +98,22 @@ export type CommentLike = Notification & {
   commentId: Scalars["ID"];
 };
 
+export type CommentLikeNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  editionId: Scalars["ID"];
+  commentId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
+};
+
 export type CommentNews = NewsBase & {
   type: NewsType;
   performer: User;
   answerOwner: User;
   question: AnsweredQuestion;
+  editionId: Scalars["ID"];
   commentId: Scalars["ID"];
   createdOn: Scalars["DateTime"];
 };
@@ -116,6 +127,15 @@ export type Connection = {
 export type Edge = {
   cursor: Scalars["String"];
   node: Node;
+};
+
+export type EditionLikeNews = NewsBase & {
+  type: NewsType;
+  performer: User;
+  answerOwner: User;
+  question: AnsweredQuestion;
+  editionId: Scalars["ID"];
+  createdOn: Scalars["DateTime"];
 };
 
 export type EditUserInput = {
@@ -283,15 +303,12 @@ export type NewFollowerNews = NewsBase & {
   createdOn: Scalars["DateTime"];
 };
 
-export type NewLikeNews = NewsBase & {
-  type: NewsType;
-  performer: User;
-  answerOwner: User;
-  question: AnsweredQuestion;
-  createdOn: Scalars["DateTime"];
-};
-
-export type News = AnswerNews | CommentNews | NewFollowerNews | NewLikeNews;
+export type News =
+  | AnswerNews
+  | CommentNews
+  | NewFollowerNews
+  | EditionLikeNews
+  | CommentLikeNews;
 
 export type NewsBase = {
   type: NewsType;
@@ -303,8 +320,9 @@ export enum NewsType {
   NewAnswer = "NEW_ANSWER",
   NewAnswerEdition = "NEW_ANSWER_EDITION",
   NewComment = "NEW_COMMENT",
-  NewLike = "NEW_LIKE",
-  NewFollower = "NEW_FOLLOWER"
+  NewFollower = "NEW_FOLLOWER",
+  EditionLike = "EDITION_LIKE",
+  CommentLike = "COMMENT_LIKE"
 }
 
 export type Node = {
@@ -445,7 +463,7 @@ export type AnswerNewsFieldsFragment = { __typename?: "AnswerNews" } & {
 
 export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
   CommentNews,
-  "commentId"
+  "editionId" | "commentId"
 > & {
     performer: { __typename?: "User" } & UserFieldsFragment;
     answerOwner: { __typename?: "User" } & UserFieldsFragment;
@@ -454,13 +472,25 @@ export type CommentNewsFieldsFragment = { __typename?: "CommentNews" } & Pick<
     } & AnsweredQuestionFieldsFragment;
   };
 
-export type NewLikeNewsFieldsFragment = { __typename?: "NewLikeNews" } & {
-  performer: { __typename?: "User" } & UserFieldsFragment;
-  answerOwner: { __typename?: "User" } & UserFieldsFragment;
-  question: {
-    __typename?: "AnsweredQuestion";
-  } & AnsweredQuestionFieldsFragment;
-};
+export type EditionLikeNewsFieldsFragment = {
+  __typename?: "EditionLikeNews";
+} & Pick<EditionLikeNews, "editionId"> & {
+    performer: { __typename?: "User" } & UserFieldsFragment;
+    answerOwner: { __typename?: "User" } & UserFieldsFragment;
+    question: {
+      __typename?: "AnsweredQuestion";
+    } & AnsweredQuestionFieldsFragment;
+  };
+
+export type CommentLikeNewsFieldsFragment = {
+  __typename?: "CommentLikeNews";
+} & Pick<CommentLikeNews, "editionId" | "commentId"> & {
+    performer: { __typename?: "User" } & UserFieldsFragment;
+    answerOwner: { __typename?: "User" } & UserFieldsFragment;
+    question: {
+      __typename?: "AnsweredQuestion";
+    } & AnsweredQuestionFieldsFragment;
+  };
 
 export type NewFollowerNewsFieldsFragment = {
   __typename?: "NewFollowerNews";
@@ -478,7 +508,8 @@ export type NewsfeedQuery = { __typename?: "Query" } & {
         (
           | ({ __typename?: "AnswerNews" } & AnswerNewsFieldsFragment)
           | ({ __typename?: "CommentNews" } & CommentNewsFieldsFragment)
-          | ({ __typename?: "NewLikeNews" } & NewLikeNewsFieldsFragment)
+          | ({ __typename?: "EditionLikeNews" } & EditionLikeNewsFieldsFragment)
+          | ({ __typename?: "CommentLikeNews" } & CommentLikeNewsFieldsFragment)
           | ({
               __typename?: "NewFollowerNews";
             } & NewFollowerNewsFieldsFragment))
@@ -848,6 +879,14 @@ export type NotificationFieldsFragment = Pick<
   | "createdOn"
 > &
   (
+    | ({ __typename?: "AnswerEditionLike" } & Pick<
+        AnswerEditionLike,
+        "userProfileId" | "questionId" | "editionId"
+      >)
+    | ({ __typename?: "CommentLike" } & Pick<
+        CommentLike,
+        "userProfileId" | "questionId" | "editionId" | "commentId"
+      >)
     | ({ __typename?: "NewComment" } & Pick<
         NewComment,
         "userProfileId" | "questionId" | "editionId" | "commentId"

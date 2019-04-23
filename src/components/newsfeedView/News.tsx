@@ -3,7 +3,7 @@ import React from "react";
 import Answer from "./Answer";
 import NewComment from "./NewComment";
 import NewFollower from "./NewFollower";
-import NewLike from "./NewLike";
+import Like from "./Like";
 import { NewsBase, NewsType } from "GqlClient/autoGenTypes";
 
 interface NewsProps {
@@ -24,8 +24,9 @@ const News = ({ news }: NewsProps) => {
     case NewsType.NewFollower:
       NewsComponent = NewFollower;
       break;
-    case NewsType.NewLike:
-      NewsComponent = NewLike;
+    case NewsType.EditionLike:
+    case NewsType.CommentLike:
+      NewsComponent = Like;
       break;
     default:
       break;

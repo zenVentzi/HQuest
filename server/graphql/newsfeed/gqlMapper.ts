@@ -60,13 +60,25 @@ const mapNews: MapNews = (
 
     const gqlQuestion = mapAnsweredQuestion(question, loggedUserId);
 
-    if (news.type === dbTypes.NewsType.NewLike) {
-      const gqlNews: gqlTypes.NewLikeNews = {
+    if (news.type === dbTypes.NewsType.EditionLike) {
+      const gqlNews: gqlTypes.EditionLikeNews = {
         type: news.type,
         createdOn,
         performer,
         answerOwner,
-        question: gqlQuestion
+        question: gqlQuestion,
+        editionId: news.editionId
+      };
+      return gqlNews;
+    } else if (news.type === dbTypes.NewsType.CommentLike) {
+      const gqlNews: gqlTypes.CommentLikeNews = {
+        type: news.type,
+        createdOn,
+        performer,
+        answerOwner,
+        question: gqlQuestion,
+        editionId: news.editionId,
+        commentId: news.commentId
       };
       return gqlNews;
     } else if (
@@ -88,7 +100,8 @@ const mapNews: MapNews = (
         commentId: news.commentId,
         performer,
         answerOwner,
-        question: gqlQuestion
+        question: gqlQuestion,
+        editionId: news.editionId
       };
       return gqlNews;
     }

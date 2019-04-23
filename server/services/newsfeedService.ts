@@ -1,19 +1,46 @@
 import { Types as GooseTypes } from "mongoose";
 import * as DbTypes from "../dbTypes";
 import { Models } from "../models";
+import { Services } from "./index";
 
 const { ObjectId } = GooseTypes;
 
 class NewsfeedService {
   constructor(private models: Models) {}
 
-  public async onLikeAnswer(answer: DbTypes.Answer, performerId: string) {
-    const news: DbTypes.NewLikeNews = {
+  public async onLikeEdition(
+    answer: DbTypes.Answer,
+    editionId: string,
+    performerId: string
+  ) {
+    const news: DbTypes.EditionLikeNews = {
       _id: ObjectId(),
-      type: DbTypes.NewsType.NewLike,
+      type: DbTypes.NewsType.EditionLike,
       performerId,
       answerOwnerId: answer.userId.toString(),
-      answerId: answer._id.toString()
+      answerId: answer._id.toString(),
+      editionId
+    };
+
+    if (!(await this.checkLikedBefore(news))) {
+      await this.models.newsfeed.create(news);
+    }
+  }
+
+  public async onLikeComment(
+    answer: DbTypes.Answer,
+    editionId: string,
+    commentId: string,
+    performerId: string
+  ) {
+    const news: DbTypes.CommentLikeNews = {
+      _id: ObjectId(),
+      type: DbTypes.NewsType.CommentLike,
+      performerId,
+      answerOwnerId: answer.userId.toString(),
+      answerId: answer._id.toString(),
+      editionId,
+      commentId
     };
 
     if (!(await this.checkLikedBefore(news))) {
@@ -37,6 +64,7 @@ class NewsfeedService {
 
   public async onNewComment(
     answer: DbTypes.Answer,
+    editionId: string,
     commentId: string,
     performerId: string
   ): Promise<void> {
@@ -46,6 +74,7 @@ class NewsfeedService {
       performerId,
       answerOwnerId: answer.userId.toString(),
       answerId: answer._id.toString(),
+      editionId,
       commentId
     };
 
@@ -80,7 +109,8 @@ class NewsfeedService {
   }
 
   public async getNewsFeedQuestions(
-    newsfeed: DbTypes.Newsfeed
+    newsfeed: DbTypes.Newsfeed,
+    answerService: Services["answer"]
   ): Promise<DbTypes.AnsweredQuestion[] | null> {
     const answerIds: string[] = [];
     newsfeed.forEach(news => {
@@ -90,11 +120,9 @@ class NewsfeedService {
       }
     });
 
-    if (!answerIds) return null;
+    if (!answerIds || !answerIds.length) return null;
 
-    const answers = (await this.models.answer.find({
-      _id: { $in: answerIds }
-    })).map(answerDoc => answerDoc.toObject());
+    const answers = await answerService.getAnswersById({ answerIds });
 
     if (!answers.length) {
       throw Error(`couldn't find answers in the database`);
@@ -111,7 +139,10 @@ class NewsfeedService {
 
     const answeredQuestions: DbTypes.AnsweredQuestion[] = answers.map(a => {
       const question = questions.find(q => q._id.equals(a.questionId));
-      return { ...question!, answer: a };
+      if (!question) {
+        throw Error(`couldn't find question with id: ${a.questionId}`);
+      }
+      return { ...question, answer: a };
     });
 
     return answeredQuestions;
@@ -184,17 +215,24 @@ class NewsfeedService {
     await this.models.newsfeed.create(news);
   }
 
-  private async checkLikedBefore(news: DbTypes.News) {
-    const existingNews = await this.models.newsfeed.findById(news._id);
+  private async checkLikedBefore(
+    news: DbTypes.CommentLikeNews | DbTypes.EditionLikeNews
+  ) {
+    if (DbTypes.isCommentLikeNews(news)) {
+      const existingNews = await this.models.newsfeed.findOne({
+        commentId: news.commentId,
+        type: DbTypes.NewsType.CommentLike
+      });
 
-    // old way
-    // const existingNews = await models.newsfeed.findOne({
-    //   type: news.type,
-    //   performerId: news.performerId,
-    //   answerId: news.answerId
-    // }).lean();
+      return !!existingNews;
+    } else {
+      const existingNews = await this.models.newsfeed.findOne({
+        editionId: news.editionId,
+        type: DbTypes.NewsType.EditionLike
+      });
 
-    return !!existingNews;
+      return !!existingNews;
+    }
   }
 }
 

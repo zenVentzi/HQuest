@@ -29,6 +29,7 @@ const Mutation: Mutation = {
 
     await services.newsfeed.onNewComment(
       dbAnswer,
+      answerEditionId,
       dbComment._id.toString(),
       user!.id
     );
@@ -113,6 +114,12 @@ const Mutation: Mutation = {
       user!.id === likedGqlComment.user.id;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
+      await services.newsfeed.onLikeComment(
+        await services.answer.getAnswerById(answerId),
+        answerEditionId,
+        likedComment._id.toHexString(),
+        user!.id
+      );
       await services.notification.onCommentLike(
         likedComment,
         answerId,

@@ -13,14 +13,14 @@ const NewsfeedSchema = new Schema({
   performerId: String,
   answerOwnerId: String,
   answerId: String,
-  followedUserId: String,
-  commentId: String
+  editionId: String,
+  commentId: String,
+  followedUserId: String
 });
 
 const NewsfeedModel = model<DbTypes.NewsDoc>(
-  "newsfeed",
+  "newsfeed", // mongoose puts an "s" at the end, this prevents it
   NewsfeedSchema
-  // "newsfeed" // mongoose puts s at the end, this prevents it
 );
 
 type NewsfeedModel = Model<DbTypes.NewsDoc>;
