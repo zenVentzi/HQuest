@@ -145,7 +145,7 @@ const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {
         <TextContainer size={size}>
           <StyledUserName size={size}>
             {user.fullName}
-            <Superscript>15exp</Superscript>
+            <Superscript>{user.experience}exp</Superscript>
           </StyledUserName>
           <StyledIntro size={size}>{user.intro}</StyledIntro>
         </TextContainer>

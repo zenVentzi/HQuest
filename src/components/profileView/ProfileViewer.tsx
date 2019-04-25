@@ -60,16 +60,7 @@ const ProfileViewer = (props: ProfileViewerProps) => {
         <Avatar src={user.avatarSrc} editable={!!user.me} />
         <Username>
           {user.fullName}
-          {/* <sup
-            style={{
-              verticalAlign: "super",
-              fontSize: "smaller"
-            }}
-          >
-            {""}
-            15exp
-          </sup> */}
-          <Superscript>15exp</Superscript>
+          <Superscript>{user.experience}exp</Superscript>
         </Username>
         <Intro>{user.intro}</Intro>
         {!user.me && <FollowBtn isFollowed={!!isFollowed} userId={user.id} />}
