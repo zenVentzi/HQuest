@@ -120,13 +120,19 @@ const Mutation: Mutation = {
         likedComment._id.toHexString(),
         user!.id
       );
+      const expForLikedComment = 1;
+
       await services.notification.onCommentLike(
         likedComment,
         answerId,
         answerEditionId,
-        user!.id
+        user!.id,
+        expForLikedComment
       );
-      await services.user.addExperience(1, likedGqlComment.user.id);
+      await services.user.addExperience(
+        expForLikedComment,
+        likedGqlComment.user.id
+      );
     }
     return likedGqlComment;
   }

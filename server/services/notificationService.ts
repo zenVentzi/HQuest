@@ -90,7 +90,8 @@ class NotificationService {
     dbComment: DbTypes.Comment,
     answerId: string,
     answerEditionId: string,
-    performerId: string
+    performerId: string,
+    addedExperience: number
   ): Promise<void> {
     const answer = await this.models.answer.findById(answerId);
     if (!answer) {
@@ -127,7 +128,8 @@ class NotificationService {
       performerId,
       dbComment,
       answer,
-      edition
+      edition,
+      addedExperience
     );
     await this.notifyOne(answer.userId, notifForCommentOwner);
   }
@@ -150,7 +152,8 @@ class NotificationService {
   public async onEditionLike(
     answerId: string,
     answerEditionId: string,
-    performerId: string
+    performerId: string,
+    addedExperience: number
   ): Promise<void> {
     const answer = await this.models.answer.findById(answerId);
     if (!answer) {
@@ -185,7 +188,8 @@ class NotificationService {
       DbTypes.NotificationType.AnswerEditionLike,
       answer,
       edition,
-      performerId
+      performerId,
+      addedExperience
     );
     await this.notifyOne(answer.userId, notifForEditionOwner);
   }
@@ -302,12 +306,13 @@ class NotificationService {
     type: DbTypes.NotificationType.AnswerEditionLike,
     answer: DbTypes.Answer,
     edition: DbTypes.Edition,
-    performerId: string
+    performerId: string,
+    addedExperience?: number
   ): Promise<DbTypes.Notification> {
     const performer = await this.models.user.findById(performerId).lean();
 
     const performerName = `${performer.firstName} ${performer.surName}`;
-    const notifText = `${performerName} liked your edition: "${
+    const notifText = `(+${addedExperience}exp) ${performerName} liked your edition: "${
       edition.value
     } "`;
 
@@ -333,7 +338,8 @@ class NotificationService {
     performerId: string,
     dbComment: DbTypes.Comment,
     answer: DbTypes.Answer,
-    edition: DbTypes.Edition
+    edition: DbTypes.Edition,
+    addedExperience?: number
   ): Promise<DbTypes.NewComment | DbTypes.CommentLike> {
     const performer = await this.models.user.findById(performerId).lean();
 
@@ -359,7 +365,7 @@ class NotificationService {
       };
       return notif;
     }
-    const notifText = `${performerName} liked your comment: "${
+    const notifText = `(+${addedExperience}exp) ${performerName} liked your comment: "${
       dbComment.value
     } "`;
 

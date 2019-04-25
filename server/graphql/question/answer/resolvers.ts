@@ -82,9 +82,15 @@ const Mutation: Mutation = {
       user!.id === editionOwnerId;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
+      const expForLikedEdition = 2;
       await services.newsfeed.onLikeEdition(answer, editionId, user!.id);
-      await services.notification.onEditionLike(answerId, editionId, user!.id);
-      await services.user.addExperience(2, editionOwnerId);
+      await services.notification.onEditionLike(
+        answerId,
+        editionId,
+        user!.id,
+        expForLikedEdition
+      );
+      await services.user.addExperience(expForLikedEdition, editionOwnerId);
     }
     return mapAnswerEdition(dbEdition, user!.id);
   },
