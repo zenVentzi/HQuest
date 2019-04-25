@@ -104,6 +104,7 @@ class NotificationService {
     }
 
     let alreadyNotified = false;
+    let prevNotif: DbTypes.CommentLike;
     const commentOwner = await this.models.user.findById(answer.userId);
     if (!commentOwner) {
       throw Error(`could not find commentOwner with id: ${answer.userId}`);
@@ -117,11 +118,19 @@ class NotificationService {
             dbComment._id.toHexString()
         ) {
           alreadyNotified = true;
+          prevNotif = notif as DbTypes.CommentLike;
         }
       });
     }
 
-    if (alreadyNotified) return;
+    if (alreadyNotified) {
+      prevNotif!.text = prevNotif!.text.replace(
+        /\(\+\d+exp\)/,
+        `(+${addedExperience}exp)`
+      );
+      await commentOwner.save();
+      return;
+    }
 
     const notifForCommentOwner = await this.createCommentNotification(
       DbTypes.NotificationType.CommentLike,
@@ -166,11 +175,12 @@ class NotificationService {
     }
 
     let alreadyNotified = false;
-    const user = await this.models.user.findById(answer.userId);
-    if (!user) {
+    let prevNotif: DbTypes.AnswerEditionLike | undefined;
+    const editionOwner = await this.models.user.findById(answer.userId);
+    if (!editionOwner) {
       throw Error(`user cannot be null, id: ${answer.userId}`);
     }
-    const userNotifs = user.notifications;
+    const userNotifs = editionOwner.notifications;
     if (userNotifs && userNotifs.length) {
       userNotifs.forEach(notif => {
         if (
@@ -178,11 +188,19 @@ class NotificationService {
           (notif as DbTypes.AnswerEditionLike).editionId === answerEditionId
         ) {
           alreadyNotified = true;
+          prevNotif = notif as DbTypes.AnswerEditionLike;
         }
       });
     }
 
-    if (alreadyNotified) return;
+    if (alreadyNotified) {
+      prevNotif!.text = prevNotif!.text.replace(
+        /\(\+\d+exp\)/,
+        `(+${addedExperience}exp)`
+      );
+      await editionOwner.save();
+      return;
+    }
 
     const notifForEditionOwner = await this.createAnswerEditionLikeNotification(
       DbTypes.NotificationType.AnswerEditionLike,

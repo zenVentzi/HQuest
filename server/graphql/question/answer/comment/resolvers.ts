@@ -120,7 +120,7 @@ const Mutation: Mutation = {
         likedComment._id.toHexString(),
         user!.id
       );
-      const expForLikedComment = 1;
+      const expForLikedComment = userLikes;
 
       await services.notification.onCommentLike(
         likedComment,

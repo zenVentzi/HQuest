@@ -82,7 +82,7 @@ const Mutation: Mutation = {
       user!.id === editionOwnerId;
 
     if (!attempt_to_suck_own_dick_for_likes_and_exp) {
-      const expForLikedEdition = 2;
+      const expForLikedEdition = 2 * userLikes;
       await services.newsfeed.onLikeEdition(answer, editionId, user!.id);
       await services.notification.onEditionLike(
         answerId,
