@@ -4,6 +4,21 @@ import styled, { ThemeProvider } from "styled-components";
 import Avatar from "./Avatar";
 import { UserFieldsFragment } from "GqlClient/autoGenTypes";
 
+const Superscript = styled.span`
+  background-color: #fa3e3e;
+  border-radius: 2px;
+  color: white;
+
+  padding: 1px 3px;
+  font-size: 10px;
+
+  position: relative;
+  vertical-align: super;
+  user-select: none;
+  top: 200;
+  right: 0;
+`;
+
 interface StyledUserNameProps {
   size: number;
 }
@@ -128,7 +143,10 @@ const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {
       >
         <Avatar src={user.avatarSrc} />
         <TextContainer size={size}>
-          <StyledUserName size={size}>{user.fullName}</StyledUserName>
+          <StyledUserName size={size}>
+            {user.fullName}
+            <Superscript>15exp</Superscript>
+          </StyledUserName>
           <StyledIntro size={size}>{user.intro}</StyledIntro>
         </TextContainer>
       </StyledUser>

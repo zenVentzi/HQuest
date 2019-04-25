@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { getLoggedUserId } from "Utils";
 import Avatar from "../reusable/Avatar";
 import Username from "./Username";
@@ -14,6 +14,21 @@ import QuestionsContainer from "./questions";
 import Search from "./Search";
 import ToggleQuestions from "./questions/ToggleQuestions";
 import { UserFieldsFragment } from "GqlClient/autoGenTypes";
+
+const Superscript = styled.span`
+  background-color: #fa3e3e;
+  border-radius: 2px;
+  color: white;
+
+  padding: 1px 3px;
+  font-size: 10px;
+
+  position: relative;
+  vertical-align: super;
+  user-select: none;
+  top: 200;
+  right: 0;
+`;
 
 interface ProfileViewerProps {
   user: UserFieldsFragment;
@@ -43,7 +58,19 @@ const ProfileViewer = (props: ProfileViewerProps) => {
     >
       <>
         <Avatar src={user.avatarSrc} editable={!!user.me} />
-        <Username>{user.fullName}</Username>
+        <Username>
+          {user.fullName}
+          {/* <sup
+            style={{
+              verticalAlign: "super",
+              fontSize: "smaller"
+            }}
+          >
+            {""}
+            15exp
+          </sup> */}
+          <Superscript>15exp</Superscript>
+        </Username>
         <Intro>{user.intro}</Intro>
         {!user.me && <FollowBtn isFollowed={!!isFollowed} userId={user.id} />}
         <div>
