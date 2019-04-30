@@ -16,11 +16,8 @@ import NewsfeedView from "./newsfeedView";
 import LandingView from "./landingView";
 import NotFoundView from "./notFoundView";
 import { GlobalStyle } from "./appTheme";
-import MentionInput from "./profileView/questions/Answer/Comments/MentionInput";
 
 const App = () => {
-  // console.log(`testt`);
-  // return <div>test</div>;
   return (
     <ApolloProvider client={ApolloClient}>
       <ThemeProvider theme={{}}>

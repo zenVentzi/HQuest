@@ -5,6 +5,10 @@ import { GET_QUESTIONS_TAGS } from "GqlClient/question/queries";
 import Anchor from "Reusable/Anchor";
 import AllTags from "./AllTags";
 import MatchingTags from "./MatchingTags";
+import {
+  QuestionsTagsQueryVariables,
+  QuestionsTagsQuery
+} from "GqlClient/autoGenTypes";
 
 const InvalidText = styled.div`
   color: red;
@@ -49,7 +53,7 @@ interface QuestionTagsProps {
 const QuestionTags = (props: QuestionTagsProps) => {
   const allTags = useRef<string[]>();
   const [showAllTags, setShowAllTags] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[] | null>();
+  const [selectedTags, setSelectedTags] = useState<string[]>();
   const [matchingTags, setMatchingTags] = useState<string[] | null>();
   const [invalidTagMsg, setInvalidTagMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,193 +62,207 @@ const QuestionTags = (props: QuestionTagsProps) => {
     setShowAllTags(false);
   };
 
-  const onSelectFromAllTags = (selectedTags: string[]) => {
-    hideAllTagsWindow();
-    inputRef.current!.focus();
-    if (!selectedTags || !selectedTags.length) return;
-    setSelectedTags(selectedTags);
-    props.onSelected(selectedTags);
-    inputRef.current!.value = `${selectedTags.join(",")},`;
+  // const onSelectFromAllTags = (selectedTags: string[]) => {
+  //   hideAllTagsWindow();
+  //   inputRef.current!.focus();
+  //   if (!selectedTags || !selectedTags.length) return;
+  //   setSelectedTags(selectedTags);
+  //   props.onSelected(selectedTags);
+  //   inputRef.current!.value = `${selectedTags.join(",")},`;
 
-    // setState(
-    //   (prevState: any) => {
-    //     return { ...prevState, selectedTags };
-    //   },
-    //   () => {
-    //     notifyParents();
-    //   }
-    // );
-  };
-
-  const onSelectFromMatchingTags = (selectedTag: string) => {
-    let newSelectedTags: string[];
-    if (selectedTags && selectedTags.length) {
-      newSelectedTags = [...selectedTags, selectedTag];
-    } else {
-      newSelectedTags = [selectedTag];
-    }
-    setSelectedTags(newSelectedTags);
-    inputRef.current!.value = `${newSelectedTags.join(",")},`;
-    props.onSelected(newSelectedTags); // this is under scrutiny
-    // setState(
-    //   (prevState: any) => {
-    //     return { ...prevState, selectedTags, matchingTags: [] };
-    //   },
-    //   () => {
-    //     notifyParents();
-    //   }
-    // );
-    inputRef.current!.focus();
-  };
-
-  const addToSelected = (tag: string) => {
-    let newSelectedTags: string[];
-    if (selectedTags && selectedTags.length) {
-      newSelectedTags = [...selectedTags, tag];
-    } else {
-      newSelectedTags = [tag];
-    }
-    setSelectedTags(newSelectedTags);
-    props.onSelected(newSelectedTags); // under scrutiny, it used to be in setState callback
-  };
-
-  const removeLastSelectedTag = () => {
-    let newSelectedTags: string[];
-    if (selectedTags && selectedTags.length) {
-      newSelectedTags = [...selectedTags];
-      newSelectedTags.pop();
-      setSelectedTags(newSelectedTags);
-      props.onSelected(newSelectedTags); // under scrutiny, used to be in setState callback
-    }
-  };
-
-  const setInputToSelected = () => {
-    if (selectedTags && selectedTags.length) {
-      inputRef.current!.value = `${selectedTags.join(",")},`;
-    } else {
-      inputRef.current!.value = "";
-    }
-    setMatchingTags(null);
-    setInvalidTagMsg(null);
-  };
-
-  // getInputSelection = (node: any) => {
-  //   const startPos = node.selectionStart;
-  //   const endPos = node.selectionEnd;
-  //   return { startPos, endPos };
+  //   // setState(
+  //   //   (prevState: any) => {
+  //   //     return { ...prevState, selectedTags };
+  //   //   },
+  //   //   () => {
+  //   //     notifyParents();
+  //   //   }
+  //   // );
   // };
 
-  const handleBackspaceOrDelete = (e: any) => {
-    const key = e.keyCode || e.charCode;
+  // const onSelectFromMatchingTags = (selectedTag: string) => {
+  //   let newSelectedTags: string[];
+  //   if (selectedTags && selectedTags.length) {
+  //     newSelectedTags = [...selectedTags, selectedTag];
+  //   } else {
+  //     newSelectedTags = [selectedTag];
+  //   }
+  //   setSelectedTags(newSelectedTags);
+  //   inputRef.current!.value = `${newSelectedTags.join(",")},`;
+  //   props.onSelected(newSelectedTags); // this is under scrutiny
+  //   // setState(
+  //   //   (prevState: any) => {
+  //   //     return { ...prevState, selectedTags, matchingTags: [] };
+  //   //   },
+  //   //   () => {
+  //   //     notifyParents();
+  //   //   }
+  //   // );
+  //   inputRef.current!.focus();
+  // };
 
-    if (key === 8 || key === 46) {
-      removeLastSelectedTag();
-      setInputToSelected();
-    }
-  };
+  // const addToSelected = (tag: string) => {
+  //   let newSelectedTags: string[];
+  //   if (selectedTags && selectedTags.length) {
+  //     newSelectedTags = [...selectedTags, tag];
+  //   } else {
+  //     newSelectedTags = [tag];
+  //   }
+  //   setSelectedTags(newSelectedTags);
+  //   props.onSelected(newSelectedTags); // under scrutiny, it used to be in setState callback
+  // };
 
-  const moveCursorToEnd = () => {
-    if (inputRef.current!.value) {
-      inputRef.current!.selectionStart = inputRef.current!.selectionEnd = 100000;
-    }
-  };
+  // const removeLastSelectedTag = () => {
+  //   let newSelectedTags: string[];
+  //   if (selectedTags && selectedTags.length) {
+  //     newSelectedTags = [...selectedTags];
+  //     newSelectedTags.pop();
+  //     setSelectedTags(newSelectedTags);
+  //     props.onSelected(newSelectedTags); // under scrutiny, used to be in setState callback
+  //   }
+  // };
 
-  const onClickInput = () => {
-    moveCursorToEnd();
-  };
+  // const setInputToSelected = () => {
+  //   if (selectedTags && selectedTags.length) {
+  //     inputRef.current!.value = `${selectedTags.join(",")},`;
+  //   } else {
+  //     inputRef.current!.value = "";
+  //   }
+  //   setMatchingTags(null);
+  //   setInvalidTagMsg(null);
+  // };
 
-  const onKeyDownInput = (event: any) => {
-    moveCursorToEnd();
-    handleBackspaceOrDelete(event);
-  };
+  // // getInputSelection = (node: any) => {
+  // //   const startPos = node.selectionStart;
+  // //   const endPos = node.selectionEnd;
+  // //   return { startPos, endPos };
+  // // };
 
-  const checkTagSelected = (tag: string) => {
-    return selectedTags && selectedTags.length && selectedTags.includes(tag);
-  };
+  // const handleBackspaceOrDelete = (e: any) => {
+  //   const key = e.keyCode || e.charCode;
 
-  const onChangeInput = (e: any) => {
-    const {
-      target: { value }
-    } = e;
-    const trimmed = value.trim();
-    if (value.charAt(value.length - 1) === " ") {
-      inputRef.current!.value = trimmed;
-      return;
-    } else if (trimmed.includes(",,")) {
-      inputRef.current!.value = trimmed.slice(0, -1);
-      return;
-    }
+  //   if (key === 8 || key === 46) {
+  //     removeLastSelectedTag();
+  //     setInputToSelected();
+  //   }
+  // };
 
-    const enteredTags = trimmed.split(",").filter((t: string) => !!t);
-    const lastTag = enteredTags[enteredTags.length - 1];
+  // const moveCursorToEnd = () => {
+  //   if (inputRef.current!.value) {
+  //     inputRef.current!.selectionStart = inputRef.current!.selectionEnd = 100000;
+  //   }
+  // };
 
-    const lastChar = trimmed.charAt(trimmed.length - 1);
-    if (lastChar === ",") {
-      const lastTagExists = allTags.current!.includes(lastTag);
-      if (!lastTagExists) {
-        setInvalidTagMsg(`Tag ${lastTag} does not exist`);
-        return;
-      }
+  // const onClickInput = () => {
+  //   moveCursorToEnd();
+  // };
 
-      const alreadySelected = checkTagSelected(lastTag);
-      if (alreadySelected) {
-        setInputToSelected();
-        return;
-      }
+  // const onKeyDownInput = (event: any) => {
+  //   moveCursorToEnd();
+  //   handleBackspaceOrDelete(event);
+  // };
 
-      addToSelected(lastTag);
-      setMatchingTags([]);
-    } else {
-      const matchingTags = allTags.current!.filter((t: string) =>
-        t.includes(lastTag)
-      );
-      setMatchingTags(matchingTags);
-    }
+  // const checkTagSelected = (tag: string) => {
+  //   return selectedTags && selectedTags.length && selectedTags.includes(tag);
+  // };
 
-    /*  
-    if backspace or delete, delete the whole previous word
-    How to detect backspace or delte
-    */
-  };
+  // const onChangeInput = (e: any) => {
+  //   const {
+  //     target: { value }
+  //   } = e;
+  //   const trimmed = value.trim();
+  //   if (value.charAt(value.length - 1) === " ") {
+  //     inputRef.current!.value = trimmed;
+  //     return;
+  //   } else if (trimmed.includes(",,")) {
+  //     inputRef.current!.value = trimmed.slice(0, -1);
+  //     return;
+  //   }
 
-  const toggleAllTags = (show: boolean) => () => {
-    setShowAllTags(show);
-  };
+  //   const enteredTags = trimmed.split(",").filter((t: string) => !!t);
+  //   const lastTag = enteredTags[enteredTags.length - 1];
+
+  //   const lastChar = trimmed.charAt(trimmed.length - 1);
+  //   if (lastChar === ",") {
+  //     const lastTagExists = allTags.current!.includes(lastTag);
+  //     if (!lastTagExists) {
+  //       setInvalidTagMsg(`Tag ${lastTag} does not exist`);
+  //       return;
+  //     }
+
+  //     const alreadySelected = checkTagSelected(lastTag);
+  //     if (alreadySelected) {
+  //       setInputToSelected();
+  //       return;
+  //     }
+
+  //     addToSelected(lastTag);
+  //     setMatchingTags([]);
+  //   } else {
+  //     const matchingTags = allTags.current!.filter((t: string) =>
+  //       t.includes(lastTag)
+  //     );
+  //     setMatchingTags(matchingTags);
+  //   }
+
+  //   /*
+  //   if backspace or delete, delete the whole previous word
+  //   How to detect backspace or delte
+  //   */
+  // };
+
+  // const toggleAllTags = (show: boolean) => () => {
+  //   setShowAllTags(show);
+  // };
 
   return (
-    <Query query={GET_QUESTIONS_TAGS} errorPolicy="all">
-      {({ loading, error, data: { questionsTags: tags } }) => {
-        allTags.current = tags;
+    <Query<QuestionsTagsQuery, QuestionsTagsQueryVariables>
+      query={GET_QUESTIONS_TAGS}
+      errorPolicy="all"
+    >
+      {({ loading, error, data }) => {
+        if (error) {
+          console.log(error);
+        } else if (loading) {
+          return null;
+        }
 
-        return (
-          <TagsWrapper>
-            {showAllTags && (
-              <AllTags
-                tags={tags}
-                onSelect={onSelectFromAllTags}
-                onClose={hideAllTagsWindow}
-              />
-            )}
-            <InputRow>
-              <Input
-                ref={inputRef}
-                placeholder="Search by tag..."
-                onClick={onClickInput}
-                onChange={onChangeInput}
-                onKeyDown={onKeyDownInput}
-                type="text"
-              />
-              <Anchor onClick={toggleAllTags(true)}>all</Anchor>
-            </InputRow>
-            {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
-            {matchingTags && matchingTags.length > 0 && (
-              <MatchingTags
-                tags={matchingTags}
-                onSelect={onSelectFromMatchingTags}
-              />
-            )}
-          </TagsWrapper>
-        );
+        if (!data) {
+          throw Error(`data cannot be null|undefined at that point`);
+        }
+        allTags.current = data.questionsTags;
+
+        return <div>place for input</div>;
+
+        // return (
+        //   <TagsWrapper>
+        //     {showAllTags && (
+        //       <AllTags
+        //         tags={tags}
+        //         onSelect={onSelectFromAllTags}
+        //         onClose={hideAllTagsWindow}
+        //       />
+        //     )}
+        //     <InputRow>
+        //       <Input
+        //         ref={inputRef}
+        //         placeholder="Search by tag..."
+        //         onClick={onClickInput}
+        //         onChange={onChangeInput}
+        //         onKeyDown={onKeyDownInput}
+        //         type="text"
+        //       />
+        //       <Anchor onClick={toggleAllTags(true)}>all</Anchor>
+        //     </InputRow>
+        //     {invalidTagMsg && <InvalidText>{invalidTagMsg}</InvalidText>}
+        //     {matchingTags && matchingTags.length > 0 && (
+        //       <MatchingTags
+        //         tags={matchingTags}
+        //         onSelect={onSelectFromMatchingTags}
+        //       />
+        //     )}
+        //   </TagsWrapper>
+        // );
       }}
     </Query>
   );

@@ -93,11 +93,11 @@ const MentionInput = React.forwardRef<
           fontWeight: "normal"
         },
         textAlign: "left",
+        width: "80%",
 
         highlighter: {
           overflow: "hidden"
         },
-        width: "80%",
 
         input: {
           margin: 0
@@ -106,17 +106,18 @@ const MentionInput = React.forwardRef<
         "&multiLine": {
           control: {
             fontFamily: "monospace",
-
             border: "1px solid silver"
           },
 
           highlighter: {
-            padding: 9
+            fontFamily: "monospace",
+            padding: 10
           },
 
           input: {
             padding: 9,
-            minHeight: 200,
+            minHeight: 10,
+            minWidth: 200,
             outline: 0,
             border: 0
           }
@@ -152,8 +153,8 @@ const MentionInput = React.forwardRef<
           });
         }}
         style={{
-          backgroundColor: "black",
-          color: "white"
+          backgroundColor: "#00000030",
+          color: "black"
         }}
         // @ts-ignore // @types/ are incomplete
         renderSuggestion={renderSuggestion}

@@ -4,8 +4,6 @@ import * as ReactDOM from "react-dom";
 
 import App from "./components/App";
 import TestApp from "./components/TestApp";
-import MentionInput from "./components/profileView/questions/Answer/Comments/MentionInput";
-import styled from "styled-components";
 
 if (module.hot) {
   module.hot.accept();

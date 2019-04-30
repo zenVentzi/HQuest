@@ -1,20 +1,22 @@
 // import { inverseTheme } from 'Utils';
 import reset from "styled-reset";
+import styledNormalize from "styled-normalize";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-  ${reset}
-  
-  * {
+  ${styledNormalize}
+
+
+* {
     box-sizing: border-box;
     color: white;
   }
 
-  body {
+body {
     background: black;
   }
 
-  q {
+q {
     quotes: "“" "”" "‘" "’";
   }
 
@@ -33,7 +35,7 @@ export const GlobalStyle = createGlobalStyle`
     font-family: monospace;
   }
 
-  hr {
+hr {
     background-color: black;
     width: 100%;
     height: .1em;
@@ -53,7 +55,7 @@ export const GlobalStyle = createGlobalStyle`
     color: black;
   }
 
-  textarea {
+textarea {
     padding: 0.2em 0.9em;
     resize: none;
     border: none;
@@ -71,7 +73,6 @@ export const GlobalStyle = createGlobalStyle`
 
   ::-webkit-scrollbar {
     width: 0.8em;
-    ${"" /* display:none; */}
     background: white;
     border-top-right-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
