@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const StyledView = styled.div`
   display: flex;
@@ -9,6 +9,7 @@ const StyledView = styled.div`
   align-items: center;
   text-align: center;
   width: 70%;
+  color: white;
 
   @media (max-width: 600px) {
     width: 90%;

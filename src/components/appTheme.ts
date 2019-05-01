@@ -6,10 +6,9 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
   ${styledNormalize}
 
-
 * {
     box-sizing: border-box;
-    color: white;
+    /* color: white; */
   }
 
 body {
