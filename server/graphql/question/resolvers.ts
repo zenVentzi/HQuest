@@ -44,9 +44,9 @@ const Query: Query = {
     if (tags && tags.some(tag => tag === "")) {
       throw Error("tags cannot have empty strings");
     }
-    if (tags && tags.length === 0) {
-      throw Error("tags cannot have 0 elements");
-    }
+    // if (tags && tags.length === 0) {
+    //   throw Error("tags cannot have 0 elements");
+    // }
     if (!ObjectId.isValid(userId)) {
       throw new Error("userId invalid format");
     }
@@ -71,9 +71,9 @@ const Query: Query = {
     if (tags && tags.some(tag => tag === "")) {
       throw Error("tags cannot have empty strings");
     }
-    if (tags && tags.length === 0) {
-      throw Error("tags cannot have 0 elements");
-    }
+    // if (tags && tags.length === 0) {
+    //   throw Error("tags cannot have 0 elements");
+    // }
     if (!ObjectId.isValid(userId)) {
       throw new Error("userId invalid format");
     }

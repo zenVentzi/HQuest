@@ -7,44 +7,6 @@ import { Models } from "../models";
 
 const { ObjectId } = mongoose.Types;
 
-function RemoveEmptyStrings(params: string[]) {
-  return function(
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
-    const originalMethod = descriptor.value;
-    descriptor.value = function(...args1) {
-      const args = arguments;
-
-      params.forEach(param => {
-        console.log(
-          `Arguments have ${param}, ${Reflect.has(arguments, param)}`
-        );
-
-        if (!args[param] || !args[param].length) {
-          // throw Error(
-          //   `Parameter ${param} does not exist. Could be spelling error`
-          // );
-          return;
-        } else if (
-          !Array.isArray(args[param]) ||
-          !args[param].every(elem => typeof elem === "string")
-        ) {
-          throw Error(`Parameter ${param} must be an array of strings`);
-        }
-
-        const noEmpty = args[param].filter((elem: string) => elem !== "");
-        args[param] = noEmpty;
-      });
-
-      const result = originalMethod.apply(this, args);
-      return result;
-    };
-    return descriptor;
-  };
-}
-
 class QuestionService {
   constructor(private models: Models) {}
 
@@ -121,18 +83,32 @@ class QuestionService {
     tags?: string[] | null
   ): Promise<DbTypes.AnsweredQuestion[]> {
     const answeredQuestionsIds = answers.map(a => a.questionId);
-    const query: any = { _id: { $in: answeredQuestionsIds } };
-
-    if (tags && tags.length) {
-      query.tags = { $in: tags };
-    }
 
     const questions = (await this.models.question
-      .find(query)
-      .lean()) as DbTypes.AnsweredQuestion[];
-    // ordering is done because the $in query returns in random order
-    const orderedQs = this.preserveOrder({ answeredQuestionsIds, questions });
-    const mergedQuestions = this.mergeAnswersWithQuestions(answers, orderedQs);
+      .find()
+      .lean()) as DbTypes.UnansweredQuestion[];
+
+    const answeredQs = questions.filter(q =>
+      answeredQuestionsIds.includes(q._id.toHexString())
+    );
+
+    const qsWithTags = answeredQs.filter(q => {
+      if (tags && tags.length) {
+        let hasAllTags = true;
+
+        tags.forEach(tag => {
+          if (!q.tags.includes(tag)) {
+            hasAllTags = false;
+          }
+        });
+
+        return hasAllTags;
+      }
+
+      return true;
+    });
+
+    const mergedQuestions = this.mergeAnswersWithQuestions(answers, qsWithTags);
     return mergedQuestions;
   }
 
@@ -145,29 +121,40 @@ class QuestionService {
       userId
     ))!.toObject();
 
-    let ignoreQuestions: string[] = [];
+    let ignoreQuestionIds: string[] = [];
 
     if (answeredQuestionsIds && answeredQuestionsIds.length) {
-      ignoreQuestions = ignoreQuestions.concat(answeredQuestionsIds);
+      ignoreQuestionIds = ignoreQuestionIds.concat(answeredQuestionsIds);
     }
     if (questionsNotApply && questionsNotApply.length) {
-      ignoreQuestions = ignoreQuestions.concat(questionsNotApply);
+      ignoreQuestionIds = ignoreQuestionIds.concat(questionsNotApply);
     }
 
-    const query: any = {};
-
-    if (ignoreQuestions.length) {
-      query._id = { $nin: ignoreQuestions };
-    }
-    if (tags && tags.length) {
-      query.tags = { $in: tags.filter(tag => tag !== "") };
-    }
-
-    const questions = (await this.models.question
-      .find(query)
+    const allQuestions = (await this.models.question
+      .find()
       .lean()) as DbTypes.UnansweredQuestion[];
 
-    return questions;
+    const notIgnoredQs = allQuestions.filter(
+      q => !ignoreQuestionIds.includes(q._id.toHexString())
+    );
+
+    const qsWithTags = notIgnoredQs.filter(q => {
+      if (tags && tags.length) {
+        let hasAllTags = true;
+
+        tags.forEach(tag => {
+          if (!q.tags.includes(tag)) {
+            hasAllTags = false;
+          }
+        });
+
+        return hasAllTags;
+      }
+
+      return true;
+    });
+
+    return qsWithTags;
   }
 
   // public async getUserQuestions(
@@ -238,9 +225,11 @@ class QuestionService {
           question._id.equals(a.questionId) &&
           !mergedAnswers.some(ma => ma._id.equals(a._id))
       );
-      const mergedQA = this.mergeAnswerWithQuestion(answer!, question);
-      mergedAnswers.push(answer!);
-      result.push(mergedQA);
+      if (answer) {
+        const mergedQA = this.mergeAnswerWithQuestion(answer, question);
+        mergedAnswers.push(answer);
+        result.push(mergedQA);
+      }
     });
 
     return result;
