@@ -84,6 +84,11 @@ const QuestionTags = (props: QuestionTagsProps) => {
                 }
               }
             }}
+            noOptionsMessage={({ inputValue }) => {
+              return inputValue.length
+                ? `No tags found with "${inputValue}"`
+                : null;
+            }}
           />
         );
       }}

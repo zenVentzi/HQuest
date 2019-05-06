@@ -1,10 +1,11 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const StyledAnchor = styled.a`
   /* user-select: none; */
   cursor: pointer;
   text-align: center;
   text-decoration: underline;
+  color: white;
 
   &:hover {
     text-decoration: none;

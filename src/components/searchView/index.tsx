@@ -26,7 +26,6 @@ const SearchView = ({
 }: SearchViewProps) => {
   return (
     <StyledView>
-      fdfd
       <Query<UsersQuery, UsersQueryVariables>
         query={GET_USERS}
         variables={{ match: username }}
