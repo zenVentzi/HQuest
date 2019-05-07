@@ -11,7 +11,10 @@
     "test:unit": "jest --detectOpenHandles --config server/jest.unit.config.js",
     "test": "jest --detectOpenHandles --config server/jest.config.js",
     "typegen": "gql-gen --config codegen.yml",
-    "getFragmentTypes": "node src/graphql/gqlSchemaExtractor.js"
+    "getFragmentTypes": "node src/graphql/gqlSchemaExtractor.js",
+    "build": "tsc --project server/tsconfig.json && npm run copy-schemas",
+    "postinstall": "npm run build",
+    "start": "node dist/server/server.js"
   },
   "author": "",
   "license": "ISC",
