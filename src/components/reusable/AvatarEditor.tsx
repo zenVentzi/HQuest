@@ -24,7 +24,7 @@ const Hint = styled.div`
 
 interface AvatarEditorProps {
   image: string | File;
-  onClickCancel: (src?: string) => void; // split that into onSave and onClose
+  onClose: (src?: string) => void; // split that into onSave and onClose
 }
 
 const AvatarEditor = (props: AvatarEditorProps) => {
@@ -37,22 +37,22 @@ const AvatarEditor = (props: AvatarEditorProps) => {
   ) => async () => {
     if (editor) {
       const canvasScaled = editor.current!.getImageScaledToCanvas();
-      const base64Img = canvasScaled.toDataURL("image/jpeg").split(",")[1];
+      const base64Img = canvasScaled.toDataURL("image/jpeg");
       const variables = { base64Img };
       // show loading/uploading
       const res = await uploadAvatar({ variables });
-      if (!res) {
+      if (!res || !res.data) {
         throw Error("Upload avatar mutation failed");
       }
 
-      const src = res.data!.uploadAvatar;
+      const src = res.data.uploadAvatar;
 
-      props.onClickCancel(src);
+      props.onClose(src);
     }
   };
 
   const onClickCancel = () => {
-    props.onClickCancel();
+    props.onClose();
   };
 
   return (

@@ -1,10 +1,17 @@
 import fs from "fs";
+import cloudinary from "cloudinary";
 import { ApolloContext, ContextUser } from "gqlContext";
 import { Types } from "mongoose";
 import path from "path";
 import * as DbTypes from "../dbTypes";
 // import * as GqlTypes from "../generated/gqltypes";
 import { Models } from "../models";
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const { ObjectId } = Types;
 
@@ -137,8 +144,31 @@ class UserService {
     base64Img: string,
     userId: string
   ): Promise<string> {
-    const avatarSrc = await this.saveAvatarToFile(base64Img, userId);
-    return avatarSrc;
+    const imageUrl = await new Promise<string>((resolve, reject) => {
+      cloudinary.v2.uploader.upload(
+        base64Img,
+        {
+          public_id: `avatar${userId}`
+        },
+        (err, image) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(image.url);
+          }
+        }
+      );
+    });
+
+    const user = await this.models.user.findById(userId);
+    if (!user) {
+      throw Error(`Could not find user with id: ${userId}`);
+    }
+
+    user.avatarSrc = imageUrl;
+    await user.save();
+
+    return imageUrl;
   }
 
   public async addExperience(
@@ -193,7 +223,8 @@ class UserService {
       surName,
       email,
       intro: "Hey, I am an intro",
-      avatarSrc: `/public/images/avatar${id}.jpeg`,
+      // avatarSrc: `/public/images/avatar${id}.jpeg`,
+      // avatarSrc: `/public/images/avatar${id}.jpeg`,
       socialMediaLinks: {
         facebookLink: "",
         twitterLink: "",

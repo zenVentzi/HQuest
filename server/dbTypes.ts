@@ -68,7 +68,7 @@ export interface User<
   surName: string;
   email: string;
   intro: string;
-  avatarSrc: string;
+  avatarSrc?: string;
   questionsNotApply?: string[];
   followers?: PopulatedFields extends UserPopulatedFields.followers
     ? User[]
