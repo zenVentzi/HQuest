@@ -28,7 +28,7 @@ interface AvatarEditorProps {
 }
 
 const AvatarEditor = (props: AvatarEditorProps) => {
-  const editor = useRef<Editor>();
+  const editor = useRef<Editor>(null);
   const onClickSave = (
     uploadAvatar: MutationFn<
       UploadAvatarMutation,
@@ -65,9 +65,7 @@ const AvatarEditor = (props: AvatarEditorProps) => {
         return (
           <Wrapper>
             <Editor
-              ref={editor => {
-                editor = editor;
-              }}
+              ref={editor}
               image={image}
               width={150}
               height={150}
