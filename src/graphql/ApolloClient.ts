@@ -65,6 +65,9 @@ const subscriptionMiddleware: Middleware = {
 
 wsMiddlewares.push(subscriptionMiddleware);
 
+console.log(process.env.CLOUDINARY_CLOUD_NAME);
+console.log(process.env.HOST_NAME);
+
 const webSocketURI =
   process.env.HOST_NAME === "heroku"
     ? "ws://hquest.herokuapp.com/graphql"
