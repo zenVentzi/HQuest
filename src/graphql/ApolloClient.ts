@@ -14,8 +14,13 @@ import introspectionQueryResultData from "./fragmentTypes.json";
 import { getAuthToken, deleteLoggedUserData, loginEvent } from "../utils";
 import { Middleware, SubscriptionClient } from "subscriptions-transport-ws";
 
+const httpURI =
+  process.env.HOST_NAME === "heroku"
+    ? "https://hquest.herokuapp.com/graphql"
+    : "http://localhost:4000/graphql";
+
 const uploadLink = createUploadLink({
-  uri: "http://localhost:4000/graphql"
+  uri: httpURI
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -60,7 +65,12 @@ const subscriptionMiddleware: Middleware = {
 
 wsMiddlewares.push(subscriptionMiddleware);
 
-const subClient = new SubscriptionClient(`ws://localhost:4000/graphql`, {
+const webSocketURI =
+  process.env.HOST_NAME === "heroku"
+    ? "ws://hquest.herokuapp.com/graphql"
+    : "ws://localhost:4000/graphql";
+
+const subClient = new SubscriptionClient(webSocketURI, {
   reconnect: true,
   connectionParams: () => ({
     authToken: getAuthToken()
