@@ -68,7 +68,7 @@ wsMiddlewares.push(subscriptionMiddleware);
 const webSocketURI =
   window.location.hostname === "localhost"
     ? "ws://localhost:4000/graphql"
-    : "ws://hquest.herokuapp.com/graphql";
+    : "wss://hquest.herokuapp.com/graphql";
 
 const subClient = new SubscriptionClient(webSocketURI, {
   reconnect: true,
