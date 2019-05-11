@@ -15,9 +15,9 @@ import { getAuthToken, deleteLoggedUserData, loginEvent } from "../utils";
 import { Middleware, SubscriptionClient } from "subscriptions-transport-ws";
 
 const httpURI =
-  process.env.HOST_NAME === "heroku"
-    ? "https://hquest.herokuapp.com/graphql"
-    : "http://localhost:4000/graphql";
+  window.location.hostname === "localhost"
+    ? "http://localhost:4000/graphql"
+    : "https://hquest.herokuapp.com/graphql";
 
 const uploadLink = createUploadLink({
   uri: httpURI
@@ -65,13 +65,10 @@ const subscriptionMiddleware: Middleware = {
 
 wsMiddlewares.push(subscriptionMiddleware);
 
-console.log(process.env.CLOUDINARY_CLOUD_NAME);
-console.log(process.env.HOST_NAME);
-
 const webSocketURI =
-  process.env.HOST_NAME === "heroku"
-    ? "ws://hquest.herokuapp.com/graphql"
-    : "ws://localhost:4000/graphql";
+  window.location.hostname === "localhost"
+    ? "ws://localhost:4000/graphql"
+    : "ws://hquest.herokuapp.com/graphql";
 
 const subClient = new SubscriptionClient(webSocketURI, {
   reconnect: true,
