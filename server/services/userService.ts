@@ -154,7 +154,7 @@ class UserService {
           if (err) {
             reject(err);
           } else {
-            resolve(image.url);
+            resolve(image.secure_url);
           }
         }
       );
