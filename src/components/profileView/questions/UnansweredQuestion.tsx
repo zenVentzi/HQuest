@@ -23,6 +23,9 @@ const StyledQuestion = styled.div`
   margin-bottom: 1em;
   flex-direction: column;
   align-items: center;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
 `;
 
 interface UnansweredQuestionProps {

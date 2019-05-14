@@ -1,27 +1,40 @@
 import { css } from "styled-components";
+import { CSSProperties } from "react";
 
-interface ClickableIconProps {
-  visible: boolean | 0 | 1;
-  reverseColor?: boolean;
-}
+export type ClickableIconProps = {
+  visible?: boolean | 0 | 1;
+  backgroundColor: CSSProperties["backgroundColor"];
+  color: CSSProperties["color"];
+};
 
-export const clickableIcon = css<ClickableIconProps>`
-  display: inline-block;
-  background: black;
-  border-radius: 0.3em;
-  cursor: pointer;
-  visibility: ${props => (props.visible ? "inherit" : "hidden")};
-
-  color: ${props => (props.reverseColor ? "black" : "white")};
-
-  &:hover {
-    background: ${props => (props.reverseColor ? "black" : "white")};
+/* 
+& * {
+      color: ${props => (props.color === "white" ? "black" : "white")};
+    }
 
     & * {
-      color: ${props => (props.reverseColor ? "white" : "black")};
-    }
+    color: ${props => props.color};
   }
-`;
+
+ */
+
+export const clickableIcon = css<ClickableIconProps>(props => {
+  return `
+  display: inline-block;
+  background-color: ${props.backgroundColor};
+  border-radius: 0.3em;
+  cursor: pointer;
+  visibility: ${
+    props.visible || props.visible === undefined ? "inherit" : "hidden"
+  };
+
+  color: white;
+
+  &:hover {
+    background-color: ${props.color};
+    color: ${props.backgroundColor};
+  }`;
+});
 
 interface ClickableTextProps {
   disabled?: boolean;

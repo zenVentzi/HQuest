@@ -23,6 +23,8 @@ const StyledViewer = styled.p`
 
 const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
+  color: black;
+  font-weight: bold;
 `;
 
 type CommentViewerProps = {
@@ -53,6 +55,7 @@ const CommentViewer = ({ likes, comment, onClickLike }: CommentViewerProps) => {
         - <TextWithMentions text={comment.value} />
       </StyledViewer>
       <Row
+        style={{ justifyContent: "left" }}
         hide=/* {!hovered} */ {
           // props.showAnswerEditor || props.showPositionEditor
           false

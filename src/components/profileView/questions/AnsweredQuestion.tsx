@@ -12,8 +12,14 @@ import Question from "./Question";
 
 const StyledQuestion = styled.div`
   width: 100%;
+  /* background-color: "red"; */
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  /* background-color: #343434; */
+  /* background-color: #242124; */
   display: flex;
-  border-bottom: 2px solid white;
+  /* border-bottom: 2px solid white; */
   margin-bottom: 2em;
   flex-direction: column;
   align-items: center;

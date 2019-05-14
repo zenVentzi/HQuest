@@ -14,7 +14,8 @@ const StyledPanel = styled.div`
   align-items: center;
   background: black;
   border-radius: 0.2em;
-  color: white;
+  color: black;
+  background-color: white;
 
   @media (max-width: 600px) {
     width: 90%;

@@ -15,7 +15,15 @@ const LikeBtn = (props: LikeBtnProps) => {
     like in medium? */
     props.onClick(e);
   };
-  return <IconBtn icon={LikeIcon} size="1.2em" onClick={onClick} />;
+  return (
+    <IconBtn
+      icon={LikeIcon}
+      size="1.2em"
+      onClick={onClick}
+      color="white"
+      backgroundColor="black"
+    />
+  );
 };
 
 export default LikeBtn;

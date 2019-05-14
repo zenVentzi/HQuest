@@ -9,7 +9,13 @@ const Profile = () => {
 
   return (
     <NavItem>
-      <IconLink icon={UserCircle} size="2em" to={link} />
+      <IconLink
+        icon={UserCircle}
+        size="2em"
+        to={link}
+        color="white"
+        backgroundColor="black"
+      />
     </NavItem>
   );
 };

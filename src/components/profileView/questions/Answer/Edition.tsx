@@ -18,12 +18,15 @@ import TextWithMentions from "Reusable/TextWithMentions";
 
 const SmallBtn = styled(Anchor)`
   margin-right: 0.6em;
+  color: black;
+  font-weight: bold;
 `;
 
 const Viewer = styled.div`
   background: black;
   text-align: left;
-  color: white;
+  background-color: white;
+  color: black;
   width: 60%;
   font-size: 1.2em;
   line-height: 1.2;
@@ -154,6 +157,7 @@ const Edition = (props: EditionProps) => {
       </Viewer>
       {/* <Viewer>- {answerWithParagraphs}</Viewer> */}
       <Row
+        style={{ justifyContent: "left", width: "55%" }}
         hide=/* {!hovered} */ {
           // props.showAnswerEditor || props.showPositionEditor
           false

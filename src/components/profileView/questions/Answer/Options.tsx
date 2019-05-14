@@ -47,6 +47,8 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
           size="1em"
           visible={!!visible}
           onClick={() => {}}
+          backgroundColor="black"
+          color="white"
         />
       }
       items={options}

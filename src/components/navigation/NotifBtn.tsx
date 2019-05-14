@@ -1,9 +1,9 @@
 import React from "react";
 import { Notifications } from "styled-icons/material/Notifications";
 import styled from "styled-components";
-import { clickableIcon } from "Reusable/css";
+import { clickableIcon, ClickableIconProps } from "Reusable/css";
 
-const Btn = styled.div<{ visible: boolean }>`
+const Btn = styled.div<ClickableIconProps>`
   display: inline-block;
   position: relative;
   padding: 2px 5px;
@@ -30,7 +30,7 @@ interface NotifBtnProps {
 
 const NotifBtn = React.forwardRef<HTMLDivElement, NotifBtnProps>(
   ({ totalUnseen, onClick }: NotifBtnProps, ref) => (
-    <Btn ref={ref} onClick={onClick} visible>
+    <Btn ref={ref} onClick={onClick} color="white" backgroundColor="black">
       <Notifications size="2em" />
       {totalUnseen > 0 && <Badge>{totalUnseen}</Badge>}
     </Btn>

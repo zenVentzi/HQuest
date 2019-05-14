@@ -76,6 +76,8 @@ const CommentOptions = (props: CommentOptionsProps) => {
       pivot="right"
       dropBtn={
         <IconBtn
+          color="black"
+          backgroundColor="white"
           icon={CaretDown}
           size="0.8em"
           visible={visible}

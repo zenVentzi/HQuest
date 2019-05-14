@@ -3,9 +3,10 @@ import { EditionFieldsFragment } from "GqlClient/autoGenTypes";
 import styled from "styled-components";
 
 const StyledSelect = styled.select`
-  background: black;
-  color: white;
-  border: 2px solid white;
+  background: white;
+  color: black;
+  font-weight: bold;
+  border: 2px solid black;
   text-align: center;
 `;
 

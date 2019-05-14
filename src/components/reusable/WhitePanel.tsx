@@ -90,6 +90,8 @@ const Panel = ({ onClose, children }: PanelProps) => (
               e.stopPropagation();
               onClose(e);
             }}
+            backgroundColor="white"
+            color="black"
           />
         </TopRightCorner>
         {children}

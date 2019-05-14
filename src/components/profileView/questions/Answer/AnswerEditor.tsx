@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import Textarea from "react-textarea-autosize";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import TextBtn from "Reusable/TextBtn";
 import {
   AnswerFieldsFragment,
@@ -30,20 +30,31 @@ const TextArea = styled(Textarea)`
 
 const Buttons = styled.div`
   display: flex;
+  margin-top: 8px;
   width: 100%;
   justify-content: center;
   margin-bottom: 1em;
 `;
 
-const ErrorText = styled.div`
-  color: red;
-  margin-bottom: 0.5em;
+const commonBtnStyles = css`
+  background: white;
+  color: black;
+  border: 2px solid black;
+  cursor: pointer;
+
+  &:hover {
+    background: black;
+    color: white;
+  }
 `;
 
 const LeftBtn = styled(TextBtn)`
   margin-right: 1em;
+  ${commonBtnStyles}
 `;
-const RightBtn = styled(TextBtn)``;
+const RightBtn = styled(TextBtn)`
+  ${commonBtnStyles}
+`;
 
 interface AnswerEditorProps {
   onClickDoesNotApply: () => void;

@@ -27,6 +27,7 @@ type MentionInputProps = {
   disabled: boolean;
   placeholder: string;
   value: string | undefined;
+  width?: string;
 };
 
 const MentionInput = React.forwardRef<
@@ -88,12 +89,14 @@ const MentionInput = React.forwardRef<
       onChange={props.onChange}
       style={{
         control: {
-          backgroundColor: "white",
+          backgroundColor: "black",
+          color: "white",
+          borderRadius: "5px",
           fontSize: 12,
           fontWeight: "normal"
         },
         textAlign: "left",
-        width: "80%",
+        width: props.width || "80%",
 
         highlighter: {
           overflow: "hidden"
@@ -111,7 +114,7 @@ const MentionInput = React.forwardRef<
 
           highlighter: {
             fontFamily: "monospace",
-            padding: 10
+            padding: 9
           },
 
           input: {
@@ -119,7 +122,8 @@ const MentionInput = React.forwardRef<
             minHeight: 10,
             minWidth: 200,
             outline: 0,
-            border: 0
+            border: 0,
+            color: "white"
           }
         },
 
@@ -153,8 +157,10 @@ const MentionInput = React.forwardRef<
           });
         }}
         style={{
-          backgroundColor: "#00000030",
-          color: "black"
+          backgroundColor: "black",
+          color: "white"
+          // backgroundColor: "#00000030",
+          // color: "black"
         }}
         // @ts-ignore // @types/ are incomplete
         renderSuggestion={renderSuggestion}

@@ -31,7 +31,15 @@ const Menu = ({ history }: MenuProps) => {
   return (
     <Dropdown
       pivot="right"
-      dropBtn={<IconBtn icon={MenuIcon} size="2em" onClick={() => {}} />}
+      dropBtn={
+        <IconBtn
+          icon={MenuIcon}
+          size="2em"
+          color="white"
+          backgroundColor="black"
+          onClick={() => {}}
+        />
+      }
       items={items}
     />
   );

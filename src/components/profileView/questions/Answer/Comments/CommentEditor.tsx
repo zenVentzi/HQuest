@@ -20,6 +20,7 @@ const ErrorText = styled.div`
 `;
 
 const Buttons = styled.div`
+  margin-top: 5px;
   display: flex;
   width: 100%;
   justify-content: center;
@@ -28,8 +29,27 @@ const Buttons = styled.div`
 
 const LeftBtn = styled(TextBtn)`
   margin-right: 1em;
+  background: white;
+  color: black;
+  border: 2px solid black;
+  cursor: pointer;
+
+  &:hover {
+    background: black;
+    color: white;
+  }
 `;
-const RightBtn = styled(TextBtn)``;
+const RightBtn = styled(TextBtn)`
+  background: white;
+  color: black;
+  border: 2px solid black;
+  cursor: pointer;
+
+  &:hover {
+    background: black;
+    color: white;
+  }
+`;
 
 interface CommentEditorProps {
   comment: string;
@@ -62,6 +82,7 @@ const CommentEditor = (props: CommentEditorProps) => {
   return (
     <>
       <MentionInput
+        width="100%"
         value={commentValue}
         onChange={e => {
           setCommentValue(e.target.value);
