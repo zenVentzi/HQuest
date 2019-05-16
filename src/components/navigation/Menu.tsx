@@ -35,9 +35,9 @@ const Menu = ({ history }: MenuProps) => {
         <IconBtn
           icon={MenuIcon}
           size="2em"
+          onClick={() => {}}
           color="white"
           backgroundColor="black"
-          onClick={() => {}}
         />
       }
       items={items}

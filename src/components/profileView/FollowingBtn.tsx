@@ -13,7 +13,11 @@ interface FollowingBtnProps {
 }
 
 const FollowingBtn = ({ numOfFollowing, onClick }: FollowingBtnProps) => {
-  return <Btn onClick={onClick}>Following {numOfFollowing}</Btn>;
+  return (
+    <Btn onClick={onClick} color="white" backgroundColor="black">
+      Following {numOfFollowing}
+    </Btn>
+  );
 };
 
 export default FollowingBtn;

@@ -105,6 +105,8 @@ const CommentEditor = (props: CommentEditorProps) => {
       />
       <Buttons>
         <LeftBtn
+          color="white"
+          backgroundColor="black"
           onClick={async () => {
             if (!isSubmitting) {
               await onSubmit();
@@ -113,7 +115,13 @@ const CommentEditor = (props: CommentEditorProps) => {
         >
           Save
         </LeftBtn>
-        <RightBtn onClick={props.onCancel}>Cancel</RightBtn>
+        <RightBtn
+          onClick={props.onCancel}
+          color="white"
+          backgroundColor="black"
+        >
+          Cancel
+        </RightBtn>
       </Buttons>
     </>
   );

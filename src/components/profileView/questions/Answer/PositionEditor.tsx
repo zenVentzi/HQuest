@@ -59,6 +59,8 @@ const PositionEditor = ({
       </div>
       <Buttons>
         <TextBtn
+          color="white"
+          backgroundColor="black"
           onClick={() => {
             const newPosition = parseInt(inputRef.current!.value, 10);
 
@@ -72,7 +74,9 @@ const PositionEditor = ({
         >
           Move
         </TextBtn>
-        <TextBtn onClick={onClickClose}>Cancel</TextBtn>
+        <TextBtn onClick={onClickClose} color="white" backgroundColor="black">
+          Cancel
+        </TextBtn>
       </Buttons>
     </StyledEditor>
   );

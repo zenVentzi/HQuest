@@ -58,7 +58,13 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
     <Mutation<LoginMutation, LoginMutationVariables> mutation={LOGIN_MUTATION}>
       {login =>
         testUser ? (
-          <TextBtn onClick={testLogin(login)}>{testUser.name}</TextBtn>
+          <TextBtn
+            onClick={testLogin(login)}
+            color="white"
+            backgroundColor="black"
+          >
+            {testUser.name}
+          </TextBtn>
         ) : (
           <FacebookLogin
             appId="765926203800350"

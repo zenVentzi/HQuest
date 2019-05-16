@@ -1,9 +1,22 @@
-import React from 'react';
-import styled from 'styled-components';
-import { clickableText } from 'Reusable/css';
+import React, { HTMLAttributes } from "react";
+import styled from "styled-components";
+import { clickableText, ClickableTextProps } from "Reusable/css";
 
-const StyledBtn = styled.div`
-  ${clickableText};
+// const StyledBtn = styled.div`
+//   ${clickableText};
+// `;
+
+const StyledBtn = styled(
+  React.forwardRef<
+    HTMLDivElement,
+    ClickableTextProps & HTMLAttributes<HTMLDivElement>
+  >(({ color, backgroundColor, children, ...rest }, ref) => (
+    <div ref={ref} {...rest}>
+      {children}
+    </div>
+  ))
+)`
+  ${clickableText}
 `;
 
 StyledBtn.defaultProps = {};

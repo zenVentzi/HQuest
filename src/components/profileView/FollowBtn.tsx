@@ -49,6 +49,8 @@ const FollowBtn = (props: FollowBtnProps) => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick(follow)}
+          color="white"
+          backgroundColor="black"
         >
           {text}
         </Btn>

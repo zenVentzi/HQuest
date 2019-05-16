@@ -12,7 +12,11 @@ interface FollowersBtnProps {
 }
 
 const FollowersBtn = ({ numOfFollowers, onClick }: FollowersBtnProps) => {
-  return <Btn onClick={onClick}>Followers {numOfFollowers}</Btn>;
+  return (
+    <Btn onClick={onClick} color="white" backgroundColor="black">
+      Followers {numOfFollowers}
+    </Btn>
+  );
 };
 
 export default FollowersBtn;

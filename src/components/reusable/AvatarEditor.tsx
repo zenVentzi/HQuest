@@ -76,8 +76,20 @@ const AvatarEditor = (props: AvatarEditorProps) => {
             />
             <Hint>Drag to adjust</Hint>
             <div>
-              <TextBtn onClick={onClickSave(uploadAvatar)}>Save</TextBtn>
-              <TextBtn onClick={onClickCancel}>Cancel</TextBtn>
+              <TextBtn
+                onClick={onClickSave(uploadAvatar)}
+                color="white"
+                backgroundColor="black"
+              >
+                Save
+              </TextBtn>
+              <TextBtn
+                onClick={onClickCancel}
+                color="white"
+                backgroundColor="black"
+              >
+                Cancel
+              </TextBtn>
             </div>
           </Wrapper>
         );

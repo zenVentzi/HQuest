@@ -145,6 +145,8 @@ const ProfileEditor = ({
                   placeholder="LinkedIn link..."
                 />
                 <TextBtn
+                  color="white"
+                  backgroundColor="black"
                   onClick={e => {
                     handleSubmit();
                   }}

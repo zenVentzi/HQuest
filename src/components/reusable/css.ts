@@ -8,49 +8,61 @@ export type ClickableIconProps = {
 };
 
 /* 
-& * {
-      color: ${props => (props.color === "white" ? "black" : "white")};
-    }
 
-    & * {
-    color: ${props => props.color};
-  }
+i have to either use .attrs to remove bgColor and color
+or not pass them at all from the styles prop but rather
+simple props like before
 
- */
+2) use less generalized component. I.e. make every component that needs it
+implement it themselves, which still requires the usage of .attrs
+
+using .attrs to remove the style from component has the most magic
+but as long as I add a comment with the reason why I am doing it
+it should be alright
+
+3) create black/white button component
+
+*/
 
 export const clickableIcon = css<ClickableIconProps>(props => {
-  return `
-  display: inline-block;
-  background-color: ${props.backgroundColor};
-  border-radius: 0.3em;
-  cursor: pointer;
-  visibility: ${
-    props.visible || props.visible === undefined ? "inherit" : "hidden"
-  };
+  return css`
+    display: inline-block;
+    background-color: ${props.backgroundColor};
+    color: ${props.color};
+    border-radius: 0.3em;
+    cursor: pointer;
+    visibility: ${props.visible || props.visible === undefined
+      ? "inherit"
+      : "hidden"};
 
-  color: white;
-
-  &:hover {
-    background-color: ${props.color};
-    color: ${props.backgroundColor};
-  }`;
+    &:hover {
+      background: ${props.color};
+      color: ${props.backgroundColor};
+    }
+  `;
 });
 
-interface ClickableTextProps {
+export type ClickableTextProps = {
   disabled?: boolean;
-}
+  backgroundColor: CSSProperties["backgroundColor"];
+  color: CSSProperties["color"];
+};
 
 export const clickableText = css<ClickableTextProps>`
-  display: inline-block;
-  background: black;
-  color: white;
-  border: 2px solid white;
-  border-radius: 0.3em;
-  padding: 0.3em 0.8em;
-  cursor: pointer;
+  ${props => {
+    return css`
+      display: inline-block;
+      background: ${props.backgroundColor};
+      color: ${props.color};
+      border: 2px solid ${props.color};
+      border-radius: 0.3em;
+      padding: 0.3em 0.8em;
+      cursor: pointer;
 
-  &:hover {
-    background: white;
-    color: black;
-  }
+      &:hover {
+        background: ${props.color};
+        color: ${props.backgroundColor};
+      }
+    `;
+  }}
 `;

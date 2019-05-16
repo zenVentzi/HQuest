@@ -1,13 +1,40 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, HTMLAttributes } from "react";
 import styled from "styled-components";
 import StyledIcon from "Reusable/StyledIcon";
 import { clickableIcon, ClickableIconProps } from "Reusable/css";
 
-const StyledBtn = styled.div`
-  ${clickableIcon};
+// const StyledBtn = styled.div`
+//   ${clickableIcon};
+// `;
+
+// const StyledBtn = styled(
+//   ({
+//     color,
+//     backgroundColor,
+//     children,
+//     ...rest
+//   }: ClickableIconProps & {
+//     children: any;
+//     ref: React.Ref<HTMLDivElement>;
+//   } & HTMLAttributes<HTMLDivElement>) => <div {...rest}>{children}</div>
+// )`
+//   ${clickableIcon}
+// `;
+
+const StyledBtn = styled(
+  React.forwardRef<
+    HTMLDivElement,
+    ClickableIconProps & HTMLAttributes<HTMLDivElement>
+  >(({ color, backgroundColor, visible, children, ...rest }, ref) => (
+    <div ref={ref} {...rest}>
+      {children}
+    </div>
+  ))
+)`
+  ${clickableIcon}
 `;
 
-StyledBtn.defaultProps = {};
+// StyledBtn.defaultProps = {};
 
 type BtnProps = ClickableIconProps & {
   icon: any;
@@ -23,9 +50,9 @@ const Btn = React.forwardRef<HTMLDivElement, BtnProps>(
         role="button"
         ref={ref}
         onClick={onClick}
+        visible={visible}
         color={color}
         backgroundColor={backgroundColor}
-        visible={visible}
       >
         <StyledIcon size={size} icon={icon} visible={visible} />
       </StyledBtn>

@@ -27,13 +27,23 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
   const { visible } = props;
 
   const options = [
-    <TextBtn key="edit" onClick={onClickEdit}>
+    <TextBtn
+      key="edit"
+      onClick={onClickEdit}
+      color="white"
+      backgroundColor="black"
+    >
       Edit
     </TextBtn>,
     // <TextBtn key="remove" onClick={onClickRemove}>
     //   Remove
     // </TextBtn>,
-    <TextBtn key="move" onClick={onClickMove}>
+    <TextBtn
+      key="move"
+      onClick={onClickMove}
+      color="white"
+      backgroundColor="black"
+    >
       Move
     </TextBtn>
   ];
@@ -47,8 +57,8 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
           size="1em"
           visible={!!visible}
           onClick={() => {}}
-          backgroundColor="black"
           color="white"
+          backgroundColor="black"
         />
       }
       items={options}

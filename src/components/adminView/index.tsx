@@ -106,7 +106,13 @@ const AdminView = () => {
                     }}
                     placeholder="Enter the questions string here"
                   />
-                  <TextBtn onClick={submitForm}>Add</TextBtn>
+                  <TextBtn
+                    onClick={submitForm}
+                    color="white"
+                    backgroundColor="black"
+                  >
+                    Add
+                  </TextBtn>
                 </Form>
               )}
             </Formik>

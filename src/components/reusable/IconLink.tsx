@@ -6,18 +6,12 @@ import { clickableIcon, ClickableIconProps } from "Reusable/css";
 import { Link } from "react-router-dom";
 import { History, LocationDescriptor } from "history";
 
-// const StyledLink = styled(UndecoratedLink)`
-//   ${clickableIcon};
-// `;
-
 // added complexity due to https://github.com/styled-components/styled-components/issues/135
 const StyledLink = styled(
   ({
-    backgroundColor,
-    color,
     visible,
-    to,
-    ref,
+    color,
+    backgroundColor,
     children,
     ...rest
   }: ClickableIconProps & {
@@ -25,11 +19,7 @@ const StyledLink = styled(
     children: any;
     ref: any;
     role: string;
-  }) => (
-    <UndecoratedLink to={to} {...rest} ref={ref}>
-      {children}
-    </UndecoratedLink>
-  )
+  }) => <UndecoratedLink {...rest}>{children}</UndecoratedLink>
 )`
   ${clickableIcon};
 `;
@@ -44,7 +34,7 @@ type IconLinkProps = ClickableIconProps & {
 // TODO remove ref if not needed
 
 const IconLink = React.forwardRef<Link, IconLinkProps>(
-  ({ icon, size, visible = true, to, backgroundColor, color }, ref) => {
+  ({ icon, size, visible = true, to, color, backgroundColor }, ref) => {
     return (
       /* the visible hack(1 : 0) reason - 
     https://github.com/styled-components/styled-components/issues/1198 */
@@ -53,8 +43,8 @@ const IconLink = React.forwardRef<Link, IconLinkProps>(
         visible={visible ? 1 : 0}
         ref={ref}
         role="button"
-        backgroundColor={backgroundColor}
         color={color}
+        backgroundColor={backgroundColor}
       >
         <StyledIcon icon={icon} size={size} visible={visible} />
       </StyledLink>

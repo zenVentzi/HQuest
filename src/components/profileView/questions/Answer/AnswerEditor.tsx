@@ -151,6 +151,8 @@ const AnswerEditor = React.forwardRef<HTMLTextAreaElement, AnswerEditorProps>(
               />
               <Buttons>
                 <LeftBtn
+                  color="white"
+                  backgroundColor="black"
                   disabled={isSubmitting}
                   onClick={async () => {
                     if (!isSubmitting) {
@@ -166,7 +168,11 @@ const AnswerEditor = React.forwardRef<HTMLTextAreaElement, AnswerEditorProps>(
                   Save
                 </LeftBtn>
                 {isNew && (
-                  <RightBtn onClick={props.onClickDoesNotApply}>
+                  <RightBtn
+                    onClick={props.onClickDoesNotApply}
+                    color="white"
+                    backgroundColor="black"
+                  >
                     Does not apply
                   </RightBtn>
                 )}
