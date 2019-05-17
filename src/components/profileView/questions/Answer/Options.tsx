@@ -57,8 +57,9 @@ const AnswerOptions = (props: AnswerOptionsProps) => {
           size="1em"
           visible={!!visible}
           onClick={() => {}}
-          color="white"
-          backgroundColor="black"
+          color="black"
+          backgroundColor="white"
+          style={{ marginRight: "2px", marginTop: "2px" }}
         />
       }
       items={options}

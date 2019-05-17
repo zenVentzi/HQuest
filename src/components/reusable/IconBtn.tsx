@@ -36,15 +36,19 @@ const StyledBtn = styled(
 
 // StyledBtn.defaultProps = {};
 
-type BtnProps = ClickableIconProps & {
-  icon: any;
-  size: string;
-  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  // iconStyle?: CSSProperties;
-};
+type BtnProps = HTMLAttributes<HTMLDivElement> &
+  ClickableIconProps & {
+    icon: any;
+    size: string;
+    onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+    // iconStyle?: CSSProperties;
+  };
 
 const Btn = React.forwardRef<HTMLDivElement, BtnProps>(
-  ({ icon, size, onClick, visible = true, color, backgroundColor }, ref) => {
+  (
+    { icon, size, onClick, visible = true, color, backgroundColor, style },
+    ref
+  ) => {
     return (
       <StyledBtn
         role="button"
@@ -53,6 +57,7 @@ const Btn = React.forwardRef<HTMLDivElement, BtnProps>(
         visible={visible}
         color={color}
         backgroundColor={backgroundColor}
+        style={style}
       >
         <StyledIcon size={size} icon={icon} visible={visible} />
       </StyledBtn>
