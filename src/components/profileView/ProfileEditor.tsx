@@ -18,6 +18,17 @@ interface ProfileEditorProps extends RouteComponentProps {
   user: UserFieldsFragment;
 }
 
+const StyledInput = styled(Field)`
+  width: 350px;
+  margin-bottom: 5px;
+`;
+
+const FieldsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
 const ProfileEditor = ({
   user: { id, me, fullName, intro, socialMediaLinks },
   history
@@ -107,38 +118,38 @@ const ProfileEditor = ({
         >
           {({ touched, handleSubmit, isSubmitting }) => (
             <Form>
-              <div>
-                <Field
+              <FieldsWrapper>
+                <StyledInput
                   touched={touched.fullName}
                   type="text"
                   name="fullName"
                   placeholder="Full name..."
                 />
-                <Field
+                <StyledInput
                   touched={touched.intro}
                   type="text"
                   name="intro"
                   placeholder="Intro..."
                 />
-                <Field
+                <StyledInput
                   touched={touched.facebookLink}
                   type="text"
                   name="facebookLink"
                   placeholder="Facebook link..."
                 />
-                <Field
+                <StyledInput
                   touched={touched.twitterLink}
                   type="text"
                   name="twitterLink"
                   placeholder="Twitter link..."
                 />
-                <Field
+                <StyledInput
                   touched={touched.instagramLink}
                   type="text"
                   name="instagramLink"
                   placeholder="Instagram link..."
                 />
-                <Field
+                <StyledInput
                   touched={touched.linkedInLink}
                   type="text"
                   name="linkedInLink"
@@ -154,7 +165,7 @@ const ProfileEditor = ({
                 >
                   Submit
                 </TextBtn>
-              </div>
+              </FieldsWrapper>
             </Form>
           )}
         </Formik>

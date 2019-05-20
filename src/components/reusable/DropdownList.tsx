@@ -11,6 +11,7 @@ const StyledDropdown = styled.div<StyledDropdownProps>`
   display: flex;
   background: white;
   border-radius: 0.2em;
+  border: 2px solid black;
   color: black;
   top: ${props => props.marginTop};
   ${props => `${props.pivot}: 0`};
