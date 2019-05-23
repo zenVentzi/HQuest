@@ -18,7 +18,7 @@ interface ProfileEditorProps extends RouteComponentProps {
   user: UserFieldsFragment;
 }
 
-const StyledInput = styled(Field)`
+const StyledInput = styled.input`
   width: 350px;
   margin-bottom: 5px;
 `;
@@ -70,6 +70,40 @@ const ProfileEditor = ({
             if (!values.intro) {
               errors.intro = "Required";
             }
+
+            const twitterRegex = RegExp(
+              /http(s)?:\/\/(.*\.)?twitter\.com\/[A-z0-9_]+\/?/
+            );
+            const linkedInRegex = RegExp(
+              /http(s)?:\/\/([\w]+\.)?linkedin\.com\/in\/[A-z0-9_-]+\/?/
+            );
+            const facebookRegex = RegExp(
+              /http(s)?:\/\/(www\.)?(facebook|fb)\.com\/[A-z0-9_\-\.]+\/?/
+            );
+            const instagramRegex = RegExp(
+              /https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/
+            );
+
+            if (values.facebookLink && values.facebookLink.length > 0) {
+              if (!facebookRegex.test(values.facebookLink)) {
+                errors.facebookLink = "Incorrect profile link";
+              }
+            }
+            if (values.twitterLink && values.twitterLink.length > 0) {
+              if (!twitterRegex.test(values.twitterLink)) {
+                errors.twitterLink = "Incorrect profile link";
+              }
+            }
+            if (values.linkedInLink && values.linkedInLink.length > 0) {
+              if (!linkedInRegex.test(values.linkedInLink)) {
+                errors.linkedInLink = "Incorrect profile link";
+              }
+            }
+            if (values.instagramLink && values.instagramLink.length > 0) {
+              if (!instagramRegex.test(values.instagramLink)) {
+                errors.instagramLink = "Incorrect profile link";
+              }
+            }
             // if (!values.email) {
             //   errors.email = 'Required';
             // } else if (
@@ -111,49 +145,154 @@ const ProfileEditor = ({
             });
             setSubmitting(false);
             history.goBack();
-            toast.success("🦄 Answer edited!");
+            toast.success("🦄 Profile edited!");
             // onSaved();
             // TODO redirect to either help page or profile depending on whether the user is new. Define if user is new by whether they have any answered questions
           }}
+          /* 
+          
+          1) stop using styled-components
+          2) use input manually, without the Field compoennt from Formik
+          3) 
+
+          */
         >
           {({ touched, handleSubmit, isSubmitting }) => (
             <Form>
               <FieldsWrapper>
-                <StyledInput
+                <Field
                   touched={touched.fullName}
                   type="text"
                   name="fullName"
                   placeholder="Full name..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => <StyledInput {...field} {...props} />}
                 />
-                <StyledInput
+                <ErrorMessage
+                  name="fullName"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
+                />
+                <Field
                   touched={touched.intro}
                   type="text"
                   name="intro"
                   placeholder="Intro..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => <StyledInput {...field} {...props} />}
                 />
-                <StyledInput
+                <ErrorMessage
+                  name="intro"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
+                />
+                <Field
                   touched={touched.facebookLink}
                   type="text"
                   name="facebookLink"
-                  placeholder="Facebook link..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => (
+                    <StyledInput
+                      {...field}
+                      {...props}
+                      placeholder="Facebook link..."
+                    />
+                  )}
                 />
-                <StyledInput
+                <ErrorMessage
+                  name="facebookLink"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
+                />
+                <Field
                   touched={touched.twitterLink}
                   type="text"
                   name="twitterLink"
-                  placeholder="Twitter link..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => (
+                    <StyledInput
+                      {...field}
+                      {...props}
+                      placeholder="Twitter link..."
+                    />
+                  )}
                 />
-                <StyledInput
+                <ErrorMessage
+                  name="twitterLink"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
+                />
+                <Field
                   touched={touched.instagramLink}
                   type="text"
                   name="instagramLink"
-                  placeholder="Instagram link..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => (
+                    <StyledInput
+                      {...field}
+                      {...props}
+                      placeholder="Instagram link..."
+                    />
+                  )}
                 />
-                <StyledInput
+                <ErrorMessage
+                  name="instagramLink"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
+                />
+                <Field
                   touched={touched.linkedInLink}
                   type="text"
                   name="linkedInLink"
-                  placeholder="LinkedIn link..."
+                  render={({
+                    field, // { name, value, onChange, onBlur }
+                    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                    ...props
+                  }) => (
+                    <StyledInput
+                      {...field}
+                      {...props}
+                      placeholder="LinkedIn link..."
+                    />
+                  )}
+                />
+                <ErrorMessage
+                  name="linkedInLink"
+                  render={msg => (
+                    <div style={{ color: "red", marginBottom: "5px" }}>
+                      {msg}
+                    </div>
+                  )}
                 />
                 <TextBtn
                   color="white"

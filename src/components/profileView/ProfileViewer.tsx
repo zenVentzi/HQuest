@@ -80,7 +80,7 @@ const ProfileViewer = (props: ProfileViewerProps) => {
         {showFollowing && (
           <Following userId={user.id} onClose={toggleFollowing} />
         )}
-        <Links />
+        <Links links={user.socialMediaLinks} />
         {/* <Search placeholder="Search questions.." onChange={() => {}} /> */}
         <QuestionsContainer user={user} />
       </>
