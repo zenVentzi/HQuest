@@ -6,6 +6,7 @@ import { TwitterSquare as TwitterLogo } from "styled-icons/fa-brands/TwitterSqua
 import { Instagram as InstagramLogo } from "styled-icons/feather/Instagram";
 import { Linkedin as LinkedInLogo } from "styled-icons/fa-brands/Linkedin";
 import { UserFieldsFragment } from "GqlClient/autoGenTypes";
+import IconLink from "../reusable/IconLink";
 
 // export default () => <FacebookLogo />;
 
@@ -25,31 +26,39 @@ const Links = ({ links }: LinksProps) => {
   return (
     <StyledLinks>
       {facebookLink && facebookLink.length && (
-        <FacebookLogo
+        <IconLink
+          color="white"
+          backgroundColor="black"
+          icon={FacebookLogo}
           size="2em"
-          css="cursor: pointer"
-          onClick={() => console.log("click")}
+          to={facebookLink}
         />
       )}
       {twitterLink && twitterLink.length && (
-        <TwitterLogo
+        <IconLink
+          color="white"
+          backgroundColor="black"
+          icon={TwitterLogo}
           size="2em"
-          css="cursor: pointer"
-          onClick={() => console.log("click")}
+          to={twitterLink}
         />
       )}
       {instagramLink && instagramLink.length && (
-        <InstagramLogo
+        <IconLink
+          color="white"
+          backgroundColor="black"
+          icon={InstagramLogo}
           size="2em"
-          css="cursor: pointer"
-          onClick={() => console.log("click")}
+          to={instagramLink}
         />
       )}
       {linkedInLink && linkedInLink.length && (
-        <LinkedInLogo
+        <IconLink
+          color="white"
+          backgroundColor="black"
+          icon={LinkedInLogo}
           size="2em"
-          css="cursor: pointer"
-          onClick={() => console.log("click")}
+          to={linkedInLink}
         />
       )}
     </StyledLinks>

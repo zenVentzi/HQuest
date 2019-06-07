@@ -5,6 +5,7 @@ import UndecoratedLink from "Reusable/UndecoratedLink";
 import { clickableIcon, ClickableIconProps } from "Reusable/css";
 import { Link } from "react-router-dom";
 import { History, LocationDescriptor } from "history";
+import { isUrlAbsolute } from "Utils";
 
 // added complexity due to https://github.com/styled-components/styled-components/issues/135
 const StyledLink = styled(
@@ -19,7 +20,17 @@ const StyledLink = styled(
     children: any;
     ref: any;
     role: string;
-  }) => <UndecoratedLink {...rest}>{children}</UndecoratedLink>
+  }) => {
+    if (isUrlAbsolute(rest.to.toString())) {
+      return (
+        <a href={rest.to.toString()} target="_blank" {...rest}>
+          {children}
+        </a>
+      );
+    } else {
+      return <UndecoratedLink {...rest}>{children}</UndecoratedLink>;
+    }
+  }
 )`
   ${clickableIcon};
 `;

@@ -5,6 +5,12 @@ import React from "react";
 import deep_diff from "deep-diff";
 import { LoginResult, LoginMutation } from "GqlClient/autoGenTypes";
 
+function isUrlAbsolute(url: string) {
+  // https://stackoverflow.com/a/19709846/4132182
+  const r = new RegExp("^(?:[a-z]+:)?//", "i");
+  return r.test(url);
+}
+
 function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN);
 }
@@ -95,6 +101,7 @@ const withPropsChecker = (WrappedComponent, componentName: string) => {
 };
 
 export {
+  isUrlAbsolute,
   getAuthToken,
   getLoggedUserId, // TODO this is unnecessary if we have getLoggedUser
   getLoggedUser,

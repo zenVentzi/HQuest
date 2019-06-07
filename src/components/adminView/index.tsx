@@ -81,7 +81,7 @@ const AdminView = () => {
                 await addQuestions({ variables });
 
                 setSubmitting(false);
-                resetForm({});
+                resetForm({ questionsText: "" });
               }}
             >
               {({

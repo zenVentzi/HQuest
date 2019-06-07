@@ -2,8 +2,9 @@ import React, { ReactChild } from "react";
 import styled from "styled-components";
 import UndecoratedLink from "Reusable/UndecoratedLink";
 import { clickableText, ClickableTextProps } from "Reusable/css";
-import { History } from "history";
+import { History, LocationDescriptor } from "history";
 import { Link, LinkProps } from "react-router-dom";
+import { isUrlAbsolute } from "Utils";
 
 // const StyledLink = styled(UndecoratedLink)`
 //   ${clickableText};
@@ -14,9 +15,20 @@ const StyledLink = styled(
     color,
     backgroundColor,
     ...rest
-  }: ClickableTextProps & LinkProps & { ref: React.Ref<Link> }) => (
-    <UndecoratedLink {...rest} />
-  )
+  }: // }: ClickableTextProps & LinkProps & { ref: React.Ref<Link> }) => {
+  ClickableTextProps & {
+    ref: any;
+    // ref: React.Ref<Link>;
+    to: LocationDescriptor<any>;
+    children: ReactChild;
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  }) => {
+    if (isUrlAbsolute(rest.to.toString())) {
+      return <a href={rest.to.toString()} target="_blank" {...rest} />;
+    } else {
+      return <UndecoratedLink {...rest} />;
+    }
+  }
 )`
   ${clickableText}
 `;
