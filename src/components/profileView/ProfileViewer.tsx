@@ -57,7 +57,12 @@ const ProfileViewer = (props: ProfileViewerProps) => {
       }}
     >
       <>
-        <Avatar src={user.avatarSrc} editable={!!user.me} />
+        <Avatar
+          src={user.avatarSrc}
+          editable={!!user.me}
+          size="150px"
+          borderColor="white"
+        />
         <Username>
           {user.fullName}
           <Superscript>{user.experience}exp</Superscript>

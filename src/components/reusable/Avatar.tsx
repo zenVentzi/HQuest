@@ -7,6 +7,8 @@ interface WrapperProps {
   editable: boolean;
   theme: "bad typings support so.. have fun";
   invertColors: boolean;
+  borderColor: "black" | "white";
+  size: string;
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -15,11 +17,11 @@ const Wrapper = styled.div<WrapperProps>`
   text-align: center;
   flex-shrink: 0;
   display: inline-block;
-  width: ${props => props.theme.avatarSize};
-  height: ${props => props.theme.avatarSize};
+  width: ${props => props.size};
+  height: ${props => props.size};
   overflow: hidden;
   border-radius: 50%;
-  border: 2px solid ${props => props.theme.foregroundColor};
+  border: 2px solid ${props => props.borderColor};
 
   &:hover {
     cursor: ${props => (props.editable ? "pointer" : "inherit")};
@@ -49,6 +51,8 @@ const UpdateOverlay = styled.div`
 
 interface AvatarProps {
   src: string | null | undefined;
+  size: string;
+  borderColor: "black" | "white";
   editable?: boolean;
   className?: string;
   invertColors?: boolean;
@@ -112,6 +116,8 @@ const Avatar = (props: AvatarProps) => {
           onMouseOut={onMouseOut}
           onBlur={onMouseOut}
           onClick={onClick}
+          borderColor={props.borderColor}
+          size={props.size}
         >
           <StyledImg src={src} />
           {editable && hovered && <UpdateOverlay>Upload</UpdateOverlay>}

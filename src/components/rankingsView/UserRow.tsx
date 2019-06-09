@@ -1,7 +1,7 @@
 import React, { Component, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
-import Avatar from "./Avatar";
+import Avatar from "../reusable/Avatar";
 import { UserFieldsFragment } from "GqlClient/autoGenTypes";
 
 const Superscript = styled.span`
@@ -26,7 +26,6 @@ interface StyledUserNameProps {
 const StyledUserName = styled.div<StyledUserNameProps>`
   /* color: ${props => props.theme.foregroundColor}; */
   text-align: left;
-  color: "black";
   font-size: ${props => `${1 * props.size}em`};
   /* margin-bottom: 1em; */
 
@@ -46,8 +45,8 @@ const StyledIntro = styled.div<StyledIntroProps>`
   font-size: ${props => `${0.7 * props.size}em`};
   font-style: oblique;
   max-width: 100%;
-  color: "black";
   word-wrap: break-word;
+  text-align: left;
   /* color: ${props => props.theme.foregroundColor}; */
 
   @media (max-width: 600px) {
@@ -66,7 +65,6 @@ const TextContainer = styled.div<StyledContainerProps>`
   display: flex;
   align-self: stretch;
   max-width: 80%;
-  color: "black";
   padding: ${props => `${0.4 * props.size}em`};
   flex-direction: column;
   justify-content: space-between;
@@ -81,7 +79,7 @@ const StyledUser = styled.div`
   border-radius: 0.2em;
   /* border: 1px solid white; */
   background-color: white;
-  color: "black";
+  color: black;
   /* background: ${props => props.theme.backgroundColor}; */
 
   &:hover {
@@ -149,7 +147,7 @@ const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {
         <Avatar
           src={user.avatarSrc}
           size={`${1.5 * size}em`}
-          borderColor={inversedColors ? "black" : "white"}
+          borderColor="black"
         />
         <TextContainer size={size}>
           <StyledUserName size={size}>

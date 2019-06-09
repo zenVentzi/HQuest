@@ -139,7 +139,12 @@ const Notif = ({ onClick, notif }: NotifProps) => {
         onMouseLeave={toggleTheme}
       >
         <Left>
-          <Avatar src={notif.performerAvatarSrc} invertColors={true} />
+          <Avatar
+            src={notif.performerAvatarSrc}
+            invertColors={true}
+            size="2.2em"
+            borderColor={theme.foregroundColor}
+          />
         </Left>
         <Right>
           <Text>

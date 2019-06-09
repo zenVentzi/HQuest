@@ -63,7 +63,11 @@ const MentionInput = React.forwardRef<
             foregroundColor: focused ? "white" : "black"
           }}
         >
-          <Avatar src={suggestion.avatarSrc} />
+          <Avatar
+            src={suggestion.avatarSrc}
+            size="1em"
+            borderColor={focused ? "white" : "black"}
+          />
         </ThemeProvider>
         <div
           style={{

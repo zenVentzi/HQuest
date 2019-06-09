@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import styled from "styled-components";
 import { GET_USERS, GET_RANKINGS } from "GqlClient/user/queries";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import StyledView from "../reusable/StyledView";
 import { History, Location } from "history";
 import {
