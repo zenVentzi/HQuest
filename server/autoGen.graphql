@@ -12,6 +12,7 @@ type Query {
   unansweredQuestions(userId: ID!, tags: [String!], first: Int!, after: String): UnansweredQuestionConnection
   answeredQuestion(userId: ID!, questionId: ID!): AnsweredQuestion
   users(match: String): [User!]
+  rankings: [User!]
   user(id: ID!): User
   followers(userId: ID!): [User!]
   following(userId: ID!): [User!]

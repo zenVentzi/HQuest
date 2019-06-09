@@ -362,6 +362,7 @@ export type Query = {
   unansweredQuestions?: Maybe<UnansweredQuestionConnection>;
   answeredQuestion?: Maybe<AnsweredQuestion>;
   users?: Maybe<Array<User>>;
+  rankings?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
   following?: Maybe<Array<User>>;
@@ -587,6 +588,12 @@ export type UsersQueryVariables = {
 
 export type UsersQuery = { __typename?: "Query" } & {
   users: Maybe<Array<{ __typename?: "User" } & UserFieldsFragment>>;
+};
+
+export type RankingsQueryVariables = {};
+
+export type RankingsQuery = { __typename?: "Query" } & {
+  rankings: Maybe<Array<{ __typename?: "User" } & UserFieldsFragment>>;
 };
 
 export type FollowersQueryVariables = {

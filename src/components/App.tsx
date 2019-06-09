@@ -16,6 +16,7 @@ import NewsfeedView from "./newsfeedView";
 import LandingView from "./landingView";
 import NotFoundView from "./notFoundView";
 import { GlobalStyle } from "./appTheme";
+import RankingsView from "./rankingsView";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
               <ProtectedRoute path="/admin" component={AdminView} />
               <ProtectedRoute path="/search" component={SearchView} />
+              <ProtectedRoute path="/rankings" component={RankingsView} />
               <ProtectedRoute path="/help" component={HelpView} />
               <ProtectedRoute path="/newsfeed" component={NewsfeedView} />
               <Route path="/" exact component={LandingView} />

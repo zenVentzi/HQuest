@@ -4,7 +4,10 @@ import { mapUser, mapUsers } from "./gqlMapper";
 import { authMiddleware } from "../middlewares";
 
 type Query = Required<
-  Pick<QueryResolvers, "user" | "users" | "followers" | "following">
+  Pick<
+    QueryResolvers,
+    "user" | "users" | "rankings" | "followers" | "following"
+  >
 >;
 
 type Mutation = Required<
@@ -28,6 +31,17 @@ const Query: Query = {
     authMiddleware(user);
 
     const dbUsers = await services.user.getUsers(match!);
+    const gqlUsers = mapUsers({
+      dbUsers,
+      loggedUserId: user!.id
+    });
+
+    return gqlUsers;
+  },
+  async rankings(_, {}, { services, user }) {
+    authMiddleware(user);
+
+    const dbUsers = await services.user.getRankings();
     const gqlUsers = mapUsers({
       dbUsers,
       loggedUserId: user!.id

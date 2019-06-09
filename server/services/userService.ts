@@ -106,7 +106,7 @@ class UserService {
   }
 
   public async getUsers(match: string): Promise<DbTypes.User[] | null> {
-    const matchWords = match!.split(" ");
+    const matchWords = match.split(" ");
 
     let matchedUsers: DbTypes.User[];
     const numOfWords = matchWords.length;
@@ -138,6 +138,13 @@ class UserService {
     }
 
     return matchedUsers;
+  }
+  public async getRankings(): Promise<DbTypes.User[] | null> {
+    const users = await this.models.user
+      .find()
+      .sort({ experience: -1 })
+      .lean();
+    return users;
   }
 
   public async uploadAvatar(

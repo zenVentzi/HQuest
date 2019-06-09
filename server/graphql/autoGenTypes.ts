@@ -362,6 +362,7 @@ export type Query = {
   unansweredQuestions?: Maybe<UnansweredQuestionConnection>;
   answeredQuestion?: Maybe<AnsweredQuestion>;
   users?: Maybe<Array<User>>;
+  rankings?: Maybe<Array<User>>;
   user?: Maybe<User>;
   followers?: Maybe<Array<User>>;
   following?: Maybe<Array<User>>;
@@ -933,6 +934,7 @@ export type QueryResolvers<Context = ApolloContext, ParentType = Query> = {
     QueryAnsweredQuestionArgs
   >;
   users?: Resolver<Maybe<Array<User>>, ParentType, Context, QueryUsersArgs>;
+  rankings?: Resolver<Maybe<Array<User>>, ParentType, Context>;
   user?: Resolver<Maybe<User>, ParentType, Context, QueryUserArgs>;
   followers?: Resolver<
     Maybe<Array<User>>,

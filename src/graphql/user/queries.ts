@@ -19,6 +19,15 @@ export const GET_USERS = gql`
   ${UserFields}
 `;
 
+export const GET_RANKINGS = gql`
+  query Rankings {
+    rankings {
+      ...UserFields
+    }
+  }
+  ${UserFields}
+`;
+
 export const GET_FOLLOWERS = gql`
   query followers($userId: ID!) {
     followers(userId: $userId) {
