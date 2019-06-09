@@ -20,8 +20,8 @@ const LikeBtn = (props: LikeBtnProps) => {
       icon={LikeIcon}
       size="1.2em"
       onClick={onClick}
-      color="white"
-      backgroundColor="black"
+      color="black"
+      backgroundColor="white"
     />
   );
 };
