@@ -56,7 +56,8 @@ const CustomSearch = (props: CustomSearchProps) => {
               return {
                 ...base,
                 width: "500px",
-                marginBottom: "15px"
+                // marginBottom: "15px",
+                display: "inline-block"
               };
             },
             control: base => {

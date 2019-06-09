@@ -8,6 +8,7 @@ import Menu from "./Menu";
 import Notifications from "./Notifications";
 import Profile from "./Profile";
 import NewsfeedBtn from "./NewsfeedBtn";
+import RankingsBtn from "./RankingsBtn";
 
 // TODO check if user is logged in
 
@@ -53,7 +54,10 @@ const Navbar = (props: NavbarProps) => {
 
   return shouldHide ? null : (
     <NavContainer>
-      <NavLeft>{isUserLogged && <Search />}</NavLeft>
+      <NavLeft>
+        {isUserLogged && <Search />}
+        {isUserLogged && <RankingsBtn />}
+      </NavLeft>
       <NavRight>
         {isUserLogged && (
           <>
