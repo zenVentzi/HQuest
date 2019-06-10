@@ -8,19 +8,50 @@ import Anchor from "Reusable/Anchor";
 import UsersDataList from "./UsersDataList";
 import { UsersQuery, UsersQueryVariables } from "GqlClient/autoGenTypes";
 import { GET_USERS } from "GqlClient/user/queries";
+import { OptionProps } from "react-select/lib/components/Option";
+import Avatar from "Reusable/Avatar";
 
-type Option = { value: string; label: string; userId: string };
+type Option = {
+  value: string;
+  label: string;
+  userId: string;
+  avatarSrc: string | null | undefined;
+};
+
+const CustomOption = (props: OptionProps<Option>) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        padding: "10px",
+        flexDirection: "row",
+        backgroundColor: props.isFocused ? "black" : "white",
+        color: props.isFocused ? "white" : "black"
+      }}
+      ref={props.innerRef}
+      {...props.innerProps}
+    >
+      <Avatar
+        src={props.data.avatarSrc}
+        size="20px"
+        borderColor={props.isFocused ? "white" : "black"}
+      />
+      <div style={{ marginTop: "2px", marginLeft: "5px" }}>
+        {props.data.label}
+      </div>
+    </div>
+  );
+};
 
 interface CustomSearchProps extends RouteComponentProps {}
 
 const CustomSearch = (props: CustomSearchProps) => {
   const [selectValue, setSelectValue] = useState<Option | null>();
-  const datalistRef = useRef<HTMLDataListElement>(null);
 
-  const search = (username: string) => {
-    const { history } = props;
-    history.push("/search", { username });
-  };
+  // const search = (username: string) => {
+  //   const { history } = props;
+  //   history.push("/search", { username });
+  // };
 
   return (
     <ApolloConsumer>
@@ -28,7 +59,8 @@ const CustomSearch = (props: CustomSearchProps) => {
         <AsyncSelect<Option>
           components={{
             IndicatorSeparator: () => null,
-            DropdownIndicator: () => null
+            DropdownIndicator: () => null,
+            Option: CustomOption
           }}
           openMenuOnClick={false}
           styles={{
@@ -78,7 +110,8 @@ const CustomSearch = (props: CustomSearchProps) => {
                 options.push({
                   label: user.fullName,
                   value: user.id,
-                  userId: user.id
+                  userId: user.id,
+                  avatarSrc: user.avatarSrc
                 });
               });
             }

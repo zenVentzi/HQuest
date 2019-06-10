@@ -149,7 +149,7 @@ const UserRow = ({ size = 2, inversedColors, user }: UserRowProps) => {
         <Avatar
           src={user.avatarSrc}
           size={`${1.5 * size}em`}
-          borderColor={inversedColors ? "black" : "white"}
+          borderColor={inversedColors ? "white" : "black"}
         />
         <TextContainer size={size}>
           <StyledUserName size={size}>
