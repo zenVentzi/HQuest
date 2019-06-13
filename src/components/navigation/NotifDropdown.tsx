@@ -20,7 +20,7 @@ const Dropdown = styled.div`
   top: 2.2em;
   right: 0em;
   background-color: white;
-  width: 20em;
+  width: 21em;
   max-width: 100vw;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
@@ -54,15 +54,22 @@ const NotifDropdown = (props: NotifDropdownProps) => {
 
   return (
     <Dropdown ref={ref}>
-      {notifications && notifications.length ? (
-        notifications.map(n => {
-          return <Notif key={n.id} notif={n} onClick={onClickNotification} />;
-        })
-      ) : (
-        <Text>No notifications yet</Text>
-      )}
+      <div>haha</div>
+      <div style={{ backgroundColor: "red" }}>haha</div>
+      <div>haha</div>
     </Dropdown>
   );
+  // return (
+  //   <Dropdown ref={ref}>
+  //     {notifications && notifications.length ? (
+  //       notifications.map(n => {
+  //         return <Notif key={n.id} notif={n} onClick={onClickNotification} />;
+  //       })
+  //     ) : (
+  //       <Text>No notifications yet</Text>
+  //     )}
+  //   </Dropdown>
+  // );
 };
 
 export default NotifDropdown;

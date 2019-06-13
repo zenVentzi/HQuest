@@ -7,7 +7,8 @@ import { ADD_QUESTIONS } from "GqlClient/question/mutations";
 import TextBtn from "Reusable/TextBtn";
 import {
   AddQuestionsMutation,
-  AddQuestionsMutationVariables
+  AddQuestionsMutationVariables,
+  InputQuestion
 } from "GqlClient/autoGenTypes";
 
 const TextArea = styled.textarea`
@@ -37,26 +38,30 @@ const AdminView = () => {
     return tagsArr;
   };
 
-  const getFormattedQuestions = (questionsText: string) => {
-    const rawQuestions = questionsText.split(";NEW_QUESTION;");
+  const getFormattedQuestions = (questionsText: string): InputQuestion[] => {
+    const questions = questionsText
+      .trim()
+      .split(/;TAGS\(\S+\);/g)
+      .filter(question => question.length > 3);
 
-    // raw question = How do you...?;TAGS(tag1,tag2,..);;NEW_QUESTION;
+    let unformattedTags = questionsText.trim().match(/;TAGS\(\S+\);/g);
+    if (!unformattedTags) {
+      throw Error(`Couldn't parse questions`);
+    }
+    unformattedTags = unformattedTags.filter(question => question.length > 3);
+    const tags = unformattedTags.map(t => getTags(t));
+    if (tags.length !== questions.length) {
+      throw Error(`Eeach question must have tags`);
+    }
 
-    const questions = rawQuestions.map(rawQuestion => {
-      let question;
-      try {
-        const value = rawQuestion.split(";")[0];
-        const tagsText = rawQuestion.split(";")[1];
-        const tags = getTags(tagsText);
-        question = { value, tags };
-      } catch (error) {
-        throw new Error(`Incorrect format: ${rawQuestion}`);
-      }
+    const combined: InputQuestion[] = [];
 
-      return question;
-    });
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < questions.length; i++) {
+      combined.push({ tags: tags[i], value: questions[i] });
+    }
 
-    return questions;
+    return combined;
   };
 
   return (
@@ -77,7 +82,7 @@ const AdminView = () => {
                 const { questionsText } = values;
 
                 const questions = getFormattedQuestions(questionsText);
-                const variables = { questions };
+                const variables: AddQuestionsMutationVariables = { questions };
                 await addQuestions({ variables });
 
                 setSubmitting(false);
