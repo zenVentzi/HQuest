@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import styled from "styled-components";
 import StyledViewRaw from "../reusable/StyledView";
 import LoginBtn from "./LoginBtn";
+import { getLoggedUser } from "Utils";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -16,11 +17,14 @@ const Row = styled.div`
 const Intro = styled.div`
   margin-top: 1em;
   margin-bottom: 2em;
+  font-size: 16px;
+  /* text-align: center; */
 `;
 
 interface LandingViewProps extends RouteComponentProps {}
 
 const LandingView = (props: LandingViewProps) => {
+  const isUserLogged = !!getLoggedUser();
   const onLoggedIn = () => {
     const { history } = props;
     history.push("/help");
@@ -30,37 +34,36 @@ const LandingView = (props: LandingViewProps) => {
     <StyledView>
       <h1>Welcome to HQuest,</h1>
       <Intro>
-        a minimalistic social network focused on answering, uncomfortable for
-        some, questions publicly. ComfortZone-GetOut, Honesty-Unapologetic,
-        Vulnerability-BigTime, Think-ALittleHarder-SlighlyDeeper.
-        <br />
+        a minimalistic social network for uncensored, dark humor.
+        {/* <br />
         <br /> Main features:
         <br /> - Search for users by name
         <br /> - Newsfeed with activity from the people you follow
-        <br />- Keep track of the evolution ofyour answers throughout time.
-        Every edit is saved in your edit history for that question
+        <br /> - Make many editions to your answers
         <br /> - Give and receive feedback from others by liking and commenting
-        on answers
-        <br />
+        on editions
+        <br /> */}
       </Intro>
-      <div>
-        <Row>Log in with: </Row>
-        <Row>
-          <LoginBtn onLoggedIn={onLoggedIn} />
-        </Row>
-        <Row>
-          <LoginBtn
-            testUser={{ name: "Test John", email: "testjohn@gmail.com" }}
-            onLoggedIn={onLoggedIn}
-          />
-        </Row>
-        <Row>
-          <LoginBtn
-            testUser={{ name: "Test Sarah", email: "testsarah@gmail.com" }}
-            onLoggedIn={onLoggedIn}
-          />
-        </Row>
-      </div>
+      {!isUserLogged && (
+        <div>
+          <Row>Log in with: </Row>
+          <Row>
+            <LoginBtn onLoggedIn={onLoggedIn} />
+          </Row>
+          <Row>
+            <LoginBtn
+              testUser={{ name: "Test John", email: "testjohn@gmail.com" }}
+              onLoggedIn={onLoggedIn}
+            />
+          </Row>
+          <Row>
+            <LoginBtn
+              testUser={{ name: "Test Sarah", email: "testsarah@gmail.com" }}
+              onLoggedIn={onLoggedIn}
+            />
+          </Row>
+        </div>
+      )}
     </StyledView>
   );
 };

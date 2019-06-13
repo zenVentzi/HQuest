@@ -52,24 +52,24 @@ const NotifDropdown = (props: NotifDropdownProps) => {
   if (loading) return <div> loading questions.. </div>;
   if (error) return <div> {`Error ${error}`}</div>;
 
-  return (
-    <Dropdown ref={ref}>
-      <div>haha</div>
-      <div style={{ backgroundColor: "red" }}>haha</div>
-      <div>haha</div>
-    </Dropdown>
-  );
   // return (
   //   <Dropdown ref={ref}>
-  //     {notifications && notifications.length ? (
-  //       notifications.map(n => {
-  //         return <Notif key={n.id} notif={n} onClick={onClickNotification} />;
-  //       })
-  //     ) : (
-  //       <Text>No notifications yet</Text>
-  //     )}
+  //     <div>haha test</div>
+  //     <div style={{ backgroundColor: "red" }}>haha</div>
+  //     <div>haha</div>
   //   </Dropdown>
   // );
+  return (
+    <Dropdown ref={ref}>
+      {notifications && notifications.length ? (
+        notifications.map(n => {
+          return <Notif key={n.id} notif={n} onClick={onClickNotification} />;
+        })
+      ) : (
+        <Text>No notifications yet</Text>
+      )}
+    </Dropdown>
+  );
 };
 
 export default NotifDropdown;

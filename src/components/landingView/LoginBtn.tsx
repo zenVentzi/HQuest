@@ -5,6 +5,7 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import { LOGIN_MUTATION } from "GqlClient/user/mutations";
 import { Mutation, MutationFunc, MutationFn } from "react-apollo";
 import TextBtn from "Reusable/TextBtn";
+import IconBtn from "Reusable/IconBtn";
 // import styled from "styled-components";
 import { saveLoggedUserData } from "Utils";
 import { LoginMutation, LoginMutationVariables } from "GqlClient/autoGenTypes";
@@ -71,10 +72,12 @@ const LoginBtn = ({ onLoggedIn, testUser }: LoginBtnProps) => {
             fields="name,email,picture"
             callback={responseFacebook(login)}
             render={(renderProps: ReactFacebookLoginProps) => (
-              <FacebookLogo
+              <IconBtn
+                backgroundColor="white"
+                color="black"
                 size="2em"
-                css="cursor: pointer"
                 onClick={renderProps.onClick as any}
+                icon={FacebookLogo}
               />
             )}
           />
