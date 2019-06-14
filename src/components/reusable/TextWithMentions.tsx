@@ -29,7 +29,16 @@ const TextWithMentions = ({
           const linkToUserProfile = `/userprofile/${userId}`;
 
           return addLinkToMention ? (
-            <Link to={linkToUserProfile} key={userId}>
+            <Link
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                backgroundColor: "black",
+                borderRadius: "5%"
+              }}
+              to={linkToUserProfile}
+              key={userId}
+            >
               {username}
             </Link>
           ) : (
