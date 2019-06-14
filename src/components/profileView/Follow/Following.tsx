@@ -1,39 +1,40 @@
 import React from "react";
 import { Query } from "react-apollo";
-import User from "Reusable/UserRow";
-import { GET_FOLLOWERS } from "GqlClient/user/queries";
+import User from "./UserRow";
+import { GET_FOLLOWING } from "GqlClient/user/queries";
 import WhitePanel from "Reusable/WhitePanel";
 import {
-  FollowersQuery,
-  FollowersQueryVariables
+  FollowingQuery,
+  FollowingQueryVariables
 } from "GqlClient/autoGenTypes";
 
-interface FollowersProps {
+interface FollowingProps {
   userId: string;
   onClose: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const Followers = ({ userId, onClose }: FollowersProps) => {
+const Following = ({ userId, onClose }: FollowingProps) => {
   return (
     <WhitePanel onClose={onClose}>
-      <Query<FollowersQuery, FollowersQueryVariables>
-        query={GET_FOLLOWERS}
+      <Query<FollowingQuery, FollowingQueryVariables>
+        query={GET_FOLLOWING}
         variables={{ userId }}
       >
         {({ loading, error, data }) => {
           if (loading) {
             return <div style={{ color: "black" }}> Loading following..</div>;
-          } else if (error) {
+          }
+          if (error) {
             return <div style={{ color: "black" }}> {error.message} </div>;
           }
 
-          const { followers } = data!;
+          const { following } = data!;
 
-          if (!followers || !followers.length) {
-            return <div>User has no followers</div>;
+          if (!following || !following.length) {
+            return <div>User doesn't follow anyone</div>;
           }
 
-          return followers.map(f => (
+          return following.map(f => (
             <User inversedColors size={2} key={f.id} user={f} />
           ));
         }}
@@ -42,4 +43,4 @@ const Followers = ({ userId, onClose }: FollowersProps) => {
   );
 };
 
-export default Followers;
+export default Following;
