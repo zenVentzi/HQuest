@@ -100,7 +100,7 @@ class AnswerService {
     questionId: string,
     answerValue: string
   ): Promise<DbTypes.Answer> {
-    await this.models.answer.updateMany({}, { $inc: { position: 1 } });
+    await this.models.answer.updateMany({ userId }, { $inc: { position: 1 } });
     let addedAnswer: DbTypes.Answer;
 
     const deletedAnswer = await this.models.answer
@@ -214,17 +214,21 @@ class AnswerService {
     answerId: string,
     position: number
   ): Promise<number> {
-    const currentAnswer = await this.models.answer.findById(answerId).lean();
-    await this.models.answer.findOneAndUpdate(
-      { position },
-      { $set: { position: currentAnswer.position } }
+    const currentAnswer = await this.models.answer.findById(answerId);
+    if (!currentAnswer) {
+      throw Error(`Could not find answer with id: ${answerId}`);
+    }
+
+    const currentPos = currentAnswer.position;
+    const targetPos = position;
+    await this.models.answer.updateMany(
+      { position: { $gte: currentPos, $lte: targetPos + 1 } },
+      { $inc: { position: -1 } }
     );
+    currentAnswer.position = targetPos;
+    await currentAnswer.save();
 
-    await this.models.answer.findByIdAndUpdate(answerId, {
-      $set: { position }
-    });
-
-    return position;
+    return targetPos;
   }
 
   private async createEdition(

@@ -62,6 +62,7 @@ export const clickableText = css<ClickableTextProps>`
       &:hover {
         background: ${props.color};
         color: ${props.backgroundColor};
+        border: 2px solid ${props.backgroundColor};
       }
     `;
   }}

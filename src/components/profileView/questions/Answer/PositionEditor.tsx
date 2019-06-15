@@ -13,7 +13,7 @@ const StyledEditor = styled.div`
 
 const Buttons = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   text-align: center;
   width: 35%;
   margin: 1em 0em 1em 0em;
@@ -55,6 +55,11 @@ const PositionEditor = ({
           defaultValue={String(position)}
           min={1}
           max={maxPosition}
+          style={{
+            backgroundColor: "white",
+            color: "black",
+            border: "2px solid black"
+          }}
         />
       </div>
       <Buttons>
