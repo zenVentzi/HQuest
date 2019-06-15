@@ -88,16 +88,25 @@ const AnsweredQuestions = ({
           if (!answeredQuestions || !answeredQuestions.edges) {
             return <Empty style={style}> No answered questions </Empty>;
           }
-          return answeredQuestions.edges.map(q => (
-            <AnsweredQuestion
-              key={q.node.id}
-              showComments={true}
-              style={style}
-              isPersonal={isPersonal}
-              question={q.node}
-              totalQuestionsCount={answeredQuestions.totalCount}
-            />
-          ));
+
+          return answeredQuestions.edges
+            .slice()
+            .sort((a, b) => {
+              if (a.node.answer.position < b.node.answer.position) {
+                return -1;
+              }
+              return 1;
+            })
+            .map(q => (
+              <AnsweredQuestion
+                key={q.node.id}
+                showComments={true}
+                style={style}
+                isPersonal={isPersonal}
+                question={q.node}
+                totalQuestionsCount={answeredQuestions.totalCount}
+              />
+            ));
         } else if (ns === NetworkStatus.fetchMore) {
           if (!answeredQuestions || !answeredQuestions.edges) {
             throw Error(
