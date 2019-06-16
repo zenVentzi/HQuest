@@ -219,12 +219,28 @@ class AnswerService {
       throw Error(`Could not find answer with id: ${answerId}`);
     }
 
+    const currentUserId = currentAnswer.userId;
     const currentPos = currentAnswer.position;
     const targetPos = position;
-    await this.models.answer.updateMany(
-      { position: { $gte: currentPos, $lte: targetPos + 1 } },
-      { $inc: { position: -1 } }
-    );
+    let searchCondition;
+    let updateObject;
+
+    if (targetPos > currentPos) {
+      searchCondition = {
+        userId: currentUserId,
+        position: { $gte: currentPos, $lte: targetPos + 1 }
+      };
+      updateObject = { $inc: { position: -1 } };
+    } else if (targetPos === currentPos) {
+      throw Error(`Cannot move to the same position`);
+    } else {
+      searchCondition = {
+        userId: currentUserId,
+        position: { $gte: targetPos - 1, $lte: currentPos }
+      };
+      updateObject = { $inc: { position: 1 } };
+    }
+    await this.models.answer.updateMany(searchCondition, updateObject);
     currentAnswer.position = targetPos;
     await currentAnswer.save();
 
