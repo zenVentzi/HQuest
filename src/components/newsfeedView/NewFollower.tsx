@@ -16,16 +16,17 @@ import {
 // this file is duplication of NewComment. To be fixed.
 const NewFollowerWrapper = styled.div`
   width: 100%;
-  margin-bottom: 1em;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 2px solid white;
+  background-color: white;
+  color: black;
 `;
 
 const Text = styled.div`
   /* flex-grow: 1; */
-  font-size: 0.8em;
+  font-size: 16px;
 `;
 
 interface NewFollowerProps {
@@ -35,13 +36,19 @@ interface NewFollowerProps {
 const NewFollower = ({
   news: { performer, followedUser, createdOn }
 }: NewFollowerProps) => {
-  const topText = `Followed, ${getTime(createdOn)},`;
+  const topText = `Followed`;
+  const bottomText = `${getTime(createdOn)}`;
 
   return (
     <NewFollowerWrapper>
-      <User user={performer} size={1.5} />
+      <div>
+        <User user={performer} size={1.5} />
+      </div>
       <Text>{topText}</Text>
-      <User user={followedUser} size={1.5} />
+      <div>
+        <User user={followedUser} size={1.5} />
+      </div>
+      <Text>{bottomText}</Text>
     </NewFollowerWrapper>
   );
 };

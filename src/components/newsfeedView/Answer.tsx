@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import { getTime } from ".";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import {
@@ -11,7 +11,8 @@ import {
 
 const NewAnswerWrapper = styled.div`
   width: 100%;
-  margin-bottom: 1em;
+  margin-bottom: 20px;
+  background-color: white;
 `;
 
 const Header = styled.div`
@@ -19,14 +20,15 @@ const Header = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 1em;
-  border-bottom: 2px solid white;
+  color: black;
+  /* border-bottom: 2px solid white; */
 `;
 const HeaderTop = styled.div`
   /* flex-grow: 3; */
 `;
 const HeaderBottom = styled.div`
   /* flex-grow: 1; */
-  font-size: 0.8em;
+  font-size: 16px;
 `;
 const Body = styled.div``;
 

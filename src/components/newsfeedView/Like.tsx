@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import styled from "styled-components";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
@@ -13,7 +13,9 @@ import {
 // this file is somewhat a duplicate of NewComment. To be fixed.
 const NewLikeWrapper = styled.div`
   width: 100%;
-  margin-bottom: 1em;
+  background-color: white;
+  color: black;
+  margin-bottom: 20px;
 `;
 
 const Header = styled.div`
@@ -26,7 +28,7 @@ const Header = styled.div`
 
 const HeaderText = styled.div`
   /* flex-grow: 1; */
-  font-size: 0.8em;
+  font-size: 16px;
 `;
 const Body = styled.div``;
 
@@ -61,11 +63,15 @@ const Like = ({ news }: LikeProps) => {
   return (
     <NewLikeWrapper>
       <Header>
-        <User user={news.performer} size={1.5} />
+        <div>
+          <User user={news.performer} size={1.5} />
+        </div>
         <HeaderText>{topText}</HeaderText>
         {!performerOwnsAnswer && !isLoggedUserAnwer && (
           <Fragment>
-            <User user={news.answerOwner} size={1.5} />
+            <div>
+              <User user={news.answerOwner} size={1.5} />
+            </div>
             <HeaderText>{bottomText}</HeaderText>
           </Fragment>
         )}

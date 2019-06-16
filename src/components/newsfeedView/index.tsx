@@ -25,7 +25,7 @@ export const getTime = (createdOn: string) => {
 
 const NewsfeedView = () => (
   <StyledView>
-    <div>Newsfeed!</div>
+    <div style={{ fontSize: "16px", marginBottom: "10px" }}>Newsfeed</div>
     <Query<NewsfeedQuery, NewsfeedQueryVariables>
       query={GET_NEWSFEED}
       // variables={vars}

@@ -9,7 +9,9 @@ import { NewCommentNewsFieldsFragment, NewsBase } from "GqlClient/autoGenTypes";
 
 const NewCommentWrapper = styled.div`
   width: 100%;
-  margin-bottom: 1em;
+  margin-bottom: 20px;
+  background-color: white;
+  color: black;
 `;
 
 const Header = styled.div`
@@ -22,7 +24,7 @@ const Header = styled.div`
 
 const HeaderText = styled.div`
   /* flex-grow: 1; */
-  font-size: 0.8em;
+  font-size: 16px;
 `;
 const Body = styled.div``;
 
@@ -54,11 +56,15 @@ const NewComment = ({
   return (
     <NewCommentWrapper>
       <Header>
-        <User user={performer} size={1.5} />
+        <div>
+          <User user={performer} size={1.5} />
+        </div>
         <HeaderText>{topText}</HeaderText>
         {!doesOwnAnswer && !isLoggedUserAnwer && (
           <Fragment>
-            <User user={answerOwner} size={1.5} />
+            <div>
+              <User user={answerOwner} size={1.5} />
+            </div>
             <HeaderText>{bottomText}</HeaderText>
           </Fragment>
         )}
