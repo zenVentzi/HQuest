@@ -3,7 +3,8 @@ import {
   Notification as DbNotification,
   NotificationType,
   NewComment as DbNewComment,
-  AnswerEditionMention as DbAnswerEditionMention
+  AnswerEditionMention as DbAnswerEditionMention,
+  NewFollower
 } from "../../dbTypes";
 
 function mapNotification(notif: DbNotification): gqlTypes.Notification {
@@ -37,6 +38,12 @@ function mapNotification(notif: DbNotification): gqlTypes.Notification {
         questionId: (notif as DbAnswerEditionMention).questionId,
         editionId: (notif as DbAnswerEditionMention).editionId,
         userProfileId: (notif as DbAnswerEditionMention).userProfileId
+      };
+      return res;
+    }
+    case NotificationType.NewFollower: {
+      const res: gqlTypes.NewFollower = {
+        ...gqlNotif
       };
       return res;
     }
