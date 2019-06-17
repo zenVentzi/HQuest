@@ -52,6 +52,8 @@ const Navbar = (props: NavbarProps) => {
 
   const isUserLogged = !!getLoggedUserId();
 
+  // below logic had better move to the upper layer
+  // to be more obvious
   return shouldHide ? null : (
     <NavContainer>
       <NavLeft>
