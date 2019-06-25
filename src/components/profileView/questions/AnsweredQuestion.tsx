@@ -76,7 +76,8 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
         <Row>
           <Question question={question.value} />
           <OptionsDropdown
-            visible={isPersonal && hovered}
+            visible={isPersonal}
+            // visible={isPersonal && hovered}
             onClickEdit={() => {
               if (showPositionEditor) return;
               setShowAnswerEditor(true);

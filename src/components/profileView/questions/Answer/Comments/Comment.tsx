@@ -168,7 +168,7 @@ export default React.forwardRef<HTMLDivElement, CommentProps>(
         <Header>
           <User user={user} size={size} />
           <CommentOptions
-            visible={!!user.me && commentHovered}
+            visible={!!user.me}
             onClickEdit={onClickEdit}
             onClickRemove={onRemove}
           />
