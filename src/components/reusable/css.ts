@@ -29,7 +29,7 @@ export const clickableIcon = css<ClickableIconProps>(props => {
     display: inline-block;
     background-color: ${props.backgroundColor};
     color: ${props.color};
-    border-radius: 0.3em;
+    border-radius: 5px;
     cursor: pointer;
     visibility: ${props.visible || props.visible === undefined
       ? "inherit"
@@ -38,6 +38,11 @@ export const clickableIcon = css<ClickableIconProps>(props => {
     &:hover {
       background: ${props.color};
       color: ${props.backgroundColor};
+    }
+    &:active {
+      background: ${props.backgroundColor};
+      color: ${props.color};
+      /* border-radius: 0.3em; */
     }
   `;
 });
@@ -63,6 +68,11 @@ export const clickableText = css<ClickableTextProps>`
         background: ${props.color};
         color: ${props.backgroundColor};
         border: 2px solid ${props.backgroundColor};
+      }
+      &:active {
+        border: 2px solid ${props.color};
+        background: ${props.backgroundColor};
+        color: ${props.color};
       }
     `;
   }}
