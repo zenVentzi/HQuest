@@ -33,9 +33,7 @@ const Followers = ({ userId, onClose }: FollowersProps) => {
             return <div>User has no followers</div>;
           }
 
-          return followers.map(f => (
-            <User inversedColors size={2} key={f.id} user={f} />
-          ));
+          return followers.map(f => <User size={2} key={f.id} user={f} />);
         }}
       </Query>
     </WhitePanel>

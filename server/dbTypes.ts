@@ -60,6 +60,11 @@ export enum UserPopulatedFields {
   none = "none"
 }
 
+export enum UserRoles {
+  Admin = "ADMIN",
+  User = "USER"
+}
+
 export interface User<
   PopulatedFields extends UserPopulatedFields = UserPopulatedFields.none
 > {
@@ -84,6 +89,7 @@ export interface User<
     linkedInLink?: string;
   };
   experience: number;
+  role: UserRoles;
 }
 
 export interface UserDoc extends User, Document {

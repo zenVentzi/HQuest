@@ -34,9 +34,7 @@ const Following = ({ userId, onClose }: FollowingProps) => {
             return <div>User doesn't follow anyone</div>;
           }
 
-          return following.map(f => (
-            <User inversedColors size={2} key={f.id} user={f} />
-          ));
+          return following.map(f => <User size={2} key={f.id} user={f} />);
         }}
       </Query>
     </WhitePanel>

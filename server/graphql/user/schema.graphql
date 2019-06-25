@@ -5,6 +5,11 @@ type SocialMediaLinks {
   linkedInLink: String
 }
 
+enum UserRoles {
+  ADMIN
+  USER
+}
+
 type User {
   id: ID!
   me: Boolean
@@ -16,6 +21,7 @@ type User {
   following: [ID!]
   followers: [ID!]
   experience: Float!
+  role: UserRoles!
 }
 
 type Query {

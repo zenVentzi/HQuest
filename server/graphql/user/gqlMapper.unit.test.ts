@@ -13,8 +13,9 @@ test("map user without following/followers", async () => {
     surName: "Goshev",
     email: "bla@",
     intro: "introo",
-    avatarSrc: "blaSrc"
-  }).toObject();
+    avatarSrc: "blaSrc",
+    role: dbTypes.UserRoles.User
+  } as dbTypes.User).toObject();
 
   const expected: gqlTypes.User = {
     id: dbUser._id.toString(),
@@ -23,7 +24,8 @@ test("map user without following/followers", async () => {
     me: true,
     email: "bla@",
     avatarSrc: "blaSrc",
-    experience: 0
+    experience: 0,
+    role: dbUser.role
   };
 
   const actual = mapUser(dbUser, dbUser._id.toString());
@@ -39,8 +41,9 @@ test("map user with following/followers", async () => {
     intro: "introo",
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
-    following: [ObjectId(), ObjectId()]
-  }).toObject();
+    following: [ObjectId(), ObjectId()],
+    role: dbTypes.UserRoles.User
+  } as dbTypes.User).toObject();
 
   const expected: gqlTypes.User = {
     id: dbUser._id.toString(),
@@ -51,7 +54,8 @@ test("map user with following/followers", async () => {
     avatarSrc: "blaSrc",
     followers: dbUser.followers!.map(f => f.toString()),
     following: dbUser.following!.map(f => f.toString()),
-    experience: 0
+    experience: 0,
+    role: dbUser.role
   };
 
   const actual = mapUser(dbUser, dbUser._id.toString());
@@ -66,8 +70,9 @@ test("map users", async () => {
     intro: "introo",
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
-    following: [ObjectId(), ObjectId()]
-  }).toObject();
+    following: [ObjectId(), ObjectId()],
+    role: dbTypes.UserRoles.User
+  } as dbTypes.User).toObject();
 
   const dbUser2 = new models.user({
     firstName: "Pesho1",
@@ -76,8 +81,9 @@ test("map users", async () => {
     intro: "introo",
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
-    following: [ObjectId(), ObjectId()]
-  }).toObject();
+    following: [ObjectId(), ObjectId()],
+    role: dbTypes.UserRoles.User
+  } as dbTypes.User).toObject();
 
   const dbUsers = [dbUser1, dbUser2];
 
@@ -90,7 +96,8 @@ test("map users", async () => {
     avatarSrc: "blaSrc",
     followers: dbUser1.followers!.map(f => f.toString()),
     following: dbUser1.following!.map(f => f.toString()),
-    experience: 0
+    experience: 0,
+    role: dbUser1.role
   };
 
   const expected2: gqlTypes.User = {
@@ -102,7 +109,8 @@ test("map users", async () => {
     avatarSrc: "blaSrc",
     followers: dbUser2.followers!.map(f => f.toString()),
     following: dbUser2.following!.map(f => f.toString()),
-    experience: 0
+    experience: 0,
+    role: dbUser2.role
   };
 
   const expected = [expected1, expected2];

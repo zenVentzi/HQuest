@@ -7,7 +7,7 @@ import Like from "./Like";
 import { NewsBase, NewsType } from "GqlClient/autoGenTypes";
 
 interface NewsProps {
-  news: NewsBase;
+  news: Pick<NewsBase, "type">;
 }
 
 const News = ({ news }: NewsProps) => {

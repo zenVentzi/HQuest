@@ -238,7 +238,8 @@ class UserService {
         instagramLink: "",
         linkedInLink: ""
       },
-      experience: 0
+      experience: 0,
+      role: DbTypes.UserRoles.User
     };
 
     const userDoc = await this.models.user.create(newUser);

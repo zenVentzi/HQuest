@@ -36,7 +36,8 @@ function mapUser(
     me,
     followers,
     following,
-    experience: dbUser.experience
+    experience: dbUser.experience,
+    role: dbUser.role
   };
 
   return gqlUser;

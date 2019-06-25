@@ -1,10 +1,11 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { getLoggedUserId, deleteLoggedUserData } from "Utils";
+import { getLoggedUserId, deleteLoggedUserData, getLoggedUser } from "Utils";
 import TextLink from "Reusable/TextLink";
 import Dropdown from "Reusable/Dropdown";
 import IconBtn from "Reusable/IconBtn";
 import { Menu as MenuIcon } from "styled-icons/material/Menu";
+import { UserRoles } from "GqlClient/autoGenTypes";
 
 interface MenuProps extends RouteComponentProps {}
 
@@ -13,20 +14,29 @@ const Menu = ({ history }: MenuProps) => {
     deleteLoggedUserData();
   };
 
-  const id = getLoggedUserId();
-  const editLink = `/userprofile/${id}/edit`;
+  // const id = getLoggedUserId();
+  const loggedUser = getLoggedUser()!;
+  const editLink = `/userprofile/${loggedUser.id}/edit`;
 
   const items = [
     <TextLink key="edit" to={editLink}>
       Edit
-    </TextLink>,
-    <TextLink key="admin" to="/admin">
-      Admin
-    </TextLink>,
+    </TextLink>
+  ];
+
+  if (loggedUser.role === UserRoles.Admin) {
+    items.push(
+      <TextLink key="admin" to="/admin">
+        Admin
+      </TextLink>
+    );
+  }
+
+  items.push(
     <TextLink key="logout" onClick={onLogOut} to="/">
       Log out
     </TextLink>
-  ];
+  );
 
   return (
     <Dropdown

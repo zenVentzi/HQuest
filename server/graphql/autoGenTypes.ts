@@ -453,7 +453,13 @@ export type User = {
   following?: Maybe<Array<Scalars["ID"]>>;
   followers?: Maybe<Array<Scalars["ID"]>>;
   experience: Scalars["Float"];
+  role: UserRoles;
 };
+
+export enum UserRoles {
+  Admin = "ADMIN",
+  User = "USER"
+}
 import { ApolloContext } from "../types/gqlContext";
 
 import {
@@ -1009,6 +1015,7 @@ export type UserResolvers<Context = ApolloContext, ParentType = User> = {
   following?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
   followers?: Resolver<Maybe<Array<Scalars["ID"]>>, ParentType, Context>;
   experience?: Resolver<Scalars["Float"], ParentType, Context>;
+  role?: Resolver<UserRoles, ParentType, Context>;
 };
 
 export type Resolvers<Context = ApolloContext> = {

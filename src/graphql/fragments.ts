@@ -16,6 +16,7 @@ export const UserFields = gql`
     followers
     following
     experience
+    role
   }
 `;
 

@@ -453,7 +453,13 @@ export type User = {
   following?: Maybe<Array<Scalars["ID"]>>;
   followers?: Maybe<Array<Scalars["ID"]>>;
   experience: Scalars["Float"];
+  role: UserRoles;
 };
+
+export enum UserRoles {
+  Admin = "ADMIN",
+  User = "USER"
+}
 export type NewAnswerEditionNewsFieldsFragment = {
   __typename?: "NewAnswerEditionNews";
 } & {
@@ -786,6 +792,7 @@ export type UserFieldsFragment = { __typename?: "User" } & Pick<
   | "followers"
   | "following"
   | "experience"
+  | "role"
 > & {
     socialMediaLinks: Maybe<
       { __typename?: "SocialMediaLinks" } & Pick<
