@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import styled from "styled-components";
 import StyledIcon from "Reusable/StyledIcon";
 import UndecoratedLink from "Reusable/UndecoratedLink";
@@ -20,6 +20,7 @@ const StyledLink = styled(
     children: any;
     ref: any;
     role: string;
+    style?: CSSProperties;
   }) => {
     if (isUrlAbsolute(rest.to.toString())) {
       return (
@@ -40,12 +41,13 @@ type IconLinkProps = ClickableIconProps & {
   size: string;
   visible?: boolean;
   to: History.LocationDescriptor;
+  style?: CSSProperties;
 };
 
 // TODO remove ref if not needed
 
 const IconLink = React.forwardRef<Link, IconLinkProps>(
-  ({ icon, size, visible = true, to, color, backgroundColor }, ref) => {
+  ({ icon, size, visible = true, to, color, backgroundColor, style }, ref) => {
     return (
       /* the visible hack(1 : 0) reason - 
     https://github.com/styled-components/styled-components/issues/1198 */
@@ -56,6 +58,7 @@ const IconLink = React.forwardRef<Link, IconLinkProps>(
         role="button"
         color={color}
         backgroundColor={backgroundColor}
+        style={style}
       >
         <StyledIcon icon={icon} size={size} visible={visible} />
       </StyledLink>

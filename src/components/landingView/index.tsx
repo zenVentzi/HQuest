@@ -32,9 +32,24 @@ const LandingView = (props: LandingViewProps) => {
 
   return (
     <StyledView>
-      <h1>Welcome to HQuest,</h1>
+      <h1>
+        Welcome to HQuest,
+        <sup
+          style={{
+            fontSize: "10px",
+            verticalAlign: "top",
+            position: "relative",
+            top: "5px",
+            right: "15px"
+          }}
+        >
+          alpha
+        </sup>
+      </h1>
       <Intro>
-        a minimalistic social network for uncensored, dark humor.
+        a minimalistic social network for all shades of uncensored humor.
+        Professional innovation one dick at a time. One button create/delete
+        account.
         {/* <br />
         <br /> Main features:
         <br /> - Search for users by name

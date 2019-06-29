@@ -19,10 +19,16 @@ const Menu = ({ history }: MenuProps) => {
   const editLink = `/userprofile/${loggedUser.id}/edit`;
 
   const items = [
+    <TextLink key="home" to={`/`}>
+      Home
+    </TextLink>
+  ];
+
+  items.push(
     <TextLink key="edit" to={editLink}>
       Edit
     </TextLink>
-  ];
+  );
 
   if (loggedUser.role === UserRoles.Admin) {
     items.push(
