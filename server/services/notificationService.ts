@@ -212,7 +212,7 @@ class NotificationService {
     await this.notifyOne(answer.userId, notifForEditionOwner);
   }
 
-  public async onDeleteAccount(userId: string): Promise<void> {
+  public async onDeleteAccount(deletedUserId: string): Promise<void> {
     const allUsers = await this.models.user.find();
 
     for (let userIndex = 0; userIndex < allUsers.length; userIndex++) {
@@ -220,7 +220,7 @@ class NotificationService {
 
       if (user.notifications) {
         user.notifications = user.notifications.filter(
-          n => n.performerId !== userId
+          n => n.performerId !== deletedUserId
         );
       }
 

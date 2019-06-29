@@ -136,7 +136,7 @@ class CommentService {
   /**
    * removeByUserId can be costly if there are thousands of answers and comments
    */
-  public async onDeleteAccount(userId: string) {
+  public async onDeleteAccount(deletedUserId: string) {
     const allAnswers = ((await this.models.answer.find()) as any) as Array<
       DbTypes.AnswerDoc<DbTypes.AnswerPopulatedFields.none>
     >;
@@ -157,7 +157,7 @@ class CommentService {
           ) {
             const commentForRemoval = edition.comments[commentIndex];
 
-            if (userId === commentForRemoval.user.toHexString()) {
+            if (deletedUserId === commentForRemoval.user.toHexString()) {
               answer.editions[editionIndex].comments! = answer.editions[
                 editionIndex
               ].comments!.filter(c => !c._id.equals(commentForRemoval._id));

@@ -103,8 +103,8 @@ class NewsfeedService {
     );
   }
 
-  public async onDeleteAccount(userId: string): Promise<void> {
-    await this.models.newsfeed.deleteMany({ performerId: userId });
+  public async onDeleteAccount(deletedUserId: string): Promise<void> {
+    await this.models.newsfeed.deleteMany({ performerId: deletedUserId });
   }
 
   public getAnswerIdFromNews(news: DbTypes.News): string | null {
