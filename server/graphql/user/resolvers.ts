@@ -11,7 +11,10 @@ type Query = Required<
 >;
 
 type Mutation = Required<
-  Pick<MutationResolvers, "login" | "editUser" | "follow" | "uploadAvatar">
+  Pick<
+    MutationResolvers,
+    "login" | "deleteAccount" | "editUser" | "follow" | "uploadAvatar"
+  >
 >;
 
 const Query: Query = {
@@ -85,6 +88,17 @@ const Mutation: Mutation = {
     };
 
     return result;
+  },
+
+  async deleteAccount(_, __, { services, user }) {
+    authMiddleware(user);
+
+    await services.user.deleteAccount(user!.id);
+    await services.answer.onDeleteAccount(user!.id);
+    await services.comment.onDeleteAccount(user!.id);
+    await services.newsfeed.onDeleteAccount(user!.id);
+    await services.notification.onDeleteAccount(user!.id);
+    return null;
   },
 
   async editUser(_, { input }, { services, user }) {

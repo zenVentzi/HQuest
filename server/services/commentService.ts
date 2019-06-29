@@ -132,6 +132,51 @@ class CommentService {
     await answer.save();
     return deletedComment;
   }
+
+  /**
+   * removeByUserId can be costly if there are thousands of answers and comments
+   */
+  public async onDeleteAccount(userId: string) {
+    const allAnswers = ((await this.models.answer.find()) as any) as Array<
+      DbTypes.AnswerDoc<DbTypes.AnswerPopulatedFields.none>
+    >;
+
+    for (let answerIndex = 0; answerIndex < allAnswers.length; answerIndex++) {
+      const answer = allAnswers[answerIndex];
+      for (
+        let editionIndex = 0;
+        editionIndex < answer.editions.length;
+        editionIndex++
+      ) {
+        const edition = answer.editions[editionIndex];
+        if (edition.comments) {
+          for (
+            let commentIndex = 0;
+            commentIndex < edition.comments.length;
+            commentIndex++
+          ) {
+            const commentForRemoval = edition.comments[commentIndex];
+
+            if (userId === commentForRemoval.user.toHexString()) {
+              answer.editions[editionIndex].comments! = answer.editions[
+                editionIndex
+              ].comments!.filter(c => !c._id.equals(commentForRemoval._id));
+              await answer.save();
+            }
+          }
+        }
+      }
+    }
+
+    allAnswers.forEach(answer => {
+      answer.editions.forEach(edition => {
+        if (edition.comments) {
+          edition.comments.forEach(comment => {});
+        }
+      });
+    });
+  }
+
   public async likeComment(
     answerId: string,
     answerEditionId: string,

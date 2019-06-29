@@ -155,6 +155,9 @@ class AnswerService {
 
     return removedAnswer;
   }
+  public async onDeleteAccount(userId: string): Promise<void> {
+    await this.models.answer.deleteMany({ userId });
+  }
 
   // FIXME
   public async like(

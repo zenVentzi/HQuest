@@ -29,7 +29,7 @@ export type AnswerEditionLike = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -42,7 +42,7 @@ export type AnswerEditionMention = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -80,7 +80,7 @@ export type CommentLike = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -160,6 +160,7 @@ export type Mutation = {
   addQuestions?: Maybe<Scalars["Boolean"]>;
   questionNotApply: UnansweredQuestion;
   signUp?: Maybe<Scalars["String"]>;
+  deleteAccount?: Maybe<Scalars["String"]>;
   login: LoginResult;
   editUser: User;
   uploadAvatar: Scalars["String"];
@@ -266,7 +267,7 @@ export type NewComment = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -290,7 +291,7 @@ export type NewFollower = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -332,7 +333,7 @@ export type Notification = {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -754,6 +755,13 @@ export type EditUserMutationVariables = {
 export type EditUserMutation = { __typename?: "Mutation" } & {
   editUser: { __typename?: "User" } & Pick<User, "id">;
 };
+
+export type DeleteAccountMutationVariables = {};
+
+export type DeleteAccountMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "deleteAccount"
+>;
 
 export type FollowMutationVariables = {
   userId: Scalars["ID"];

@@ -14,7 +14,8 @@
     "unified-signatures": false,
     "jsdoc-format": false,
     "jsx-no-lambda": false,
-    "interface-over-type-literal": false
+    "interface-over-type-literal": false,
+    "prefer-for-of": false
     // "max-line-length": [
     //   true,
     //   { "limit": 120, "ignore-pattern": "^import |^export {(.*?)}" }

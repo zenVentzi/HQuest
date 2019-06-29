@@ -15,7 +15,7 @@ export interface Notification {
   _id: ObjectId;
   type: NotificationType;
   performerId: string;
-  performerAvatarSrc: string;
+  performerAvatarSrc: string | undefined;
   text: string;
   seen: boolean;
 }

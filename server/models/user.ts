@@ -18,7 +18,7 @@ const NotificationSchema = new Schema({
   editionId: { type: String, required: false },
   commentId: { type: String, required: false },
   performerId: { type: String, required: true },
-  performerAvatarSrc: { type: String, required: true },
+  performerAvatarSrc: { type: String, required: false },
   text: { type: String, required: true },
   seen: { type: Boolean, required: true }
 });
@@ -40,7 +40,8 @@ const UserSchema = new Schema({
     linkedInLink: String,
     required: false
   },
-  experience: { type: Number, required: true }
+  experience: { type: Number, required: true },
+  role: { type: String, required: true }
 });
 
 const UserModel = model<DbTypes.UserDoc>("User", UserSchema);

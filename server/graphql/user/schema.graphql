@@ -57,6 +57,7 @@ type Mutation {
     email: String!
     password: String!
   ): String
+  deleteAccount: String
   login(email: String!, name: String!): LoginResult!
   editUser(input: EditUserInput): User!
   uploadAvatar(base64Img: String!): String!

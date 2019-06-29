@@ -212,11 +212,35 @@ class NotificationService {
     await this.notifyOne(answer.userId, notifForEditionOwner);
   }
 
+  public async onDeleteAccount(userId: string): Promise<void> {
+    const allUsers = await this.models.user.find();
+
+    for (let userIndex = 0; userIndex < allUsers.length; userIndex++) {
+      const user = allUsers[userIndex];
+
+      if (user.notifications) {
+        user.notifications = user.notifications.filter(
+          n => n.performerId !== userId
+        );
+      }
+
+      if (user.isModified()) {
+        /* note that the above might always return true, if
+        user.notifications is reasigned with no changes */
+        await user.save();
+      }
+    }
+  }
+
   public async onNewFollower(
     receiverId: string,
     followerId: string
   ): Promise<void> {
-    const follower = await this.models.user.findById(followerId).lean();
+    const follower = await this.models.user.findById(followerId);
+
+    if (!follower) {
+      throw Error(`Could not find follower with id ${followerId}`);
+    }
 
     const followerName = `${follower.firstName} ${follower.surName}`;
     const notif: DbTypes.Notification = {

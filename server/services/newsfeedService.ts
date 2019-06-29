@@ -103,6 +103,10 @@ class NewsfeedService {
     );
   }
 
+  public async onDeleteAccount(userId: string): Promise<void> {
+    await this.models.newsfeed.deleteMany({ performerId: userId });
+  }
+
   public getAnswerIdFromNews(news: DbTypes.News): string | null {
     if (news.type === DbTypes.NewsType.NewFollower) return null;
     return news.answerId;

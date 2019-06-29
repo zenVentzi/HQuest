@@ -29,7 +29,7 @@ export type AnswerEditionLike = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -42,7 +42,7 @@ export type AnswerEditionMention = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -80,7 +80,7 @@ export type CommentLike = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -160,6 +160,7 @@ export type Mutation = {
   addQuestions?: Maybe<Scalars["Boolean"]>;
   questionNotApply: UnansweredQuestion;
   signUp?: Maybe<Scalars["String"]>;
+  deleteAccount?: Maybe<Scalars["String"]>;
   login: LoginResult;
   editUser: User;
   uploadAvatar: Scalars["String"];
@@ -266,7 +267,7 @@ export type NewComment = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -290,7 +291,7 @@ export type NewFollower = Notification & {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -332,7 +333,7 @@ export type Notification = {
   id: Scalars["ID"];
   type: NotificationType;
   performerId: Scalars["ID"];
-  performerAvatarSrc: Scalars["String"];
+  performerAvatarSrc?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
   seen: Scalars["Boolean"];
   createdOn: Scalars["DateTime"];
@@ -561,7 +562,7 @@ export type AnswerEditionLikeResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
@@ -577,7 +578,7 @@ export type AnswerEditionMentionResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
@@ -627,7 +628,7 @@ export type CommentLikeResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
@@ -766,6 +767,7 @@ export type MutationResolvers<
     Context,
     MutationSignUpArgs
   >;
+  deleteAccount?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   login?: Resolver<LoginResult, ParentType, Context, MutationLoginArgs>;
   editUser?: Resolver<User, ParentType, Context, MutationEditUserArgs>;
   uploadAvatar?: Resolver<
@@ -800,7 +802,7 @@ export type NewCommentResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
@@ -830,7 +832,7 @@ export type NewFollowerResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;
@@ -901,7 +903,7 @@ export type NotificationResolvers<
   id?: Resolver<Scalars["ID"], ParentType, Context>;
   type?: Resolver<NotificationType, ParentType, Context>;
   performerId?: Resolver<Scalars["ID"], ParentType, Context>;
-  performerAvatarSrc?: Resolver<Scalars["String"], ParentType, Context>;
+  performerAvatarSrc?: Resolver<Maybe<Scalars["String"]>, ParentType, Context>;
   text?: Resolver<Scalars["String"], ParentType, Context>;
   seen?: Resolver<Scalars["Boolean"], ParentType, Context>;
   createdOn?: Resolver<Scalars["DateTime"], ParentType, Context>;

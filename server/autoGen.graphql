@@ -33,6 +33,7 @@ type Mutation {
   # removeQuestion(questionId: ID!): Question!
   questionNotApply(questionId: ID!): UnansweredQuestion!
   signUp(firstName: String!, surName: String!, email: String!, password: String!): String
+  deleteAccount: String
   login(email: String!, name: String!): LoginResult!
   editUser(input: EditUserInput): User!
   uploadAvatar(base64Img: String!): String!
@@ -118,7 +119,7 @@ interface Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!
@@ -131,7 +132,7 @@ type AnswerEditionLike implements Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!
@@ -144,7 +145,7 @@ type CommentLike implements Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!
@@ -158,7 +159,7 @@ type AnswerEditionMention implements Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!
@@ -171,7 +172,7 @@ type NewComment implements Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!
@@ -185,7 +186,7 @@ type NewFollower implements Notification {
   id: ID!
   type: NotificationType!
   performerId: ID!
-  performerAvatarSrc: String!
+  performerAvatarSrc: String
   text: String!
   seen: Boolean!
   createdOn: DateTime!

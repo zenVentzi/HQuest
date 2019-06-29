@@ -21,6 +21,12 @@ export const EDIT_USER = gql`
   }
 `;
 
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount {
+    deleteAccount
+  }
+`;
+
 export const FOLLOW = gql`
   mutation Follow($userId: ID!, $follow: Boolean!) {
     follow(userId: $userId, follow: $follow)

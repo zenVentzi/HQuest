@@ -32,6 +32,30 @@ class UserService {
     return user;
   }
 
+  public async deleteAccount(userId: string): Promise<void> {
+    await this.models.user.deleteOne({ _id: userId });
+
+    const allUsers = await this.models.user.find();
+    for (let userIndex = 0; userIndex < allUsers.length; userIndex++) {
+      const user = allUsers[userIndex];
+
+      if (user.followers) {
+        user.followers = user.followers.filter(
+          fwerId => fwerId.toHexString() !== userId
+        );
+      }
+      if (user.following) {
+        user.following = user.following.filter(
+          fwingId => fwingId.toHexString() !== userId
+        );
+      }
+
+      if (user.isModified()) {
+        await user.save();
+      }
+    }
+  }
+
   public async follow(followerId: string, followedId: string): Promise<void> {
     await this.followBaseFunc(followerId, followedId, true);
   }
