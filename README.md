@@ -24,6 +24,8 @@ npm run test:unit // runs only unit tests
 npm run test:integration //runs only integration tests
 ```
 
+Results are generated in `root/server/coverage`.
+
 ## Tech used:
 
 - Typescript
