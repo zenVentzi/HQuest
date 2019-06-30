@@ -4,6 +4,7 @@ import styled from "styled-components";
 import StyledViewRaw from "../reusable/StyledView";
 import LoginBtn from "./LoginBtn";
 import { getLoggedUser } from "Utils";
+import StyledAnchor from "Reusable/Anchor";
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -50,6 +51,15 @@ const LandingView = (props: LandingViewProps) => {
         a minimalistic social network for all shades of uncensored humor.
         Professional innovation one dick at a time. One button create/delete
         account.
+        <div style={{ marginTop: "20px" }}>
+          Geek?{" "}
+          <StyledAnchor
+            href="https://github.com/zenVentzi/HQuest"
+            target="_blank"
+          >
+            Source code
+          </StyledAnchor>{" "}
+        </div>
         {/* <br />
         <br /> Main features:
         <br /> - Search for users by name

@@ -1,13 +1,11 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-const mLabURI = `mongodb://zenVentzi:${
-  process.env.MLAB_PASS
-}@ds149732.mlab.com:49732/hquest`;
+const mongoURI = process.env.MONGO_URI;
 
 const connect = onConnected => {
   mongoose.connect(
-    mLabURI,
+    mongoURI,
     { useNewUrlParser: true, reconnectTries: 100, reconnectInterval: 2000 }
   );
 
