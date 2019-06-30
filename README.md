@@ -4,20 +4,17 @@ a minimalistic social network for all shades of uncensored humor. Professional i
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 1. `git clone https://github.com/zenVentzi/HQuest.git`
 2. Run `npm install` in project root folder
 3. Create .env file based on .env.example file(located in project root)
 4. Run `npm run build`
 5. Run `npm run start`
-6. Visit localhost:4000
+6. Visit `localhost:4000` or `localhost:4000/graphql` for graphql playground
 
 ### Prerequisites
 
-```
-node.js 10.x // lower v. may work as well, though it's been developed with 10.x
-```
+- `Node.js 10.x` Lower v. may work as well
+- Free Cloudinary account
 
 ## Running the tests
 
