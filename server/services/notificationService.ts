@@ -140,7 +140,10 @@ class NotificationService {
       edition,
       addedExperience
     );
-    await this.notifyOne(answer.userId, notifForCommentOwner);
+    await this.notifyOne(
+      dbComment.user._id.toHexString(),
+      notifForCommentOwner
+    );
   }
 
   public async onNewAnswerEdition(
