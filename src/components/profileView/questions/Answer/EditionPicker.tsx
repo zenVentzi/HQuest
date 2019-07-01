@@ -18,12 +18,15 @@ interface EditionPickerProps {
 
 const EditionPicker = (props: EditionPickerProps) => {
   const editions: React.ReactElement[] = [];
+  let a;
 
   const getEditionText = (editionIndex: number) => {
     return editionIndex === 0
       ? `1'st edition`
       : editionIndex === 1
       ? `2'nd edition`
+      : editionIndex === 2
+      ? `3'rd edition`
       : `${editionIndex + 1}'th edition`;
   };
 
