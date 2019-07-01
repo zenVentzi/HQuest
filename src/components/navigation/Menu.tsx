@@ -44,6 +44,12 @@ const Menu = ({ history }: MenuProps) => {
     </TextLink>
   );
 
+  items.push(
+    <TextLink key="faq" /* onClick={onLogOut} */ to="/faq">
+      FAQ
+    </TextLink>
+  );
+
   return (
     <Dropdown
       pivot="right"

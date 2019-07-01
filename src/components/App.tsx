@@ -17,6 +17,7 @@ import LandingView from "./landingView";
 import NotFoundView from "./notFoundView";
 import { GlobalStyle } from "./appTheme";
 import RankingsView from "./rankingsView";
+import FaqView from "./FAQView";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
               <ProtectedRoute path="/search" component={SearchView} />
               <ProtectedRoute path="/rankings" component={RankingsView} />
               <ProtectedRoute path="/help" component={HelpView} />
+              <ProtectedRoute path="/faq" component={FaqView} />
               <ProtectedRoute path="/newsfeed" component={NewsfeedView} />
               <Route path="/" exact component={LandingView} />
               <Route component={NotFoundView} />
