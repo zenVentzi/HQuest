@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter, RouteComponentProps } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import Avatar from "Reusable/Avatar";
 import { UserFieldsFragment } from "GqlClient/autoGenTypes";
@@ -91,13 +91,12 @@ const StyledUser = styled.div`
   }
 `;
 
-interface UserRowProps {
+interface UserRowProps extends RouteComponentProps {
   size?: number;
   user: UserFieldsFragment;
 }
 
-const UserRow = ({ size = 2, user }: UserRowProps) => {
-  const [redirect, setRedirect] = useState(false);
+const UserRow = ({ size = 2, user, history }: UserRowProps) => {
   const [theme, setTheme] = useState({
     avatarSize: `${1.5 * size}em`,
     backgroundColor: "black",
@@ -117,21 +116,6 @@ const UserRow = ({ size = 2, user }: UserRowProps) => {
   //   }));
   // };
 
-  if (redirect) {
-    const redirectTo = `/userProfile/${user.id}`;
-
-    if (redirectTo === window.location.pathname) {
-      // window.scroll(0, 0); doesn't work bcuz can't change state here
-      window.location.reload();
-      // think how you can reload the user component easily without passing down all the props down
-      /* problem currently is that when we pass the same variables to the Query comp, it doesn't refetch. And
-        in getUserQuery case the userId can be the same in case of refresh. One hacky way is to do refetch = refetch in render.
-        then in componentDidUpdate to do a refetch */
-    } else {
-      return <Redirect push to={redirectTo} />;
-    }
-  }
-
   return (
     <ThemeProvider
       theme={currentTheme => {
@@ -143,8 +127,8 @@ const UserRow = ({ size = 2, user }: UserRowProps) => {
         // onFocus={onMouseEnter}
         // onMouseLeave={onMouseLeave}
         // onBlur={onMouseLeave}
-        onClick={() => {
-          setRedirect(true);
+        onClick={e => {
+          history.push(`/userProfile/${user.id}`);
         }}
       >
         <Avatar
@@ -164,4 +148,4 @@ const UserRow = ({ size = 2, user }: UserRowProps) => {
   );
 };
 
-export default UserRow;
+export default withRouter(UserRow);
