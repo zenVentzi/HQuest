@@ -1,10 +1,20 @@
 import React from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps, Link } from "react-router-dom";
 import styled from "styled-components";
 import StyledViewRaw from "../reusable/StyledView";
 import LoginBtn from "./LoginBtn";
 import { getLoggedUser } from "Utils";
 import StyledAnchor from "Reusable/Anchor";
+import UndecoratedLink from "Reusable/UndecoratedLink";
+
+const WhiteLink = styled(Link)`
+  color: white;
+
+  &:hover {
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #555;
+  }
+`;
 
 const StyledView = styled(StyledViewRaw)`
   align-items: center;
@@ -50,7 +60,13 @@ const LandingView = (props: LandingViewProps) => {
       <Intro>
         a minimalistic social network for all shades of uncensored humor.
         Professional innovation one dick at a time. One button create/delete
-        account.
+        account.{" "}
+        <WhiteLink
+          to="/faq"
+          // target="_blank"
+        >
+          FAQ
+        </WhiteLink>
         <div style={{ marginTop: "20px" }}>
           Geek?{" "}
           <StyledAnchor
@@ -58,7 +74,7 @@ const LandingView = (props: LandingViewProps) => {
             target="_blank"
           >
             Source code
-          </StyledAnchor>{" "}
+          </StyledAnchor>
         </div>
         {/* <br />
         <br /> Main features:

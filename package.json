@@ -57,6 +57,7 @@
     "merge-graphql-schemas": "^1.5.8",
     "mongoose": "^5.2.12",
     "node-fetch": "^2.2.0",
+    "rc-collapse": "^1.11.3",
     "react": "^16.8.3",
     "react-apollo": "^2.5.6",
     "react-avatar-editor": "^11.0.4",
