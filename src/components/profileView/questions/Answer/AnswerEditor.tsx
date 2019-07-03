@@ -62,6 +62,7 @@ interface AnswerEditorProps {
     answerValue: string,
     mentionedUserIds: string[] | null | undefined
   ) => Promise<void>;
+  onClickClose: () => void;
   answer: AnswerFieldsFragment | null;
 }
 
@@ -167,13 +168,21 @@ const AnswerEditor = React.forwardRef<HTMLTextAreaElement, AnswerEditorProps>(
                 >
                   Save
                 </LeftBtn>
-                {isNew && (
+                {isNew ? (
                   <RightBtn
                     onClick={props.onClickDoesNotApply}
                     color="white"
                     backgroundColor="black"
                   >
                     Does not apply
+                  </RightBtn>
+                ) : (
+                  <RightBtn
+                    onClick={props.onClickClose}
+                    color="white"
+                    backgroundColor="black"
+                  >
+                    Cancel
                   </RightBtn>
                 )}
               </Buttons>

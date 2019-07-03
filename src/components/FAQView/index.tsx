@@ -48,7 +48,7 @@ const FaqView = ({  }: FaqView) => {
           header="Resolution looks strange. Why?"
           headerClass="my-header-class"
         >
-          Currently the app is developed and tested only on a (1920 x 1080)
+          Currently the app is developed and tested mostly on a (1920 x 1080)
           screen.
         </Panel>
         <Panel header="How do I get exp?">

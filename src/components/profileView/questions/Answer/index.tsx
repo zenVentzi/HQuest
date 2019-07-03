@@ -110,6 +110,7 @@ const Answer = (props: AnswerProps) => {
                 answer={props.answer}
                 onClickDoesNotApply={() => {}}
                 onClickSave={onSaveAnswer(editAnswer)}
+                onClickClose={props.onCloseAnswerEditor}
               />
             ) : props.showPositionEditor ? (
               <PositionEditor
