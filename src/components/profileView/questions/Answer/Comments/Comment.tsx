@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import CommentOptions from "./CommentOptions";
 import CommentViewer from "./CommentViewer";
 import CommentEditor from "./CommentEditor";
