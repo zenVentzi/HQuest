@@ -77,8 +77,7 @@ const StyledUser = styled.div`
   align-items: center;
   justify-content: flex-start;
   border-radius: 0.2em;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 10px;
   /* border: 1px solid white; */
   background-color: white;
   color: black;
