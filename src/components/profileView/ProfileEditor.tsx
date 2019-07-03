@@ -22,7 +22,7 @@ interface ProfileEditorProps extends RouteComponentProps {
 }
 
 const StyledInput = styled.input`
-  width: 350px;
+  width: 100%;
   margin-bottom: 5px;
 `;
 
@@ -30,6 +30,11 @@ const FieldsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 300px;
+
+  @media screen and (min-width: 520px) {
+    width: 500px;
+  }
 `;
 
 const ProfileEditor = ({
