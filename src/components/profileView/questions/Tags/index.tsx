@@ -7,6 +7,7 @@ import {
   QuestionsTagsQueryVariables,
   QuestionsTagsQuery
 } from "GqlClient/autoGenTypes";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
 type Option = { value: string; label: string };
 
@@ -15,6 +16,8 @@ interface QuestionTagsProps {
 }
 
 const QuestionTags = (props: QuestionTagsProps) => {
+  const windowSize = useWindowSize();
+
   return (
     <Query<QuestionsTagsQuery, QuestionsTagsQueryVariables>
       query={GET_QUESTIONS_TAGS}
@@ -60,7 +63,11 @@ const QuestionTags = (props: QuestionTagsProps) => {
                 };
               },
               container: base => {
-                return { ...base, width: "500px", marginBottom: "15px" };
+                return {
+                  ...base,
+                  width: windowSize.width! < 550 ? "300px" : "500px",
+                  marginBottom: "15px"
+                };
               },
               indicatorsContainer: base => {
                 return { ...base, color: "red" };
