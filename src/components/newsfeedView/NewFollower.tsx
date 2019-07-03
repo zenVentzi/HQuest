@@ -6,7 +6,7 @@ do we implement "Got followed by" news?
 
 import React, { Fragment } from "react";
 import styled from "styled-components";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import { getTime } from ".";
 import {
   NewFollowerNewsFieldsFragment,

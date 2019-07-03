@@ -44,6 +44,7 @@ interface StyledIntroProps {
 const StyledIntro = styled.div<StyledIntroProps>`
   font-size: ${props => `${0.7 * props.size}em`};
   font-style: oblique;
+  text-align: left;
   max-width: 100%;
   word-wrap: break-word;
   /* color: ${props => props.theme.foregroundColor}; */

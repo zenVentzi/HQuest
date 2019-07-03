@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 // import distanceInWords from "date-fns/distance_in_words";
 import styled from "styled-components";
-import User from "Reusable/UserRow";
+import User from "./UserRow";
 import { getLoggedUserId } from "Utils";
 import AnsweredQuestion from "../profileView/questions/AnsweredQuestion";
 import { getTime } from ".";
