@@ -120,7 +120,7 @@ const Avatar = (props: AvatarProps) => {
           size={props.size}
         >
           <StyledImg src={src} />
-          {editable && hovered && <UpdateOverlay>Upload</UpdateOverlay>}
+          {editable && !src && <UpdateOverlay>Upload</UpdateOverlay>}
           <input
             id="myInput"
             key={fileInputKey}
