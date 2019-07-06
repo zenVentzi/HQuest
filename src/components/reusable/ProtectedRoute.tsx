@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Route, Redirect } from "react-router-dom";
-import { getAuthToken } from "Utils";
+import { getAuthToken, getLoggedUser } from "Utils";
 import { ComponentConstructor } from "react-onclickoutside";
+import { UserRoles } from "GqlClient/autoGenTypes";
 
 interface ProtectedRouteProps {
   component: ComponentConstructor<any>;
+  userRole?: UserRoles;
   path: string;
 }
 
@@ -15,9 +17,19 @@ const ProtectedRoute = ({
   return (
     <Route
       {...props}
-      render={prps =>
-        getAuthToken() ? <RouteComponent {...prps} /> : <Redirect to="/" />
-      }
+      render={prps => {
+        const loggedUser = getLoggedUser();
+
+        if (!loggedUser) {
+          return <Redirect to="/" />;
+        }
+
+        if (props.userRole && loggedUser.role !== props.userRole) {
+          return <Redirect to="/" />;
+        }
+
+        return <RouteComponent {...prps} />;
+      }}
     />
   );
 };

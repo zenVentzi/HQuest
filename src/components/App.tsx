@@ -18,6 +18,7 @@ import NotFoundView from "./notFoundView";
 import { GlobalStyle } from "./appTheme";
 import RankingsView from "./rankingsView";
 import FaqView from "./FAQView";
+import { UserRoles } from "GqlClient/autoGenTypes";
 
 const App = () => {
   return (
@@ -35,7 +36,11 @@ const App = () => {
             <Navbar />
             <Switch>
               <ProtectedRoute path="/userProfile/:id" component={ProfileView} />
-              <ProtectedRoute path="/admin" component={AdminView} />
+              <ProtectedRoute
+                path="/admin"
+                userRole={UserRoles.Admin}
+                component={AdminView}
+              />
               <ProtectedRoute path="/search" component={SearchView} />
               <ProtectedRoute path="/rankings" component={RankingsView} />
               <ProtectedRoute path="/help" component={HelpView} />
