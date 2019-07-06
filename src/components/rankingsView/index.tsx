@@ -30,7 +30,9 @@ const RankingsView = ({  }: SearchViewProps) => {
     <StyledView>
       <Query<RankingsQuery, RankingsQueryVariables>
         query={GET_RANKINGS}
-        // variables={{ match: username }}
+        /* play with fetchPolicy
+        
+        Rankings do not refresh on new user creation*/
       >
         {({ loading, error, data }) => {
           if (loading) return <div> Loading..</div>;

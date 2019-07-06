@@ -57,7 +57,7 @@ const NewsfeedView = () => {
         <Query<NewsfeedQuery, NewsfeedQueryVariables>
           query={GET_NEWSFEED}
           // variables={vars}
-          fetchPolicy="no-cache"
+          fetchPolicy="cache-and-network"
           errorPolicy="all"
         >
           {({ loading, error, data, networkStatus }) => {

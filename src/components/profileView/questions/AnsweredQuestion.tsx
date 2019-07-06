@@ -64,6 +64,9 @@ const AnsweredQuestion = (props: AnsweredQuestionProps) => {
     showComments
   } = props;
 
+  /* TODO raise the logic for which edition to pick up
+  but first weight in the disadvantages */
+
   return (
     <AnsweredQuestionContext.Provider value={props.question}>
       <StyledQuestion
