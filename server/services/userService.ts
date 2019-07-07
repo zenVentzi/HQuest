@@ -266,6 +266,14 @@ class UserService {
       role: DbTypes.UserRoles.User
     };
 
+    const registeredAdmin = await this.models.user.findOne({
+      role: DbTypes.UserRoles.Admin
+    });
+
+    if (!registeredAdmin) {
+      newUser.role = DbTypes.UserRoles.Admin;
+    }
+
     const userDoc = await this.models.user.create(newUser);
     return userDoc.toObject();
   }
