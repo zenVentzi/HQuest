@@ -9,14 +9,16 @@ import { ApolloContext } from "../../../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-const contextUser = {
+const contextUser: DbTypes.User = {
   _id: ObjectId("5c652bcbbe436f0108224888"),
   email: "fdf",
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
-} as DbTypes.User;
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.User,
+  experience: 0
+};
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
@@ -127,12 +129,19 @@ test("editAnswer() result should contain editions", async done => {
 
 test("likeAnswer() result should contain likes", async done => {
   await new models.user(contextUser).save();
-  const existingAnswer = (await new models.answer({
+  const answerOwner: DbTypes.User = { ...contextUser, _id: ObjectId() };
+  await new models.user(answerOwner).save();
+
+  const existingAnswerObj: DbTypes.Answer = {
+    _id: ObjectId(),
     position: 1,
     questionId: ObjectId().toHexString(),
-    userId: ObjectId().toHexString(),
+    userId: answerOwner._id.toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
-  } as DbTypes.Answer).save()).toObject();
+  };
+  const existingAnswer = (await new models.answer(
+    existingAnswerObj
+  ).save()).toObject();
 
   const args: GqlTypes.MutationLikeAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),

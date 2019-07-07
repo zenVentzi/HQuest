@@ -9,14 +9,16 @@ import { ApolloContext } from "../../../../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-const contextUser = {
+const contextUser: DbTypes.User = {
   _id: ObjectId("5c652bcbbe436f0108224888"),
   email: "fdf",
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
-} as DbTypes.User;
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.User,
+  experience: 0
+};
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
@@ -26,13 +28,17 @@ const context: ApolloContext = {
 test("commentAnswer() should return added comment", async done => {
   await new models.user(contextUser).save();
 
-  const existingAnswer = (await new models.answer({
+  const existingAnswerObj: DbTypes.Answer = {
     _id: ObjectId(),
     position: 1,
     questionId: ObjectId().toHexString(),
     userId: ObjectId().toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
-  } as DbTypes.Answer).save()).toObject();
+  };
+
+  const existingAnswer = (await new models.answer(
+    existingAnswerObj
+  ).save()).toObject();
 
   const args: GqlTypes.MutationCommentAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),
@@ -59,18 +65,25 @@ test("commentAnswer() should return added comment", async done => {
 test("commentAnswer() should notify answer owner", async done => {
   await new models.user(contextUser).save();
 
-  const answerOwner = (await new models.user({
+  const answerOwnerObj: DbTypes.User = {
     ...contextUser,
     _id: ObjectId()
-  } as DbTypes.User).save()).toObject();
+  };
 
-  const existingAnswer = (await new models.answer({
+  const answerOwner = (await new models.user(answerOwnerObj).save()).toObject();
+
+  const existingAnswerObj: DbTypes.Answer = {
+    _id: ObjectId(),
     position: 1,
     // value: "ass",
     questionId: ObjectId().toHexString(),
     userId: answerOwner._id.toHexString(),
     editions: [{ _id: ObjectId(), date: new Date(), value: "ass" }]
-  } as DbTypes.Answer).save()).toObject();
+  };
+
+  const existingAnswer = (await new models.answer(
+    existingAnswerObj
+  ).save()).toObject();
 
   const args: GqlTypes.MutationCommentAnswerEditionArgs = {
     answerId: existingAnswer._id.toHexString(),
@@ -101,7 +114,8 @@ test("commentAnswer() should notify answer owner", async done => {
 test("editComment() should return edited comment", async done => {
   const existingUser = (await new models.user(contextUser).save()).toObject();
 
-  const existingAnswer = (await new models.answer({
+  const existingAnswerObj: DbTypes.Answer = {
+    _id: ObjectId(),
     position: 1,
     questionId: ObjectId().toHexString(),
     userId: ObjectId().toHexString(),
@@ -115,7 +129,10 @@ test("editComment() should return edited comment", async done => {
         ] as DbTypes.Comment[]
       }
     ]
-  } as DbTypes.Answer).save()).toObject();
+  };
+  const existingAnswer = (await new models.answer(
+    existingAnswerObj
+  ).save()).toObject();
 
   const args: GqlTypes.MutationEditCommentArgs = {
     answerId: existingAnswer._id.toHexString(),
@@ -144,7 +161,8 @@ test("editComment() should return edited comment", async done => {
 test("removeComment() should return removed comment", async done => {
   const existingUser = (await new models.user(contextUser).save()).toObject();
 
-  const existingAnswer = (await new models.answer({
+  const existingAnswerObj: DbTypes.Answer = {
+    _id: ObjectId(),
     position: 1,
     questionId: ObjectId().toHexString(),
     userId: ObjectId().toHexString(),
@@ -158,7 +176,10 @@ test("removeComment() should return removed comment", async done => {
         ] as DbTypes.Comment[]
       }
     ]
-  } as DbTypes.Answer).save()).toObject();
+  };
+  const existingAnswer = (await new models.answer(
+    existingAnswerObj
+  ).save()).toObject();
 
   const args: GqlTypes.MutationRemoveCommentArgs = {
     answerId: existingAnswer._id.toHexString(),

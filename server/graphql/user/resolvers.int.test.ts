@@ -9,14 +9,16 @@ import { ApolloContext } from "../../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-const contextUser = {
+const contextUser: DbTypes.User = {
   _id: ObjectId("5c652bcbbe436f0108224888"),
   email: "fdf",
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
-} as DbTypes.User;
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.User,
+  experience: 0
+};
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
@@ -24,13 +26,17 @@ const context: ApolloContext = {
 };
 
 test("login() should login if user exists", async done => {
-  const existingUser = await new models.user({
+  const existingUserObj: DbTypes.User = {
+    _id: ObjectId(),
     email: "fdf",
     firstName: "Pesho",
     surName: "Goeshev",
     intro: "blaIntro",
-    avatarSrc: "test"
-  } as DbTypes.User).save();
+    avatarSrc: "test",
+    role: DbTypes.UserRoles.User,
+    experience: 0
+  };
+  const existingUser = await new models.user(existingUserObj).save();
 
   const args = {
     email: existingUser.email,
@@ -286,13 +292,19 @@ test("following() should return nullshit if user doesn't exist", async done => {
 });
 
 test("follow() should add followers to user doc", async done => {
-  const existingUser = (await new models.user({
+  const existingUserObj: DbTypes.User = {
+    _id: ObjectId(),
     email: "fdf@",
     firstName: "Pesho123",
     surName: "Goeshev",
     intro: "blaIntro",
-    avatarSrc: "test"
-  } as DbTypes.User).save())!.toObject();
+    avatarSrc: "test",
+    role: DbTypes.UserRoles.User,
+    experience: 0
+  };
+  const existingUser = (await new models.user(
+    existingUserObj
+  ).save())!.toObject();
 
   const args: GqlTypes.MutationFollowArgs = {
     follow: true,
@@ -314,13 +326,19 @@ test("follow() should add followers to user doc", async done => {
 });
 
 test("follow(false) should remove followers from user doc", async done => {
-  const existingUser = (await new models.user({
+  const existingUserObj: DbTypes.User = {
+    _id: ObjectId(),
     email: "fdf@",
     firstName: "Pesho123",
     surName: "Goeshev",
     intro: "blaIntro",
-    avatarSrc: "test"
-  } as DbTypes.User).save())!.toObject();
+    avatarSrc: "test",
+    role: DbTypes.UserRoles.User,
+    experience: 0
+  };
+  const existingUser = (await new models.user(
+    existingUserObj
+  ).save())!.toObject();
 
   const args: GqlTypes.MutationFollowArgs = {
     follow: true,
@@ -348,13 +366,17 @@ test("follow(false) should remove followers from user doc", async done => {
 });
 
 test("follow() should add notification to the followed user", async done => {
-  const follower = (await new models.user({
+  const followerObj: DbTypes.User = {
+    _id: ObjectId(),
     email: "fdf@",
     firstName: "Pesho123",
     surName: "Goeshev",
     intro: "blaIntro",
-    avatarSrc: "test"
-  } as DbTypes.User).save())!.toObject();
+    avatarSrc: "test",
+    role: DbTypes.UserRoles.User,
+    experience: 0
+  };
+  const follower = (await new models.user(followerObj).save())!.toObject();
 
   const followedUser = (await new models.user(contextUser).save())!.toObject();
 

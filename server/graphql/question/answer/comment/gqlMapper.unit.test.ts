@@ -28,6 +28,7 @@ test("mapComment() should map db comment to gql", () => {
   const expected: gqlTypes.Comment = {
     id: dbComment._id.toHexString(),
     user: gqlUser,
+    likes: null,
     value: "commentValue"
   };
 

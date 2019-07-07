@@ -9,14 +9,16 @@ import { ApolloContext } from "../../types/gqlContext";
 
 const { ObjectId } = GooseTypes;
 
-const contextUser = {
+const contextUser: DbTypes.User = {
   _id: ObjectId("5c652bcbbe436f0108224888"),
   email: "fdf",
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
-} as DbTypes.User;
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.User,
+  experience: 0
+};
 
 const context: ApolloContext = {
   user: { email: contextUser.email, id: contextUser._id.toHexString() },
@@ -245,8 +247,12 @@ const context: ApolloContext = {
 // });
 
 test("questionsTags() should return all tags", async notDONEyet => {
-  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
-  const question1 = {
+  const question: DbTypes.Question = {
+    _id: ObjectId(),
+    tags: ["bla"],
+    value: "questionValue"
+  };
+  const question1: DbTypes.Question = {
     _id: ObjectId(),
     tags: ["bla1", "shegichka_we_bonak_hihi"],
     value: "questionValue1"
@@ -268,16 +274,21 @@ test("questionsTags() should return all tags", async notDONEyet => {
 });
 
 test("answeredQuestion() should return answered question", async done => {
-  const question = { _id: ObjectId(), tags: ["bla"], value: "questionValue" };
+  const question: DbTypes.Question = {
+    _id: ObjectId(),
+    tags: ["bla"],
+    value: "questionValue"
+  };
   await new models.question(question).save();
   await new models.user(contextUser).save();
-  const dbAnswer = (await new models.answer({
+  const dbAnswerObj: DbTypes.Answer = {
     _id: ObjectId(),
     userId: contextUser._id.toHexString(),
     questionId: question._id.toHexString(),
     position: 1,
     editions: [{ _id: ObjectId(), date: new Date(), value: "answerValue" }]
-  } as DbTypes.Answer).save()).toObject();
+  };
+  const dbAnswer = (await new models.answer(dbAnswerObj).save()).toObject();
 
   if (typeof Query.answeredQuestion !== "function") {
     throw Error(`answeredQuestion must be a function`);

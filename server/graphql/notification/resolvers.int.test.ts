@@ -15,7 +15,9 @@ const contextUser = {
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.Admin,
+  experience: 0
 } as DbTypes.User;
 
 const context: ApolloContext = {
@@ -76,7 +78,9 @@ test("notifsMarkSeen() should mark user notifications as seen", async done => {
     firstName: "Pesho123",
     surName: "Goeshev",
     intro: "blaIntro",
-    avatarSrc: "test"
+    avatarSrc: "test",
+    role: DbTypes.UserRoles.User,
+    experience: 0
   } as DbTypes.User).save())!.toObject();
   const followed = (await new models.user({
     ...contextUser,

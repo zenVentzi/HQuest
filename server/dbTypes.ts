@@ -209,7 +209,7 @@ export interface AnswerDoc<
   ): Answer<PopulatedFieldss>;
 }
 
-interface Question {
+export interface Question {
   _id: ObjectId;
   value: string;
   tags: string[];

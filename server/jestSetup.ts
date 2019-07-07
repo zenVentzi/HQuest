@@ -8,14 +8,16 @@ const { ObjectId } = mongoose.Types;
 
 process.env = { JWT_SECRET: "test" };
 
-const tempUser = {
+const tempUser: DbTypes.User = {
   _id: ObjectId(),
   email: "fdf",
   firstName: "Pesho",
   surName: "Goeshev",
   intro: "blaIntro",
-  avatarSrc: "test"
-} as DbTypes.User;
+  avatarSrc: "test",
+  role: DbTypes.UserRoles.Admin,
+  experience: 0
+};
 
 beforeAll(async done => {
   const dbName = Math.floor(Math.random() * 99999999999);
