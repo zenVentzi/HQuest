@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import { Formik, Form, ErrorMessage } from "formik";
 import { Mutation } from "react-apollo";
+import Auto_resize_Textarea from "react-textarea-autosize";
 import { ADD_QUESTIONS } from "GqlClient/question/mutations";
 // import StyledView from '../reusable/StyledView';
 import TextBtn from "Reusable/TextBtn";
@@ -11,10 +12,11 @@ import {
   InputQuestion
 } from "GqlClient/autoGenTypes";
 
-const TextArea = styled.textarea`
+const TextArea = styled(Auto_resize_Textarea)`
   margin-bottom: 1em;
   overflow: hidden;
   width: 95%;
+  word-break: break-all;
 `;
 
 // use the one from Reusable
@@ -98,6 +100,9 @@ const AdminView = () => {
                 isSubmitting
               }) => (
                 <Form style={{ width: "100%", textAlign: "center" }}>
+                  <div style={{ color: "white" }}>
+                    Enter the questions string below:{" "}
+                  </div>
                   <TextArea
                     name="questionsText"
                     onChange={handleChange}
@@ -111,6 +116,24 @@ const AdminView = () => {
                     }}
                     placeholder="Enter the questions string here"
                   />
+                  <div style={{ color: "white" }}>
+                    Please follow the format below:{" "}
+                  </div>
+                  {/* If you open console you will see the following error:
+
+                    "Warning: Use the `defaultValue` or `value` props 
+                    instead of setting children on <textarea>."
+
+                    It's left on purpose, because value or defaultValue
+                    add unwanted spacing to the string.
+                  */}
+                  <TextArea readOnly>
+                    What did his mother say?;TAGS(mother); Dumbest thing a woman
+                    could say?;TAGS(female,dumb); Finish the sentence: “He lacks
+                    self-discipline but likes big butts
+                    because...”;TAGS(discipline,ass); Finish the sentence: “She
+                    wasn’t very pretty but...”;TAGS(female,ugly);
+                  </TextArea>
                   <TextBtn
                     onClick={submitForm}
                     color="white"
