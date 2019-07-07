@@ -70,7 +70,7 @@ const UnansweredQuestion = ({
       questionId: question.id
     };
     await questionNotApply({ variables });
-    toast.success("🦄 Does not apply? Mi ae huu.");
+    toast.success("Does not apply? Mi ae huu.");
     refetchQuestions();
   };
 

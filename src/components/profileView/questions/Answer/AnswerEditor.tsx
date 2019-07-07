@@ -57,12 +57,12 @@ const RightBtn = styled(TextBtn)`
 `;
 
 interface AnswerEditorProps {
-  onClickDoesNotApply: () => void;
+  onClickDoesNotApply?: () => void;
   onClickSave: (
     answerValue: string,
     mentionedUserIds: string[] | null | undefined
   ) => Promise<void>;
-  onClickClose: () => void;
+  onClickClose?: () => void;
   answer: AnswerFieldsFragment | null;
 }
 
