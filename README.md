@@ -11,6 +11,8 @@ a minimalistic social network for all shades of uncensored humor. Professional i
 5. Run `npm run start`
 6. Visit `localhost:4000` or `localhost:4000/graphql` for graphql playground
 
+The first user to login/register has the ADMIN role. Go to `localhost:4000/admin` to add the questions for the app.
+
 ### Prerequisites
 
 - `Node.js 10.x` Lower v. may work as well
