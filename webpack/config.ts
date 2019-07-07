@@ -8,7 +8,7 @@ const config: webpack.Configuration = {
   entry: [
     "webpack-hot-middleware/client?path=/__webpack_hmr&quiet=true",
     // "babel-polyfill",
-    "./src/index.tsx"
+    "./client/index.tsx"
     // "./foo.ts"
   ],
   mode: "development",
@@ -53,14 +53,14 @@ const config: webpack.Configuration = {
   },
   resolve: {
     alias: {
-      Constants: path.resolve(process.cwd(), "./src/constants"),
-      Utils: path.resolve(process.cwd(), "./src/utils"),
-      // Queries: path.resolve(process.cwd(), './src/gqlQueries'),
-      // Mutations: path.resolve(process.cwd(), './src/gqlMutations'),
-      // Fragments: path.resolve(process.cwd(), './src/gqlFragments'),
-      // Subscriptions: path.resolve(process.cwd(), './src/gqlSubscriptions'),
-      Reusable: path.resolve(process.cwd(), "./src/components/reusable"),
-      GqlClient: path.resolve(process.cwd(), "./src/graphql")
+      Constants: path.resolve(process.cwd(), "./client/constants"),
+      Utils: path.resolve(process.cwd(), "./client/utils"),
+      // Queries: path.resolve(process.cwd(), './client/gqlQueries'),
+      // Mutations: path.resolve(process.cwd(), './client/gqlMutations'),
+      // Fragments: path.resolve(process.cwd(), './client/gqlFragments'),
+      // Subscriptions: path.resolve(process.cwd(), './client/gqlSubscriptions'),
+      Reusable: path.resolve(process.cwd(), "./client/components/reusable"),
+      GqlClient: path.resolve(process.cwd(), "./client/graphql")
     },
     extensions: [
       "*",

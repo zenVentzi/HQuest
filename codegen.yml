@@ -1,10 +1,10 @@
 overwrite: true
 schema: "./server/graphql/**/*.graphql"
 documents:
-  - "./src/graphql/**/*queries.ts"
-  - "./src/graphql/**/*mutations.ts"
-  - "./src/graphql/**/*subscriptions.ts"
-  - "./src/graphql/**/*fragments.ts"
+  - "./client/graphql/**/*queries.ts"
+  - "./client/graphql/**/*mutations.ts"
+  - "./client/graphql/**/*subscriptions.ts"
+  - "./client/graphql/**/*fragments.ts"
 generates:
   ./server/graphql/autoGenTypes.ts:
     schema: "./server/graphql/**/*.graphql"
@@ -13,7 +13,7 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
-  ./src/graphql/autoGenTypes.ts:
+  ./client/graphql/autoGenTypes.ts:
     schema: "./server/graphql/**/*.graphql"
     config:
       # noNamespaces: true # used in v.0.18 and below
