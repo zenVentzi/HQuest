@@ -17,7 +17,7 @@ The first user to login/register has the ADMIN role. Go to `localhost:4000/admin
 
 - `Node.js 10.x` Lower v. may work as well
 - Free Cloudinary account
-- MongoDB locally installed **OR** mLab free tier account. Note that if you want to run integration tests, MongoDB local installation is still required.
+- MongoDB locally installed **OR** mLab free tier account. Note that if you want to run integration tests, MongoDB local installation is always required.
 
 ## Running the tests
 
@@ -36,6 +36,10 @@ Results are generated in `root/server/coverage`.
 - Node
 - Graphql(Apollo)
 - Jest
+
+## Project structure
+
+- [Here](ProjectStructure.md)
 
 ## Authors
 
