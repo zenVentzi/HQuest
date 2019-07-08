@@ -65,30 +65,35 @@ test("map gql likes", () => {
   expect(actual).toEqual(expected);
 });
 
-test("getLikes() should return gql likes", () => {
-  const dbUser = new models.user({
+test("mapLikes() should return gql likes", () => {
+  const dbUser: dbTypes.User<dbTypes.UserPopulatedFields.none> = {
+    _id: ObjectId(),
     firstName: "Pesho",
     surName: "Goshev",
     email: "bla@",
     intro: "introo",
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
-    following: [ObjectId(), ObjectId()]
-  }).toObject();
+    following: [ObjectId(), ObjectId()],
+    role: dbTypes.UserRoles.User,
+    experience: 0
+  };
+  // const dbUser = new models.user(dbUserObj).toObject();
 
-  const dbLikes: dbTypes.CommentLikes = {
+  const dbLikes: dbTypes.EditionLikes = {
     total: 1,
     likers: [{ user: dbUser, numOfLikes: 1 }]
   };
 
-  const dbAnswer = new models.answer({
+  const dbAnswer: dbTypes.Answer = {
+    _id: ObjectId(),
     position: 1,
     questionId: ObjectId().toHexString(),
     userId: ObjectId().toHexString(),
     editions: [
       { _id: ObjectId(), date: new Date(), value: "ass", likes: dbLikes }
     ]
-  } as dbTypes.Answer).toObject();
+  };
 
   const gqlLikes = mapLikes({ dbLikes, loggedUserId: "" });
 
