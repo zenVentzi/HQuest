@@ -8,14 +8,16 @@ import { models } from "../../models";
 const { ObjectId } = Types;
 
 test("map user without following/followers", async () => {
-  const dbUser = new models.user({
+  const dbUser: dbTypes.User = {
+    _id: ObjectId(),
     firstName: "Pesho",
     surName: "Goshev",
     email: "bla@",
     intro: "introo",
     avatarSrc: "blaSrc",
-    role: dbTypes.UserRoles.User
-  } as dbTypes.User).toObject();
+    role: dbTypes.UserRoles.User,
+    experience: 0
+  };
 
   const expected: gqlTypes.User = {
     id: dbUser._id.toString(),
@@ -34,7 +36,8 @@ test("map user without following/followers", async () => {
 });
 
 test("map user with following/followers", async () => {
-  const dbUser = new models.user({
+  const dbUser: dbTypes.User = {
+    _id: ObjectId(),
     firstName: "Pesho",
     surName: "Goshev",
     email: "bla@",
@@ -42,8 +45,9 @@ test("map user with following/followers", async () => {
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
     following: [ObjectId(), ObjectId()],
-    role: dbTypes.UserRoles.User
-  } as dbTypes.User).toObject();
+    role: dbTypes.UserRoles.User,
+    experience: 0
+  };
 
   const expected: gqlTypes.User = {
     id: dbUser._id.toString(),
@@ -62,8 +66,10 @@ test("map user with following/followers", async () => {
 
   expect(actual).toEqual(expected);
 });
+
 test("map users", async () => {
-  const dbUser1 = new models.user({
+  const dbUser1: dbTypes.User = {
+    _id: ObjectId(),
     firstName: "Pesho",
     surName: "Goshev",
     email: "bla@",
@@ -71,10 +77,12 @@ test("map users", async () => {
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
     following: [ObjectId(), ObjectId()],
-    role: dbTypes.UserRoles.User
-  } as dbTypes.User).toObject();
+    role: dbTypes.UserRoles.User,
+    experience: 0
+  };
 
-  const dbUser2 = new models.user({
+  const dbUser2: dbTypes.User = {
+    _id: ObjectId(),
     firstName: "Pesho1",
     surName: "Goshev",
     email: "bla@",
@@ -82,8 +90,9 @@ test("map users", async () => {
     avatarSrc: "blaSrc",
     followers: [ObjectId(), ObjectId()],
     following: [ObjectId(), ObjectId()],
-    role: dbTypes.UserRoles.User
-  } as dbTypes.User).toObject();
+    role: dbTypes.UserRoles.User,
+    experience: 0
+  };
 
   const dbUsers = [dbUser1, dbUser2];
 

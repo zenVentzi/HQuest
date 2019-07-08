@@ -1,11 +1,11 @@
-import { User } from "../autoGenTypes";
+import * as gqlTypes from "../autoGenTypes";
 import { User as DbUser } from "../../dbTypes";
 
 function mapUser(
   dbUser: DbUser,
   loggedUserId: string,
   isFromLogin?: boolean
-): User {
+): gqlTypes.User {
   let me = false;
 
   if (isFromLogin) {
@@ -26,7 +26,7 @@ function mapUser(
     );
   }
 
-  const gqlUser: User = {
+  const gqlUser: gqlTypes.User = {
     id: dbUser._id.toString(),
     email: dbUser.email,
     fullName: `${dbUser.firstName} ${dbUser.surName}`,
@@ -56,21 +56,21 @@ function mapUsers({
 }: {
   dbUsers: DbUser[];
   loggedUserId: string;
-}): User[];
+}): gqlTypes.User[];
 function mapUsers({
   dbUsers,
   loggedUserId
 }: {
   dbUsers: DbUser[] | null;
   loggedUserId: string;
-}): User[] | null;
+}): gqlTypes.User[] | null;
 function mapUsers({
   dbUsers,
   loggedUserId
 }: {
   dbUsers: DbUser[] | null;
   loggedUserId: string;
-}): User[] | null {
+}): gqlTypes.User[] | null {
   if (!dbUsers || !dbUsers.length) return null;
   return dbUsers.map(dbUser => mapUser(dbUser, loggedUserId));
 }
