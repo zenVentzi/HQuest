@@ -48,7 +48,14 @@ const FaqView = ({  }: FaqView) => {
           header="Is the author of this app crazy/sexist/nazi/retard/sad/angry/bad_person/` insert shaming tactic here `?"
           headerClass="my-header-class"
         >
-          No. Thank you for the concern.
+          No. Thank you for the concern. These are just random questions that I
+          came up with. No, I don't think about that a lot. Making a lot of
+          jokes about women or anyone in particular does not mean I hate them.
+          Not in my world. I just find these jokes hillarious because everybody
+          avoids them like the plague in today's feminised society. I don't like
+          how if you make a joke towards the female audience, you must be some
+          sort of crazy. I think that's bullshit and all the politically-correct
+          jokes aren't protecting anybody.
         </Panel>
         <Panel
           header="Resolution looks strange. Why?"
