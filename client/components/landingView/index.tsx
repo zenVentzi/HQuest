@@ -59,7 +59,7 @@ const LandingView = (props: LandingViewProps) => {
       </h1>
       <Intro>
         a minimalistic social network for all shades of non-pc, uncensored
-        humor. Professional innovation one dick at a time. One button
+        humor. Professional innovation one dick at a time. 18+. One button
         create/delete account.{" "}
         <WhiteLink
           to="/faq"
