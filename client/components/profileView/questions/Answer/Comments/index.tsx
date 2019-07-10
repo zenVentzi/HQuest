@@ -173,9 +173,9 @@ const Comments = (props: CommentsProps) => {
     if (props.onAddComment) {
       props.onAddComment();
     }
-    // setIsSubmitting(false);
+    setIsSubmitting(false);
     // inputRef.current!.value = "";
-    // setCommentValue("");
+    setCommentValue("");
     // inputRef.current!.blur();
     // resetForm({ comment: "" });
   };
