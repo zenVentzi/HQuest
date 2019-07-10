@@ -22,6 +22,7 @@ const LikeBtn = (props: LikeBtnProps) => {
       onClick={onClick}
       color="black"
       backgroundColor="white"
+      style={{ border: "2px solid black" }}
     />
   );
 };
