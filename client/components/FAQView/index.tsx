@@ -48,7 +48,7 @@ const FaqView = ({  }: FaqView) => {
           header="Is the author of this app crazy/sexist/nazi/retard/sad/angry/bad_person/` insert shaming tactic here `?"
           headerClass="my-header-class"
         >
-          No. Thanks for asking.
+          No. Thank you for the concern.
         </Panel>
         <Panel
           header="Resolution looks strange. Why?"
