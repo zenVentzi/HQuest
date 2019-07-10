@@ -45,6 +45,12 @@ const FaqView = ({  }: FaqView) => {
       </div>
       <Collapse accordion={true}>
         <Panel
+          header="Is the author of this app crazy/sexist/nazi/retard/sad/angry/bad_person/` insert shaming tactic here `?"
+          headerClass="my-header-class"
+        >
+          No. Thanks for asking.
+        </Panel>
+        <Panel
           header="Resolution looks strange. Why?"
           headerClass="my-header-class"
         >
