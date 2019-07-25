@@ -17,6 +17,9 @@ module.exports = {
         'no-underscore-dangle': 0,
         "import/prefer-default-export": 0,
         'no-plusplus': 1,
+        "import/extensions": 0,
+        "import/no-unresolved": [ 0, { caseSensitive: false } ], //FIXME could  be more specific, and not ignore all
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", "ts", "tsx"] }],
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "linebreak-style": ["error", "windows"],
         "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],
@@ -26,7 +29,7 @@ module.exports = {
             "error",
             {
                 "trailingComma": "es5",
-                "singleQuote": true,
+                "singleQuote": false,
                 "printWidth": 80
             }
         ]
