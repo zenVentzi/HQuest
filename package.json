@@ -6,6 +6,8 @@
   "scripts": {
     "webpack:build": "webpack --config webpack/config.ts",
     "genSchema": "node introspect.js",
+    "tsc:client": "tsc --project client/tsconfig.json",
+    "tsc:server": "tsc --project server/tsconfig.json",
     "copy-schemas": "cpx server/**/*.graphql dist/server",
     "test:integration": "jest --detectOpenHandles --config server/jest.integration.config.js",
     "test:unit": "jest --detectOpenHandles --config server/jest.unit.config.js",
