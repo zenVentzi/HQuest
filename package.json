@@ -39,7 +39,7 @@
     "apollo-server-express": "^2.0.4",
     "apollo-upload-client": "^8.1.0",
     "apollo-utilities": "^1.0.19",
-    "bcrypt": "^3.0.2",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "clone": "^2.1.2",
     "cloudinary": "^1.14.0",
